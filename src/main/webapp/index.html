@@ -1,0 +1,78 @@
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2012, Red Hat, Inc. and individual contributors
+by the @authors tag. See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+
+This is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation; either version 2.1 of
+the License, or (at your option) any later version.
+
+
+This software is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+
+You should have received a copy of the GNU Lesser General Public
+License along with this software; if not, write to the Free
+Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+02110-1301 USA, or see the FSF site: http://www.fsf.org.
+--> 
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSFUnit PoC</title>
+<script type="text/javascript" src="xhrInjection.js"></script>
+<script type="text/javascript">
+function sendAjaxRequest() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            //alert(this.responseText);
+            //alert(window.responseEnrichment);
+        }
+    };
+    xhr.open("GET", "/test/servlet?param1=someparam");
+    xhr.send();
+}
+
+window.requestEnrichment = "null";
+window.responseEnrichment = "null";
+
+Graphene.xhrInjection.onOpen(function(context, args) {
+    var url = args[1];
+    url += (url.indexOf('?') > -1) ? '&' : '?';
+    url += 'X-Arq-Enrichment-Request=' + window.requestEnrichment;
+    args[1] = url;
+    context.proceed(args);
+});
+
+function extractAssertion(responseText) {
+    var result = {};
+    var separator = 'X-Arq-Enrichment-Response=';
+    var index = responseText.indexOf(separator);
+    result.responseText = responseText.substring(0, index);
+    result.assertion = responseText.substring(index + separator.length, responseText.length);
+    return result;
+}
+
+Graphene.xhrInjection.onreadystatechange(function(context, args) {
+    if (this.readyState == 4) {
+        var extracted = extractAssertion(this.responseText);
+        this.responseText = extracted.responseText;
+        window.responseEnrichment = extracted.assertion;
+    }
+    context.proceed(args);
+});
+</script>
+</head>
+<body>
+    <input id="enableInjection" type="button" value="Enable injection" onclick="Graphene.xhrInjection.inject()" />
+    <input id="sendAjax" type="button" value="Send Ajax" onclick="sendAjaxRequest()" />
+</body>
+</html>
