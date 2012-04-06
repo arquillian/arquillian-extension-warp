@@ -58,6 +58,7 @@ public class BasicClientTest {
         browser.navigate().to(contextPath + "/index.html");
 
         AssertionObject assertionObject = new AssertionObject();
+        assertionObject.setPayload("server");
         String requestEnrichment = SerializationUtils.serializeToBase64(assertionObject);
 
         browser.executeScript("window.requestEnrichment = '" + requestEnrichment + "'");

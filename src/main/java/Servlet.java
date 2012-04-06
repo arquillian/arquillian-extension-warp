@@ -62,6 +62,7 @@ public class Servlet extends HttpServlet {
                 AssertionObject assertionObject = SerializationUtils.deserializeFromBase64(requestEnrichment);
                 assertionObject.method();
                 
+                assertionObject.setPayload("client");
                 responseEnrichment = SerializationUtils.serializeToBase64(assertionObject);
             }
             

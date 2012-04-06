@@ -24,7 +24,18 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class AssertionObject implements Serializable {
+    
+    private String payload;
+    
     public void method() {
-        System.out.println("Hi Ike!");
+        System.out.println("Hi " + payload + "!");
+    }
+    
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+    
+    public String getPayload() {
+        return payload;
     }
 }
