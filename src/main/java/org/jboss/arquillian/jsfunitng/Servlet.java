@@ -1,3 +1,5 @@
+package org.jboss.arquillian.jsfunitng;
+
 /**
  * JBoss, Home of Professional Open Source
  * Copyright 2011, Red Hat, Inc. and individual contributors
@@ -32,11 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/servlet")
 @SuppressWarnings("serial")
 public class Servlet extends HttpServlet {
-    
-    private static final String ENRICHMENT = "X-Arq-Enrichment";
-    private static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
-    private static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
-    
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -52,22 +49,7 @@ public class Servlet extends HttpServlet {
             }
             out.write("\n");
         }
-        if (req.getParameter(ENRICHMENT_REQUEST) != null) {
-            
-            String requestEnrichment = req.getParameter(ENRICHMENT_REQUEST);
-            
-            String responseEnrichment = "null";
-            
-            if (!"null".equals(requestEnrichment)) {
-                AssertionObject assertionObject = SerializationUtils.deserializeFromBase64(requestEnrichment);
-                assertionObject.method();
-                
-                assertionObject.setPayload("client");
-                responseEnrichment = SerializationUtils.serializeToBase64(assertionObject);
-            }
-            
-            out.write(ENRICHMENT_RESPONSE + "=" + responseEnrichment);
-        }
+
         out.close();
     }
 }

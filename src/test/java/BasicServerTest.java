@@ -20,39 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 import java.io.File;
-import java.net.URL;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
-import org.jboss.arquillian.graphene.page.interception.XhrInjection;
+import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.jsfunitng.AssertionObject;
 import org.jboss.arquillian.jsfunitng.Servlet;
-import org.jboss.arquillian.jsfunitng.javascript.RequestEnrichment;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 @RunWith(Arquillian.class)
-public class BasicClientTest {
+public class BasicServerTest {
 
-    @Drone
-    RemoteWebDriver browser;
-
-    @ArquillianResource
-    URL contextPath;
-    
-    XhrInjection xhrInjection = JSInterfaceFactory.create(XhrInjection.class).instantiate();
-    RequestEnrichment enricher = JSInterfaceFactory.create(RequestEnrichment.class).instantiate();
 
     @Deployment
     public static WebArchive createDeployment() {
@@ -64,32 +47,8 @@ public class BasicClientTest {
     }
 
     
-    @Test
-    @RunAsClient
+    @Test  @OverProtocol("Servlet 3.0")
     public void test() {
-        
-        browser.navigate().to(contextPath + "index.html");
-
-        AssertionObject assertionObject = new AssertionObject();
-        assertionObject.setPayload("server");
-        String requestEnrichment = SerializationUtils.serializeToBase64(assertionObject);
-
-//        browser.executeScript("window.requestEnrichment = '" + requestEnrichment + "'");
-        enricher.setRequestEnrichment(requestEnrichment);
-
-//        WebElement enableInjection = browser.findElement(By.id("enableInjection"));
-//      enableInjection.click();
-        
-        WebElement sendAjax = browser.findElement(By.id("sendAjax"));
-        sendAjax.click();
-        
-        
-
-//        String responseEnrichment = (String) browser.executeScript("return window.responseEnrichment");
-        String responseEnrichment = enricher.getResponseEnrichment();
-        if (!"null".equals(responseEnrichment)) {
-            assertionObject = SerializationUtils.deserializeFromBase64(responseEnrichment);
-            assertionObject.method();
-        }
+        System.out.println("hello there, my beloved server");
     }
 }

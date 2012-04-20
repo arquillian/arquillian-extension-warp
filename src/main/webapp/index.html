@@ -27,48 +27,14 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>JSFUnit PoC</title>
-<script type="text/javascript" src="xhrInjection.js"></script>
 <script type="text/javascript">
 function sendAjaxRequest() {
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4) {
-            //alert(this.responseText);
-            //alert(window.responseEnrichment);
-        }
-    };
     xhr.open("GET", "/test/servlet?param1=someparam");
     xhr.send();
 }
 
-window.requestEnrichment = "null";
-window.responseEnrichment = "null";
 
-Graphene.xhrInjection.onOpen(function(context, args) {
-    var url = args[1];
-    url += (url.indexOf('?') > -1) ? '&' : '?';
-    url += 'X-Arq-Enrichment-Request=' + window.requestEnrichment;
-    args[1] = url;
-    context.proceed(args);
-});
-
-function extractAssertion(responseText) {
-    var result = {};
-    var separator = 'X-Arq-Enrichment-Response=';
-    var index = responseText.indexOf(separator);
-    result.responseText = responseText.substring(0, index);
-    result.assertion = responseText.substring(index + separator.length, responseText.length);
-    return result;
-}
-
-Graphene.xhrInjection.onreadystatechange(function(context, args) {
-    if (this.readyState == 4) {
-        var extracted = extractAssertion(this.responseText);
-        this.responseText = extracted.responseText;
-        window.responseEnrichment = extracted.assertion;
-    }
-    context.proceed(args);
-});
 </script>
 </head>
 <body>
