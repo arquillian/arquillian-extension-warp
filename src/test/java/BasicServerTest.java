@@ -22,9 +22,7 @@
 import java.io.File;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.jsfunitng.AssertionObject;
-import org.jboss.arquillian.jsfunitng.MyBean;
 import org.jboss.arquillian.jsfunitng.Servlet;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
 import org.jboss.arquillian.junit.Arquillian;

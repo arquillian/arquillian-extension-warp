@@ -21,12 +21,8 @@ package org.jboss.arquillian.jsfunitng;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 import java.io.Serializable;
-import java.net.URL;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
-
-import org.jboss.arquillian.test.api.ArquillianResource;
 
 
 @SuppressWarnings("serial")
