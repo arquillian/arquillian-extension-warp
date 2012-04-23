@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,16 +26,12 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.jsfunitng.AssertionObject;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
-import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-
-import com.google.common.collect.Maps;
 
 @WebFilter(urlPatterns = "/*")
 public class EnrichmentFilter implements Filter {
@@ -93,6 +88,7 @@ public class EnrichmentFilter implements Filter {
                         backupUpdatedFields(assertionObject);
 
                         assertionObject.method();
+                        assertionObject.beanMethod();
 
                         manager.fire(new After(assertionObject, testMethod));
                         restoreFields(assertionObject);

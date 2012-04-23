@@ -28,6 +28,7 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.jboss.arquillian.graphene.page.interception.XhrInjection;
 import org.jboss.arquillian.jsfunitng.AssertionObject;
+import org.jboss.arquillian.jsfunitng.MyBean;
 import org.jboss.arquillian.jsfunitng.Servlet;
 import org.jboss.arquillian.jsfunitng.javascript.RequestEnrichment;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
@@ -63,7 +64,7 @@ public class BasicClientTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(Servlet.class)
-                .addClasses(AssertionObject.class, SerializationUtils.class)
+                .addClasses(AssertionObject.class, SerializationUtils.class, MyBean.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
                 .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec"))
                 .addAsWebInfResource("beans.xml");

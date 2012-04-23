@@ -35,10 +35,14 @@ public class AssertionObject implements Serializable {
     private String payload;
     
     @Inject
-    Event<Object> event;
+    MyBean myBean;
     
     public void method() {
         System.out.println("Hi " + payload + "!");
+    }
+    
+    public void beanMethod() {
+        System.out.println(myBean.getMessage());
     }
     
     public void setPayload(String payload) {
