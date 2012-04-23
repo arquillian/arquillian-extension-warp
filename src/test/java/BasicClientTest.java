@@ -34,13 +34,18 @@ import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.google.common.base.Predicate;
 
 @RunWith(Arquillian.class)
 public class BasicClientTest {
@@ -60,7 +65,8 @@ public class BasicClientTest {
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(Servlet.class)
                 .addClasses(AssertionObject.class, SerializationUtils.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec"));
+                .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec"))
+                .addAsWebInfResource("beans.xml");
     }
 
     
@@ -86,10 +92,19 @@ public class BasicClientTest {
         
 
 //        String responseEnrichment = (String) browser.executeScript("return window.responseEnrichment");
+        
+        new WebDriverWait(browser, 600).until(new Predicate<WebDriver>() {
+            
+            @Override
+            public boolean apply(WebDriver input) {
+                return enricher.getResponseEnrichment() != null;
+            }
+        });
+        
         String responseEnrichment = enricher.getResponseEnrichment();
-        if (!"null".equals(responseEnrichment)) {
+//        if (!"null".equals(responseEnrichment)) {
             assertionObject = SerializationUtils.deserializeFromBase64(responseEnrichment);
             assertionObject.method();
-        }
+//        }
     }
 }

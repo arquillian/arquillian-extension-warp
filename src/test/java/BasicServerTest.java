@@ -43,11 +43,12 @@ public class BasicServerTest {
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(Servlet.class)
                 .addClasses(AssertionObject.class, SerializationUtils.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec"));
+                .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec"))
+                .addAsWebInfResource("beans.xml");
     }
 
     
-    @Test  @OverProtocol("Servlet 3.0")
+    @Test
     public void test() {
         System.out.println("hello there, my beloved server");
     }
