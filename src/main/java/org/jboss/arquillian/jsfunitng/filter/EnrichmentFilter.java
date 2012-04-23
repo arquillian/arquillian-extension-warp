@@ -26,12 +26,14 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.jsfunitng.AssertionObject;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.event.suite.Test;
 
 @WebFilter(urlPatterns = "/*")
 public class EnrichmentFilter implements Filter {
@@ -76,7 +78,7 @@ public class EnrichmentFilter implements Filter {
                         final AssertionObject assertionObject = SerializationUtils.deserializeFromBase64(requestEnrichment);
                         ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
 
-                        Method testMethod = AssertionObject.class.getMethod("method");
+                        final Method testMethod = AssertionObject.class.getMethod("method");
 
                         manager = builder.create();
                         manager.start();
@@ -86,6 +88,24 @@ public class EnrichmentFilter implements Filter {
                         backupAllFields(assertionObject);
                         manager.fire(new Before(assertionObject, testMethod));
                         backupUpdatedFields(assertionObject);
+                        
+                        manager.fire(new Test(new TestMethodExecutor() {
+                            
+                            @Override
+                            public void invoke(Object... parameters) throws Throwable {
+                                getMethod().invoke(getInstance(), parameters);
+                            }
+                            
+                            @Override
+                            public Method getMethod() {
+                                return testMethod;
+                            }
+                            
+                            @Override
+                            public Object getInstance() {
+                                return assertionObject;
+                            }
+                        }));
 
                         assertionObject.method();
                         assertionObject.beanMethod();
