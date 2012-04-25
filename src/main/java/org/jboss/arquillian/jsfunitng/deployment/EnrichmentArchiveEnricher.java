@@ -10,8 +10,13 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.jsfunitng.assertion.AssertionRegistry;
 import org.jboss.arquillian.jsfunitng.enrichment.EnrichmentExtension;
 import org.jboss.arquillian.jsfunitng.filter.EnrichmentFilter;
+import org.jboss.arquillian.jsfunitng.lifecycle.LifecycleManager;
+import org.jboss.arquillian.jsfunitng.request.RequestContext;
+import org.jboss.arquillian.jsfunitng.request.RequestContextImpl;
+import org.jboss.arquillian.jsfunitng.test.LifecycleTestDriver;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -29,6 +34,8 @@ public class EnrichmentArchiveEnricher implements ApplicationArchiveProcessor, A
             WebArchive webArchive = (WebArchive) applicationArchive;
 
             webArchive.addPackage(EnrichmentFilter.class.getPackage());
+
+            webArchive.addClasses(RequestContextImpl.class);
 
             // webArchive.addPackage(EnrichmentExtension.class.getPackage());
             // webArchive.addAsServiceProvider(RemoteLoadableExtension.class, EnrichmentExtension.class);
@@ -51,7 +58,9 @@ public class EnrichmentArchiveEnricher implements ApplicationArchiveProcessor, A
         // throw new UnsupportedOperationException();
         return ShrinkWrap.create(JavaArchive.class, "jsfunitng-enrichment.jar")
                 .addPackage(EnrichmentExtension.class.getPackage())
-                .addAsServiceProvider(RemoteLoadableExtension.class, EnrichmentExtension.class);
+                .addAsServiceProvider(RemoteLoadableExtension.class, EnrichmentExtension.class)
+                .addPackage(LifecycleManager.class.getPackage()).addPackage(RequestContext.class.getPackage())
+                .addPackage(LifecycleTestDriver.class.getPackage()).addPackage(AssertionRegistry.class.getPackage());
     }
 
 }

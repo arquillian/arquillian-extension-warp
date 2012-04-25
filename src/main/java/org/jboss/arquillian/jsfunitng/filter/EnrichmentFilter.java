@@ -2,12 +2,7 @@ package org.jboss.arquillian.jsfunitng.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -23,17 +18,19 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
-import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.jsfunitng.AssertionObject;
+import org.jboss.arquillian.jsfunitng.assertion.AssertionRegistry;
+import org.jboss.arquillian.jsfunitng.lifecycle.BindLifecycleManager;
+import org.jboss.arquillian.jsfunitng.lifecycle.LifecycleManager;
+import org.jboss.arquillian.jsfunitng.lifecycle.UnbindLifecycleManager;
+import org.jboss.arquillian.jsfunitng.request.AfterRequest;
+import org.jboss.arquillian.jsfunitng.request.BeforeRequest;
+import org.jboss.arquillian.jsfunitng.test.BeforeServlet;
+import org.jboss.arquillian.jsfunitng.test.BeforeServletEvent;
+import org.jboss.arquillian.jsfunitng.test.LifecycleEvent;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
-import org.jboss.arquillian.test.spi.TestMethodExecutor;
-import org.jboss.arquillian.test.spi.event.suite.After;
-import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.test.spi.event.suite.Test;
 
 @WebFilter(urlPatterns = "/*")
 public class EnrichmentFilter implements Filter {
@@ -44,10 +41,11 @@ public class EnrichmentFilter implements Filter {
 
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
 
-    private Manager manager;
-
     @Inject
-    Instance<ServiceLoader> serviceLoader;
+    private Instance<LifecycleManager> lifecycleManager;
+    
+    @Inject
+    private Instance<AssertionRegistry> assertionRegistry;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -76,43 +74,23 @@ public class EnrichmentFilter implements Filter {
 
                     try {
                         final AssertionObject assertionObject = SerializationUtils.deserializeFromBase64(requestEnrichment);
-                        ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
-
                         final Method testMethod = AssertionObject.class.getMethod("method");
 
-                        manager = builder.create();
+                        ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
+                        Manager manager = builder.create();
                         manager.start();
                         manager.inject(this);
+
                         manager.fire(new BeforeSuite());
-                        manager.fire(new BeforeClass(AssertionObject.class));
-                        backupAllFields(assertionObject);
-                        manager.fire(new Before(assertionObject, testMethod));
-                        backupUpdatedFields(assertionObject);
+                        manager.fire(new BeforeRequest(req));
+                        manager.fire(new BindLifecycleManager<ServletRequest>(req, ServletRequest.class, req));
                         
-                        manager.fire(new Test(new TestMethodExecutor() {
-                            
-                            @Override
-                            public void invoke(Object... parameters) throws Throwable {
-                                getMethod().invoke(getInstance(), parameters);
-                            }
-                            
-                            @Override
-                            public Method getMethod() {
-                                return testMethod;
-                            }
-                            
-                            @Override
-                            public Object getInstance() {
-                                return assertionObject;
-                            }
-                        }));
+                        assertionRegistry.get().registerAssertion(assertionObject);
 
-                        assertionObject.method();
-                        assertionObject.beanMethod();
+                        lifecycleManager.get().fireLifecycleEvent(new BeforeServletEvent());
 
-                        manager.fire(new After(assertionObject, testMethod));
-                        restoreFields(assertionObject);
-                        manager.fire(new AfterClass(AssertionObject.class));
+                        manager.fire(new UnbindLifecycleManager<ServletRequest>(req, ServletRequest.class, req));
+                        manager.fire(new AfterRequest(req));
                         manager.fire(new AfterSuite());
 
                         assertionObject.setPayload("client");
@@ -143,53 +121,6 @@ public class EnrichmentFilter implements Filter {
             // TODO: handle exception
             e.printStackTrace();
         }
-    }
-
-    Map<Field, Object> backupAll = new HashMap<Field, Object>();
-    Map<Field, Object> backupUpdated = new HashMap<Field, Object>();
-
-    private void backupAllFields(Object instance) {
-        try {
-            List<Field> fields = SecurityActions.getFields(instance.getClass());
-            for (Field field : fields) {
-                backupAll.put(field, field.get(instance));
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-    
-    private void backupUpdatedFields(Object instance) {
-        try {
-            for (Entry<Field, Object> entry : backupAll.entrySet()) {
-                Field field = entry.getKey();
-                Object oldValue = entry.getValue();
-                
-                Object newValue = field.get(instance);
-                
-                if (oldValue != newValue) {
-                    backupUpdated.put(field, oldValue);
-                }
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        backupAll.clear();
-    }
-    
-    private void restoreFields(Object instance) {
-        try {
-            for (Entry<Field, Object> entry : backupUpdated.entrySet()) {
-                Field field = entry.getKey();
-                Object oldValue = entry.getValue();
-                
-                field.set(instance, oldValue);
-                
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        backupUpdated.clear();
     }
 
 }

@@ -24,6 +24,8 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 
+import org.jboss.arquillian.jsfunitng.test.BeforeServlet;
+
 
 @SuppressWarnings("serial")
 public class AssertionObject implements Serializable {
@@ -33,6 +35,7 @@ public class AssertionObject implements Serializable {
     @Inject
     MyBean myBean;
     
+    @BeforeServlet
     public void method() {
         System.out.println("Hi " + payload + "!");
     }
