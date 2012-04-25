@@ -2,6 +2,7 @@ package org.jboss.arquillian.jsfunitng.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,7 +18,6 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
-import org.jboss.arquillian.jsfunitng.AssertionObject;
 import org.jboss.arquillian.jsfunitng.assertion.AssertionRegistry;
 import org.jboss.arquillian.jsfunitng.lifecycle.BindLifecycleManager;
 import org.jboss.arquillian.jsfunitng.lifecycle.LifecycleManager;
@@ -67,7 +67,7 @@ public class EnrichmentFilter implements Filter {
                 String responseEnrichment = "null";
 
                 try {
-                    final AssertionObject assertionObject = SerializationUtils.deserializeFromBase64(requestEnrichment);
+                    final Serializable assertionObject = SerializationUtils.deserializeFromBase64(requestEnrichment);
 
                     ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
                     Manager manager = builder.create();
@@ -86,11 +86,12 @@ public class EnrichmentFilter implements Filter {
 
                     lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
 
+                    assertionRegistry.get().unregisterAssertion(assertionObject);
+
                     manager.fire(new UnbindLifecycleManager<ServletRequest>(req, ServletRequest.class, req));
                     manager.fire(new AfterRequest(req));
                     manager.fire(new AfterSuite());
 
-                    assertionObject.setPayload("client");
                     responseEnrichment = SerializationUtils.serializeToBase64(assertionObject);
                 } catch (Exception e) {
                     // TODO handle exception

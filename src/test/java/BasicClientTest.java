@@ -104,7 +104,7 @@ public class BasicClientTest {
         String responseEnrichment = enricher.getResponseEnrichment();
 //        if (!"null".equals(responseEnrichment)) {
             assertionObject = SerializationUtils.deserializeFromBase64(responseEnrichment);
-            assertionObject.method();
+            assertionObject.beforeServlet();
 //        }
     }
 }

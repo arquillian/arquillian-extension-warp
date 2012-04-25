@@ -1,4 +1,5 @@
 package org.jboss.arquillian.jsfunitng;
+
 /**
  * JBoss, Home of Professional Open Source
  * Copyright 2011, Red Hat, Inc. and individual contributors
@@ -24,30 +25,36 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 
+import org.jboss.arquillian.jsfunitng.test.AfterServlet;
 import org.jboss.arquillian.jsfunitng.test.BeforeServlet;
-
 
 @SuppressWarnings("serial")
 public class AssertionObject implements Serializable {
-    
+
     private String payload;
-    
+
     @Inject
     MyBean myBean;
-    
+
     @BeforeServlet
-    public void method() {
+    public void beforeServlet() {
         System.out.println("Hi " + payload + "!");
     }
-    
-    public void beanMethod() {
+
+    @BeforeServlet
+    public void accessingEnrichment() {
         System.out.println(myBean.getMessage());
     }
-    
+
+    @AfterServlet
+    public void afterServlet() {
+        payload = "client";
+    }
+
     public void setPayload(String payload) {
         this.payload = payload;
     }
-    
+
     public String getPayload() {
         return payload;
     }
