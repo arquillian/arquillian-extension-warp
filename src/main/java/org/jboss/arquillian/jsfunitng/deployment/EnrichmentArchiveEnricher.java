@@ -15,15 +15,16 @@ import org.jboss.arquillian.jsfunitng.enrichment.EnrichmentExtension;
 import org.jboss.arquillian.jsfunitng.filter.EnrichmentFilter;
 import org.jboss.arquillian.jsfunitng.lifecycle.LifecycleManager;
 import org.jboss.arquillian.jsfunitng.request.RequestContext;
-import org.jboss.arquillian.jsfunitng.request.RequestContextImpl;
 import org.jboss.arquillian.jsfunitng.test.LifecycleTestDriver;
+import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
-public class EnrichmentArchiveEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender {
+public class EnrichmentArchiveEnricher implements ApplicationArchiveProcessor {
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
@@ -34,8 +35,13 @@ public class EnrichmentArchiveEnricher implements ApplicationArchiveProcessor, A
             WebArchive webArchive = (WebArchive) applicationArchive;
 
             webArchive.addPackage(EnrichmentFilter.class.getPackage());
-
-            webArchive.addClasses(RequestContextImpl.class);
+            webArchive.addPackage(EnrichmentExtension.class.getPackage());
+            webArchive.addAsServiceProvider(RemoteLoadableExtension.class, EnrichmentExtension.class);
+            webArchive.addPackage(LifecycleManager.class.getPackage()).addPackage(RequestContext.class.getPackage());
+            webArchive.addPackage(LifecycleTestDriver.class.getPackage()).addPackage(AssertionRegistry.class.getPackage());
+            webArchive.addClass(SerializationUtils.class);
+            
+//            webArchive.addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec"));
 
             // webArchive.addPackage(EnrichmentExtension.class.getPackage());
             // webArchive.addAsServiceProvider(RemoteLoadableExtension.class, EnrichmentExtension.class);
@@ -51,16 +57,6 @@ public class EnrichmentArchiveEnricher implements ApplicationArchiveProcessor, A
             // TODO user logger
             throw new IllegalStateException("applicationAchieve must be WebArchive");
         }
-    }
-
-    @Override
-    public Archive<?> createAuxiliaryArchive() {
-        // throw new UnsupportedOperationException();
-        return ShrinkWrap.create(JavaArchive.class, "jsfunitng-enrichment.jar")
-                .addPackage(EnrichmentExtension.class.getPackage())
-                .addAsServiceProvider(RemoteLoadableExtension.class, EnrichmentExtension.class)
-                .addPackage(LifecycleManager.class.getPackage()).addPackage(RequestContext.class.getPackage())
-                .addPackage(LifecycleTestDriver.class.getPackage()).addPackage(AssertionRegistry.class.getPackage());
     }
 
 }

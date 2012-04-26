@@ -45,7 +45,6 @@
             <artifactId>graphene-webdriver</artifactId>
             <version>2.0.0-SNAPSHOT</version>
             <type>pom</type>
-            <scope>test</scope>
         </dependency>
         
         <!-- Arquillian JUnit -->
@@ -81,16 +80,19 @@
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api</artifactId>
             <version>${version.shrinkwrap-resolver}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api-maven</artifactId>
             <version>${version.shrinkwrap-resolver}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
             <version>${version.shrinkwrap-resolver}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
@@ -109,6 +111,11 @@
             <artifactId>arquillian-container-test-impl-base</artifactId>
             <classifier>tests</classifier>
             <version>1.0.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.littleshoot</groupId>
+            <artifactId>littleproxy</artifactId>
+            <version>0.4</version>
         </dependency>
     </dependencies>
     <build>
@@ -144,5 +151,4 @@
             </dependencies>
         </profile>
     </profiles>
-    <packaging>war</packaging>
 </project>

@@ -1,4 +1,4 @@
-package org.jboss.arquillian.jsfunitng;
+
 
 /**
  * JBoss, Home of Professional Open Source

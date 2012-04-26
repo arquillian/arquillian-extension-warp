@@ -1,4 +1,4 @@
-package org.jboss.arquillian.jsfunitng;
+
 
 public class MyBean {
 
