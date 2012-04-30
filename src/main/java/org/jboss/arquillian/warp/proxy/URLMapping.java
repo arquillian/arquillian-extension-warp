@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.arquillian.graphene.utils.URLUtils;
+import org.jboss.arquillian.warp.utils.URLUtils;
 
 /**
  * Maps real URL to proxied URL.
