@@ -70,7 +70,7 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
     @Test
     public void test_bind_manager_to_request() {
-        fire(new BindLifecycleManager<ServletRequest>(request, ServletRequest.class, request));
+        fire(new BindLifecycleManager<ServletRequest>(ServletRequest.class, request));
         try {
             LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
             assertNotNull("lifecycle manager should be bound to request", resolvedLifecycleManager);
@@ -94,7 +94,7 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
             throw new IllegalStateException(e);
         }
         try {
-            fire(new UnbindLifecycleManager<ServletRequest>(request, ServletRequest.class, request));
+            fire(new UnbindLifecycleManager<ServletRequest>(ServletRequest.class, request));
 
             LifecycleManagerStore.get(ServletRequest.class, request);
             fail("lifecycle manager should be unbound from request");
@@ -111,8 +111,8 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
     @Test
     public void test_bind_manager_to_request_and_another_class() {
-        fire(new BindLifecycleManager<ServletRequest>(request, ServletRequest.class, request));
-        fire(new BindLifecycleManager<AnotherClass>(request, AnotherClass.class, anotherInstance));
+        fire(new BindLifecycleManager<ServletRequest>(ServletRequest.class, request));
+        fire(new BindLifecycleManager<AnotherClass>(AnotherClass.class, anotherInstance));
         try {
             // verify lifecycle manager for request
             LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
@@ -146,8 +146,8 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
             throw new IllegalStateException(e);
         }
         try {
-            fire(new UnbindLifecycleManager<ServletRequest>(request, ServletRequest.class, request));
-            fire(new UnbindLifecycleManager<AnotherClass>(request, AnotherClass.class, anotherInstance));
+            fire(new UnbindLifecycleManager<ServletRequest>(ServletRequest.class, request));
+            fire(new UnbindLifecycleManager<AnotherClass>(AnotherClass.class, anotherInstance));
 
             try {
                 LifecycleManagerStore.get(ServletRequest.class, request);

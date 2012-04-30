@@ -43,6 +43,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.lifecycle.BindLifecycleManager;
 import org.jboss.arquillian.warp.lifecycle.LifecycleManager;
+import org.jboss.arquillian.warp.lifecycle.LifecycleManagerStore;
 import org.jboss.arquillian.warp.lifecycle.UnbindLifecycleManager;
 import org.jboss.arquillian.warp.request.AfterRequest;
 import org.jboss.arquillian.warp.request.BeforeRequest;
@@ -72,9 +73,14 @@ public class WarpFilter implements Filter {
     public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
 
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
+    
+    public static final String LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE = WarpFilter.class.getName() + ".MANAGER_REQUEST_ATTRIBUTE";
 
     @Inject
     private Instance<LifecycleManager> lifecycleManager;
+    
+    @Inject
+    private Instance<LifecycleManagerStore> lifecycleManagerStore;
 
     @Inject
     private Instance<AssertionRegistry> assertionRegistry;
@@ -119,10 +125,13 @@ public class WarpFilter implements Filter {
                     Manager manager = builder.create();
                     manager.start();
                     manager.inject(this);
+                    
+                    req.setAttribute(LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
 
                     manager.fire(new BeforeSuite());
                     manager.fire(new BeforeRequest(req));
-                    manager.fire(new BindLifecycleManager<ServletRequest>(req, ServletRequest.class, req));
+                    manager.fire(new BindLifecycleManager<ServletRequest>(ServletRequest.class, req));
+                    
 
                     assertionRegistry.get().registerAssertion(assertionObject);
 
@@ -134,7 +143,7 @@ public class WarpFilter implements Filter {
 
                     assertionRegistry.get().unregisterAssertion(assertionObject);
 
-                    manager.fire(new UnbindLifecycleManager<ServletRequest>(req, ServletRequest.class, req));
+                    manager.fire(new UnbindLifecycleManager<ServletRequest>(ServletRequest.class, req));
                     manager.fire(new AfterRequest(req));
                     manager.fire(new AfterSuite());
 

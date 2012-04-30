@@ -59,9 +59,9 @@ public class LifecycleTestDriver {
         final AssertionRegistry registry = getRegistry();
 
         for (final Object assertionObject : registry.getAssertions()) {
-            final Class<? extends Annotation> annotationType = event.getAnnotation();
+            final Annotation annotation = event.getAnnotation();
 
-            List<Method> methods = SecurityActions.getMethodsWithAnnotation(assertionObject.getClass(), annotationType);
+            List<Method> methods = SecurityActions.getMethodsWithAnnotation(assertionObject.getClass(), annotation);
 
             for (final Method testMethod : methods) {
                 before.fire(new Before(assertionObject, testMethod));

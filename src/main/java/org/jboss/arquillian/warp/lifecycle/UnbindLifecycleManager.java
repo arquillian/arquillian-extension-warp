@@ -38,8 +38,7 @@ public class UnbindLifecycleManager<T> {
      *        {@link LifecycleManagerStore}
      * @param boundObject the instance which is used as key for retriving instance of {@link LifecycleManager}.
      */
-    public UnbindLifecycleManager(ServletRequest request, Class<T> determinator, T boundObject) {
-        this.request = request;
+    public UnbindLifecycleManager(Class<T> determinator, T boundObject) {
         this.determinator = determinator;
         this.boundObject = boundObject;
     }

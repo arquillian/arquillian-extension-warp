@@ -30,6 +30,7 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.filter.WarpFilter;
+import org.jboss.arquillian.warp.jsf.WarpPhaseListener;
 import org.jboss.arquillian.warp.lifecycle.LifecycleManager;
 import org.jboss.arquillian.warp.request.RequestContext;
 import org.jboss.arquillian.warp.test.LifecycleTestDriver;
@@ -59,7 +60,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor {
 
             // add requred libraries
             webArchive.addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec:1.6"));
-            
+
             // add all required packages
             webArchive.addPackage(WarpFilter.class.getPackage());
             webArchive.addPackage(WarpRemoteExtension.class.getPackage());
@@ -81,12 +82,14 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor {
                 auxiliarryArchives.add(archiveAppender.createAuxiliaryArchive());
             }
             webArchive.addAsLibraries(auxiliarryArchives);
+            webArchive.addAsLibrary(getFacesPhaseListener());
         }
     }
 
-    // TODO add phase listener
     public JavaArchive getFacesPhaseListener() {
-        return ShrinkWrap.create(JavaArchive.class, "jsfunitng-faces-listener.jar");
+        return ShrinkWrap.create(JavaArchive.class, "jsfunitng-faces-listener.jar")
+                .addPackage(WarpPhaseListener.class.getPackage())
+                .addAsManifestResource("META-INF/warp-extensions/faces-config.xml", "faces-config.xml");
     }
 
 }

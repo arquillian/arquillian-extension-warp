@@ -25,19 +25,22 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 /**
  * SecurityActions
- *
+ * 
  * A set of privileged actions that are not to leak out of this package
- *
- *
+ * 
+ * 
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
- *
+ * 
  * @version $Revision: $
  */
 final class SecurityActions {
@@ -68,7 +71,7 @@ final class SecurityActions {
 
     /**
      * Obtains the Constructor specified from the given Class and argument types
-     *
+     * 
      * @param clazz
      * @param argumentTypes
      * @return
@@ -104,7 +107,7 @@ final class SecurityActions {
     /**
      * Create a new instance by finding a constructor that matches the argumentTypes signature using the arguments for
      * instantiation.
-     *
+     * 
      * @param className Full classname of class to create
      * @param argumentTypes The constructor argument types
      * @param arguments The constructor arguments
@@ -176,7 +179,7 @@ final class SecurityActions {
         });
         return declaredAccessableFields;
     }
-    
+
     static List<Method> getMethodsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) {
         List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>() {
             public List<Method> run() {
@@ -198,7 +201,42 @@ final class SecurityActions {
         });
         return declaredAccessableMethods;
     }
-    
+
+    static List<Method> getMethodsWithAnnotation(final Class<?> source, final Annotation annotation) {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        List<Method> declaredAccessableMethods = getMethodsWithAnnotation(source, annotationType);
+        Set<Method> result = new HashSet<Method>(declaredAccessableMethods);
+        for (Method method : declaredAccessableMethods) {
+            Annotation methodAnnotation = method.getAnnotation(annotationType);
+            for (Method parameter : annotationType.getMethods()) {
+                if (parameter.getDeclaringClass() == annotationType) {
+                    Object annotationValue = invokeSafely(methodAnnotation, parameter);
+                    Object referenceValue = invokeSafely(annotation, parameter);
+                    if (!annotationValue.equals(referenceValue)) {
+                        result.remove(method);
+                    }
+                }
+            }
+        }
+        return new LinkedList<Method>(result);
+    }
+
+    private static Method getMethodSafely(Class<?> clazz, String methodName, Class<?>... params) {
+        try {
+            return clazz.getMethod(methodName, params);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static Object invokeSafely(Object instance, Method method, Object... args) {
+        try {
+            return method.invoke(instance, args);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     static List<Field> getFields(final Class<?> source) {
         List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
             public List<Field> run() {

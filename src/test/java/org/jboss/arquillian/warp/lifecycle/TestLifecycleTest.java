@@ -60,7 +60,7 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
     @Test
     public void test() throws ObjectNotAssociatedException {
         fire(new BeforeRequest(request));
-        fire(new BindLifecycleManager<ServletRequest>(request, ServletRequest.class, request));
+        fire(new BindLifecycleManager<ServletRequest>(ServletRequest.class, request));
 
         TestingAssertion assertion = new TestingAssertion();
         registry.get().registerAssertion(assertion);

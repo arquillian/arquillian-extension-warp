@@ -36,5 +36,5 @@ public abstract class LifecycleEvent {
      * @return the annotation which annotates methods on {@link ServerAssertion} which will be executed during this
      *         {@link LifecycleEvent}.
      */
-    public abstract Class<? extends Annotation> getAnnotation();
+    public abstract Annotation getAnnotation();
 }

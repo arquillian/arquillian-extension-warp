@@ -20,7 +20,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.logging.Logger;
 
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
@@ -32,8 +31,6 @@ import org.jboss.arquillian.warp.ServerAssertion;
  * 
  */
 public class AssertionExecution {
-
-    private final static Logger log = Logger.getLogger(AssertionExecution.class.getName());
 
     private ClientAction action;
     // TODO AtomicReference
@@ -52,19 +49,15 @@ public class AssertionExecution {
     }
 
     public void execute() {
-        log.info("advertise");
         AssertionHolder.advertise();
         FutureTask<ServerAssertion> future = new FutureTask<ServerAssertion>(new PushAssertion());
-        log.info("future.run");
         executor.submit(future);
         try {
-            log.info("action");
             action.action();
         } catch (Exception e) {
             throw new ClientActionException(e);
         }
         try {
-            log.info("future.get");
             assertion = future.get();
         } catch (Exception e) {
             throw new ServerAssertionException(e);

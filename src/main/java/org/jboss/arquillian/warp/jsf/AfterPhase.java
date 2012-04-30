@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,26 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.test;
+package org.jboss.arquillian.warp.jsf;
 
-import java.lang.annotation.Annotation;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * The lifecycle event which binds with {@link AfterServlet} verification execution.
  * 
  * @author Lukas Fryc
  * 
  */
-public class AfterServletEvent extends LifecycleEvent {
-
-    @Override
-    public Annotation getAnnotation() {
-        return new AfterServlet() {
-
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return AfterServlet.class;
-            }
-        };
-    }
+@Documented
+@Retention(RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AfterPhase {
+    public Phase value();
 }

@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.warp.lifecycle;
 
-import javax.servlet.ServletRequest;
-
 import org.jboss.arquillian.core.spi.Validate;
 
 /**
@@ -39,7 +37,7 @@ public class BindLifecycleManager<T> {
      *        {@link LifecycleManagerStore}
      * @param boundObject the instance which is used as key for retriving instance of {@link LifecycleManager}.
      */
-    public BindLifecycleManager(ServletRequest request, Class<T> determinator, T boundObject) {
+    public BindLifecycleManager(Class<T> determinator, T boundObject) {
         Validate.notNull(determinator, "determinator must not be null");
         Validate.notNull(boundObject, "boundObject must not be null");
         this.determinator = determinator;

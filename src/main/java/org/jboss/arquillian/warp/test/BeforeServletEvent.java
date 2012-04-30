@@ -27,8 +27,14 @@ import java.lang.annotation.Annotation;
 public class BeforeServletEvent extends LifecycleEvent {
 
     @Override
-    public Class<? extends Annotation> getAnnotation() {
-        return BeforeServlet.class;
+    public Annotation getAnnotation() {
+        return new BeforeServlet() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return BeforeServlet.class;
+            }
+        };
     }
 
 }

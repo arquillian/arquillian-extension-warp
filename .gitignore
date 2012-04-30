@@ -6,3 +6,4 @@ test-output
 chromedriver.log
 log.txt
 *.dia~
+*.faces-config.xml.jsfdia
