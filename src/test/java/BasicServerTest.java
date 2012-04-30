@@ -22,7 +22,6 @@
 import java.io.File;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.jsfunitng.AssertionObject;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -39,7 +38,7 @@ public class BasicServerTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(Servlet.class)
-                .addClasses(AssertionObject.class, SerializationUtils.class)
+                .addClasses(SerializationUtils.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
                 .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec"))
                 .addAsWebInfResource("beans.xml");

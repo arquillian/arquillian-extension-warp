@@ -23,6 +23,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.servlet.Servlet;
+
+/**
+ * Executed after the request is processed by {@link Servlet}.
+ * 
+ * @author Lukas Fryc
+ * 
+ */
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)

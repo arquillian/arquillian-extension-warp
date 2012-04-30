@@ -1,15 +1,35 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.jsfunitng.proxy;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 import org.jboss.arquillian.jsfunitng.ServerAssertion;
 
+/**
+ * The holder for {@link ServerAssertion} object.
+ * 
+ * Provides methods for settings up the server assertion and its retrieval.
+ * 
+ * @author Lukas Fryc
+ */
 @SuppressWarnings("unchecked")
 class AssertionHolder {
-    
-    private final static Logger log = Logger.getLogger(AssertionExecution.class.getName());
 
     private static final long WAIT_TIMEOUT_MILISECONDS = 5000;
     private static final long THREAD_SLEEP = 50;
@@ -19,13 +39,73 @@ class AssertionHolder {
     private static final AtomicReference<ServerAssertion> request = new AtomicReference<ServerAssertion>();
     private static final AtomicReference<ServerAssertion> response = new AtomicReference<ServerAssertion>();
 
+    /**
+     * Advertizes that there will be taken client action which will lead into request.
+     */
     public static void advertise() {
-        log.info("advertise");
         advertisement.set(true);
     }
 
+    /**
+     * Returns true if there is client action advertised, see {@link #advertise()}.
+     * 
+     * @return true if there is client action advertised, see {@link #advertise()}.
+     */
+    private static boolean isAdvertised() {
+        return advertisement.get();
+    }
+
+    /**
+     * Returns true if there is {@link ServerAssertion} pushed for current request.
+     * 
+     * @return true if there is {@link ServerAssertion} pushed for current request.
+     */
+    private static boolean isEnriched() {
+        return request.get() != null;
+    }
+
+    /**
+     * Returns true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
+     * is advertised.
+     * 
+     * @return true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
+     *         is advertised.
+     */
+    static boolean isWaitingForProcessing() {
+        return isAdvertised() || isEnriched();
+    }
+
+    /**
+     * Waits until the {@link ServerAssertion} for request is available and returns it.
+     * 
+     * @return the associated {@link ServerAssertion}
+     * @throws SettingRequestTimeoutException when {@link ServerAssertion} isn't setup in time
+     */
+    static <T extends ServerAssertion> T popRequest() {
+        awaitRequest();
+        return (T) request.getAndSet(null);
+    }
+
+    /**
+     * Pushes the verified {@link ServerAssertion} to be obtained by test.
+     * 
+     * @param assertion verified {@link ServerAssertion} to be obtained by test.
+     */
+    static void pushResponse(ServerAssertion assertion) {
+        response.set(assertion);
+    }
+
+    /**
+     * <p>
+     * Pushes the {@link ServerAssertion} to verify on the server.
+     * </p>
+     * 
+     * <p>
+     * This method cancels flag set by {@link #advertise()}.
+     * 
+     * @param assertion to verify on the server
+     */
     public static void pushRequest(ServerAssertion assertion) {
-        log.info("pushRequest");
         if (request.get() != null) {
             throw new ServerAssertionAlreadySetException();
         }
@@ -34,31 +114,13 @@ class AssertionHolder {
         advertisement.set(false);
     }
 
-    private static boolean isAdvertised() {
-        return advertisement.get();
-    }
-    
-    private static boolean isEnriched() {
-        return request.get() != null;
-    }
-    
-    static boolean isWaitingForProcessing() {
-        return isAdvertised() || isEnriched();
-    }
-
-    static <T extends ServerAssertion> T popRequest() {
-        log.info("popRequest");
-        awaitRequest();
-        return (T) request.getAndSet(null);
-    }
-
-    static void pushResponse(ServerAssertion assertion) {
-        log.info("pushResponse");
-        response.set(assertion);
-    }
-
+    /**
+     * Waits until the {@link ServerAssertion} for response is available and returns it.
+     * 
+     * @return the {@link ServerAssertion} for response
+     * @throws ServerResponseTimeoutException when the response wasn't returned in time
+     */
     public static <T extends ServerAssertion> T popResponse() {
-        log.info("popResponse");
         awaitResponse();
         return (T) response.getAndSet(null);
     }

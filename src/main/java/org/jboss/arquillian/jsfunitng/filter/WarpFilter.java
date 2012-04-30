@@ -1,3 +1,19 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.jsfunitng.filter;
 
 import java.io.IOException;
@@ -5,7 +21,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.resource.spi.IllegalStateException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -22,6 +37,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
+import org.jboss.arquillian.jsfunitng.ServerAssertion;
 import org.jboss.arquillian.jsfunitng.assertion.AssertionRegistry;
 import org.jboss.arquillian.jsfunitng.lifecycle.BindLifecycleManager;
 import org.jboss.arquillian.jsfunitng.lifecycle.LifecycleManager;
@@ -30,12 +46,26 @@ import org.jboss.arquillian.jsfunitng.request.AfterRequest;
 import org.jboss.arquillian.jsfunitng.request.BeforeRequest;
 import org.jboss.arquillian.jsfunitng.test.AfterServletEvent;
 import org.jboss.arquillian.jsfunitng.test.BeforeServletEvent;
+import org.jboss.arquillian.jsfunitng.test.LifecycleEvent;
 import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
+/**
+ * <p>
+ * Filter which ensures detects and extracts {@link ServerAssertion}s from request and registers it in {@link AssertionRegistry}
+ * .
+ * </p>
+ * 
+ * <p>
+ * The assertion can be retrieved from {@link AssertionRegistry} each time the {@link LifecycleEvent} is fired.
+ * </p>
+ * 
+ * @author Lukas Fryc
+ * 
+ */
 @WebFilter(urlPatterns = "/*")
-public class EnrichmentFilter implements Filter {
+public class WarpFilter implements Filter {
 
     private static final String ENRICHMENT = "X-Arq-Enrichment";
     public static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
@@ -59,11 +89,9 @@ public class EnrichmentFilter implements Filter {
             HttpServletRequest httpReq = ((HttpServletRequest) req);
             HttpServletResponse httpResp = ((HttpServletResponse) resp);
 
-            // String requestEnrichment = req.getParameter(ENRICHMENT_REQUEST);
             String requestEnrichment = httpReq.getHeader(ENRICHMENT_REQUEST);
 
             if (requestEnrichment != null && !"null".equals(requestEnrichment)) {
-                // final NonClosingPrintWriter out = new NonClosingPrintWriter(resp.getWriter());
 
                 final AtomicReference<NonWritingServletOutputStream> stream = new AtomicReference<NonWritingServletOutputStream>();
                 final AtomicReference<NonWritingPrintWriter> writer = new AtomicReference<NonWritingPrintWriter>();
@@ -115,7 +143,6 @@ public class EnrichmentFilter implements Filter {
                     throw new ServletException(e);
                 }
 
-                // out.write(ENRICHMENT_RESPONSE + "=" + responseEnrichment);
                 httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
 
                 if (writer.get() != null) {
@@ -134,13 +161,6 @@ public class EnrichmentFilter implements Filter {
 
     @Override
     public void destroy() {
-        try {
-            // testRunnerAdaptor.afterSuite();
-            // testRunnerAdaptor.shutdown();
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
     }
 
 }

@@ -22,6 +22,12 @@ import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
 import org.jboss.arquillian.core.spi.context.ObjectStore;
 
+/**
+ * The implementation of {@link RequestContext}.
+ * 
+ * @author Lukas Fryc
+ * 
+ */
 public class RequestContextImpl extends AbstractContext<String> implements RequestContext {
 
     private static final String REQUEST_CONTEXT_ID = "request";
@@ -46,11 +52,21 @@ public class RequestContextImpl extends AbstractContext<String> implements Reque
         return new HashObjectStore();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#activate()
+     */
     @Override
     public void activate() {
         super.activate(REQUEST_CONTEXT_ID);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#destroy()
+     */
     @Override
     public void destroy() {
         super.destroy(REQUEST_CONTEXT_ID);

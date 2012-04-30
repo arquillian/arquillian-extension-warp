@@ -20,18 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 import java.io.File;
-import java.io.Serializable;
 import java.net.URL;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.jsfunitng.AssertionObject;
 import org.jboss.arquillian.jsfunitng.ClientAction;
-import org.jboss.arquillian.jsfunitng.MyBean;
 import org.jboss.arquillian.jsfunitng.ServerAssertion;
 import org.jboss.arquillian.jsfunitng.Warp;
-import org.jboss.arquillian.jsfunitng.proxy.ProxyHolder;
 import org.jboss.arquillian.jsfunitng.test.BeforeServlet;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -43,15 +39,13 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.internal.seleniumemulation.WaitForPageToLoad;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 @RunWith(Arquillian.class)
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({ "serial" })
 public class BasicClientTest {
 
     @Drone
@@ -64,8 +58,7 @@ public class BasicClientTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(Servlet.class)
-                .addClasses(AssertionObject.class, MyBean.class).addAsWebResource(new File("src/main/webapp/index.html"))
-                .addClass(BasicClientTest.class).addClass(ServerAssertion.class)
+                .addAsWebResource(new File("src/main/webapp/index.html"))
                 .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec:1.6"))
                 .addAsWebInfResource("beans.xml");
     }

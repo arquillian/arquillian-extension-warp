@@ -18,6 +18,12 @@ package org.jboss.arquillian.jsfunitng.request;
 
 import org.jboss.arquillian.core.spi.context.NonIdBoundContext;
 
+/**
+ * The context bound with current context.
+ * 
+ * @author Lukas Fryc
+ * 
+ */
 public interface RequestContext extends NonIdBoundContext {
 
 }

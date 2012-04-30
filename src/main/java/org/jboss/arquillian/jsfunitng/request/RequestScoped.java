@@ -25,6 +25,12 @@ import java.lang.annotation.Target;
 
 import org.jboss.arquillian.core.api.annotation.Scope;
 
+/**
+ * The scope of current request.
+ * 
+ * @author Lukas Fryc
+ * 
+ */
 @Scope
 @Documented
 @Retention(RUNTIME)
