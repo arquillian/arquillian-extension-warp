@@ -3,14 +3,18 @@ package org.jboss.arquillian.jsfunitng.filter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicReference;
 
+import javax.resource.spi.IllegalStateException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -34,8 +38,8 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 public class EnrichmentFilter implements Filter {
 
     private static final String ENRICHMENT = "X-Arq-Enrichment";
-    private static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
-    private static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
+    public static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
+    public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
 
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
 
@@ -51,16 +55,30 @@ public class EnrichmentFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-        if (resp instanceof HttpServletResponse) {
+        if (req instanceof HttpServletRequest && resp instanceof HttpServletResponse) {
+            HttpServletRequest httpReq = ((HttpServletRequest) req);
+            HttpServletResponse httpResp = ((HttpServletResponse) resp);
 
-            String requestEnrichment = req.getParameter(ENRICHMENT_REQUEST);
+            // String requestEnrichment = req.getParameter(ENRICHMENT_REQUEST);
+            String requestEnrichment = httpReq.getHeader(ENRICHMENT_REQUEST);
 
             if (requestEnrichment != null && !"null".equals(requestEnrichment)) {
-                final NonClosingPrintWriter out = new NonClosingPrintWriter(resp.getWriter());
+                // final NonClosingPrintWriter out = new NonClosingPrintWriter(resp.getWriter());
+
+                final AtomicReference<NonWritingServletOutputStream> stream = new AtomicReference<NonWritingServletOutputStream>();
+                final AtomicReference<NonWritingPrintWriter> writer = new AtomicReference<NonWritingPrintWriter>();
 
                 HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper((HttpServletResponse) resp) {
+                    @Override
+                    public ServletOutputStream getOutputStream() throws IOException {
+                        stream.set(new NonWritingServletOutputStream());
+                        return stream.get();
+                    }
+
+                    @Override
                     public PrintWriter getWriter() throws IOException {
-                        return out;
+                        writer.set(NonWritingPrintWriter.newInstance());
+                        return writer.get();
                     }
                 };
 
@@ -94,13 +112,18 @@ public class EnrichmentFilter implements Filter {
 
                     responseEnrichment = SerializationUtils.serializeToBase64(assertionObject);
                 } catch (Exception e) {
-                    // TODO handle exception
-                    e.printStackTrace();
+                    throw new ServletException(e);
                 }
 
-                out.write(ENRICHMENT_RESPONSE + "=" + responseEnrichment);
+                // out.write(ENRICHMENT_RESPONSE + "=" + responseEnrichment);
+                httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
 
-                out.closeFinally();
+                if (writer.get() != null) {
+                    writer.get().finallyWriteAndClose(resp.getOutputStream());
+                }
+                if (stream.get() != null) {
+                    stream.get().finallyWriteAndClose(resp.getOutputStream());
+                }
 
                 return;
             }

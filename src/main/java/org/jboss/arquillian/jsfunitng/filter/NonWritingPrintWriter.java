@@ -1,31 +1,50 @@
 package org.jboss.arquillian.jsfunitng.filter;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
 
-public class NonClosingPrintWriter extends PrintWriter {
+import javax.servlet.ServletOutputStream;
 
+public class NonWritingPrintWriter extends PrintWriter {
+
+    private ByteArrayOutputStream baos;
     private PrintWriter delegate;
     private boolean wasClosed = false;
 
-    public NonClosingPrintWriter(PrintWriter out) {
-        super(out);
-        this.delegate = out;
+    private NonWritingPrintWriter(ByteArrayOutputStream baos, PrintWriter delegate) {
+        super(delegate);
+        this.baos = baos;
+        this.delegate = delegate; 
     }
+    
+    public static NonWritingPrintWriter newInstance() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintWriter delegate = new PrintWriter(baos);
+        return new NonWritingPrintWriter(baos, delegate);
+    }
+    
+    
 
     @Override
     public void close() {
         wasClosed = true;
     }
 
-    void closeFinally() {
+    void finallyWriteAndClose(ServletOutputStream delegateStream) throws IOException {
+
         if (wasClosed) {
             delegate.close();
         }
+
+        byte[] byteArray = baos.toByteArray();
+
+        delegateStream.write(byteArray);
     }
 
     @Override
     public void flush() {
-
         delegate.flush();
     }
 

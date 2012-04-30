@@ -58,5 +58,9 @@ public class EnrichmentArchiveEnricher implements ApplicationArchiveProcessor {
             throw new IllegalStateException("applicationAchieve must be WebArchive");
         }
     }
+    
+    public JavaArchive getFacesPhaseListener() {
+        return ShrinkWrap.create(JavaArchive.class, "jsfunitng-faces-listener.jar");
+    }
 
 }

@@ -2,12 +2,18 @@ package org.jboss.arquillian.jsfunitng.proxy;
 
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.graphene.utils.URLUtils;
+import org.jboss.arquillian.jsfunitng.ServerAssertion;
+import org.jboss.arquillian.jsfunitng.filter.EnrichmentFilter;
+import org.jboss.arquillian.jsfunitng.utils.SerializationUtils;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
@@ -31,7 +37,8 @@ public class ProxyHolder {
         Map<String, HttpFilter> responseFilters = createResponseFilters(proxyUrl, realUrl);
         HttpRequestFilter requestFilter = createRequestFilter(proxyUrl, realUrl);
 
-        HttpProxyServer server = new DefaultHttpProxyServer(proxyUrl.getPort(), responseFilters, realUrl.getHost() + ":" + realUrl.getPort(), null, requestFilter);
+        HttpProxyServer server = new DefaultHttpProxyServer(proxyUrl.getPort(), responseFilters, realUrl.getHost() + ":"
+                + realUrl.getPort(), null, requestFilter);
         log.info("starting proxy");
         server.start();
 
@@ -50,7 +57,18 @@ public class ProxyHolder {
 
             @Override
             public void filter(HttpRequest request) {
-                log.info("filtering request: " + request.getUri());
+                log.info("filter");
+                if (AssertionHolder.isWaitingForProcessing()) {
+                    try {
+                        log.info("enriching request: " + request.getUri());
+//                        Serializable assertion = requestEnrichmentRef.getAndSet(null);
+                        ServerAssertion assertion = AssertionHolder.popRequest();
+                        String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
+                        request.setHeader(EnrichmentFilter.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
+                    } catch (Exception e) {
+                        log.severe("enriching request failed: " + e.getMessage());
+                    }
+                }
             }
         };
     }
@@ -71,7 +89,16 @@ public class ProxyHolder {
 
             @Override
             public HttpResponse filterResponse(HttpResponse response) {
-                log.info("filtering response");
+                
+                String responseEnrichment = response.getHeader(EnrichmentFilter.ENRICHMENT_RESPONSE);
+
+                if (responseEnrichment != null) {
+                    log.info("filtering response");
+                    ServerAssertion assertion = SerializationUtils.deserializeFromBase64(responseEnrichment);
+//                    responseEnrichmentRef.set(assertion);
+                    AssertionHolder.pushResponse(assertion);
+                }
+
                 return response;
             }
         };

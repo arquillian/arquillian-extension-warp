@@ -4,4 +4,5 @@ test-output
 .settings
 .project
 chromedriver.log
+log.txt
 *.dia~
