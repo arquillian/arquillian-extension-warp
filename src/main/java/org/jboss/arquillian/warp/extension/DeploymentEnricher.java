@@ -38,6 +38,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 /**
  * Adds all parts required by JSFUnit into web archive.
@@ -56,6 +57,9 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor {
         if (applicationArchive instanceof WebArchive) {
             WebArchive webArchive = (WebArchive) applicationArchive;
 
+            // add requred libraries
+            webArchive.addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec:1.6"));
+            
             // add all required packages
             webArchive.addPackage(WarpFilter.class.getPackage());
             webArchive.addPackage(WarpRemoteExtension.class.getPackage());

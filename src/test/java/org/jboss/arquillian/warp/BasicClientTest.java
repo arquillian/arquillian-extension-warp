@@ -24,13 +24,9 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.test.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -58,9 +54,7 @@ public class BasicClientTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec:1.6"))
-                .addAsWebInfResource("beans.xml");
+                .addAsWebResource(new File("src/main/webapp/index.html")).addAsWebInfResource("beans.xml");
     }
 
     @Test
