@@ -1,36 +1,33 @@
-/**
+/*
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.jboss.arquillian.warp;
+
 import java.io.File;
 import java.net.URL;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.jsfunitng.ClientAction;
-import org.jboss.arquillian.jsfunitng.ServerAssertion;
-import org.jboss.arquillian.jsfunitng.Warp;
-import org.jboss.arquillian.jsfunitng.test.BeforeServlet;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Warp;
+import org.jboss.arquillian.warp.test.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -44,6 +41,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Function;
 
+/**
+ * @author Lukas Fryc
+ */
 @RunWith(Arquillian.class)
 @SuppressWarnings({ "serial" })
 public class BasicClientTest {
@@ -57,7 +57,7 @@ public class BasicClientTest {
     @Deployment
     public static WebArchive createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(Servlet.class)
+        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(TestingServlet.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
                 .addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec:1.6"))
                 .addAsWebInfResource("beans.xml");
