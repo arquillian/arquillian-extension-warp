@@ -118,7 +118,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>${version.mockito}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
@@ -138,6 +137,12 @@
             <classifier>tests</classifier>
             <version>${version.arquillian.core}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian Graphene -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-api</artifactId>
         </dependency>
     </dependencies>
 
