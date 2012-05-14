@@ -35,7 +35,7 @@ public class WarpFacesContextFactoryWrapper extends FacesContextFactory {
 
             facesContext.getAttributes().put(INITIALIZED, Boolean.FALSE);
 
-            if (store.get() != null) {
+            if (store != null && store.get() != null) {
                 try {
                     store.get().bind(FacesContext.class, facesContext);
                     facesContext.getAttributes().put(INITIALIZED, Boolean.TRUE);
@@ -71,7 +71,7 @@ public class WarpFacesContextFactoryWrapper extends FacesContextFactory {
                     Instance<LifecycleManagerStore> store = (Instance<LifecycleManagerStore>) httpReq
                             .getAttribute(WarpFilter.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE);
 
-                    if (store.get() != null) {
+                    if (store != null && store.get() != null) {
                         try {
                             store.get().unbind(FacesContext.class, this);
                         } catch (ObjectNotAssociatedException e) {
