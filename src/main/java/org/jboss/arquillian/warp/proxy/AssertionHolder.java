@@ -31,7 +31,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 @SuppressWarnings("unchecked")
 class AssertionHolder {
 
-    private static final long WAIT_TIMEOUT_MILISECONDS = 5000;
+    private static final long WAIT_TIMEOUT_MILISECONDS = 30000;
     private static final long THREAD_SLEEP = 50;
     private static final long NUMBER_OF_WAIT_LOOPS = WAIT_TIMEOUT_MILISECONDS / THREAD_SLEEP;
 
