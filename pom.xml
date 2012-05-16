@@ -127,7 +127,7 @@
                     <localCheckout>true</localCheckout>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
                 <version>1.7</version>
@@ -147,15 +147,19 @@
                         <version>1.0</version>
                     </signature>
                 </configuration>
-            </plugin>
+            </plugin> -->
         </plugins>
     </build>
 
     <!-- Modules -->
     <modules>
-        <!-- Drone modules -->
-        <module>warp-impl</module>
-        <module>warp-ftest</module>
+        <!-- main modules -->
+        <module>impl</module>
+        <module>ftest</module>
+        
+        <!-- extensions -->
+        <module>extension/phaser</module>
+        <module>spi</module>
     </modules>
 
 </project>
