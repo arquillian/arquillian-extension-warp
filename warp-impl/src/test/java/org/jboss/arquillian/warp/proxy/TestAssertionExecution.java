@@ -45,7 +45,7 @@ public class TestAssertionExecution {
         actionFinished = new CountDownLatch(1);
     }
 
-    @Test
+    @Test(timeout=5000)
     public void testBlocking() {
         new Thread(new Runnable() {
             public void run() {
@@ -71,7 +71,7 @@ public class TestAssertionExecution {
         awaitSafely(actionFinished);
     }
     
-    @Test
+    @Test(timeout=5000)
     public void testBlocking_modified() {
         new Thread(new Runnable() {
             public void run() {
@@ -99,7 +99,7 @@ public class TestAssertionExecution {
         awaitSafely(actionFinished);
     }
 
-    @Test
+    @Test(timeout=5000)
     public void testNonBlocking() {
         new Thread(new Runnable() {
             public void run() {

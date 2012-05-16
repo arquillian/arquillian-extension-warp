@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.warp.proxy;
 
-import static org.mockito.Mockito.when;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +31,6 @@ import org.littleshoot.proxy.DefaultHttpProxyServer;
 import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.HttpRequestFilter;
-import org.mockito.Mockito;
 
 /**
  * The holder for instantiated proxies.
@@ -53,8 +50,8 @@ public class ProxyHolder {
             return;
         }
 
-        Map<String, HttpFilter> responseFilters = createResponseFilters(proxyUrl, realUrl);
-        HttpRequestFilter requestFilter = createRequestFilter(proxyUrl, realUrl);
+        Map<String, HttpFilter> responseFilters = createResponseFilters();
+        HttpRequestFilter requestFilter = createRequestFilter();
 
         HttpProxyServer server = new DefaultHttpProxyServer(proxyUrl.getPort(), responseFilters, realUrl.getHost() + ":"
                 + realUrl.getPort(), null, requestFilter);
@@ -70,7 +67,7 @@ public class ProxyHolder {
         servers.clear();
     }
 
-    private HttpRequestFilter createRequestFilter(final URL proxyUrl, final URL realUrl) {
+    private HttpRequestFilter createRequestFilter() {
         return new HttpRequestFilter() {
 
             @Override
@@ -88,7 +85,7 @@ public class ProxyHolder {
         };
     }
 
-    private Map<String, HttpFilter> createResponseFilters(final URL proxyUrl, final URL realUrl) {
+    private Map<String, HttpFilter> createResponseFilters() {
 
         final HttpFilter filter = new HttpFilter() {
 
@@ -116,10 +113,8 @@ public class ProxyHolder {
             }
         };
 
-        // TODO replace Mockito
-        Map<String, HttpFilter> map = Mockito.mock(Map.class);
-        when(map.get(Mockito.anyObject())).thenReturn(filter);
-        when(map.isEmpty()).thenReturn(false);
+        Map<String, HttpFilter> map = new HashMap<String, HttpFilter>();
+        map.put("", filter);
 
         return map;
     }
