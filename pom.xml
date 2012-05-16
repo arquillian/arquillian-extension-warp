@@ -155,6 +155,7 @@
     <modules>
         <!-- Drone modules -->
         <module>warp-impl</module>
+        <module>warp-ftest</module>
     </modules>
 
 </project>
