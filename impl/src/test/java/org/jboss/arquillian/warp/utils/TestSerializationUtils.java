@@ -32,7 +32,6 @@ public class TestSerializationUtils {
     public void testObjectSerializationToBytes() {
         CustomObject object = new CustomObject(CustomObject.class.getName());
         byte[] serialized = SerializationUtils.serializeToBytes(object);
-        System.out.println(serialized);
         CustomObject deserialized = SerializationUtils.deserializeFromBytes(serialized);
         assertEquals(CustomObject.class.getName(), deserialized.payload);
     }
@@ -41,7 +40,6 @@ public class TestSerializationUtils {
     public void testObjectSerializationToBase64() {
         CustomObject object = new CustomObject(CustomObject.class.getName());
         String serialized = SerializationUtils.serializeToBase64(object);
-        System.out.println(serialized);
         CustomObject deserialized = SerializationUtils.deserializeFromBase64(serialized);
         assertEquals(CustomObject.class.getName(), deserialized.payload);
     }

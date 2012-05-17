@@ -30,9 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.arquillian.drone.api.annotation.Default;
-import org.jboss.arquillian.drone.api.annotation.Qualifier;
-
 /**
  * SecurityActions
  * 
@@ -264,36 +261,6 @@ final class SecurityActions {
             }
         }
         return false;
-    }
-
-    static Class<? extends Annotation> getQualifier(final Field field) {
-        Annotation[] annotations = AccessController.doPrivileged(new PrivilegedAction<Annotation[]>() {
-            public Annotation[] run() {
-                return field.getAnnotations();
-            }
-        });
-
-        return getQualifier(annotations);
-    }
-
-    static Class<? extends Annotation> getQualifier(Annotation[] annotations) {
-
-        List<Class<? extends Annotation>> candidates = new ArrayList<Class<? extends Annotation>>();
-
-        for (Annotation a : annotations) {
-            if (a.annotationType().isAnnotationPresent(Qualifier.class)) {
-                candidates.add(a.annotationType());
-            }
-        }
-
-        if (candidates.isEmpty()) {
-            return Default.class;
-        } else if (candidates.size() == 1) {
-            return candidates.get(0);
-        }
-
-        throw new IllegalStateException("Unable to determine Qualifier, multiple (" + candidates.size()
-                + ") Qualifier annotations were present");
     }
 
     // -------------------------------------------------------------------------------||
