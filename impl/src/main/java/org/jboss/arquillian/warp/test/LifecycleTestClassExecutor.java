@@ -16,10 +16,11 @@
  */
 package org.jboss.arquillian.warp.test;
 
-import java.util.Deque;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -63,8 +64,10 @@ public class LifecycleTestClassExecutor {
     }
 
     public void afterRequest(@Observes(precedence = 100) EventContext<AfterRequest> context) {
-        Deque<Object> deque = new LinkedList<Object>(executedAssertions);
-        Iterator<Object> iterator = deque.descendingIterator();
+        List<Object> list = new LinkedList<Object>(executedAssertions);
+        Collections.reverse(list);
+
+        Iterator<Object> iterator = list.iterator();
 
         while (iterator.hasNext()) {
             Object testInstance = iterator.next();
