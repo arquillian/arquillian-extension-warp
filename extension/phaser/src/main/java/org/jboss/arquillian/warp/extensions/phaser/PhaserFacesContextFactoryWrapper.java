@@ -13,13 +13,13 @@ import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 
-public class PhaserContextFactoryWrapper extends FacesContextFactory {
+public class PhaserFacesContextFactoryWrapper extends FacesContextFactory {
 
-    public static final String INITIALIZED = PhaserContextFactoryWrapper.class.getName() + ".INITIALIZED";
+    public static final String INITIALIZED = PhaserFacesContextFactoryWrapper.class.getName() + ".INITIALIZED";
 
     private FacesContextFactory delegate;
 
-    public PhaserContextFactoryWrapper(FacesContextFactory facesContextFactory) {
+    public PhaserFacesContextFactoryWrapper(FacesContextFactory facesContextFactory) {
         delegate = facesContextFactory;
     }
 

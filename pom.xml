@@ -154,12 +154,13 @@
     <!-- Modules -->
     <modules>
         <!-- main modules -->
+        <module>spi</module>
         <module>impl</module>
         <module>ftest</module>
         
         <!-- extensions -->
         <module>extension/phaser</module>
-        <module>spi</module>
+        <module>extension/phaser-ftest</module>
     </modules>
 
 </project>

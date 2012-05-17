@@ -44,7 +44,7 @@ public class PhaserListener implements PhaseListener {
 
     private void executeEvents(When when, PhaseEvent event) {
         FacesContext facesContext = event.getFacesContext();
-        Boolean initialized = (Boolean) facesContext.getAttributes().get(PhaserContextFactoryWrapper.INITIALIZED);
+        Boolean initialized = (Boolean) facesContext.getAttributes().get(PhaserFacesContextFactoryWrapper.INITIALIZED);
 
         if (initialized) {
             try {
