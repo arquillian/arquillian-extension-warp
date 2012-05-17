@@ -62,8 +62,9 @@ public class SerializationUtils {
         return new String(Base64.encodeBase64(serialized));
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Serializable> T deserializeFromBase64(String serializedObject) {
         byte[] bytes = Base64.decodeBase64(serializedObject);
-        return deserializeFromBytes(bytes);
+        return (T) deserializeFromBytes(bytes);
     }
 }
