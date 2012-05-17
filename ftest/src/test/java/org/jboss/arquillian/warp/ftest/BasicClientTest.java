@@ -32,7 +32,12 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.google.common.base.Function;
 
 /**
  * @author Lukas Fryc
@@ -42,7 +47,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 public class BasicClientTest {
 
     @Drone
-    HtmlUnitDriver browser;
+    WebDriver browser;
 
     @ArquillianResource
     URL contextPath;
@@ -64,17 +69,17 @@ public class BasicClientTest {
             }
         }).verify(new InitialRequestAssertion());
 
-        // final WebElement sendAjax = new WebDriverWait(browser, 60).until(new Function<WebDriver, WebElement>() {
-        // public WebElement apply(WebDriver input) {
-        // return browser.findElement(By.id("sendAjax"));
-        // }
-        // });
+        final WebElement sendAjax = new WebDriverWait(browser, 60).until(new Function<WebDriver, WebElement>() {
+            public WebElement apply(WebDriver input) {
+                return browser.findElement(By.id("sendAjax"));
+            }
+        });
 
-        // Warp.execute(new ClientAction() {
-        // public void action() {
-        // sendAjax.click();
-        // }
-        // }).verify(new AjaxRequestAssertion());
+        Warp.execute(new ClientAction() {
+            public void action() {
+                sendAjax.click();
+            }
+        }).verify(new AjaxRequestAssertion());
     }
 
     public static class InitialRequestAssertion implements ServerAssertion {
@@ -85,12 +90,12 @@ public class BasicClientTest {
         }
     }
 
-    // public static class AjaxRequestAssertion implements ServerAssertion {
-    //
-    // @BeforeServlet
-    // public void beforeServlet() {
-    // System.out.println("Hi server, here is AJAX request!");
-    // }
-    // }
+    public static class AjaxRequestAssertion implements ServerAssertion {
+
+        @BeforeServlet
+        public void beforeServlet() {
+            System.out.println("Hi server, here is AJAX request!");
+        }
+    }
 
 }
