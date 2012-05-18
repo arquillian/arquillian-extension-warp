@@ -30,12 +30,6 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         
-        <!-- Commons Codec -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
-        
         <!-- Arquillian Core -->
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>

@@ -35,7 +35,6 @@
         <version.arquillian.drone>1.0.0.Final</version.arquillian.drone>
         <version.shrinkwrap-resolver>2.0.0-alpha-1</version.shrinkwrap-resolver>
         <version.littleproxy>0.4</version.littleproxy>
-        <version.commons-codec>1.6</version.commons-codec>
         
         <!-- Tests -->
         <version.junit>4.10</version.junit>
@@ -70,12 +69,6 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${version.servlet-api}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${version.commons-codec}</version>
             </dependency>
 
             <dependency>

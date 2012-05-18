@@ -23,8 +23,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.apache.commons.codec.binary.Base64;
-
 /**
  * The utility methods for serializatio of {@link Serializable} objects.
  * 

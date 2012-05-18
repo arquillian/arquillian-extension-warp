@@ -36,6 +36,8 @@ import org.jboss.arquillian.warp.server.test.LifecycleTestDriver;
 import org.jboss.arquillian.warp.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
+import org.jboss.arquillian.warp.utils.Base64;
+import org.jboss.arquillian.warp.utils.BaseNCodec;
 import org.jboss.arquillian.warp.utils.SerializationUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -62,9 +64,6 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
         if (testClass.isAnnotationPresent(WarpTest.class)) {
             if (applicationArchive instanceof WebArchive) {
                 WebArchive webArchive = (WebArchive) applicationArchive;
-
-                // add requred libraries
-                webArchive.addAsLibrary(Maven.withPom("pom.xml").dependency("commons-codec:commons-codec:1.6"));
 
                 // add warp extensions
                 Collection<WarpLifecycleExtension> lifecycleExtensions = serviceLoader.get().all(WarpLifecycleExtension.class);
@@ -98,7 +97,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             archive.addPackage(ResponsePayload.class.getPackage());
 
             // add all required classes
-            archive.addClasses(SerializationUtils.class, ServerAssertion.class);
+            archive.addClass(ServerAssertion.class);
+            archive.addClasses(SerializationUtils.class, Base64.class, BaseNCodec.class);
 
             // register remote extension
             archive.addAsServiceProvider(RemoteLoadableExtension.class, WarpRemoteExtension.class);
