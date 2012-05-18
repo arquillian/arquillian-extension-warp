@@ -18,8 +18,9 @@ package org.jboss.arquillian.warp.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -41,6 +42,8 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.assertion.RequestPayload;
+import org.jboss.arquillian.warp.assertion.ResponsePayload;
 import org.jboss.arquillian.warp.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.request.AfterRequest;
@@ -72,6 +75,8 @@ public class WarpFilter implements Filter {
     public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
 
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
+
+    private static Logger log = Logger.getLogger("Proxy");
 
     @Inject
     private Instance<LifecycleManagerImpl> lifecycleManager;
@@ -116,7 +121,8 @@ public class WarpFilter implements Filter {
                 String responseEnrichment = "null";
 
                 try {
-                    final Serializable assertionObject = SerializationUtils.deserializeFromBase64(requestEnrichment);
+                    RequestPayload requestPayload = SerializationUtils.deserializeFromBase64(requestEnrichment);
+                    ServerAssertion serverAssertion = requestPayload.getAssertion();
 
                     ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
                     Manager manager = builder.create();
@@ -129,26 +135,37 @@ public class WarpFilter implements Filter {
                     manager.fire(new BeforeRequest(req));
                     lifecycleManagerStore.get().bind(ServletRequest.class, req);
 
-                    assertionRegistry.get().registerAssertion(assertionObject);
+                    assertionRegistry.get().registerAssertion(serverAssertion);
 
                     lifecycleManager.get().fireLifecycleEvent(new BeforeServletEvent());
 
-                    chain.doFilter(req, responseWrapper);
+                    try {
+                        chain.doFilter(req, responseWrapper);
 
-                    lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
+                        // request successfully finished
+                        ResponsePayload responsePayload = new ResponsePayload(serverAssertion);
+                        responseEnrichment = SerializationUtils.serializeToBase64(responsePayload);
+                        httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
+                    } catch (Exception e) {
+                        log.log(Level.SEVERE, "The error occured during request execution", e);
+                        throw e;
+                    } finally {
+                        lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
 
-                    assertionRegistry.get().unregisterAssertion(assertionObject);
+                        assertionRegistry.get().unregisterAssertion(serverAssertion);
 
-                    lifecycleManagerStore.get().unbind(ServletRequest.class, req);
-                    manager.fire(new AfterRequest(req));
-                    manager.fire(new AfterSuite());
+                        lifecycleManagerStore.get().unbind(ServletRequest.class, req);
+                        manager.fire(new AfterRequest(req));
+                        manager.fire(new AfterSuite());
+                    }
 
-                    responseEnrichment = SerializationUtils.serializeToBase64(assertionObject);
                 } catch (Exception e) {
-                    throw new ServletException(e);
+                    // exception occured during request execution
+                    ResponsePayload responsePayload = new ResponsePayload(e);
+                    responseEnrichment = SerializationUtils.serializeToBase64(responsePayload);
+                    httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
+                    httpResp.sendError(500);
                 }
-
-                httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
 
                 if (writer.get() != null) {
                     writer.get().finallyWriteAndClose(resp.getOutputStream());

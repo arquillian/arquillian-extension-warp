@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
+import org.jboss.arquillian.warp.assertion.RequestPayload;
+import org.jboss.arquillian.warp.assertion.ResponsePayload;
 import org.jboss.arquillian.warp.execution.AssertionHolder;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +52,9 @@ public class TestAssertionExecution {
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                ServerAssertion assertion = AssertionHolder.popRequest();
-                AssertionHolder.pushResponse(assertion);
+                RequestPayload requestPayload = AssertionHolder.popRequest();
+                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion(), null);
+                AssertionHolder.pushResponse(responsePayload);
                 log.info("response finished");
                 responseFinished.countDown();
             }
@@ -77,8 +80,9 @@ public class TestAssertionExecution {
             public void run() {
                 awaitSafely(requestStarted);
                 if (AssertionHolder.isWaitingForProcessing()) {
-                    ServerAssertion assertion = AssertionHolder.popRequest();
-                    AssertionHolder.pushResponse(assertion);
+                    RequestPayload requestPayload = AssertionHolder.popRequest();
+                    ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion(), null);
+                    AssertionHolder.pushResponse(responsePayload);
                 }
                 log.info("response finished");
                 responseFinished.countDown();
@@ -104,8 +108,9 @@ public class TestAssertionExecution {
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                ServerAssertion assertion = AssertionHolder.popRequest();
-                AssertionHolder.pushResponse(assertion);
+                RequestPayload requestPayload = AssertionHolder.popRequest();
+                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion(), null);
+                AssertionHolder.pushResponse(responsePayload);
                 log.info("response finished");
                 responseFinished.countDown();
             }

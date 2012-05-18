@@ -3,7 +3,7 @@ package org.jboss.arquillian.warp.execution;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.assertion.RequestPayload;
 import org.jboss.arquillian.warp.filter.WarpFilter;
 import org.jboss.arquillian.warp.utils.SerializationUtils;
 import org.jboss.netty.handler.codec.http.HttpRequest;
@@ -17,7 +17,7 @@ public class RequestEnrichmentFilter implements HttpRequestFilter {
     public void filter(HttpRequest request) {
         if (AssertionHolder.isWaitingForProcessing()) {
             try {
-                ServerAssertion assertion = AssertionHolder.popRequest();
+                RequestPayload assertion = AssertionHolder.popRequest();
                 String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
                 request.setHeader(WarpFilter.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
             } catch (Exception e) {

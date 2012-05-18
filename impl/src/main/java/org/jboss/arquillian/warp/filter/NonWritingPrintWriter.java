@@ -19,7 +19,6 @@ package org.jboss.arquillian.warp.filter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 

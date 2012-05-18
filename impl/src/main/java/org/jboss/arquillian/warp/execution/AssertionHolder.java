@@ -20,6 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.assertion.RequestPayload;
+import org.jboss.arquillian.warp.assertion.ResponsePayload;
 
 /**
  * The holder for {@link ServerAssertion} object.
@@ -28,7 +30,6 @@ import org.jboss.arquillian.warp.ServerAssertion;
  * 
  * @author Lukas Fryc
  */
-@SuppressWarnings("unchecked")
 class AssertionHolder {
 
     private static final long WAIT_TIMEOUT_MILISECONDS = 30000;
@@ -36,8 +37,8 @@ class AssertionHolder {
     private static final long NUMBER_OF_WAIT_LOOPS = WAIT_TIMEOUT_MILISECONDS / THREAD_SLEEP;
 
     private static final AtomicBoolean advertisement = new AtomicBoolean();
-    private static final AtomicReference<ServerAssertion> request = new AtomicReference<ServerAssertion>();
-    private static final AtomicReference<ServerAssertion> response = new AtomicReference<ServerAssertion>();
+    private static final AtomicReference<RequestPayload> request = new AtomicReference<RequestPayload>();
+    private static final AtomicReference<ResponsePayload> response = new AtomicReference<ResponsePayload>();
 
     /**
      * Advertizes that there will be taken client action which will lead into request.
@@ -76,53 +77,53 @@ class AssertionHolder {
     }
 
     /**
-     * Waits until the {@link ServerAssertion} for request is available and returns it.
-     * 
-     * @return the associated {@link ServerAssertion}
-     * @throws SettingRequestTimeoutException when {@link ServerAssertion} isn't setup in time
-     */
-    static <T extends ServerAssertion> T popRequest() {
-        awaitRequest();
-        return (T) request.getAndSet(null);
-    }
-
-    /**
-     * Pushes the verified {@link ServerAssertion} to be obtained by test.
-     * 
-     * @param assertion verified {@link ServerAssertion} to be obtained by test.
-     */
-    static void pushResponse(ServerAssertion assertion) {
-        response.set(assertion);
-    }
-
-    /**
      * <p>
-     * Pushes the {@link ServerAssertion} to verify on the server.
+     * Pushes the {@link RequestPayload} to verify on the server.
      * </p>
      * 
      * <p>
      * This method cancels flag set by {@link #advertise()}.
      * 
-     * @param assertion to verify on the server
+     * @param payload to verify on the server
      */
-    public static void pushRequest(ServerAssertion assertion) {
+    public static void pushRequest(RequestPayload payload) {
         if (request.get() != null) {
-            throw new ServerAssertionAlreadySetException();
+            throw new RequestPayloadAlreadySetException();
         }
-        request.set(assertion);
+        request.set(payload);
         response.set(null);
         advertisement.set(false);
     }
 
     /**
-     * Waits until the {@link ServerAssertion} for response is available and returns it.
+     * Waits until the {@link ServerAssertion} for request is available and returns it.
      * 
-     * @return the {@link ServerAssertion} for response
+     * @return the associated {@link ServerAssertion}
+     * @throws SettingRequestTimeoutException when {@link ServerAssertion} isn't setup in time
+     */
+    static RequestPayload popRequest() {
+        awaitRequest();
+        return request.getAndSet(null);
+    }
+
+    /**
+     * Pushes the verified {@link ResponsePayload} to be obtained by test.
+     * 
+     * @param payload verified {@link ResponsePayload} to be obtained by test.
+     */
+    static void pushResponse(ResponsePayload payload) {
+        response.set(payload);
+    }
+
+    /**
+     * Waits until the for response is available and returns it.
+     * 
+     * @return the {@link ResponsePayload}
      * @throws ServerResponseTimeoutException when the response wasn't returned in time
      */
-    public static <T extends ServerAssertion> T popResponse() {
+    public static ResponsePayload popResponse() {
         awaitResponse();
-        return (T) response.getAndSet(null);
+        return response.getAndSet(null);
     }
 
     private static void awaitRequest() {
@@ -167,7 +168,7 @@ class AssertionHolder {
         private static final long serialVersionUID = 7267806785171391801L;
     }
 
-    public static class ServerAssertionAlreadySetException extends RuntimeException {
+    public static class RequestPayloadAlreadySetException extends RuntimeException {
         private static final long serialVersionUID = 8333157142743791135L;
     }
 }

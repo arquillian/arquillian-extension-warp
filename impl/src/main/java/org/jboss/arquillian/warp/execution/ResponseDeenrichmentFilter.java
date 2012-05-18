@@ -1,6 +1,6 @@
 package org.jboss.arquillian.warp.execution;
 
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.assertion.ResponsePayload;
 import org.jboss.arquillian.warp.filter.WarpFilter;
 import org.jboss.arquillian.warp.utils.SerializationUtils;
 import org.jboss.netty.handler.codec.http.HttpRequest;
@@ -25,8 +25,8 @@ public class ResponseDeenrichmentFilter implements HttpFilter {
         String responseEnrichment = response.getHeader(WarpFilter.ENRICHMENT_RESPONSE);
 
         if (responseEnrichment != null) {
-            ServerAssertion assertion = SerializationUtils.deserializeFromBase64(responseEnrichment);
-            AssertionHolder.pushResponse(assertion);
+            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
+            AssertionHolder.pushResponse(payload);
         }
 
         return response;

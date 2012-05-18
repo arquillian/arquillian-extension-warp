@@ -24,6 +24,8 @@ import java.util.concurrent.FutureTask;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.RequestExecution;
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.assertion.RequestPayload;
+import org.jboss.arquillian.warp.assertion.ResponsePayload;
 
 /**
  * The implementation of execution of client action and server assertion.
@@ -33,42 +35,64 @@ import org.jboss.arquillian.warp.ServerAssertion;
  */
 public class RequestExecutionImpl implements RequestExecution {
 
-    private ClientAction action;
-    // TODO AtomicReference
-    private ServerAssertion assertion;
-
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    private ClientAction action;
+    private ServerAssertion assertion;
+    private FutureTask<ResponsePayload> payloadFuture;
 
     public RequestExecutionImpl(ClientAction action) {
         this.action = action;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends ServerAssertion> T verify(T assertion) {
         this.assertion = assertion;
         execute();
-        return assertion;
+        return (T) this.assertion;
     }
 
     private void execute() {
+        setupServerAssertion();
+        executeClientAction();
+        awaitServerExecution();
+    }
+
+    private void setupServerAssertion() {
         AssertionHolder.advertise();
-        FutureTask<ServerAssertion> future = new FutureTask<ServerAssertion>(new PushAssertion());
-        executor.submit(future);
+
+        payloadFuture = new FutureTask<ResponsePayload>(new PushAssertion());
+        executor.submit(payloadFuture);
+    }
+
+    private void executeClientAction() {
         try {
             action.action();
         } catch (Exception e) {
             throw new ClientActionException(e);
         }
-        try {
-            assertion = future.get();
-        } catch (Exception e) {
-            throw new ServerAssertionException(e);
-        }
     }
 
-    public class PushAssertion implements Callable<ServerAssertion> {
+    private void awaitServerExecution() {
+        ResponsePayload responsePayload;
+
+        try {
+            responsePayload = payloadFuture.get();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        if (responsePayload.getException() != null) {
+            throw new ServerExecutionException(responsePayload.getException());
+        }
+
+        assertion = responsePayload.getAssertion();
+    }
+
+    public class PushAssertion implements Callable<ResponsePayload> {
         @Override
-        public ServerAssertion call() throws Exception {
-            AssertionHolder.pushRequest(assertion);
+        public ResponsePayload call() throws Exception {
+            AssertionHolder.pushRequest(new RequestPayload(assertion));
             return AssertionHolder.popResponse();
         }
     }
@@ -77,14 +101,6 @@ public class RequestExecutionImpl implements RequestExecution {
         private static final long serialVersionUID = 7267806785171391801L;
 
         public ClientActionException(Throwable cause) {
-            super(cause);
-        }
-    }
-
-    public static class ServerAssertionException extends RuntimeException {
-        private static final long serialVersionUID = -5318390607884452966L;
-
-        public ServerAssertionException(Throwable cause) {
             super(cause);
         }
     }
