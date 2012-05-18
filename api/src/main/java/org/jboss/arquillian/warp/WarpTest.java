@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,17 +16,22 @@
  */
 package org.jboss.arquillian.warp;
 
-import java.io.Serializable;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Provides contract for being assertion which could be serialized and sent to the server.
- * 
- * Implementations should use SPI annotations to trigger asserting logic on server, such as
- * {@link org.jboss.arquillian.warp.test.BeforeServlet} or {@link org.jboss.arquillian.warp.WarpTest.AfterServlet}.
+ * Specifies that given test class should be considered Warp test
  * 
  * @author Lukas Fryc
  * 
  */
-public interface ServerAssertion extends Serializable {
+@Documented
+@Retention(RUNTIME)
+@Target(ElementType.TYPE)
+public @interface WarpTest {
 
 }

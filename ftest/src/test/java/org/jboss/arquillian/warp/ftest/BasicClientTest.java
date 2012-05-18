@@ -27,6 +27,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
+import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.request.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -43,6 +44,7 @@ import com.google.common.base.Function;
  * @author Lukas Fryc
  */
 @RunWith(Arquillian.class)
+@WarpTest
 @SuppressWarnings({ "serial" })
 public class BasicClientTest {
 

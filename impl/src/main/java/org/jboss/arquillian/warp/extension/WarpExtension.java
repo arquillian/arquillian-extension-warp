@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.extension;
 
 import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.proxy.ProxyService;
@@ -39,6 +40,7 @@ public class WarpExtension implements LoadableExtension {
 
         // deployment enrichment
         builder.service(ApplicationArchiveProcessor.class, DeploymentEnricher.class);
+        builder.service(AuxiliaryArchiveAppender.class, DeploymentEnricher.class);
     }
 
 }

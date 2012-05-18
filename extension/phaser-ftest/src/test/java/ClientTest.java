@@ -34,6 +34,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
+import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extensions.phaser.AfterPhase;
 import org.jboss.arquillian.warp.extensions.phaser.BeforePhase;
 import org.jboss.arquillian.warp.extensions.phaser.Phase;
@@ -47,6 +48,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 @RunWith(Arquillian.class)
+@WarpTest
 @SuppressWarnings("serial")
 public class ClientTest {
 
