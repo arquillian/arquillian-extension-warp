@@ -27,8 +27,6 @@ import org.jboss.arquillian.warp.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.request.AfterRequest;
 import org.jboss.arquillian.warp.request.BeforeRequest;
 import org.jboss.arquillian.warp.request.RequestScoped;
-import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
-import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
 
 /**
  * Drives {@link LifecycleManagerImpl} and {@link AssertionRegistry} lifecycle.
@@ -70,24 +68,6 @@ public class LifecycleManagerService {
         try {
             getStore().verifyManagerUnbound();
         } catch (StoreHasAssociatedObjectsException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> void bindManager(@Observes BindLifecycleManager event) {
-        try {
-            getStore().bind(event.getDeterminator(), event.getBoundObject());
-        } catch (ObjectAlreadyAssociatedException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> void unbindManager(@Observes UnbindLifecycleManager event) {
-        try {
-            getStore().unbind(event.getDeterminator(), event.getBoundObject());
-        } catch (ObjectNotAssociatedException e) {
             throw new IllegalStateException(e);
         }
     }

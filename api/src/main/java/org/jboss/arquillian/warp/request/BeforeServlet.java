@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.test;
+package org.jboss.arquillian.warp.request;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -23,10 +23,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.servlet.Servlet;
-
 /**
- * Executed after the request is processed by {@link Servlet}.
+ * Executed after the request is processed by {@link javax.servlet.Servlet}.
  * 
  * @author Lukas Fryc
  * 
@@ -34,6 +32,6 @@ import javax.servlet.Servlet;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
-public @interface AfterServlet {
+public @interface BeforeServlet {
 
 }

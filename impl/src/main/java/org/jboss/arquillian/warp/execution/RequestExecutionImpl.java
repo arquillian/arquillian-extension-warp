@@ -26,7 +26,7 @@ import org.jboss.arquillian.warp.RequestExecution;
 import org.jboss.arquillian.warp.ServerAssertion;
 
 /**
- * The execution of client action and server assertion.
+ * The implementation of execution of client action and server assertion.
  * 
  * @author Lukas Fryc
  * 

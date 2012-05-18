@@ -41,10 +41,8 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.assertion.AssertionRegistry;
-import org.jboss.arquillian.warp.lifecycle.BindLifecycleManager;
 import org.jboss.arquillian.warp.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.lifecycle.LifecycleManagerStoreImpl;
-import org.jboss.arquillian.warp.lifecycle.UnbindLifecycleManager;
 import org.jboss.arquillian.warp.request.AfterRequest;
 import org.jboss.arquillian.warp.request.BeforeRequest;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
@@ -77,7 +75,7 @@ public class WarpFilter implements Filter {
 
     @Inject
     private Instance<LifecycleManagerImpl> lifecycleManager;
-    
+
     @Inject
     private Instance<LifecycleManagerStoreImpl> lifecycleManagerStore;
 
@@ -124,13 +122,12 @@ public class WarpFilter implements Filter {
                     Manager manager = builder.create();
                     manager.start();
                     manager.inject(this);
-                    
+
                     req.setAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
 
                     manager.fire(new BeforeSuite());
                     manager.fire(new BeforeRequest(req));
-                    manager.fire(new BindLifecycleManager<ServletRequest>(ServletRequest.class, req));
-                    
+                    lifecycleManagerStore.get().bind(ServletRequest.class, req);
 
                     assertionRegistry.get().registerAssertion(assertionObject);
 
@@ -142,7 +139,7 @@ public class WarpFilter implements Filter {
 
                     assertionRegistry.get().unregisterAssertion(assertionObject);
 
-                    manager.fire(new UnbindLifecycleManager<ServletRequest>(ServletRequest.class, req));
+                    lifecycleManagerStore.get().unbind(ServletRequest.class, req);
                     manager.fire(new AfterRequest(req));
                     manager.fire(new AfterSuite());
 

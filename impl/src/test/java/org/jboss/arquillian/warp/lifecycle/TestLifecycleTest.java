@@ -26,8 +26,9 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.request.BeforeRequest;
+import org.jboss.arquillian.warp.request.BeforeServlet;
+import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
-import org.jboss.arquillian.warp.test.BeforeServlet;
 import org.jboss.arquillian.warp.test.BeforeServletEvent;
 import org.jboss.arquillian.warp.test.LifecycleTestDriver;
 import org.junit.Test;
@@ -50,6 +51,9 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
     @Inject
     Instance<LifecycleManagerImpl> lifecycleManager;
 
+    @Inject
+    Instance<LifecycleManagerStoreImpl> lifecycleManagerStore;
+
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         super.addExtensions(extensions);
@@ -58,9 +62,9 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
     }
 
     @Test
-    public void test() throws ObjectNotAssociatedException {
+    public void test() throws ObjectNotAssociatedException, ObjectAlreadyAssociatedException {
         fire(new BeforeRequest(request));
-        fire(new BindLifecycleManager<ServletRequest>(ServletRequest.class, request));
+        lifecycleManagerStore.get().bind(ServletRequest.class, request);
 
         TestingAssertion assertion = new TestingAssertion();
         registry.get().registerAssertion(assertion);

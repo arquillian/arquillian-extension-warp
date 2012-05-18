@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.test;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.warp.request.AfterServlet;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
 /**
