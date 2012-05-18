@@ -82,8 +82,13 @@ public class RequestExecutionImpl implements RequestExecution {
             throw new IllegalStateException(e);
         }
 
-        if (responsePayload.getException() != null) {
-            throw new ServerExecutionException(responsePayload.getException());
+        Throwable throwable = responsePayload.getThrowable();
+        if (throwable != null) {
+            if (throwable instanceof AssertionError) {
+                throw (AssertionError) throwable;
+            } else {
+                throw new ServerExecutionException(responsePayload.getThrowable());
+            }
         }
 
         assertion = responsePayload.getAssertion();

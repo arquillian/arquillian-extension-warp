@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+import static org.jboss.arquillian.warp.extensions.phaser.Phase.RENDER_RESPONSE;
+import static org.jboss.arquillian.warp.extensions.phaser.Phase.UPDATE_MODEL_VALUES;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -37,7 +39,6 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extensions.phaser.AfterPhase;
 import org.jboss.arquillian.warp.extensions.phaser.BeforePhase;
-import org.jboss.arquillian.warp.extensions.phaser.Phase;
 import org.jboss.as.quickstarts.jsf.RichBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -50,7 +51,7 @@ import org.openqa.selenium.WebElement;
 @RunWith(Arquillian.class)
 @WarpTest
 @SuppressWarnings("serial")
-public class ClientTest {
+public class PhaserBasicTest {
 
     @Drone
     WebDriver browser;
@@ -71,7 +72,13 @@ public class ClientTest {
     @Test
     @RunAsClient
     public void test() {
-        browser.navigate().to(contextPath + "index.jsf");
+        Warp.execute(new ClientAction() {
+
+            @Override
+            public void action() {
+                browser.navigate().to(contextPath + "index.jsf");
+            }
+        }).verify(new InitialRequestVerification());
 
         Warp.execute(new ClientAction() {
             public void action() {
@@ -81,17 +88,28 @@ public class ClientTest {
         }).verify(new NameChangedToX());
     }
 
+    public static class InitialRequestVerification implements ServerAssertion {
+
+        @Inject
+        RichBean richBean;
+
+        @AfterPhase(RENDER_RESPONSE)
+        public void initial_state_havent_changed_yet() {
+            assertEquals("John", richBean.getName());
+        }
+    }
+
     public static class NameChangedToX implements ServerAssertion {
 
         @Inject
         RichBean richBean;
 
-        @BeforePhase(Phase.UPDATE_MODEL_VALUES)
+        @BeforePhase(UPDATE_MODEL_VALUES)
         public void initial_state_havent_changed_yet() {
             assertEquals("John", richBean.getName());
         }
 
-        @AfterPhase(Phase.UPDATE_MODEL_VALUES)
+        @AfterPhase(UPDATE_MODEL_VALUES)
         public void changed_input_value_has_been_applied() {
             assertEquals("JohnX", richBean.getName());
         }

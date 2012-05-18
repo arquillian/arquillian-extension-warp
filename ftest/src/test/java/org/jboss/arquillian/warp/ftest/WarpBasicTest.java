@@ -46,7 +46,7 @@ import com.google.common.base.Function;
 @RunWith(Arquillian.class)
 @WarpTest
 @SuppressWarnings({ "serial" })
-public class BasicClientTest {
+public class WarpBasicTest {
 
     @Drone
     WebDriver browser;

@@ -53,7 +53,7 @@ public class TestAssertionExecution {
             public void run() {
                 awaitSafely(requestStarted);
                 RequestPayload requestPayload = AssertionHolder.popRequest();
-                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion(), null);
+                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion());
                 AssertionHolder.pushResponse(responsePayload);
                 log.info("response finished");
                 responseFinished.countDown();
@@ -81,7 +81,7 @@ public class TestAssertionExecution {
                 awaitSafely(requestStarted);
                 if (AssertionHolder.isWaitingForProcessing()) {
                     RequestPayload requestPayload = AssertionHolder.popRequest();
-                    ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion(), null);
+                    ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion());
                     AssertionHolder.pushResponse(responsePayload);
                 }
                 log.info("response finished");
@@ -109,7 +109,7 @@ public class TestAssertionExecution {
             public void run() {
                 awaitSafely(requestStarted);
                 RequestPayload requestPayload = AssertionHolder.popRequest();
-                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion(), null);
+                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion());
                 AssertionHolder.pushResponse(responsePayload);
                 log.info("response finished");
                 responseFinished.countDown();

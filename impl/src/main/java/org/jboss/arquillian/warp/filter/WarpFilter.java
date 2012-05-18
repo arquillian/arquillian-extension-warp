@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,9 +36,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.warp.ServerAssertion;
@@ -52,6 +55,7 @@ import org.jboss.arquillian.warp.spi.LifecycleEvent;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.test.AfterServletEvent;
 import org.jboss.arquillian.warp.test.BeforeServletEvent;
+import org.jboss.arquillian.warp.test.TestResultStore;
 import org.jboss.arquillian.warp.utils.SerializationUtils;
 
 /**
@@ -86,6 +90,9 @@ public class WarpFilter implements Filter {
 
     @Inject
     private Instance<AssertionRegistry> assertionRegistry;
+    
+    @Inject
+    private Instance<TestResultStore> testResultStore;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -127,6 +134,7 @@ public class WarpFilter implements Filter {
                     ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
                     Manager manager = builder.create();
                     manager.start();
+                    manager.bind(ApplicationScoped.class, Manager.class, manager);
                     manager.inject(this);
 
                     req.setAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
@@ -143,9 +151,19 @@ public class WarpFilter implements Filter {
                         chain.doFilter(req, responseWrapper);
 
                         // request successfully finished
-                        ResponsePayload responsePayload = new ResponsePayload(serverAssertion);
-                        responseEnrichment = SerializationUtils.serializeToBase64(responsePayload);
-                        httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
+                        TestResult firstFailedResult = testResultStore.get().getFirstFailed();
+                        if (firstFailedResult == null) {
+                            ResponsePayload responsePayload = new ResponsePayload(serverAssertion);
+                            responseEnrichment = SerializationUtils.serializeToBase64(responsePayload);
+                            httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
+                        } else {
+                            Throwable throwable = firstFailedResult.getThrowable();
+                            if (throwable instanceof InvocationTargetException) {
+                                throwable = throwable.getCause();
+                            }
+                            ResponsePayload responsePayload = new ResponsePayload(throwable);
+                            enrichResponse(httpResp, responsePayload);
+                        }
                     } catch (Exception e) {
                         log.log(Level.SEVERE, "The error occured during request execution", e);
                         throw e;
@@ -179,6 +197,11 @@ public class WarpFilter implements Filter {
         }
 
         chain.doFilter(req, resp);
+    }
+
+    public void enrichResponse(HttpServletResponse httpResp, ResponsePayload payload) {
+        String enrichment = SerializationUtils.serializeToBase64(payload);
+        httpResp.setHeader(ENRICHMENT_RESPONSE, enrichment);
     }
 
     @Override

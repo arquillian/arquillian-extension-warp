@@ -59,7 +59,7 @@ public abstract class LifecycleManagerStore {
     public static <T> LifecycleManager get(Class<T> clazz, T boundObject) throws ObjectNotAssociatedException {
         try {
             Class<?> implementation = Class.forName(LIFECYCLE_MANAGER_STORE_IMPLEMENTATION);
-            Method getMethod = implementation.getMethod("get", clazz.getClass(), boundObject.getClass());
+            Method getMethod = implementation.getMethod("get", Object.class.getClass(), Object.class);
             return (LifecycleManager) getMethod.invoke(null, clazz, boundObject);
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof ObjectNotAssociatedException) {

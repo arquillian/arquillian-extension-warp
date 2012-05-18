@@ -27,6 +27,7 @@ import org.jboss.arquillian.warp.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.request.AfterRequest;
 import org.jboss.arquillian.warp.request.BeforeRequest;
 import org.jboss.arquillian.warp.request.RequestScoped;
+import org.jboss.arquillian.warp.test.TestResultStore;
 
 /**
  * Drives {@link LifecycleManagerImpl} and {@link AssertionRegistry} lifecycle.
@@ -49,6 +50,10 @@ public class LifecycleManagerService {
     private InstanceProducer<AssertionRegistry> registry;
 
     @Inject
+    @RequestScoped
+    private InstanceProducer<TestResultStore> testResultStore;
+
+    @Inject
     private Instance<Injector> injector;
 
     public void initializeStore(@Observes ManagerStarted event) {
@@ -62,6 +67,7 @@ public class LifecycleManagerService {
     public void initializeManagerAndDriver(@Observes BeforeRequest event) {
         manager.set(inject(new LifecycleManagerImpl()));
         registry.set(inject(new AssertionRegistry()));
+        testResultStore.set(inject(new TestResultStore()));
     }
 
     public void finalizeManager(@Observes AfterRequest event) {

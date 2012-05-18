@@ -23,6 +23,7 @@ import org.jboss.arquillian.warp.request.RequestContextImpl;
 import org.jboss.arquillian.warp.test.LifecycleTestClassExecutor;
 import org.jboss.arquillian.warp.test.LifecycleTestDeenricher;
 import org.jboss.arquillian.warp.test.LifecycleTestDriver;
+import org.jboss.arquillian.warp.test.TestResultObserver;
 
 /**
  * Registers extension logic on the server-side.
@@ -41,6 +42,7 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
         builder.observer(LifecycleTestDriver.class);
         builder.observer(LifecycleTestClassExecutor.class);
         builder.observer(LifecycleTestDeenricher.class);
+        builder.observer(TestResultObserver.class);
     }
 
 }

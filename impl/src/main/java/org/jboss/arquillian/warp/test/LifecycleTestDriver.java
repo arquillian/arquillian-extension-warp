@@ -48,13 +48,13 @@ public class LifecycleTestDriver {
     private Instance<AssertionRegistry> registry;
 
     @Inject
-    private Event<Test> test;
-
-    @Inject
     private Event<Before> before;
 
     @Inject
     private Event<After> after;
+
+    @Inject
+    private Event<Test> test;
 
     public void fireTest(@Observes LifecycleEvent event) {
         final AssertionRegistry registry = getRegistry();
@@ -66,23 +66,9 @@ public class LifecycleTestDriver {
 
             for (final Method testMethod : methods) {
                 before.fire(new Before(assertionObject, testMethod));
-                test.fire(new Test(new TestMethodExecutor() {
 
-                    @Override
-                    public void invoke(Object... parameters) throws Throwable {
-                        getMethod().invoke(getInstance(), parameters);
-                    }
+                test.fire(new Test(new LifecycleMethodExecutor(assertionObject, testMethod)));
 
-                    @Override
-                    public Method getMethod() {
-                        return testMethod;
-                    }
-
-                    @Override
-                    public Object getInstance() {
-                        return assertionObject;
-                    }
-                }));
                 after.fire(new After(assertionObject, testMethod));
             }
         }
@@ -90,5 +76,33 @@ public class LifecycleTestDriver {
 
     private AssertionRegistry getRegistry() {
         return registry.get();
+    }
+
+    private static class LifecycleMethodExecutor implements TestMethodExecutor {
+
+        private Object instance;
+        private Method method;
+
+        public LifecycleMethodExecutor(Object instance, Method method) {
+            super();
+            this.instance = instance;
+            this.method = method;
+        }
+
+        @Override
+        public Method getMethod() {
+            return method;
+        }
+
+        @Override
+        public Object getInstance() {
+            return instance;
+        }
+
+        @Override
+        public void invoke(Object... parameters) throws Throwable {
+            method.invoke(instance, parameters);
+        }
+
     }
 }

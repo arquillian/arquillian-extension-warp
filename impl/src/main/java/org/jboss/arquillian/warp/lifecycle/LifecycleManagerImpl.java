@@ -17,10 +17,12 @@
 package org.jboss.arquillian.warp.lifecycle;
 
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
+import org.jboss.arquillian.warp.test.TestResultStore;
 
 /**
  * The manager which can fire lifecycle event, which can in turn start verification on assertion registered using
@@ -33,6 +35,9 @@ public class LifecycleManagerImpl implements LifecycleManager {
 
     @Inject
     private Event<LifecycleEvent> lifecycleEvent;
+
+    @Inject
+    Instance<TestResultStore> testResultStore;
 
     /**
      * Fires lifecycle event, which can start verification on given assertion.
