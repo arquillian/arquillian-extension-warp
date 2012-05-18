@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.proxy;
+package org.jboss.arquillian.warp.execution;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.RequestExecution;
 import org.jboss.arquillian.warp.ServerAssertion;
 
 /**
@@ -30,7 +31,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
  * @author Lukas Fryc
  * 
  */
-public class AssertionExecution {
+public class RequestExecutionImpl implements RequestExecution {
 
     private ClientAction action;
     // TODO AtomicReference
@@ -38,7 +39,7 @@ public class AssertionExecution {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public AssertionExecution(ClientAction action) {
+    public RequestExecutionImpl(ClientAction action) {
         this.action = action;
     }
 
@@ -48,7 +49,7 @@ public class AssertionExecution {
         return assertion;
     }
 
-    public void execute() {
+    private void execute() {
         AssertionHolder.advertise();
         FutureTask<ServerAssertion> future = new FutureTask<ServerAssertion>(new PushAssertion());
         executor.submit(future);

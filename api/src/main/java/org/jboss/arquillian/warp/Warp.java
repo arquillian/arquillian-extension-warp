@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp;
 
-import org.jboss.arquillian.warp.proxy.AssertionExecution;
+import java.lang.reflect.Constructor;
 
 /**
  * Utility class for invoking client action followed by server request, enriched with assertion.
@@ -25,13 +25,29 @@ import org.jboss.arquillian.warp.proxy.AssertionExecution;
  */
 public class Warp {
 
+    private static final String REQUEST_EXECUTION_IMPL = "org.jboss.arquillian.warp.execution.RequestExecutionImpl";
+
     /**
      * Takes client action which should be fired in order to cause server request.
      * 
      * @param action the client action to execute
-     * @return {@link AssertionExecution} instance
+     * @return {@link RequestExecution} instance
      */
-    public static AssertionExecution execute(ClientAction action) {
-        return new AssertionExecution(action);
+    public static RequestExecution execute(ClientAction action) {
+        try {
+            @SuppressWarnings("unchecked")
+            Class<? extends RequestExecution> clazz = (Class<? extends RequestExecution>) Class.forName(REQUEST_EXECUTION_IMPL);
+
+            Constructor<? extends RequestExecution> constructor = clazz.getConstructor(ClientAction.class);
+
+            return constructor.newInstance(action);
+
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Cannot find class " + REQUEST_EXECUTION_IMPL
+                    + ", make sure you have arquillian-warp-impl.jar included on the classpath.", e);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
     }
 }

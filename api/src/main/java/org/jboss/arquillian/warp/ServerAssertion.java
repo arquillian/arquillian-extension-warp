@@ -18,14 +18,11 @@ package org.jboss.arquillian.warp;
 
 import java.io.Serializable;
 
-import org.jboss.arquillian.warp.test.AfterServlet;
-import org.jboss.arquillian.warp.test.BeforeServlet;
-
 /**
  * Provides contract for being assertion which could be serialized and sent to the server.
  * 
- * Implementations should use SPI annotations to trigger asserting logic on server, such as {@link BeforeServlet} or
- * {@link AfterServlet}.
+ * Implementations should use SPI annotations to trigger asserting logic on server, such as
+ * {@link org.jboss.arquillian.warp.test.BeforeServlet} or {@link org.jboss.arquillian.warp.test.AfterServlet}.
  * 
  * @author Lukas Fryc
  * 

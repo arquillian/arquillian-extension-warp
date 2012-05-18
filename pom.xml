@@ -154,6 +154,7 @@
     <!-- Modules -->
     <modules>
         <!-- main modules -->
+        <module>api</module>
         <module>spi</module>
         <module>impl</module>
         <module>ftest</module>

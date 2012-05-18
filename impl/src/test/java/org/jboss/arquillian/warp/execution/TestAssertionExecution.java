@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.proxy;
+package org.jboss.arquillian.warp.execution;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
-import org.jboss.arquillian.warp.proxy.AssertionHolder;
+import org.jboss.arquillian.warp.execution.AssertionHolder;
 import org.junit.Before;
 import org.junit.Test;
 

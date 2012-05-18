@@ -16,22 +16,13 @@
  */
 package org.jboss.arquillian.warp.proxy;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.filter.WarpFilter;
-import org.jboss.arquillian.warp.utils.SerializationUtils;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.jboss.arquillian.warp.execution.RequestEnrichmentFilter;
+import org.jboss.arquillian.warp.execution.ResponseFilterMap;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
-import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.HttpRequestFilter;
 
@@ -43,8 +34,6 @@ import org.littleshoot.proxy.HttpRequestFilter;
  */
 public class ProxyHolder {
 
-    private static Logger log = Logger.getLogger("Proxy");
-
     private Map<URL, HttpProxyServer> servers = new HashMap<URL, HttpProxyServer>();
 
     public void startProxyForUrl(URL proxyUrl, URL realUrl) {
@@ -53,11 +42,11 @@ public class ProxyHolder {
             return;
         }
 
-        Map<String, HttpFilter> responseFilters = createResponseFilters(realUrl);
-        HttpRequestFilter requestFilter = createRequestFilter();
+        String hostPort = realUrl.getHost() + ":" + realUrl.getPort();
+        HttpRequestFilter requestFilter = new RequestEnrichmentFilter();
+        ResponseFilterMap responseFilter = new ResponseFilterMap(hostPort);
 
-        HttpProxyServer server = new DefaultHttpProxyServer(proxyUrl.getPort(), responseFilters, realUrl.getHost() + ":"
-                + realUrl.getPort(), null, requestFilter);
+        HttpProxyServer server = new DefaultHttpProxyServer(proxyUrl.getPort(), responseFilter, hostPort, null, requestFilter);
         server.start();
 
         servers.put(proxyUrl, server);
@@ -68,76 +57,5 @@ public class ProxyHolder {
             server.stop();
         }
         servers.clear();
-    }
-
-    private HttpRequestFilter createRequestFilter() {
-        return new HttpRequestFilter() {
-
-            @Override
-            public void filter(HttpRequest request) {
-                if (AssertionHolder.isWaitingForProcessing()) {
-                    try {
-                        ServerAssertion assertion = AssertionHolder.popRequest();
-                        String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
-                        request.setHeader(WarpFilter.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
-                    } catch (Exception e) {
-                        log.severe("enriching request failed: " + e.getMessage());
-                    }
-                }
-            }
-        };
-    }
-
-    private Map<String, HttpFilter> createResponseFilters(final URL realUrl) {
-
-        final HttpFilter filter = new HttpFilter() {
-
-            @Override
-            public boolean shouldFilterResponses(HttpRequest httpRequest) {
-                return true;
-            }
-
-            @Override
-            public int getMaxResponseSize() {
-                return Integer.MAX_VALUE;
-            }
-
-            @Override
-            public HttpResponse filterResponse(HttpResponse response) {
-
-                String responseEnrichment = response.getHeader(WarpFilter.ENRICHMENT_RESPONSE);
-
-                if (responseEnrichment != null) {
-                    ServerAssertion assertion = SerializationUtils.deserializeFromBase64(responseEnrichment);
-                    AssertionHolder.pushResponse(assertion);
-                }
-
-                return response;
-            }
-        };
-
-        String key = realUrl.getHost() + ":" + realUrl.getPort();
-        Map<String, HttpFilter> map = new HashMap<String, HttpFilter>();
-        map.put(key, filter);
-
-        return map;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Map<String, HttpFilter> getSingleEntryMap(final HttpFilter filter) {
-        return (Map<String, HttpFilter>) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { Map.class },
-                new InvocationHandler() {
-
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        if ("get".equals(method.getName())) {
-                            return filter;
-                        }
-                        if ("isEmpty".equals(method.getName())) {
-                            return false;
-                        }
-                        throw new UnsupportedOperationException();
-                    }
-                });
     }
 }
