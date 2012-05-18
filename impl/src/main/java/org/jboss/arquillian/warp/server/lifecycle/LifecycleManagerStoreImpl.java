@@ -83,24 +83,16 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
         final LifecycleManagerImpl manager = getManager();
 
         // update binding
-
+        STORE.putIfAbsent(clazz, new Binding());
         Binding binding = STORE.get(clazz);
-        if (binding == null) {
-            STORE.putIfAbsent(clazz, new Binding());
-            binding = STORE.get(clazz);
-        }
 
         if (binding.put(object, manager) != null) {
             throw new ObjectAlreadyAssociatedException();
         }
 
         // update tracking
-
+        TRACK.putIfAbsent(manager, new Tracking());
         Tracking tracking = TRACK.get(manager);
-        if (tracking == null) {
-            TRACK.putIfAbsent(manager, new Tracking());
-            tracking = TRACK.get(manager);
-        }
 
         tracking.add(clazz);
     }
