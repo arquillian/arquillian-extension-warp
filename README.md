@@ -9,6 +9,13 @@ Warp has own extensions which allows you to integrate with various frameworks:
 * Phaser (JSF lifecycle)
 
 
+Links
+-----
+
+* [Issue Tracker](https://issues.jboss.org/browse/ARQ/component/12315782)
+* [Continuous Integration](https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/)
+
+
 Configuration
 -------------
 
