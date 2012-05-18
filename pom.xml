@@ -33,11 +33,13 @@
         <version.servlet-api>3.0.1</version.servlet-api>
         <version.arquillian.core>1.0.0.Final</version.arquillian.core>
         <version.arquillian.drone>1.0.0.Final</version.arquillian.drone>
-        <version.shrinkwrap-resolver>2.0.0-alpha-1</version.shrinkwrap-resolver>
+        
         <version.littleproxy>0.4</version.littleproxy>
         
         <!-- Tests -->
         <version.junit>4.10</version.junit>
+        <version.mockito>1.9.0</version.mockito>
+        <version.shrinkwrap-resolver>2.0.0-alpha-1</version.shrinkwrap-resolver>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -97,6 +99,12 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${version.junit}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${version.mockito}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
