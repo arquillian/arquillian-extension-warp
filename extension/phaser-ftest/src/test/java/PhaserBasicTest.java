@@ -19,8 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-import static org.jboss.arquillian.warp.extensions.phaser.Phase.RENDER_RESPONSE;
-import static org.jboss.arquillian.warp.extensions.phaser.Phase.UPDATE_MODEL_VALUES;
+import static org.jboss.arquillian.warp.extension.phaser.Phase.RENDER_RESPONSE;
+import static org.jboss.arquillian.warp.extension.phaser.Phase.UPDATE_MODEL_VALUES;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -37,8 +37,8 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.extensions.phaser.AfterPhase;
-import org.jboss.arquillian.warp.extensions.phaser.BeforePhase;
+import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
+import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
 import org.jboss.as.quickstarts.jsf.RichBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;

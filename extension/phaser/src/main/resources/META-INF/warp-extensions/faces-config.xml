@@ -5,11 +5,11 @@
 
 
     <lifecycle>
-        <phase-listener>org.jboss.arquillian.warp.extensions.phaser.PhaserListener</phase-listener>
+        <phase-listener>org.jboss.arquillian.warp.extension.phaser.PhaserListener</phase-listener>
     </lifecycle>
 
     <factory>
-        <faces-context-factory>org.jboss.arquillian.warp.extensions.phaser.PhaserFacesContextFactoryWrapper</faces-context-factory>
+        <faces-context-factory>org.jboss.arquillian.warp.extension.phaser.PhaserFacesContextFactoryWrapper</faces-context-factory>
     </factory>
 
 </faces-config>

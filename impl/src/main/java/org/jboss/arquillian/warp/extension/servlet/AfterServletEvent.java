@@ -14,30 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.lifecycle;
+package org.jboss.arquillian.warp.extension.servlet;
 
-import java.util.List;
+import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
-import org.jboss.arquillian.core.spi.Manager;
-import org.jboss.arquillian.core.spi.context.Context;
-import org.jboss.arquillian.warp.server.request.RequestContext;
-import org.jboss.arquillian.warp.server.request.RequestContextImpl;
+import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
+import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
 /**
+ * The lifecycle event which binds with {@link AfterServlet} verification execution.
+ * 
  * @author Lukas Fryc
+ * 
  */
-public class AbstractLifecycleTestBase extends AbstractContainerTestTestBase {
+public class AfterServletEvent extends LifecycleEvent {
 
     @Override
-    protected void addContexts(List<Class<? extends Context>> contexts) {
-        super.addContexts(contexts);
-        contexts.add(RequestContextImpl.class);
-    }
+    public Annotation getAnnotation() {
+        return new AfterServlet() {
 
-    @Override
-    protected void startContexts(Manager manager) {
-        super.startContexts(manager);
-        manager.getContext(RequestContext.class).activate();
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return AfterServlet.class;
+            }
+        };
     }
 }

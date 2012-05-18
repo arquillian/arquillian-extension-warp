@@ -14,30 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.lifecycle;
+package org.jboss.arquillian.warp.server.assertion;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
-import org.jboss.arquillian.core.spi.Manager;
-import org.jboss.arquillian.core.spi.context.Context;
-import org.jboss.arquillian.warp.server.request.RequestContext;
-import org.jboss.arquillian.warp.server.request.RequestContextImpl;
+import org.jboss.arquillian.core.spi.Validate;
 
 /**
+ * The registry for registered assertions registered for current requests.
+ * 
  * @author Lukas Fryc
  */
-public class AbstractLifecycleTestBase extends AbstractContainerTestTestBase {
+public class AssertionRegistry {
 
-    @Override
-    protected void addContexts(List<Class<? extends Context>> contexts) {
-        super.addContexts(contexts);
-        contexts.add(RequestContextImpl.class);
+    private Set<Object> assertions = new LinkedHashSet<Object>(1);
+
+    public void registerAssertion(Object assertion) {
+        Validate.notNull(assertion, "assertion must not be null");
+        assertions.add(assertion);
     }
 
-    @Override
-    protected void startContexts(Manager manager) {
-        super.startContexts(manager);
-        manager.getContext(RequestContext.class).activate();
+    public void unregisterAssertion(Object assertion) {
+        Validate.notNull(assertion, "assertion must not be null");
+        assertions.remove(assertion);
+    }
+
+    public Collection<Object> getAssertions() {
+        return assertions;
     }
 }

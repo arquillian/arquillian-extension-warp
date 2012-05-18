@@ -14,37 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.lifecycle;
-
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
+package org.jboss.arquillian.warp.server.request;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.test.AbstractManagerTestBase;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerService;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerStoreImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.EventContext;
 
 /**
+ * The handler for current context.
+ * 
  * @author Lukas Fryc
+ * 
  */
-@RunWith(MockitoJUnitRunner.class)
-public class LifecycleManagerStoreTest extends AbstractManagerTestBase {
+public class RequestContextHandler {
 
     @Inject
-    Instance<LifecycleManagerStoreImpl> store;
+    private Instance<RequestContext> requestContextInstance;
 
-    @Override
-    protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(LifecycleManagerService.class);
+    public void createRequestContext(@Observes(precedence = 100) EventContext<BeforeRequest> context) {
+        RequestContext requestContext = this.requestContextInstance.get();
+        requestContext.activate();
+        context.proceed();
     }
 
-    @Test
-    public void test() {
-        assertNotNull("store should be initialized on manager start", store.get());
+    public void destroyRequestContext(@Observes(precedence = 100) EventContext<AfterRequest> context) {
+        RequestContext requestContext = this.requestContextInstance.get();
+        try {
+            context.proceed();
+        } finally {
+            requestContext.deactivate();
+        }
     }
 }

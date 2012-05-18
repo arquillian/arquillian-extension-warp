@@ -14,37 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.lifecycle;
+package org.jboss.arquillian.warp.server.lifecycle;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.test.AbstractManagerTestBase;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerService;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerStoreImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.jboss.arquillian.warp.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.server.test.TestResultStore;
+import org.jboss.arquillian.warp.spi.LifecycleEvent;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
 
 /**
+ * The manager which can fire lifecycle event, which can in turn start verification on assertion registered using
+ * {@link AssertionRegistry}.
+ * 
  * @author Lukas Fryc
+ * 
  */
-@RunWith(MockitoJUnitRunner.class)
-public class LifecycleManagerStoreTest extends AbstractManagerTestBase {
+public class LifecycleManagerImpl implements LifecycleManager {
 
     @Inject
-    Instance<LifecycleManagerStoreImpl> store;
+    private Event<LifecycleEvent> lifecycleEvent;
 
-    @Override
-    protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(LifecycleManagerService.class);
-    }
+    @Inject
+    Instance<TestResultStore> testResultStore;
 
-    @Test
-    public void test() {
-        assertNotNull("store should be initialized on manager start", store.get());
+    /**
+     * Fires lifecycle event, which can start verification on given assertion.
+     * 
+     * @param event the lifecycle event to fire
+     */
+    public void fireLifecycleEvent(LifecycleEvent event) {
+        lifecycleEvent.fire(event);
     }
 }

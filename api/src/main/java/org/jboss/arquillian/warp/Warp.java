@@ -25,7 +25,7 @@ import java.lang.reflect.Constructor;
  */
 public class Warp {
 
-    private static final String REQUEST_EXECUTION_IMPL = "org.jboss.arquillian.warp.execution.RequestExecutionImpl";
+    private static final String REQUEST_EXECUTION_IMPL = "org.jboss.arquillian.warp.client.execution.RequestExecutionImpl";
 
     /**
      * Takes client action which should be fired in order to cause server request.

@@ -14,30 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.lifecycle;
+package org.jboss.arquillian.warp.server.request;
 
-import java.util.List;
-
-import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
-import org.jboss.arquillian.core.spi.Manager;
-import org.jboss.arquillian.core.spi.context.Context;
-import org.jboss.arquillian.warp.server.request.RequestContext;
-import org.jboss.arquillian.warp.server.request.RequestContextImpl;
+import javax.servlet.Servlet;
+import javax.servlet.ServletRequest;
 
 /**
+ * The event fired after the request is processed by {@link Servlet}.
+ * 
  * @author Lukas Fryc
  */
-public class AbstractLifecycleTestBase extends AbstractContainerTestTestBase {
+public class AfterRequest extends RequestEvent {
 
-    @Override
-    protected void addContexts(List<Class<? extends Context>> contexts) {
-        super.addContexts(contexts);
-        contexts.add(RequestContextImpl.class);
+    public AfterRequest(ServletRequest request) {
+        super(request);
     }
 
-    @Override
-    protected void startContexts(Manager manager) {
-        super.startContexts(manager);
-        manager.getContext(RequestContext.class).activate();
-    }
 }

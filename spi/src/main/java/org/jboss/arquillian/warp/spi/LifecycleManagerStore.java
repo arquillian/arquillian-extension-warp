@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  */
 public abstract class LifecycleManagerStore {
 
-    private static final String LIFECYCLE_MANAGER_STORE_IMPLEMENTATION = "org.jboss.arquillian.warp.lifecycle.LifecycleManagerStoreImpl";
+    private static final String LIFECYCLE_MANAGER_STORE_IMPLEMENTATION = "org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerStoreImpl";
 
     /**
      * Binds the current {@link LifecycleManager} with given object of given class.

@@ -26,7 +26,10 @@ import javax.servlet.ServletRequest;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.warp.request.BeforeRequest;
+import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerImpl;
+import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerService;
+import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerStoreImpl;
+import org.jboss.arquillian.warp.server.request.BeforeRequest;
 import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
 import org.junit.Before;

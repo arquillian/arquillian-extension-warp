@@ -14,37 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.lifecycle;
+package org.jboss.arquillian.warp.client.proxy;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.test.AbstractManagerTestBase;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerService;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerStoreImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
+ * Initializes and finalizes proxies.
+ * 
  * @author Lukas Fryc
+ * 
  */
-@RunWith(MockitoJUnitRunner.class)
-public class LifecycleManagerStoreTest extends AbstractManagerTestBase {
+public class ProxyService {
 
     @Inject
-    Instance<LifecycleManagerStoreImpl> store;
+    @SuiteScoped
+    private InstanceProducer<URLMapping> mapping;
 
-    @Override
-    protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(LifecycleManagerService.class);
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<ProxyHolder> proxyStore;
+
+    public void initializeProxies(@Observes BeforeSuite event) {
+        mapping.set(new URLMapping());
+        proxyStore.set(new ProxyHolder());
     }
 
-    @Test
-    public void test() {
-        assertNotNull("store should be initialized on manager start", store.get());
+    public void finalizeProxies(@Observes AfterSuite event) {
+        proxyStore.get().freeAllProxies();
     }
+
 }
