@@ -3,23 +3,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>arquillian-warp-parent</artifactId>
         <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-warp-parent</artifactId>
         <version>1.0.0.Alpha1-SNAPSHOT</version>
     </parent>
 
     <artifactId>arquillian-warp-ftest</artifactId>
-    
-    <properties>
-        <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
-    </properties>
+    <name>Arquillian Warp Extension: Tests</name>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-warp-impl</artifactId>
-            <version>1.0.0.Alpha1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -45,7 +46,7 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
 
     <profiles>
@@ -53,20 +54,14 @@
             <id>jbossas-remote-7</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.jboss.spec</groupId>
-                    <artifactId>jboss-javaee-6.0</artifactId>
-                    <version>1.0.0.Final</version>
-                    <type>pom</type>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
                     <groupId>org.jboss.as</groupId>
                     <artifactId>jboss-as-arquillian-container-remote</artifactId>
                     <version>${version.org.jboss.jbossas}</version>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
-        
+
         <profile>
             <id>jbossas-managed-7</id>
             <activation>
