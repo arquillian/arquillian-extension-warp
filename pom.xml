@@ -24,22 +24,24 @@
 
     <scm>
         <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-warp.git</connection>
-        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension--warp.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-warp.git</developerConnection>
         <url>git://github.com/arquillian/arquillian-extension-warp.git</url>
     </scm>
 
     <properties>
         <!-- Arquillian -->
-        <version.servlet-api>3.0.1</version.servlet-api>
-        <version.arquillian.core>1.0.0.Final</version.arquillian.core>
-        <version.arquillian.drone>1.0.0.Final</version.arquillian.drone>
-        
+        <version.servlet_api>3.0.1</version.servlet_api>
+        <version.arquillian_core>1.0.0.Final</version.arquillian_core>
+        <version.arquillian_drone>1.0.0.Final</version.arquillian_drone>
+
         <version.littleproxy>0.4</version.littleproxy>
-        
+
         <!-- Tests -->
         <version.junit>4.10</version.junit>
         <version.mockito>1.9.0</version.mockito>
-        <version.shrinkwrap-resolver>2.0.0-alpha-1</version.shrinkwrap-resolver>
+        <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
+        <version.jboss_spec>3.0.0.Final</version.jboss_spec>
+        <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -52,7 +54,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian.core}</version>
+                <version>${version.arquillian_core}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -61,32 +63,35 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-bom</artifactId>
-                <version>${version.arquillian.drone}</version>
+                <version>${version.arquillian_drone}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            
+
             <!-- Version Management -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${version.servlet-api}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-api</artifactId>
-                <version>${version.shrinkwrap-resolver}</version>
+                <version>${version.shrinkwrap_resolver}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-                <version>${version.shrinkwrap-resolver}</version>
+                <version>${version.shrinkwrap_resolver}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-                <version>${version.shrinkwrap-resolver}</version>
+                <version>${version.shrinkwrap_resolver}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.spec</groupId>
+                <artifactId>jboss-javaee-6.0</artifactId>
+                <version>${version.jboss_spec}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
@@ -150,7 +155,7 @@
         <module>spi</module>
         <module>impl</module>
         <module>ftest</module>
-        
+
         <!-- extensions -->
         <module>extension/phaser</module>
         <module>extension/phaser-ftest</module>

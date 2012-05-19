@@ -3,13 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>arquillian-warp-parent</artifactId>
         <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-warp-parent</artifactId>
         <version>1.0.0.Alpha1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
     <artifactId>arquillian-warp-spi</artifactId>
+    <name>Arquillian Warp Extension: SPI</name>
 
     <dependencies>
         <dependency>

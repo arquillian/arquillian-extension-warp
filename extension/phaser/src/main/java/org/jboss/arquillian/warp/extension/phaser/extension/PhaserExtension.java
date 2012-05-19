@@ -1,7 +1,7 @@
 package org.jboss.arquillian.warp.extension.phaser.extension;
 
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.warp.extension.phaser.PhaserListener;
+import org.jboss.arquillian.warp.extension.phaser.Phase;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -16,7 +16,7 @@ public class PhaserExtension implements LoadableExtension, WarpLifecycleExtensio
 
     @Override
     public JavaArchive getEnrichmentLibrary() {
-        return ShrinkWrap.create(JavaArchive.class, "warp-extension-phaser.jar").addPackage(PhaserListener.class.getPackage())
+        return ShrinkWrap.create(JavaArchive.class, "warp-extension-phaser.jar").addPackage(Phase.class.getPackage())
                 .addAsManifestResource("META-INF/warp-extensions/faces-config.xml", "faces-config.xml");
     }
 
