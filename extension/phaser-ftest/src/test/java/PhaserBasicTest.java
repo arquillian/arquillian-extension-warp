@@ -42,15 +42,15 @@ import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
 import org.jboss.as.quickstarts.jsf.RichBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-@RunWith(Arquillian.class)
 @WarpTest
-@SuppressWarnings("serial")
+@RunWith(Arquillian.class)
 public class PhaserBasicTest {
 
     @Drone
@@ -80,15 +80,20 @@ public class PhaserBasicTest {
             }
         }).verify(new InitialRequestVerification());
 
-        Warp.execute(new ClientAction() {
+        NameChangedToX x = Warp.execute(new ClientAction() {
             public void action() {
                 WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
                 nameInput.sendKeys("X");
             }
         }).verify(new NameChangedToX());
+
+        // verify Object was Deserialized with Server state
+        Assert.assertNotNull(x.getUpdatedName());
     }
 
     public static class InitialRequestVerification implements ServerAssertion {
+
+        private static final long serialVersionUID = 1L;
 
         @Inject
         RichBean richBean;
@@ -101,8 +106,12 @@ public class PhaserBasicTest {
 
     public static class NameChangedToX implements ServerAssertion {
 
+        private static final long serialVersionUID = 1L;
+
         @Inject
         RichBean richBean;
+
+        private String updatedName;
 
         @BeforePhase(UPDATE_MODEL_VALUES)
         public void initial_state_havent_changed_yet() {
@@ -112,6 +121,11 @@ public class PhaserBasicTest {
         @AfterPhase(UPDATE_MODEL_VALUES)
         public void changed_input_value_has_been_applied() {
             assertEquals("JohnX", richBean.getName());
+            updatedName = richBean.getName();
+        }
+
+        public String getUpdatedName() {
+            return updatedName;
         }
     }
 }

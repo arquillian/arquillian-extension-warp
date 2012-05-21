@@ -16,7 +16,9 @@
  */
 package org.jboss.arquillian.warp.server.test;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +94,12 @@ public class LifecycleTestDeenricher {
                 Field field = entry.getKey();
                 Object oldValue = entry.getValue();
 
+                if(!validateIfFieldCanBeSetAndSerialized(field)) {
+                    continue;
+                }
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
                 field.set(instance, oldValue);
 
             }
@@ -99,5 +107,20 @@ public class LifecycleTestDeenricher {
             throw new IllegalStateException(e);
         }
         backupUpdated.clear();
+    }
+
+    private boolean validateIfFieldCanBeSetAndSerialized(Field field) {
+        if (Modifier.isTransient(field.getModifiers()) ||
+                (Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()))) {
+            return false;
+        }
+        if(!isSerializable(field.getType())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isSerializable(Class<?> clazz) {
+        return clazz.isPrimitive() || Serializable.class.isAssignableFrom(clazz);
     }
 }
