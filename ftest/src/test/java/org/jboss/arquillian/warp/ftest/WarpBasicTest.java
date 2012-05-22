@@ -83,7 +83,7 @@ public class WarpBasicTest {
         }).verify(new AjaxRequestAssertion());
     }
 
-    public static class InitialRequestAssertion implements ServerAssertion {
+    public static class InitialRequestAssertion extends ServerAssertion {
 
         private static final long serialVersionUID = 1L;
 
@@ -93,7 +93,7 @@ public class WarpBasicTest {
         }
     }
 
-    public static class AjaxRequestAssertion implements ServerAssertion {
+    public static class AjaxRequestAssertion extends ServerAssertion {
 
         private static final long serialVersionUID = 1L;
 

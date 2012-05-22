@@ -91,7 +91,7 @@ public class PhaserBasicTest {
         Assert.assertNotNull(x.getUpdatedName());
     }
 
-    public static class InitialRequestVerification implements ServerAssertion {
+    public static class InitialRequestVerification extends ServerAssertion {
 
         private static final long serialVersionUID = 1L;
 
@@ -104,7 +104,7 @@ public class PhaserBasicTest {
         }
     }
 
-    public static class NameChangedToX implements ServerAssertion {
+    public static class NameChangedToX extends ServerAssertion {
 
         private static final long serialVersionUID = 1L;
 

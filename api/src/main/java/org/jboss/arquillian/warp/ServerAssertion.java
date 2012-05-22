@@ -27,6 +27,8 @@ import java.io.Serializable;
  * @author Lukas Fryc
  * 
  */
-public interface ServerAssertion extends Serializable {
+public abstract class ServerAssertion implements Serializable {
+    
+    private static final long serialVersionUID = -8706974268337963961L;
 
 }
