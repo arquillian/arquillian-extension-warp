@@ -32,12 +32,12 @@
             <rich:panel header="Ajax enabled inputText">
                 <h:form id="helloWorldJsf">
                     <h:outputLabel value="Name:" for="nameInput"/>
-                    <h:inputText id="nameInput" value="#{richBean.name}">
+                    <h:inputText id="nameInput" value="#{myBean.name}">
                         <f:ajax event="keyup" render="output"/>
                     </h:inputText>
                     <h:panelGroup id="output">
-                        <h:outputText value="Hello #{richBean.name}!"
-                                      rendered="#{not empty richBean.name}"/>
+                        <h:outputText value="Hello #{myBean.name}!"
+                                      rendered="#{not empty myBean.name}"/>
                     </h:panelGroup>
                 </h:form>
             </rich:panel>

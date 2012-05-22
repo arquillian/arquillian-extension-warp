@@ -8,14 +8,14 @@ import javax.inject.Named;
 
 /**
  * <p>
- * {@link RichBean} is the JSF backing bean for the application, holding the input data to be
+ * {@link MyBean} is the JSF backing bean for the application, holding the input data to be
  * re-displayed.
  * </p>
  * 
  */
 @Named
 @RequestScoped
-public class RichBean implements Serializable {
+public class MyBean implements Serializable {
 
     private static final long serialVersionUID = -6239437588285327644L;
 

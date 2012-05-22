@@ -39,7 +39,7 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
 import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
-import org.jboss.as.quickstarts.jsf.RichBean;
+import org.jboss.as.quickstarts.jsf.MyBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
@@ -62,7 +62,7 @@ public class PhaserBasicTest {
     @Deployment
     public static WebArchive createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(RichBean.class)
+        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(MyBean.class)
                 .addAsWebResource(new File("src/main/webapp/index.xhtml"))
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
                 .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
@@ -96,11 +96,11 @@ public class PhaserBasicTest {
         private static final long serialVersionUID = 1L;
 
         @Inject
-        RichBean richBean;
+        MyBean myBean;
 
         @AfterPhase(RENDER_RESPONSE)
         public void initial_state_havent_changed_yet() {
-            assertEquals("John", richBean.getName());
+            assertEquals("John", myBean.getName());
         }
     }
 
@@ -109,19 +109,19 @@ public class PhaserBasicTest {
         private static final long serialVersionUID = 1L;
 
         @Inject
-        RichBean richBean;
+        MyBean myBean;
 
         private String updatedName;
 
         @BeforePhase(UPDATE_MODEL_VALUES)
         public void initial_state_havent_changed_yet() {
-            assertEquals("John", richBean.getName());
+            assertEquals("John", myBean.getName());
         }
 
         @AfterPhase(UPDATE_MODEL_VALUES)
         public void changed_input_value_has_been_applied() {
-            assertEquals("JohnX", richBean.getName());
-            updatedName = richBean.getName();
+            assertEquals("JohnX", myBean.getName());
+            updatedName = myBean.getName();
         }
 
         public String getUpdatedName() {

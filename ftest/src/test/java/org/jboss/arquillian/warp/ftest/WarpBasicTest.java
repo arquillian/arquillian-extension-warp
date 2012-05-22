@@ -45,7 +45,6 @@ import com.google.common.base.Function;
  */
 @RunWith(Arquillian.class)
 @WarpTest
-@SuppressWarnings({ "serial" })
 public class WarpBasicTest {
 
     @Drone
@@ -86,6 +85,8 @@ public class WarpBasicTest {
 
     public static class InitialRequestAssertion implements ServerAssertion {
 
+        private static final long serialVersionUID = 1L;
+
         @BeforeServlet
         public void beforeServlet() {
             System.out.println("Hi server, here is my initial request!");
@@ -93,6 +94,8 @@ public class WarpBasicTest {
     }
 
     public static class AjaxRequestAssertion implements ServerAssertion {
+
+        private static final long serialVersionUID = 1L;
 
         @BeforeServlet
         public void beforeServlet() {
