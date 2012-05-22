@@ -24,9 +24,9 @@ import javax.servlet.ServletOutputStream;
 /**
  * The implementation {@link ServletOutputStream} which caches all the written input and writes only when
  * {@link #finallyWriteAndClose(ServletOutputStream)} method is called.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class NonWritingServletOutputStream extends ServletOutputStream {
 

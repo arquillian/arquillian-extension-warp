@@ -59,7 +59,7 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
         extensions.add(LifecycleManagerService.class);
         extensions.add(RequestContextHandler.class);
     }
-    
+
     @Override
     protected void addContexts(List<Class<? extends Context>> contexts) {
         super.addContexts(contexts);

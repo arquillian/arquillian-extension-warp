@@ -25,9 +25,9 @@ import org.jboss.arquillian.warp.utils.URLUtils;
 
 /**
  * Maps real URL to proxied URL.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class URLMapping {
 

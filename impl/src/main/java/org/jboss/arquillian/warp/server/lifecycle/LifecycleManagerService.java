@@ -31,9 +31,9 @@ import org.jboss.arquillian.warp.server.test.TestResultStore;
 
 /**
  * Drives {@link LifecycleManagerImpl} and {@link AssertionRegistry} lifecycle.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class LifecycleManagerService {
 

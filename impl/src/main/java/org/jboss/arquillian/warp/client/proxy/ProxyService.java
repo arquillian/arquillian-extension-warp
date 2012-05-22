@@ -25,9 +25,9 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
  * Initializes and finalizes proxies.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class ProxyService {
 

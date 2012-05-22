@@ -24,13 +24,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
 public @interface BeforePhase {
-    public Phase value();
+    Phase value();
 }

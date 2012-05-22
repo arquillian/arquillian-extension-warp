@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 
 /**
  * Stores the bindings from auxiliary class instance to {@link LifecycleManager}.
- * 
+ *
  * @author Lukas Fryc
  */
 public abstract class LifecycleManagerStore {
@@ -30,7 +30,7 @@ public abstract class LifecycleManagerStore {
 
     /**
      * Binds the current {@link LifecycleManager} with given object of given class.
-     * 
+     *
      * @param clazz the class to be bound
      * @param object the object to be bound
      * @throws ObjectAlreadyAssociatedException when there is already object bound with {@link LifecycleManager} for given
@@ -40,7 +40,7 @@ public abstract class LifecycleManagerStore {
 
     /**
      * Unbinds the {@link LifecycleManager} for given class and given object.
-     * 
+     *
      * @param clazz the bound class
      * @param object the bound class
      * @throws ObjectNotAssociatedException when no object bound with {@link LifecycleManager}.
@@ -49,7 +49,7 @@ public abstract class LifecycleManagerStore {
 
     /**
      * Retrieves instance of {@link LifecycleManagerImpl} for given instance of given class.
-     * 
+     *
      * @param clazz the class used as denominator during retrieval
      * @param boundObject the object used as key for retriving {@link LifecycleManagerImpl}
      * @return the bound instance of {@link LifecycleManagerImpl}

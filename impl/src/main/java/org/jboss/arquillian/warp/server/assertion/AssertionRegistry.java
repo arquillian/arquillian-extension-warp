@@ -24,7 +24,7 @@ import org.jboss.arquillian.core.spi.Validate;
 
 /**
  * The registry for registered assertions registered for current requests.
- * 
+ *
  * @author Lukas Fryc
  */
 public class AssertionRegistry {

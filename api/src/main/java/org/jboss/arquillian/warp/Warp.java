@@ -20,7 +20,7 @@ import java.lang.reflect.Constructor;
 
 /**
  * Utility class for invoking client action followed by server request, enriched with assertion.
- * 
+ *
  * @author Lukas Fryc
  */
 public class Warp {
@@ -29,7 +29,7 @@ public class Warp {
 
     /**
      * Takes client action which should be fired in order to cause server request.
-     * 
+     *
      * @param action the client action to execute
      * @return {@link RequestExecution} instance
      */

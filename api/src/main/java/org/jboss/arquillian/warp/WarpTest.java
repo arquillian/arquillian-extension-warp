@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 
 /**
  * Specifies that given test class should be considered Warp test
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 @Documented
 @Retention(RUNTIME)

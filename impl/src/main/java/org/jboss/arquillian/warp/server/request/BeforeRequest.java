@@ -21,9 +21,9 @@ import javax.servlet.ServletRequest;
 
 /**
  * The event fired before the request is processed by {@link Servlet}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class BeforeRequest extends RequestEvent {
 

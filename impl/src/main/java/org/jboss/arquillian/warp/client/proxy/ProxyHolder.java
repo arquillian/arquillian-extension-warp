@@ -28,9 +28,9 @@ import org.littleshoot.proxy.HttpRequestFilter;
 
 /**
  * The holder for instantiated proxies.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class ProxyHolder {
 

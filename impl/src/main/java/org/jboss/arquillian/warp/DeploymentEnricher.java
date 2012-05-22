@@ -25,8 +25,6 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
 import org.jboss.arquillian.warp.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.server.filter.WarpFilter;
@@ -46,9 +44,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * Adds all parts required by JSFUnit into web archive.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class DeploymentEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender {
 

@@ -27,7 +27,7 @@ import org.jboss.arquillian.warp.server.test.TestResultObserver;
 
 /**
  * Registers extension logic on the server-side.
- * 
+ *
  * @author Lukas Fryc
  */
 public class WarpRemoteExtension implements RemoteLoadableExtension {

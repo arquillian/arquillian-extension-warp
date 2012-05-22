@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 
 /**
  * Executed after the request is processed by {@link javax.servlet.Servlet}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 @Documented
 @Retention(RUNTIME)

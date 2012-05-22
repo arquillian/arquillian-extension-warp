@@ -25,9 +25,9 @@ import java.io.Serializable;
 
 /**
  * The utility methods for serializatio of {@link Serializable} objects.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class SerializationUtils {
 

@@ -23,9 +23,9 @@ import org.jboss.arquillian.core.spi.EventContext;
 
 /**
  * The handler for current context.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class RequestContextHandler {
 

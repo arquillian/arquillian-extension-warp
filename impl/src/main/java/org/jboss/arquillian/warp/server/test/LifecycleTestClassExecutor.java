@@ -36,9 +36,9 @@ import org.jboss.arquillian.warp.server.request.BeforeRequest;
 /**
  * The observer which watches all {@link Before} and {@link AfterRequest} events and executes the {@link BeforeClass} and
  * {@link AfterClass} events once per {@link ServerAssertion} class on the end of a request.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class LifecycleTestClassExecutor {
 

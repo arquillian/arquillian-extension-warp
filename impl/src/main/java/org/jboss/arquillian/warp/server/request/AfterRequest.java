@@ -21,7 +21,7 @@ import javax.servlet.ServletRequest;
 
 /**
  * The event fired after the request is processed by {@link Servlet}.
- * 
+ *
  * @author Lukas Fryc
  */
 public class AfterRequest extends RequestEvent {

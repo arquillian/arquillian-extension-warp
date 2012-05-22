@@ -30,7 +30,7 @@ public class PhaserListener implements PhaseListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
      */
     @Override
@@ -40,7 +40,7 @@ public class PhaserListener implements PhaseListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.faces.event.PhaseListener#afterPhase(javax.faces.event.PhaseEvent)
      */
     @Override
@@ -50,7 +50,7 @@ public class PhaserListener implements PhaseListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.faces.event.PhaseListener#getPhaseId()
      */
     @Override

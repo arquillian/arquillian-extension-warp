@@ -21,7 +21,7 @@ import java.net.URL;
 
 /**
  * Provides URL manipulations and functionality.
- * 
+ *
  * @author Lukas Fryc
  */
 public final class URLUtils {
@@ -31,7 +31,7 @@ public final class URLUtils {
 
     /**
      * Use URL context and one or more relocations to build end URL.
-     * 
+     *
      * @param context first URL used like a context root for all relocation changes
      * @param relocations array of relocation URLs
      * @return end url after all changes made on context with relocations
@@ -47,7 +47,7 @@ public final class URLUtils {
 
     /**
      * Use URL context and one or more relocations to build end URL.
-     * 
+     *
      * @param context first URL used like a context root for all relocation changes
      * @param relocations array of relocation URLs
      * @return end url after all changes made on context with relocations

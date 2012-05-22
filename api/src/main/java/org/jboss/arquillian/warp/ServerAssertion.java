@@ -20,15 +20,15 @@ import java.io.Serializable;
 
 /**
  * Provides contract for being assertion which could be serialized and sent to the server.
- * 
+ *
  * Implementations should use SPI annotations to trigger asserting logic on server, such as
  * {@link org.jboss.arquillian.warp.test.BeforeServlet} or {@link org.jboss.arquillian.warp.WarpTest.AfterServlet}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public abstract class ServerAssertion implements Serializable {
-    
+
     private static final long serialVersionUID = -8706974268337963961L;
 
 }

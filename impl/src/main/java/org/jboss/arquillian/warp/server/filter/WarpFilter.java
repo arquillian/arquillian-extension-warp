@@ -63,13 +63,13 @@ import org.jboss.arquillian.warp.utils.SerializationUtils;
  * Filter which ensures detects and extracts {@link ServerAssertion}s from request and registers it in {@link AssertionRegistry}
  * .
  * </p>
- * 
+ *
  * <p>
  * The assertion can be retrieved from {@link AssertionRegistry} each time the {@link LifecycleEvent} is fired.
  * </p>
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 @WebFilter(urlPatterns = "/*")
 public class WarpFilter implements Filter {
@@ -90,7 +90,7 @@ public class WarpFilter implements Filter {
 
     @Inject
     private Instance<AssertionRegistry> assertionRegistry;
-    
+
     @Inject
     private Instance<TestResultStore> testResultStore;
 

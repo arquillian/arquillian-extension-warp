@@ -29,9 +29,9 @@ import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
 
 /**
  * Stores the bindings from auxiliary class instance to {@link LifecycleManagerImpl}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
 
@@ -51,7 +51,7 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
 
     /**
      * Retrieves instance of {@link LifecycleManagerImpl} for given instance of given class.
-     * 
+     *
      * @param clazz the class used as denominator during retrieval
      * @param boundObject the object used as key for retriving {@link LifecycleManagerImpl}
      * @return the bound instance of {@link LifecycleManagerImpl}
@@ -73,7 +73,7 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
 
     /**
      * Binds the current {@link LifecycleManagerImpl} with given object of given class.
-     * 
+     *
      * @param clazz the class to be bound
      * @param object the object to be bound
      * @throws ObjectAlreadyAssociatedException when there is already object bound with {@link LifecycleManagerImpl} for given
@@ -99,7 +99,7 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
 
     /**
      * Unbinds the {@link LifecycleManagerImpl} for given class and given object.
-     * 
+     *
      * @param clazz the bound class
      * @param object the bound class
      * @throws ObjectNotAssociatedException when no object bound with {@link LifecycleManagerImpl}.
@@ -126,7 +126,7 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
 
     /**
      * Verifies that there is no object bound with current {@link LifecycleManagerImpl}.
-     * 
+     *
      * @throws StoreHasAssociatedObjectsException when there is object bound with current {@link LifecycleManagerImpl}.
      */
     public <T> void verifyManagerUnbound() throws StoreHasAssociatedObjectsException {

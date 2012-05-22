@@ -21,16 +21,16 @@ import java.lang.annotation.Annotation;
 /**
  * The lifecycle event which will be caught by {@link LifecycleTestDriver} and all methods annotated with annotation
  * {@link #getAnnotation()} will be executed.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public abstract class LifecycleEvent {
 
     /**
      * Returns the annotation which annotates methods on {@link ServerAssertion} which will be executed during this
      * {@link LifecycleEvent}.
-     * 
+     *
      * @return the annotation which annotates methods on {@link ServerAssertion} which will be executed during this
      *         {@link LifecycleEvent}.
      */

@@ -25,9 +25,9 @@ import org.jboss.arquillian.warp.shared.ResponsePayload;
 
 /**
  * The holder for {@link ServerAssertion} object.
- * 
+ *
  * Provides methods for settings up the server assertion and its retrieval.
- * 
+ *
  * @author Lukas Fryc
  */
 class AssertionHolder {
@@ -49,7 +49,7 @@ class AssertionHolder {
 
     /**
      * Returns true if there is client action advertised, see {@link #advertise()}.
-     * 
+     *
      * @return true if there is client action advertised, see {@link #advertise()}.
      */
     private static boolean isAdvertised() {
@@ -58,7 +58,7 @@ class AssertionHolder {
 
     /**
      * Returns true if there is {@link ServerAssertion} pushed for current request.
-     * 
+     *
      * @return true if there is {@link ServerAssertion} pushed for current request.
      */
     private static boolean isEnriched() {
@@ -68,7 +68,7 @@ class AssertionHolder {
     /**
      * Returns true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
      * is advertised.
-     * 
+     *
      * @return true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
      *         is advertised.
      */
@@ -80,10 +80,10 @@ class AssertionHolder {
      * <p>
      * Pushes the {@link RequestPayload} to verify on the server.
      * </p>
-     * 
+     *
      * <p>
      * This method cancels flag set by {@link #advertise()}.
-     * 
+     *
      * @param payload to verify on the server
      */
     public static void pushRequest(RequestPayload payload) {
@@ -97,7 +97,7 @@ class AssertionHolder {
 
     /**
      * Waits until the {@link ServerAssertion} for request is available and returns it.
-     * 
+     *
      * @return the associated {@link ServerAssertion}
      * @throws SettingRequestTimeoutException when {@link ServerAssertion} isn't setup in time
      */
@@ -108,7 +108,7 @@ class AssertionHolder {
 
     /**
      * Pushes the verified {@link ResponsePayload} to be obtained by test.
-     * 
+     *
      * @param payload verified {@link ResponsePayload} to be obtained by test.
      */
     static void pushResponse(ResponsePayload payload) {
@@ -117,7 +117,7 @@ class AssertionHolder {
 
     /**
      * Waits until the for response is available and returns it.
-     * 
+     *
      * @return the {@link ResponsePayload}
      * @throws ServerResponseTimeoutException when the response wasn't returned in time
      */

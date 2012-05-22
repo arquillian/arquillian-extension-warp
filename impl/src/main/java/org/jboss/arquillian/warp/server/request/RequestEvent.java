@@ -22,9 +22,9 @@ import org.jboss.arquillian.core.spi.event.Event;
 
 /**
  * The event associated with {@link ServletRequest}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class RequestEvent implements Event {
 

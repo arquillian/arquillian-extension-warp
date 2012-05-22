@@ -27,9 +27,9 @@ import org.jboss.arquillian.warp.spi.LifecycleManager;
 /**
  * The manager which can fire lifecycle event, which can in turn start verification on assertion registered using
  * {@link AssertionRegistry}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class LifecycleManagerImpl implements LifecycleManager {
 
@@ -41,7 +41,7 @@ public class LifecycleManagerImpl implements LifecycleManager {
 
     /**
      * Fires lifecycle event, which can start verification on given assertion.
-     * 
+     *
      * @param event the lifecycle event to fire
      */
     public void fireLifecycleEvent(LifecycleEvent event) {

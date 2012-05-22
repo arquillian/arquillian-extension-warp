@@ -25,9 +25,9 @@ import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
 /**
  * The lifecycle event which binds with {@link BeforePhase} verification execution.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class PhaseLifecycleEvent extends LifecycleEvent {
 

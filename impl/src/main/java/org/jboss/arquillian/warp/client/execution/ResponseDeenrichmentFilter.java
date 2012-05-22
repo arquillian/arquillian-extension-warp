@@ -24,7 +24,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.littleshoot.proxy.HttpFilter;
 
 public class ResponseDeenrichmentFilter implements HttpFilter {
-    
+
     @Override
     public boolean shouldFilterResponses(HttpRequest httpRequest) {
         return true;

@@ -18,14 +18,13 @@ package org.jboss.arquillian.warp.extension.servlet;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
 /**
  * The lifecycle event which binds with {@link BeforeServlet} verification execution.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class BeforeServletEvent extends LifecycleEvent {
 

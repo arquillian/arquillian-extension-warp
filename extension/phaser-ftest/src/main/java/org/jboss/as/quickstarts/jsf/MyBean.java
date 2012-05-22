@@ -24,10 +24,9 @@ import javax.inject.Named;
 
 /**
  * <p>
- * {@link MyBean} is the JSF backing bean for the application, holding the input data to be
- * re-displayed.
+ * {@link MyBean} is the JSF backing bean for the application, holding the input data to be re-displayed.
  * </p>
- * 
+ *
  */
 @Named
 @RequestScoped

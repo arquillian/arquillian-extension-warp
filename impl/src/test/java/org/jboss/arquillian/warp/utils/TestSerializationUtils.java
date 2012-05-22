@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 
-import org.jboss.arquillian.warp.utils.SerializationUtils;
 import org.junit.Test;
 
 /**

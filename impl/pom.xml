@@ -94,20 +94,15 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <excludes>**/Base64.java,**/BaseNCodec.java</excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <validHeaders>
-                        <validHeader>licences/apache-commons-codec.txt</validHeader>
-                    </validHeaders>
-                </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.jboss.arquillian.extension</groupId>
-                            <artifactId>arquillian-warp-build-resources</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-                    </dependencies>
             </plugin>
         </plugins>
     </build>

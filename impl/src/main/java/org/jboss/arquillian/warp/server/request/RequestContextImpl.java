@@ -24,9 +24,9 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
 
 /**
  * The implementation of {@link RequestContext}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class RequestContextImpl extends AbstractContext<String> implements RequestContext {
 
@@ -34,7 +34,7 @@ public class RequestContextImpl extends AbstractContext<String> implements Reque
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.spi.Context#getScope()
      */
     @Override
@@ -44,7 +44,7 @@ public class RequestContextImpl extends AbstractContext<String> implements Reque
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
      */
     @Override
@@ -54,7 +54,7 @@ public class RequestContextImpl extends AbstractContext<String> implements Reque
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#activate()
      */
     @Override
@@ -64,7 +64,7 @@ public class RequestContextImpl extends AbstractContext<String> implements Reque
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#destroy()
      */
     @Override

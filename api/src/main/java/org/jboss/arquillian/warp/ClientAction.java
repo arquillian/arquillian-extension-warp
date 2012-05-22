@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp;
 
 /**
  * The interface for invoking client action which should trigger server request
- * 
+ *
  * @author Lukas Fryc
  */
 public interface ClientAction {

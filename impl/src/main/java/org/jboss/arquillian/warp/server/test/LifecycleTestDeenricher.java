@@ -32,13 +32,13 @@ import org.jboss.arquillian.warp.ServerAssertion;
 /**
  * Watches the {@link ServerAssertion} objects and on {@link Before} event, it stores all fields which have been changed during
  * that event.
- * 
+ *
  * These changes are the {@link ServerAssertion} enrichment actions.
- * 
+ *
  * Then on {@link After} method, it restores all the changed fields, which deenrich the instance.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class LifecycleTestDeenricher {
 

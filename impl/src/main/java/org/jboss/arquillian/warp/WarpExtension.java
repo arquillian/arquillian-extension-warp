@@ -26,7 +26,7 @@ import org.jboss.arquillian.warp.client.proxy.ProxyURLProvider;
 
 /**
  * The client side extension for enhancing test with JSFUnit's logic.
- * 
+ *
  * @author Lukas Fryc
  */
 public class WarpExtension implements LoadableExtension {

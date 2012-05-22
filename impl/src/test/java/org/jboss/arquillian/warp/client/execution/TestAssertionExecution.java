@@ -33,7 +33,7 @@ import org.junit.Test;
 @SuppressWarnings("serial")
 public class TestAssertionExecution {
 
-    private final static Logger log = Logger.getLogger(TestAssertionExecution.class.getName());
+    private static final Logger log = Logger.getLogger(TestAssertionExecution.class.getName());
 
     private CountDownLatch requestStarted;
     private CountDownLatch responseFinished;
@@ -46,7 +46,7 @@ public class TestAssertionExecution {
         actionFinished = new CountDownLatch(1);
     }
 
-    @Test(timeout=5000)
+    @Test(timeout = 5000)
     public void testBlocking() {
         new Thread(new Runnable() {
             public void run() {
@@ -72,8 +72,8 @@ public class TestAssertionExecution {
 
         awaitSafely(actionFinished);
     }
-    
-    @Test(timeout=5000)
+
+    @Test(timeout = 5000)
     public void testBlocking_modified() {
         new Thread(new Runnable() {
             public void run() {
@@ -102,7 +102,7 @@ public class TestAssertionExecution {
         awaitSafely(actionFinished);
     }
 
-    @Test(timeout=5000)
+    @Test(timeout = 5000)
     public void testNonBlocking() {
         new Thread(new Runnable() {
             public void run() {
