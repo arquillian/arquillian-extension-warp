@@ -24,6 +24,8 @@ import java.util.concurrent.FutureTask;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.RequestExecution;
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
+import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.shared.RequestPayload;
 import org.jboss.arquillian.warp.shared.ResponsePayload;
 
@@ -86,8 +88,10 @@ public class RequestExecutionImpl implements RequestExecution {
         if (throwable != null) {
             if (throwable instanceof AssertionError) {
                 throw (AssertionError) throwable;
+            } else if (throwable instanceof ClientWarpExecutionException) {
+                throw (ClientWarpExecutionException) throwable;
             } else {
-                throw new ServerExecutionException(responsePayload.getThrowable());
+                throw new ServerWarpExecutionException(responsePayload.getThrowable());
             }
         }
 
