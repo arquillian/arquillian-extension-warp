@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -91,4 +90,25 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <validHeaders>
+                        <validHeader>licences/apache-commons-codec.txt</validHeader>
+                    </validHeaders>
+                </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.jboss.arquillian.extension</groupId>
+                            <artifactId>arquillian-warp-build-resources</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 </project>
