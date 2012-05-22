@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.warp.server.test;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -49,14 +48,20 @@ public class LifecycleTestDeenricher {
     public void beforeTest(@Observes(precedence = 100) EventContext<Before> context) {
         final Object testInstance = context.getEvent().getTestInstance();
         backupAllFields(testInstance);
-        context.proceed();
-        backupUpdatedFields(testInstance);
+        try {
+            context.proceed();
+        } finally {
+            backupUpdatedFields(testInstance);
+        }
     }
 
     public void afterTest(@Observes(precedence = 100) EventContext<After> context) {
         final Object testInstance = context.getEvent().getTestInstance();
-        context.proceed();
-        restoreFields(testInstance);
+        try {
+            context.proceed();
+        } finally {
+            restoreFields(testInstance);
+        }
     }
 
     private void backupAllFields(Object instance) {
@@ -94,9 +99,10 @@ public class LifecycleTestDeenricher {
                 Field field = entry.getKey();
                 Object oldValue = entry.getValue();
 
-                if(!validateIfFieldCanBeSetAndSerialized(field)) {
+                if (!validateIfFieldCanBeSetAndSerialized(field)) {
                     continue;
                 }
+
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
@@ -110,17 +116,11 @@ public class LifecycleTestDeenricher {
     }
 
     private boolean validateIfFieldCanBeSetAndSerialized(Field field) {
-        if (Modifier.isTransient(field.getModifiers()) ||
-                (Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()))) {
+        if (Modifier.isTransient(field.getModifiers())
+                || (Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()))) {
             return false;
         }
-        if(!isSerializable(field.getType())) {
-            return false;
-        }
-        return true;
-    }
 
-    private boolean isSerializable(Class<?> clazz) {
-        return clazz.isPrimitive() || Serializable.class.isAssignableFrom(clazz);
+        return true;
     }
 }
