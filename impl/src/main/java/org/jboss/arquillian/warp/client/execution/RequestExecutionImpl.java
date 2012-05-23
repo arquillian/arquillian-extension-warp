@@ -91,7 +91,7 @@ public class RequestExecutionImpl implements RequestExecution {
 
         assertion = responsePayload.getAssertion();
     }
-    
+
     private void propagateFailure(Throwable throwable) {
         if (throwable instanceof AssertionError) {
             throw (AssertionError) throwable;
