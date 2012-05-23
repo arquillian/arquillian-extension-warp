@@ -86,16 +86,20 @@ public class RequestExecutionImpl implements RequestExecution {
 
         Throwable throwable = responsePayload.getThrowable();
         if (throwable != null) {
-            if (throwable instanceof AssertionError) {
-                throw (AssertionError) throwable;
-            } else if (throwable instanceof ClientWarpExecutionException) {
-                throw (ClientWarpExecutionException) throwable;
-            } else {
-                throw new ServerWarpExecutionException(responsePayload.getThrowable());
-            }
+            propagateFailure(throwable);
         }
 
         assertion = responsePayload.getAssertion();
+    }
+    
+    private void propagateFailure(Throwable throwable) {
+        if (throwable instanceof AssertionError) {
+            throw (AssertionError) throwable;
+        } else if (throwable instanceof ClientWarpExecutionException) {
+            throw (ClientWarpExecutionException) throwable;
+        } else {
+            throw new ServerWarpExecutionException(throwable);
+        }
     }
 
     public class PushAssertion implements Callable<ResponsePayload> {

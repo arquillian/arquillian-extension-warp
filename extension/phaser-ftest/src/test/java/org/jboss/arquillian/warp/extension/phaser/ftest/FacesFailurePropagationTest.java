@@ -1,3 +1,5 @@
+package org.jboss.arquillian.warp.extension.phaser.ftest;
+
 /**
  * JBoss, Home of Professional Open Source
  * Copyright 2012, Red Hat Middleware LLC, and individual contributors
@@ -36,13 +38,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 import static org.jboss.arquillian.warp.extension.phaser.Phase.RENDER_RESPONSE;
-import static org.jboss.arquillian.warp.extension.phaser.Phase.UPDATE_MODEL_VALUES;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
-
-import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -53,21 +52,18 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
-import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
 import org.jboss.as.quickstarts.jsf.MyBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 @WarpTest
 @RunWith(Arquillian.class)
-public class PhaserBasicTest {
+public class FacesFailurePropagationTest {
 
     @Drone
     WebDriver browser;
@@ -82,66 +78,36 @@ public class PhaserBasicTest {
                 .addAsWebResource(new File("src/main/webapp/index.xhtml"))
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
                 .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+                .addAsWebInfResource("failing-listener.faces-config.xml", "faces-config.xml")
+                .addClass(FailingPhaseListener.class);
     }
 
     @Test
     @RunAsClient
     public void test() {
-        Warp.execute(new ClientAction() {
+        try {
+            Warp.execute(new ClientAction() {
 
-            @Override
-            public void action() {
-                browser.navigate().to(contextPath + "index.jsf");
-            }
-        }).verify(new InitialRequestVerification());
+                @Override
+                public void action() {
+                    browser.navigate().to(contextPath + "index.jsf");
+                }
+            }).verify(new InitialRequestVerification());
 
-        NameChangedToX x = Warp.execute(new ClientAction() {
-            public void action() {
-                WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
-                nameInput.sendKeys("X");
-            }
-        }).verify(new NameChangedToX());
+            fail("warp test should fail");
 
-        // verify Object was Deserialized with Server state
-        Assert.assertNotNull(x.getUpdatedName());
+        } catch (ServerWarpExecutionException e) {
+            // that is okay, we expect test to fail
+        }
     }
 
     public static class InitialRequestVerification extends ServerAssertion {
 
         private static final long serialVersionUID = 1L;
 
-        @Inject
-        MyBean myBean;
-
         @AfterPhase(RENDER_RESPONSE)
         public void initial_state_havent_changed_yet() {
-            assertEquals("John", myBean.getName());
-        }
-    }
-
-    public static class NameChangedToX extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @Inject
-        MyBean myBean;
-
-        private String updatedName;
-
-        @BeforePhase(UPDATE_MODEL_VALUES)
-        public void initial_state_havent_changed_yet() {
-            assertEquals("John", myBean.getName());
-        }
-
-        @AfterPhase(UPDATE_MODEL_VALUES)
-        public void changed_input_value_has_been_applied() {
-            assertEquals("JohnX", myBean.getName());
-            updatedName = myBean.getName();
-        }
-
-        public String getUpdatedName() {
-            return updatedName;
+            fail("test should not reach rendering phase");
         }
     }
 }

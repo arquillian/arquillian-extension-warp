@@ -177,7 +177,7 @@ public class WarpFilter implements Filter {
                         manager.fire(new AfterSuite());
                     }
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     // exception occured during request execution
                     ResponsePayload responsePayload = new ResponsePayload(e);
                     responseEnrichment = SerializationUtils.serializeToBase64(responsePayload);
