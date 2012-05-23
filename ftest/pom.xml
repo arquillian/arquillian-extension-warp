@@ -4,8 +4,9 @@
 
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-parent</artifactId>
+        <artifactId>arquillian-warp-build</artifactId>
         <version>1.0.0.Alpha1-SNAPSHOT</version>
+        <relativePath>../build</relativePath>
     </parent>
 
     <artifactId>arquillian-warp-ftest</artifactId>
@@ -20,7 +21,6 @@
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-warp-impl</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

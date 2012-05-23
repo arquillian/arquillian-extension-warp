@@ -4,15 +4,25 @@
 
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-parent</artifactId>
+        <artifactId>arquillian-warp-build</artifactId>
         <version>1.0.0.Alpha1-SNAPSHOT</version>
-        <relativePath>../..</relativePath>
+        <relativePath>../../build</relativePath>
     </parent>
 
     <artifactId>arquillian-warp-phaser</artifactId>
     <name>Arquillian Warp Extension: Phaser</name>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.core</groupId>
+            <artifactId>arquillian-core-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-warp-spi</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_3.0_spec</artifactId>
@@ -29,15 +39,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.core</groupId>
-            <artifactId>arquillian-core-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-warp-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
