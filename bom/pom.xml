@@ -26,7 +26,6 @@
     </scm>
 
     <properties>
-        <version.arquillian.warp>1.0.0.Alpha1-SNAPSHOT</version.arquillian.warp>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
@@ -36,22 +35,22 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-warp-api</artifactId>
-                <version>${version.arquillian.warp}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-warp-spi</artifactId>
-                <version>${version.arquillian.warp}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-warp-phaser</artifactId>
-                <version>${version.arquillian.warp}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-warp-impl</artifactId>
-                <version>${version.arquillian.warp}</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

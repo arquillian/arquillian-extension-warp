@@ -12,11 +12,6 @@
     <name>Arquillian Warp Extension: Build Parent</name>
     <packaging>pom</packaging>
 
-
-    <properties>
-        <version.arquillian.warp>1.0.0.Alpha1-SNAPSHOT</version.arquillian.warp>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
         
@@ -24,14 +19,9 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-warp-bom</artifactId>
-                <version>${version.arquillian.warp}</version>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-build-resources</artifactId>
-                <version>${version.arquillian.warp}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
@@ -156,7 +146,7 @@
                         <dependency>
                             <groupId>org.jboss.arquillian.extension</groupId>
                             <artifactId>arquillian-warp-build-resources</artifactId>
-                            <version>${version.arquillian.warp}</version>
+                            <version>${project.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -198,7 +188,7 @@
                         <dependency>
                             <groupId>org.jboss.arquillian.extension</groupId>
                             <artifactId>arquillian-warp-build-resources</artifactId>
-                            <version>${version.arquillian.warp}</version>
+                            <version>${project.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
