@@ -14,9 +14,9 @@
 
 
     <properties>
-        <version.arquillian.warp>1.0.0.Alpha1-SNAPSHOT</version.arquillian.warp>    
+        <version.arquillian.warp>1.0.0.Alpha1-SNAPSHOT</version.arquillian.warp>
     </properties>
-    
+
     <dependencyManagement>
         <dependencies>
         
@@ -27,6 +27,11 @@
                 <version>${version.arquillian.warp}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-warp-build-resources</artifactId>
+                <version>${version.arquillian.warp}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
