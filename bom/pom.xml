@@ -19,11 +19,28 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Lukas Fryc</name>
+            <email>lfryc@redhat.com</email>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://issues.jboss.org/browse/ARQ/component/12315782</url>
+    </issueManagement>
+
     <scm>
         <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-warp.git</connection>
         <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-warp.git</developerConnection>
         <url>git://github.com/arquillian/arquillian-extension-warp.git</url>
     </scm>
+
+    <ciManagement>
+        <system>CloudBess</system>
+        <url>https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/</url>
+    </ciManagement>
 
     <properties>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
