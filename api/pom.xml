@@ -6,7 +6,7 @@
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-parent</artifactId>
         <version>1.0.0.Alpha1-SNAPSHOT</version>
-        <relativePath>..</relativePath>
+        <relativePath>../build</relativePath>
     </parent>
 
     <artifactId>arquillian-warp-api</artifactId>
