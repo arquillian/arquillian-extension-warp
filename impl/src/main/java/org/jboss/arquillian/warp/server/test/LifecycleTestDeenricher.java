@@ -83,7 +83,7 @@ public class LifecycleTestDeenricher {
 
                 Object newValue = field.get(instance);
 
-                if (oldValue != newValue) {
+                if (hasChanged(field, oldValue, newValue)) {
                     backupUpdated.put(field, oldValue);
                 }
             }
@@ -91,6 +91,14 @@ public class LifecycleTestDeenricher {
             throw new IllegalStateException(e);
         }
         backupAll.clear();
+    }
+
+    private boolean hasChanged(Field field, Object oldValue, Object newValue) {
+        if (field.getType().isPrimitive()) {
+            return !oldValue.equals(newValue);
+        } else {
+            return oldValue != newValue;
+        }
     }
 
     private void restoreFields(Object instance) {

@@ -76,15 +76,15 @@ public class TestLifecycleTestDeenricher {
 
         // given
         LifecycleTestDeenricher deenricher = new LifecycleTestDeenricher();
-        assertEquals(testInstance.integer, 1);
-        assertNull(testInstance.object);
+        assertEquals(1, testInstance.injectedInteger);
+        assertNull(testInstance.injectedObject);
 
         // when
         deenricher.beforeTest(beforeContext);
 
         // then
-        assertEquals(testInstance.integer, 2);
-        assertNotNull(testInstance.object);
+        assertEquals(2, testInstance.injectedInteger);
+        assertNotNull(testInstance.injectedObject);
     }
 
     @Test
@@ -92,28 +92,57 @@ public class TestLifecycleTestDeenricher {
 
         // given
         LifecycleTestDeenricher deenricher = new LifecycleTestDeenricher();
-        assertEquals(testInstance.integer, 1);
-        assertNull(testInstance.object);
+        assertEquals(1, testInstance.injectedInteger);
+        assertNull(testInstance.injectedObject);
 
         // when
         deenricher.beforeTest(beforeContext);
         deenricher.afterTest(afterContext);
 
         // then
-        assertEquals(testInstance.integer, 1);
-        assertNull(testInstance.object);
+        assertEquals(1, testInstance.injectedInteger);
+        assertNull(testInstance.injectedObject);
+    }
+
+    @Test
+    public void testValueChanged() {
+
+        // given
+        LifecycleTestDeenricher deenricher = new LifecycleTestDeenricher();
+        assertEquals(false, testInstance.bool);
+        assertEquals(1, testInstance.injectedInteger);
+        assertNull(testInstance.injectedObject);
+
+        // when
+        deenricher.beforeTest(beforeContext);
+        testInstance.bool = true;
+        testInstance.object = "string";
+        testInstance.injectedInteger = 4;
+        testInstance.injectedObject = "string";
+        deenricher.afterTest(afterContext);
+
+        // then
+        assertEquals(true, testInstance.bool);
+        assertEquals("string", testInstance.object);
+        assertEquals(1, testInstance.injectedInteger);
+        assertNull(testInstance.injectedObject);
     }
 
     private void enrich() {
-        testInstance.integer = 2;
-        testInstance.object = new Object();
+        testInstance.injectedInteger = 2;
+        testInstance.injectedObject = new Object();
     }
 
     public static class TestInstance implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
-        public int integer = 1;
+        // not enriched state of the object (in the control of user)
+        public boolean bool = false;
         public Object object;
+
+        // values which will be enriched
+        public int injectedInteger = 1;
+        public Object injectedObject;
     }
 }
