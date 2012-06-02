@@ -150,6 +150,8 @@ public class WarpFilter implements Filter {
                     try {
                         chain.doFilter(req, responseWrapper);
 
+                        lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
+
                         // request successfully finished
                         TestResult firstFailedResult = testResultStore.get().getFirstFailed();
                         if (firstFailedResult == null) {
@@ -168,8 +170,6 @@ public class WarpFilter implements Filter {
                         log.log(Level.SEVERE, "The error occured during request execution", e);
                         throw e;
                     } finally {
-                        lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
-
                         assertionRegistry.get().unregisterAssertion(serverAssertion);
 
                         lifecycleManagerStore.get().unbind(ServletRequest.class, req);
