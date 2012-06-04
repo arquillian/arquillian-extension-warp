@@ -17,6 +17,7 @@
 package org.jboss.as.quickstarts.spring;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WelcomeController {
 
     @RequestMapping("welcome.do")
-    public String welcome() {
+    public String welcome(Model model) {
+
+        model.addAttribute("message", "Warp welcomes!");
 
         return "welcome";
     }

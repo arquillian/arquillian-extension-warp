@@ -23,6 +23,6 @@ limitations under the License.
     <title>Arquillian Warp Spring</title>
 </head>
 <body>
-    <h2>Warp welcomes!</h2>
+    <h2>${message}</h2>
 </body>
 </html>

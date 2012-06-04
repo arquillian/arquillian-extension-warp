@@ -94,6 +94,7 @@ public class WelcomeControllerTestCase {
         public void testWelcome() {
 
             assertEquals("welcome", modelAndView.getViewName());
+            assertEquals("Warp welcomes!", modelAndView.getModel().get("message"));
         }
     }
 }
