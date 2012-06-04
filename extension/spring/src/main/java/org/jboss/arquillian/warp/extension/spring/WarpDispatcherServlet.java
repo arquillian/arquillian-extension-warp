@@ -16,10 +16,10 @@
  */
 package org.jboss.arquillian.warp.extension.spring;
 
-import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.test.spi.annotation.TestScoped;
+import org.jboss.arquillian.warp.extension.spring.container.Commons;
+import org.jboss.arquillian.warp.extension.spring.container.SpringMvcResultImpl;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +28,41 @@ import javax.servlet.http.HttpServletResponse;
 /**
  *
  */
-public class TestDispatcherServlet extends DispatcherServlet {
+public class WarpDispatcherServlet extends DispatcherServlet {
+
+    /**
+     * <p>Creates new instance of {@link WarpDispatcherServlet} class.</p>
+     */
+    public WarpDispatcherServlet() {
+        // empty constructor
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        saveMvcResult(request, new SpringMvcResultImpl());
+
+        super.doService(request, response);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected HandlerExecutionChain getHandler(HttpServletRequest request, boolean cache) throws Exception {
+        HandlerExecutionChain handlerExecutionChain = super.getHandler(request, cache);
+
+        if (handlerExecutionChain != null) {
+            SpringMvcResultImpl mvcResult = getMvcResult(request);
+            mvcResult.setHandler(handlerExecutionChain.getHandler());
+            mvcResult.setInterceptors(handlerExecutionChain.getInterceptors());
+        }
+
+        return handlerExecutionChain;
+    }
 
     /**
      * {@inheritDoc}
@@ -36,10 +70,8 @@ public class TestDispatcherServlet extends DispatcherServlet {
     @Override
     protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        SpringMvcResult mvcResult = new SpringMvcResult();
+        SpringMvcResultImpl mvcResult = getMvcResult(request);
         mvcResult.setModelAndView(mv);
-
-        storeMvcResult(request, mvcResult);
 
         super.render(mv, request, response);
     }
@@ -52,11 +84,9 @@ public class TestDispatcherServlet extends DispatcherServlet {
 
         ModelAndView mv = super.processHandlerException(request, response, handler, ex);
 
-        SpringMvcResult mvcResult = new SpringMvcResult();
+        SpringMvcResultImpl mvcResult = getMvcResult(request);
         mvcResult.setModelAndView(mv);
         mvcResult.setException(ex);
-
-        storeMvcResult(request, mvcResult);
 
         return mv;
     }
@@ -66,8 +96,20 @@ public class TestDispatcherServlet extends DispatcherServlet {
      *
      * @param mvcResult the mvc result
      */
-    private void storeMvcResult(HttpServletRequest request, SpringMvcResult mvcResult) {
+    private void saveMvcResult(HttpServletRequest request, SpringMvcResult mvcResult) {
 
         request.setAttribute(Commons.SPRING_MVC_RESULT_ATTRIBUTE_NAME, mvcResult);
+    }
+
+    /**
+     * <p>Retrieves the {@link SpringMvcResult} class.</p>
+     *
+     * @param request the request
+     *
+     * @return the retrieved {@link SpringMvcResult}
+     */
+    private SpringMvcResultImpl getMvcResult(HttpServletRequest request) {
+
+        return (SpringMvcResultImpl) request.getAttribute(Commons.SPRING_MVC_RESULT_ATTRIBUTE_NAME);
     }
 }

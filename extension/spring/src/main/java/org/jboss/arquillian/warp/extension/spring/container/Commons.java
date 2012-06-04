@@ -14,12 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.spring;
+package org.jboss.arquillian.warp.extension.spring.container;
 
 /**
  * 
  */
-final class Commons {
+public final class Commons {
+    
+    private Commons() {
+        // empty constructor
+    }
     
     public static final String SPRING_MVC_RESULT_ATTRIBUTE_NAME =
             "org.jboss.arquillian.warp.extension.spring.SPRING_MVC_RESULT";

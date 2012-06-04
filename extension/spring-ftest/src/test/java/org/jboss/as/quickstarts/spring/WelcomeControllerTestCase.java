@@ -34,6 +34,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -87,12 +88,12 @@ public class WelcomeControllerTestCase {
         private static final long serialVersionUID = 1L;
 
         @Inject
-        private SpringMvcResult mvcResult;
+        private ModelAndView modelAndView;
 
         @AfterServlet
         public void testWelcome() {
 
-            assertEquals("welcome", mvcResult.getModelAndView().getViewName());
+            assertEquals("welcome", modelAndView.getViewName());
         }
     }
 }

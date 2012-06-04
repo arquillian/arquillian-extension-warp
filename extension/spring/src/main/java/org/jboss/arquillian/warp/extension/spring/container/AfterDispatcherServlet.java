@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.spring;
+package org.jboss.arquillian.warp.extension.spring.container;
 
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.warp.extension.servlet.AfterServletEvent;
+import org.jboss.arquillian.warp.extension.spring.SpringMvcResult;
 import org.jboss.arquillian.warp.server.request.BeforeRequest;
 import org.jboss.arquillian.warp.server.request.RequestScoped;
 

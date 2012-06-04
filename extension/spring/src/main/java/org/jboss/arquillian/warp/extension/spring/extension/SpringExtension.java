@@ -18,8 +18,8 @@ package org.jboss.arquillian.warp.extension.spring.extension;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.warp.extension.spring.SpringWarpRemoteExtension;
-import org.jboss.arquillian.warp.extension.spring.TestDispatcherServlet;
+import org.jboss.arquillian.warp.extension.spring.container.SpringWarpRemoteExtension;
+import org.jboss.arquillian.warp.extension.spring.WarpDispatcherServlet;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -37,8 +37,9 @@ public class SpringExtension implements LoadableExtension, WarpLifecycleExtensio
 
     @Override
     public JavaArchive getEnrichmentLibrary() {
-        return ShrinkWrap.create(JavaArchive.class, "warp-extension-phaser.jar")
-                .addPackage(TestDispatcherServlet.class.getPackage())
+        return ShrinkWrap.create(JavaArchive.class, "warp-extension-spring.jar")
+                .addPackage(WarpDispatcherServlet.class.getPackage())
+                .addPackage(SpringWarpRemoteExtension.class.getPackage())
                 .addAsServiceProvider(RemoteLoadableExtension.class, SpringWarpRemoteExtension.class);
     }
 

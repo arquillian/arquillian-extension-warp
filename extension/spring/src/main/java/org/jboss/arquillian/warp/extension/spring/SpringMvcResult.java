@@ -16,34 +16,19 @@
  */
 package org.jboss.arquillian.warp.extension.spring;
 
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
  */
-public class SpringMvcResult {
+public interface SpringMvcResult {
 
-    private ModelAndView modelAndView;
+    Object getHandler();
 
-    private Exception exception;
+    HandlerInterceptor[] getInterceptors();
 
-    public SpringMvcResult() {
-        // empty constructor
-    }
+    ModelAndView getModelAndView();
 
-    public ModelAndView getModelAndView() {
-        return modelAndView;
-    }
-
-    public void setModelAndView(ModelAndView modelAndView) {
-        this.modelAndView = modelAndView;
-    }
-
-    public Throwable getException() {
-        return exception;
-    }
-
-    public void setException(Exception exception) {
-        this.exception = exception;
-    }
+    Throwable getException();
 }

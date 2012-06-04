@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.spring;
+package org.jboss.arquillian.warp.extension.spring.container;
 
 import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.warp.server.request.RequestScoped;
+import org.jboss.arquillian.warp.extension.spring.SpringMvcResult;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -32,7 +33,7 @@ import java.util.List;
 public class SpringWarpTestEnricher implements TestEnricher {
 
     @Inject
-    private Instance<SpringMvcResult> mvcResult;
+    private Instance<SpringMvcResult> springMvcResult;
 
     @Override
     public void enrich(Object testCase) {
@@ -40,18 +41,31 @@ public class SpringWarpTestEnricher implements TestEnricher {
         List<Field> annotatedFields = SecurityActions.getFieldsWithAnnotation(testCase.getClass(),
                 javax.inject.Inject.class);
 
+        SpringMvcResult mvcResult = springMvcResult.get();
+
         try {
             for (Field field : annotatedFields) {
                 Object value = null;
 
-                if (field.getType() == SpringMvcResult.class) {
-                    value = mvcResult.get();
+                if (mvcResult != null) {
+                    if (field.getType() == SpringMvcResult.class) {
+                        value = mvcResult;
+                    } else if (field.getType() == ModelAndView.class) {
+                        value = mvcResult.getModelAndView();
+                    } else if (field.getType() == Exception.class) {
+                        value = mvcResult.getException();
+                    } else if (field.getType() == HandlerInterceptor[].class) {
+                        value = mvcResult.getInterceptors();
+                    } else if (mvcResult.getHandler() != null &&
+                            field.getType() == mvcResult.getHandler().getClass()) {
+                        value = mvcResult.getHandler();
+                    }
                 }
 
                 field.set(testCase, value);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Could not inject members", e);
+            throw new RuntimeException("Could not inject field in the test class.", e);
         }
 
     }
@@ -59,24 +73,6 @@ public class SpringWarpTestEnricher implements TestEnricher {
     @Override
     public Object[] resolve(Method method) {
 
-        Object[] values = new Object[method.getParameterTypes().length];
-
-        try {
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            for (int i = 0; i < parameterTypes.length; i++) {
-                Class<?> parameterType = parameterTypes[i];
-
-                Object value = null;
-
-                if (parameterType == SpringMvcResult.class) {
-                    value = mvcResult.get();
-                }
-
-                values[i] = value;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Could not inject method parameters", e);
-        }
-        return values;
+        return new Object[method.getParameterTypes().length];
     }
 }
