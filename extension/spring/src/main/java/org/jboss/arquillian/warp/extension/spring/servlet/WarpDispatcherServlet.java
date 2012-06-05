@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.spring;
+package org.jboss.arquillian.warp.extension.spring.servlet;
 
+import org.jboss.arquillian.warp.extension.spring.SpringMvcResult;
 import org.jboss.arquillian.warp.extension.spring.container.Commons;
 import org.jboss.arquillian.warp.extension.spring.container.SpringMvcResultImpl;
 import org.springframework.web.servlet.DispatcherServlet;
