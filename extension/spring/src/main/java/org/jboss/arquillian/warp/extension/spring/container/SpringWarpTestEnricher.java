@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.extension.spring.container;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.warp.extension.spring.SpringMvcResource;
 import org.jboss.arquillian.warp.extension.spring.SpringMvcResult;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,7 +40,7 @@ public class SpringWarpTestEnricher implements TestEnricher {
     public void enrich(Object testCase) {
 
         List<Field> annotatedFields = SecurityActions.getFieldsWithAnnotation(testCase.getClass(),
-                javax.inject.Inject.class);
+                SpringMvcResource.class);
 
         SpringMvcResult mvcResult = springMvcResult.get();
 
