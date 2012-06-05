@@ -17,14 +17,14 @@
 package org.jboss.arquillian.warp.extension.spring.container;
 
 /**
- * 
+ *
  */
 public final class Commons {
-    
+
     private Commons() {
         // empty constructor
     }
-    
+
     public static final String SPRING_MVC_RESULT_ATTRIBUTE_NAME =
             "org.jboss.arquillian.warp.extension.spring.SPRING_MVC_RESULT";
 }
