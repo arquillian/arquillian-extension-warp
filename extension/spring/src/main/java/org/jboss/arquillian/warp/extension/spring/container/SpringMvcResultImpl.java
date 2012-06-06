@@ -17,6 +17,8 @@
 package org.jboss.arquillian.warp.extension.spring.container;
 
 import org.jboss.arquillian.warp.extension.spring.SpringMvcResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -128,5 +130,63 @@ public class SpringMvcResultImpl implements SpringMvcResult {
      */
     public void setException(Exception exception) {
         this.exception = exception;
+    }
+
+    /**
+     * <p>Retrieves the validation errors for the given attribute.</p>
+     *
+     * @param attributeName the attribute name
+     *
+     * @return the validation errors
+     */
+    @Override
+    public Errors getErrors(String attributeName) {
+
+        return getBindingResult(attributeName);
+    }
+
+    /**
+     * <p>Retrieves the validation errors.</p>
+     *
+     * @return the validation errors
+     */
+    @Override
+    public Errors getErrors() {
+
+        return getBindingResult();
+    }
+
+    /**
+     * <p>Retrieves the {@link BindingResult} from the model for the given attribute.</p>
+     *
+     * @return the {@link BindingResult}
+     */
+    private BindingResult getBindingResult(String attributeName) {
+
+        if (modelAndView != null) {
+            return (BindingResult) modelAndView.getModel().get(BindingResult.MODEL_KEY_PREFIX + attributeName);
+        }
+
+        return null;
+    }
+
+    /**
+     * <p>Retrieves the {@link BindingResult} from the model.</p>
+     *
+     * @return the {@link BindingResult}
+     */
+    private BindingResult getBindingResult() {
+
+        if (modelAndView != null) {
+            for (Object obj : modelAndView.getModel().values()) {
+
+                if (obj instanceof BindingResult) {
+
+                    return (BindingResult) obj;
+                }
+            }
+        }
+
+        return null;
     }
 }

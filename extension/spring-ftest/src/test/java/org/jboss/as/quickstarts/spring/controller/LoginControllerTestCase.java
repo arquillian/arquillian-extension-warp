@@ -36,13 +36,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>Tests {@link LoginController} class.</p>
@@ -145,11 +148,17 @@ public class LoginControllerTestCase {
         @SpringMvcResource
         private ModelAndView modelAndView;
 
+        @SpringMvcResource
+        private Errors errors;
+
         @AfterServlet
         public void testGetLogin() {
 
             assertEquals("login", modelAndView.getViewName());
             assertNotNull(modelAndView.getModel().get("userCredentials"));
+            assertEquals("Two errors were expected.", 2, errors.getAllErrors().size());
+            assertTrue("The login hasn't been validated.", errors.hasFieldErrors("login"));
+            assertTrue("The password hasn't been validated.", errors.hasFieldErrors("password"));
         }
     }
 
@@ -160,10 +169,14 @@ public class LoginControllerTestCase {
         @SpringMvcResource
         private ModelAndView modelAndView;
 
+        @SpringMvcResource
+        private Errors errors;
+
         @AfterServlet
         public void testGetLogin() {
 
             assertEquals("welcome", modelAndView.getViewName());
+            assertFalse(errors.hasErrors());
         }
     }
 }

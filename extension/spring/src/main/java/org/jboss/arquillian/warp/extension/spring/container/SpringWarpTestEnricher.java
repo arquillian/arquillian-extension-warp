@@ -21,6 +21,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.warp.extension.spring.SpringMvcResource;
 import org.jboss.arquillian.warp.extension.spring.SpringMvcResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -65,6 +66,8 @@ public class SpringWarpTestEnricher implements TestEnricher {
                         value = mvcResult.getException();
                     } else if (field.getType() == HandlerInterceptor[].class) {
                         value = mvcResult.getInterceptors();
+                    } else if (field.getType() == Errors.class) {
+                        value = mvcResult.getErrors();
                     } else if (mvcResult.getHandler() != null &&
                             field.getType() == mvcResult.getHandler().getClass()) {
                         value = mvcResult.getHandler();

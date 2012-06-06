@@ -28,11 +28,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>Marks that the given annotated field represents a DispatcherServlet state and that needs to be injected into test
  * case.</p>
  *
- * <p>Supported filed types are: {@link SpringMvcResult}, {@link org.springframework.web.servlet.ModelAndView}, {@link
- * Exception}, array of {@link org.springframework.web.servlet.HandlerInterceptor}.</p>
+ * <p>Supported field types are: {@link SpringMvcResult}, {@link org.springframework.web.servlet.ModelAndView}, {@link
+ * Exception}, array of {@link org.springframework.web.servlet.HandlerInterceptor} and {@link
+ * org.springframework.validation.Errors}.</p>
  *
- * <p>It is also possible to inject handler into the test case, but only if the type of the handler is exactly the same
- * as the type of handler that was intercepted during request processing.</p>
+ * <p>It is also possible to inject handler into the test case, but only if the type of the field declared in the test
+ * case is exactly the same as the type of handler that was intercepted during request processing.</p>
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @see SpringMvcResult

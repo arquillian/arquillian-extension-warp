@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.extension.spring;
 
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -55,4 +56,20 @@ public interface SpringMvcResult {
      * @return the exception throw by controller during execution, may be null
      */
     Throwable getException();
+
+    /**
+     * <p>Retrieves the validation errors for the given attribute.</p>
+     *
+     * @param attributeName the attribute name
+     *
+     * @return the validation errors, may be null
+     */
+    Errors getErrors(String attributeName);
+
+    /**
+     * <p>Retrieves the validation errors.</p>
+     *
+     * @return the validation errors, may be null
+     */
+    Errors getErrors();
 }
