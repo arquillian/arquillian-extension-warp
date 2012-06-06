@@ -29,13 +29,21 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
+ * <p>A test enricher that inject into test case fields annotated with {@link SpringMvcResult}.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class SpringWarpTestEnricher implements TestEnricher {
 
+    /**
+     * <p>Represents the {@link SpringMvcResult} captured during request execution.</p>
+     */
     @Inject
     private Instance<SpringMvcResult> springMvcResult;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void enrich(Object testCase) {
 
@@ -71,6 +79,9 @@ public class SpringWarpTestEnricher implements TestEnricher {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object[] resolve(Method method) {
 

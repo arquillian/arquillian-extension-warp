@@ -20,10 +20,15 @@ import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
+ * <p>A remote extension that registers the extension in the remote container.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class SpringWarpRemoteExtension implements RemoteLoadableExtension {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void register(ExtensionBuilder builder) {
         builder.service(TestEnricher.class, SpringWarpTestEnricher.class)

@@ -27,15 +27,23 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
+ * <p>Register Spring extension in Arquillian.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class SpringExtension implements LoadableExtension, WarpLifecycleExtension {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void register(ExtensionBuilder builder) {
         builder.service(WarpLifecycleExtension.class, this.getClass());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public JavaArchive getEnrichmentLibrary() {
         return ShrinkWrap.create(JavaArchive.class, "warp-extension-spring.jar")
@@ -45,7 +53,11 @@ public class SpringExtension implements LoadableExtension, WarpLifecycleExtensio
                 .addAsServiceProvider(RemoteLoadableExtension.class, SpringWarpRemoteExtension.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void enrichWebArchive(WebArchive webArchive) {
+        // empty method
     }
 }

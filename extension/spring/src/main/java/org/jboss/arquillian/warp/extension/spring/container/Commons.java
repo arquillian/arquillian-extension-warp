@@ -17,14 +17,25 @@
 package org.jboss.arquillian.warp.extension.spring.container;
 
 /**
+ * <p>Defines constants used by this extension.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public final class Commons {
 
+    /**
+     * <p>Creates new instance of {@link Commons} class.</p>
+     *
+     * <p>Private constructor prevents from instantiation outside this class.</p>
+     */
     private Commons() {
         // empty constructor
     }
 
+    /**
+     * <p>Represents the name of the attribute in which the {@link org.jboss.arquillian.warp.extension.spring.SpringMvcResult}
+     * is being stored.</p>
+     */
     public static final String SPRING_MVC_RESULT_ATTRIBUTE_NAME =
             "org.jboss.arquillian.warp.extension.spring.SPRING_MVC_RESULT";
 }

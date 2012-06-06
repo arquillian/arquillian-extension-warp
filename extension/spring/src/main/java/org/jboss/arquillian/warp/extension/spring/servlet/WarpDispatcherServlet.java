@@ -27,7 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * <p>A implementation of {@link DispatcherServlet} that captures it internal state during request processing.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
+ * @see SpringMvcResult
  */
 public class WarpDispatcherServlet extends DispatcherServlet {
 

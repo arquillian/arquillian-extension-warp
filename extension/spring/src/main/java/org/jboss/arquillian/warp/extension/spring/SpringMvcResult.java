@@ -20,15 +20,39 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
+ * <p>Aggregates the execution state of {@link org.jboss.arquillian.warp.extension.spring.servlet.WarpDispatcherServlet}
+ * after is execution.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
+ * @see org.jboss.arquillian.warp.extension.spring.servlet.WarpDispatcherServlet
  */
 public interface SpringMvcResult {
 
+    /**
+     * <p>Retrieves the handler responsible for processing the request.</p>
+     *
+     * @return the handler that was responsible for processing the request
+     */
     Object getHandler();
 
+    /**
+     * <p>Retrieves the array of {@link HandlerInterceptor} that was used during request processing.</p>
+     *
+     * @return array of interceptors
+     */
     HandlerInterceptor[] getInterceptors();
 
+    /**
+     * <p>Retrieves the {@link ModelAndView} returned by controller.</p>
+     *
+     * @return {@link ModelAndView} returned by controller
+     */
     ModelAndView getModelAndView();
 
+    /**
+     * <p>The exception that was thrown by the controller during it's execution.</p>
+     *
+     * @return the exception throw by controller during execution, may be null
+     */
     Throwable getException();
 }

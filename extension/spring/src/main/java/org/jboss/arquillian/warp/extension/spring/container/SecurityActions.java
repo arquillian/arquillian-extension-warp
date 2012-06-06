@@ -24,12 +24,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>Defines a set of utility methods that need to be executed in secured context.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 final class SecurityActions {
 
-    static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass)
-    {
+    /**
+     * <p>Retrieves the list of annotated fields for the given type.</p>
+     *
+     * @param source          the type that will be scanned for fields annotated with given type
+     * @param annotationClass the annotation type
+     *
+     * @return list of fields of the given glass that are annotated with specific annotation, may be empty
+     */
+    static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) {
         List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
             public List<Field> run() {
                 List<Field> foundFields = new ArrayList<Field>();

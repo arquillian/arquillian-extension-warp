@@ -28,23 +28,42 @@ import org.jboss.arquillian.warp.server.request.RequestScoped;
 import javax.servlet.ServletRequest;
 
 /**
+ * <p>An observer that intercepts the {@link AfterServletEvent} and sets the instance of {@link SpringMvcResult}
+ * captured from the request.</p>
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class AfterDispatcherServlet {
 
+    /**
+     * <p>Instance of {@link ServletRequest}.</p>
+     */
     @Inject
     @RequestScoped
     private InstanceProducer<ServletRequest> servletRequest;
 
+    /**
+     * <p>Instance of {@link SpringMvcResult}.</p>
+     */
     @Inject
     @RequestScoped
     private InstanceProducer<SpringMvcResult> mvcResult;
 
+    /**
+     * <p>Event handler for {@link BeforeRequest}.</p>
+     *
+     * @param beforeRequest the event
+     */
     public void beforeRequest(@Observes BeforeRequest beforeRequest) {
 
         servletRequest.set(beforeRequest.getRequest());
     }
 
+    /**
+     * <p>Event handler for {@link AfterServletEvent}.</p>
+     *
+     * @param context the execution context
+     */
     public void afterDispatcherServlet(@Observes EventContext<AfterServletEvent> context) {
 
         // retrieves the servlet request
