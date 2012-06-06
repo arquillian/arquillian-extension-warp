@@ -86,6 +86,9 @@
         <!-- extensions -->
         <module>extension/phaser</module>
         <module>extension/phaser-ftest</module>
+
+        <module>extension/spring</module>
+        <module>extension/spring-ftest</module>
     </modules>
 
     <build>
