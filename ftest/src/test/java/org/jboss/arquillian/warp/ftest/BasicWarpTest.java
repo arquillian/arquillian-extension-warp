@@ -50,7 +50,7 @@ import org.openqa.selenium.WebDriver;
  */
 @RunWith(Arquillian.class)
 @WarpTest
-public class WarpBasicTest {
+public class BasicWarpTest {
 
     @Drone
     WebDriver browser;

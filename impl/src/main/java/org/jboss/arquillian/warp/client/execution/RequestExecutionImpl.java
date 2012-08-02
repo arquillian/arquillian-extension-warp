@@ -33,9 +33,9 @@ import org.jboss.arquillian.warp.shared.ResponsePayload;
 
 /**
  * The implementation of execution of client action and server assertion.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class RequestExecutionImpl implements RequestExecution {
 

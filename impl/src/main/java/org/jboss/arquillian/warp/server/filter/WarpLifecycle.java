@@ -40,7 +40,7 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * The lifecycle of Warp request verification
- * 
+ *
  * @author Lukas Fryc
  */
 public class WarpLifecycle {
@@ -59,14 +59,14 @@ public class WarpLifecycle {
 
     /**
      * Executes the lifecycle
-     * 
+     *
      * @return {@link ResponsePayload} based on the lifecycle tests results
      */
     public ResponsePayload execute(Manager manager, ServletRequest request, DoFilterCommand filterCommand,
             ServerAssertion serverAssertion) throws Throwable {
         try {
             request.setAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
-            
+
             manager.fire(new BeforeSuite());
             manager.fire(new BeforeRequest(request));
 
@@ -95,9 +95,9 @@ public class WarpLifecycle {
 
     /**
      * Processes the test results and returns appropriate {@link ResponsePayload} for successful or failed lifecycle tests.
-     * 
+     *
      * The successful lifecycle tests is where no test failed. Failed test is test where at least on lifecycle test failed.
-     * 
+     *
      * @param serverAssertion
      * @return appropriate {@link ResponsePayload} for successful or failed lifecycle tests
      */

@@ -38,7 +38,7 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
 import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
-import org.jboss.as.quickstarts.jsf.MyBean;
+import org.jboss.arquillian.warp.extension.phaser.ftest.cdi.CdiBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
@@ -49,7 +49,7 @@ import org.openqa.selenium.WebElement;
 
 @WarpTest
 @RunWith(Arquillian.class)
-public class PhaserBasicTest {
+public class BasicPhaserTest {
 
     @Drone
     WebDriver browser;
@@ -60,7 +60,7 @@ public class PhaserBasicTest {
     @Deployment
     public static WebArchive createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(MyBean.class)
+        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(CdiBean.class)
                 .addAsWebResource(new File("src/main/webapp/index.xhtml"))
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
                 .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
@@ -102,7 +102,7 @@ public class PhaserBasicTest {
         private static final long serialVersionUID = 1L;
 
         @Inject
-        MyBean myBean;
+        CdiBean myBean;
 
         @AfterPhase(RENDER_RESPONSE)
         public void initial_state_havent_changed_yet() {
@@ -115,7 +115,7 @@ public class PhaserBasicTest {
         private static final long serialVersionUID = 1L;
 
         @Inject
-        MyBean myBean;
+        CdiBean myBean;
 
         private String updatedName;
 

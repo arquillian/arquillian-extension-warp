@@ -38,9 +38,9 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
 import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
 import org.jboss.arquillian.warp.extension.phaser.Phase;
+import org.jboss.arquillian.warp.extension.phaser.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
-import org.jboss.as.quickstarts.jsf.MyBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class TestPhaserLifecycle {
     @Deployment
     public static WebArchive createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(MyBean.class)
+        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(CdiBean.class)
                 .addAsWebResource(new File("src/main/webapp/index.xhtml"))
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
                 .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
@@ -115,6 +115,7 @@ public class TestPhaserLifecycle {
 
         @BeforePhase(Phase.RESTORE_VIEW)
         public void beforeRestoreView() {
+            postback = FacesContext.getCurrentInstance().isPostback();
             before.add(Phase.RESTORE_VIEW);
         }
 
@@ -171,8 +172,6 @@ public class TestPhaserLifecycle {
         @AfterPhase(Phase.RENDER_RESPONSE)
         public void afterRenderResponse() {
             after.add(Phase.RENDER_RESPONSE);
-
-            postback = FacesContext.getCurrentInstance().isPostback();
         }
 
         @AfterServlet

@@ -32,8 +32,8 @@ import org.jboss.arquillian.warp.RequestFilter;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.extension.phaser.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
-import org.jboss.as.quickstarts.jsf.MyBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class TestServerAssertionFailurePropagation {
     @Deployment
     public static WebArchive createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(MyBean.class)
+        return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(CdiBean.class)
                 .addAsWebResource(new File("src/main/webapp/index.xhtml"))
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
                 .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")

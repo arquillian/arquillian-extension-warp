@@ -38,7 +38,7 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.context(RequestContextImpl.class);
-        
+
         builder.service(ResourceProvider.class, HttpServletRequestEnricher.class);
         builder.service(ResourceProvider.class, HttpServletResponseEnricher.class);
 

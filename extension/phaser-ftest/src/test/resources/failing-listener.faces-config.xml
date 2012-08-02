@@ -23,7 +23,7 @@
 
 
     <lifecycle>
-        <phase-listener>org.jboss.arquillian.warp.extension.phaser.ftest.FailingPhaseListener</phase-listener>
+        <phase-listener>org.jboss.arquillian.warp.extension.phaser.ftest.lifecycle.FailingPhaseListener</phase-listener>
     </lifecycle>
 
 </faces-config>

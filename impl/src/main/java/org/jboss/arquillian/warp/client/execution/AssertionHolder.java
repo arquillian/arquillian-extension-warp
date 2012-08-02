@@ -29,9 +29,9 @@ import org.jboss.arquillian.warp.shared.ResponsePayload;
 
 /**
  * The holder for {@link ServerAssertion} object.
- * 
+ *
  * Provides methods for settings up the server assertion and its retrieval.
- * 
+ *
  * @author Lukas Fryc
  */
 class AssertionHolder {
@@ -63,7 +63,7 @@ class AssertionHolder {
 
     /**
      * Returns true if there is client action advertised, see {@link #advertise()}.
-     * 
+     *
      * @return true if there is client action advertised, see {@link #advertise()}.
      */
     private static boolean isEnrichmentAdvertised() {
@@ -72,7 +72,7 @@ class AssertionHolder {
 
     /**
      * Returns true if there is {@link ServerAssertion} pushed for current request.
-     * 
+     *
      * @return true if there is {@link ServerAssertion} pushed for current request.
      */
     private static boolean isEnrichmentFinished() {
@@ -82,14 +82,14 @@ class AssertionHolder {
     /**
      * Returns true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
      * is advertised.
-     * 
+     *
      * @return true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
      *         is advertised.
      */
     static boolean isWaitingForRequests() {
         return isEnrichmentAdvertised();
     }
-    
+
     private static boolean isWaitingForEnriching() {
         return isEnrichmentAdvertised() && !isEnrichmentFinished();
     }
@@ -102,10 +102,10 @@ class AssertionHolder {
      * <p>
      * Pushes the {@link RequestEnrichment} to verify on the server.
      * </p>
-     * 
+     *
      * <p>
      * This method cancels flag set by {@link #advertise()}.
-     * 
+     *
      * @param request to be verified on the server
      */
     public static void addRequest(RequestEnrichment request) {
@@ -116,7 +116,7 @@ class AssertionHolder {
 
     /**
      * Waits until the {@link ServerAssertion} for request is available and returns it.
-     * 
+     *
      * @return the associated {@link ServerAssertion}
      * @throws SettingRequestTimeoutException when {@link ServerAssertion} isn't setup in time
      */
@@ -129,7 +129,7 @@ class AssertionHolder {
 
     /**
      * Pushes the verified {@link ResponsePayload} to be obtained by test.
-     * 
+     *
      * @param payload verified {@link ResponsePayload} to be obtained by test.
      */
     static void addResponse(ResponseEnrichment response) {
@@ -138,7 +138,7 @@ class AssertionHolder {
         responses.add(response);
         responsesLatch.countDown();
     }
-    
+
     static void finishEnrichmentRound() {
         responsesLatch = null;
         enrichmentAdvertised.set(false);
@@ -149,7 +149,7 @@ class AssertionHolder {
 
     /**
      * Waits until the for response is available and returns it.
-     * 
+     *
      * @return the {@link ResponsePayload}
      * @throws ServerResponseTimeoutException when the response wasn't returned in time
      */

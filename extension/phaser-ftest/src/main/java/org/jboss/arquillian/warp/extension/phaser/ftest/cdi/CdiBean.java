@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.as.quickstarts.jsf;
+package org.jboss.arquillian.warp.extension.phaser.ftest.cdi;
 
 import java.io.Serializable;
 
@@ -24,13 +24,13 @@ import javax.inject.Named;
 
 /**
  * <p>
- * {@link MyBean} is the JSF backing bean for the application, holding the input data to be re-displayed.
+ * {@link CdiBean} is the JSF backing bean for the application, holding the input data to be re-displayed.
  * </p>
  *
  */
 @Named
 @RequestScoped
-public class MyBean implements Serializable {
+public class CdiBean implements Serializable {
 
     private static final long serialVersionUID = -6239437588285327644L;
 
