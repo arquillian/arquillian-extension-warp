@@ -17,191 +17,83 @@
 package org.jboss.arquillian.warp.server.filter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.spi.Manager;
-import org.jboss.arquillian.core.spi.ManagerBuilder;
-import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.extension.servlet.AfterServletEvent;
-import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
-import org.jboss.arquillian.warp.server.assertion.AssertionRegistry;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerImpl;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerStoreImpl;
-import org.jboss.arquillian.warp.server.request.AfterRequest;
-import org.jboss.arquillian.warp.server.request.BeforeRequest;
-import org.jboss.arquillian.warp.server.test.TestResultStore;
-import org.jboss.arquillian.warp.shared.RequestPayload;
-import org.jboss.arquillian.warp.shared.ResponsePayload;
-import org.jboss.arquillian.warp.spi.LifecycleEvent;
-import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.arquillian.warp.utils.SerializationUtils;
 
 /**
  * <p>
- * Filter which ensures detects and extracts {@link ServerAssertion}s from request and registers it in {@link AssertionRegistry}
- * .
- * </p>
- *
- * <p>
- * The assertion can be retrieved from {@link AssertionRegistry} each time the {@link LifecycleEvent} is fired.
+ * Filter that detects whenever the incoming request is enriched and thus should be processed by {@link WarpRequestProcessor}.
  * </p>
  *
  * @author Lukas Fryc
- *
  */
-@WebFilter(urlPatterns = "/*")
+@WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class WarpFilter implements Filter {
-
-    private static final String ENRICHMENT = "X-Arq-Enrichment";
-    public static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
-    public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
-
-    private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
-
-    private static Logger log = Logger.getLogger("Proxy");
-
-    @Inject
-    private Instance<LifecycleManagerImpl> lifecycleManager;
-
-    @Inject
-    private Instance<LifecycleManagerStoreImpl> lifecycleManagerStore;
-
-    @Inject
-    private Instance<AssertionRegistry> assertionRegistry;
-
-    @Inject
-    private Instance<TestResultStore> testResultStore;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
+    /**
+     * Detects whenever the request is HTTP request and if yes, delegates to
+     * {@link #doFilterHttp(HttpServletRequest, HttpServletResponse, FilterChain)}.
+     */
     @Override
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse resp, final FilterChain chain) throws IOException,
+            ServletException {
+
         if (req instanceof HttpServletRequest && resp instanceof HttpServletResponse) {
-            HttpServletRequest httpReq = ((HttpServletRequest) req);
-            HttpServletResponse httpResp = ((HttpServletResponse) resp);
-
-            String requestEnrichment = httpReq.getHeader(ENRICHMENT_REQUEST);
-
-            if (requestEnrichment != null && !"null".equals(requestEnrichment)) {
-
-                final AtomicReference<NonWritingServletOutputStream> stream = new AtomicReference<NonWritingServletOutputStream>();
-                final AtomicReference<NonWritingPrintWriter> writer = new AtomicReference<NonWritingPrintWriter>();
-
-                HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper((HttpServletResponse) resp) {
-                    @Override
-                    public ServletOutputStream getOutputStream() throws IOException {
-                        stream.set(new NonWritingServletOutputStream());
-                        return stream.get();
-                    }
-
-                    @Override
-                    public PrintWriter getWriter() throws IOException {
-                        writer.set(NonWritingPrintWriter.newInstance());
-                        return writer.get();
-                    }
-                };
-
-                String responseEnrichment = "null";
-
-                try {
-                    RequestPayload requestPayload = SerializationUtils.deserializeFromBase64(requestEnrichment);
-                    ServerAssertion serverAssertion = requestPayload.getAssertion();
-
-                    ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
-                    Manager manager = builder.create();
-                    manager.start();
-                    manager.bind(ApplicationScoped.class, Manager.class, manager);
-                    manager.inject(this);
-
-                    req.setAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
-
-                    manager.fire(new BeforeSuite());
-                    manager.fire(new BeforeRequest(req));
-                    lifecycleManagerStore.get().bind(ServletRequest.class, req);
-
-                    assertionRegistry.get().registerAssertion(serverAssertion);
-
-                    lifecycleManager.get().fireLifecycleEvent(new BeforeServletEvent());
-
-                    try {
-                        chain.doFilter(req, responseWrapper);
-
-                        lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
-
-                        // request successfully finished
-                        TestResult firstFailedResult = testResultStore.get().getFirstFailed();
-                        if (firstFailedResult == null) {
-                            ResponsePayload responsePayload = new ResponsePayload(serverAssertion);
-                            responseEnrichment = SerializationUtils.serializeToBase64(responsePayload);
-                            httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
-                        } else {
-                            Throwable throwable = firstFailedResult.getThrowable();
-                            if (throwable instanceof InvocationTargetException) {
-                                throwable = throwable.getCause();
-                            }
-                            ResponsePayload responsePayload = new ResponsePayload(throwable);
-                            enrichResponse(httpResp, responsePayload);
-                        }
-                    } catch (Exception e) {
-                        log.log(Level.SEVERE, "The error occured during request execution", e);
-                        throw e;
-                    } finally {
-                        assertionRegistry.get().unregisterAssertion(serverAssertion);
-
-                        lifecycleManagerStore.get().unbind(ServletRequest.class, req);
-                        manager.fire(new AfterRequest(req));
-                        manager.fire(new AfterSuite());
-                    }
-
-                } catch (Throwable e) {
-                    // exception occured during request execution
-                    ResponsePayload responsePayload = new ResponsePayload(e);
-                    responseEnrichment = SerializationUtils.serializeToBase64(responsePayload);
-                    httpResp.setHeader(ENRICHMENT_RESPONSE, responseEnrichment);
-                    httpResp.sendError(500);
-                }
-
-                if (writer.get() != null) {
-                    writer.get().finallyWriteAndClose(resp.getOutputStream());
-                }
-                if (stream.get() != null) {
-                    stream.get().finallyWriteAndClose(resp.getOutputStream());
-                }
-
-                return;
-            }
+            doFilterHttp((HttpServletRequest) req, (HttpServletResponse) resp, chain);
+        } else {
+            chain.doFilter(req, resp);
         }
-
-        chain.doFilter(req, resp);
     }
 
-    public void enrichResponse(HttpServletResponse httpResp, ResponsePayload payload) {
-        String enrichment = SerializationUtils.serializeToBase64(payload);
-        httpResp.setHeader(ENRICHMENT_RESPONSE, enrichment);
+    /**
+     * Detects whenever the request is enriched by Warp and if yes, delegates to {
+     * {@link #doFilterWarp(HttpServletRequest, HttpServletResponse, FilterChain, WarpRequest)}
+     */
+    private void doFilterHttp(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException,
+            ServletException {
+
+        WarpRequest warpRequest = new WarpRequest(req);
+
+        if (warpRequest.isEnriched()) {
+            doFilterWarp(req, resp, chain, warpRequest);
+        } else {
+            chain.doFilter(req, resp);
+        }
+    }
+
+    /**
+     * Delegates to {@link WarpRequestProcessor} in order to process the request
+     */
+    private void doFilterWarp(HttpServletRequest req, HttpServletResponse resp, FilterChain chain, WarpRequest warpRequest)
+            throws IOException, ServletException {
+
+        DoFilterCommand filterCommand = createFilterCommand(chain);
+        WarpRequestProcessor requestProcessor = new WarpRequestProcessor(req, resp);
+        requestProcessor.process(warpRequest, filterCommand);
+    }
+
+    /**
+     * Creates the command which delegates to provided chain
+     */
+    private DoFilterCommand createFilterCommand(final FilterChain chain) {
+        return new DoFilterCommand() {
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+                chain.doFilter(request, response);
+            }
+        };
     }
 
     @Override

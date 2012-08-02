@@ -21,4 +21,8 @@ public class WarpCommons {
     public static final String NAMESPACE = "org.jboss.arquillian.warp";
     public static final String LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE = NAMESPACE + ".MANAGER_REQUEST_ATTRIBUTE";
 
+    private static final String ENRICHMENT = "X-Arq-Enrichment";
+    public static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
+    public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
+
 }
