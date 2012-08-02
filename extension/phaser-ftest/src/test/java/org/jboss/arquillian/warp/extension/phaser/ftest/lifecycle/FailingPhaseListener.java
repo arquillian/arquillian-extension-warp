@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.phaser.ftest;
+package org.jboss.arquillian.warp.extension.phaser.ftest.lifecycle;
 
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;

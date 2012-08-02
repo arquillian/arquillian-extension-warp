@@ -14,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.ftest;
+package org.jboss.arquillian.warp.ftest.failure;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -35,14 +30,12 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
-import org.jboss.arquillian.warp.spi.WarpCommons;
+import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -50,7 +43,7 @@ import org.openqa.selenium.WebDriver;
  */
 @RunWith(Arquillian.class)
 @WarpTest
-public class WarpBasicTest {
+public class TestServerAssertionFailurePropagation {
 
     @Drone
     WebDriver browser;
@@ -65,7 +58,7 @@ public class WarpBasicTest {
                 .addAsWebResource(new File("src/main/webapp/index.html")).addAsWebInfResource("beans.xml");
     }
 
-    @Test
+    @Test(expected = AssertionError.class)
     @RunAsClient
     public void test() {
 
@@ -74,52 +67,14 @@ public class WarpBasicTest {
                 browser.navigate().to(contextPath + "index.html");
             }
         }).verify(new InitialRequestAssertion());
-
-        Warp.execute(new ClientAction() {
-            public void action() {
-                browser.findElement(By.id("sendAjax")).click();
-            }
-        }).verify(new AjaxRequestAssertion());
     }
 
     public static class InitialRequestAssertion extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @ArquillianResource
-        HttpServletRequest request;
-
-        @ArquillianResource
-        HttpServletResponse response;
-
-        @BeforeServlet
-        public void beforeServlet() {
-
-            System.out.println("Hi server, here is my initial request!");
-
-            assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
-
-            assertNull("response is not enriched before servlet processing",
-                    response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
-        }
-
-        @AfterServlet
-        public void afterServlet() {
-
-            assertNull("response still isn't senriched, that happens little bit later",
-                    response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
-
-            assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
-        }
-    }
-
-    public static class AjaxRequestAssertion extends ServerAssertion {
-
         private static final long serialVersionUID = 1L;
 
         @BeforeServlet
         public void beforeServlet() {
-            System.out.println("Hi server, here is AJAX request!");
+            fail("AssertionError should be correctly handled and propagated to the client-side");
         }
     }
 

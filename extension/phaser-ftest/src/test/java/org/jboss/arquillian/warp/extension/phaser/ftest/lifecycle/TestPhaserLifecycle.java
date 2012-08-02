@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.phaser.ftest;
+package org.jboss.arquillian.warp.extension.phaser.ftest.lifecycle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -51,7 +51,7 @@ import org.openqa.selenium.WebElement;
 
 @WarpTest
 @RunWith(Arquillian.class)
-public class PhaserLifecycleTest {
+public class TestPhaserLifecycle {
 
     @Drone
     WebDriver browser;

@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.extension.phaser.ftest;
+package org.jboss.arquillian.warp.extension.phaser.ftest.lifecycle;
 
 /**
  * JBoss, Home of Professional Open Source
@@ -63,7 +63,7 @@ import org.openqa.selenium.WebDriver;
 
 @WarpTest
 @RunWith(Arquillian.class)
-public class FacesFailurePropagationTest {
+public class TestFacesLifecycleFailurePropagation {
 
     @Drone
     WebDriver browser;
@@ -82,23 +82,18 @@ public class FacesFailurePropagationTest {
                 .addClass(FailingPhaseListener.class);
     }
 
-    @Test
+    @Test(expected = ServerWarpExecutionException.class)
     @RunAsClient
     public void test() {
-        try {
-            Warp.execute(new ClientAction() {
+        Warp.execute(new ClientAction() {
 
-                @Override
-                public void action() {
-                    browser.navigate().to(contextPath + "index.jsf");
-                }
-            }).verify(new InitialRequestVerification());
+            @Override
+            public void action() {
+                browser.navigate().to(contextPath + "index.jsf");
+            }
+        }).verify(new InitialRequestVerification());
 
-            fail("warp test should fail");
-
-        } catch (ServerWarpExecutionException e) {
-            // that is okay, we expect test to fail
-        }
+        fail("warp test should fail");
     }
 
     public static class InitialRequestVerification extends ServerAssertion {

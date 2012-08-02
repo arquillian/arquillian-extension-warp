@@ -14,16 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.phaser.ftest;
+package org.jboss.arquillian.warp.extension.phaser.ftest.failure;
 
-import static org.jboss.arquillian.warp.extension.phaser.Phase.RENDER_RESPONSE;
-import static org.jboss.arquillian.warp.extension.phaser.Phase.UPDATE_MODEL_VALUES;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
-
-import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -36,20 +32,17 @@ import org.jboss.arquillian.warp.RequestFilter;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
-import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
+import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.as.quickstarts.jsf.MyBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 @WarpTest
 @RunWith(Arquillian.class)
-public class PhaserBasicTest {
+public class TestServerAssertionFailurePropagation {
 
     @Drone
     WebDriver browser;
@@ -68,7 +61,7 @@ public class PhaserBasicTest {
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
-    @Test
+    @Test(expected = AssertionError.class)
     @RunAsClient
     public void test() {
         Warp.execute(new ClientAction() {
@@ -78,16 +71,6 @@ public class PhaserBasicTest {
                 browser.navigate().to(contextPath + "index.jsf");
             }
         }).verify(new InitialRequestVerification());
-
-        NameChangedToX x = Warp.filter(new JsfRequestFilter()).execute(new ClientAction() {
-            public void action() {
-                WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
-                nameInput.sendKeys("X");
-            }
-        }).verify(new NameChangedToX());
-
-        // verify Object was Deserialized with Server state
-        assertEquals("JohnX", x.getUpdatedName());
     }
 
     public static class JsfRequestFilter implements RequestFilter<HttpRequest> {
@@ -101,37 +84,9 @@ public class PhaserBasicTest {
 
         private static final long serialVersionUID = 1L;
 
-        @Inject
-        MyBean myBean;
-
-        @AfterPhase(RENDER_RESPONSE)
+        @BeforeServlet
         public void initial_state_havent_changed_yet() {
-            assertEquals("John", myBean.getName());
-        }
-    }
-
-    public static class NameChangedToX extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @Inject
-        MyBean myBean;
-
-        private String updatedName;
-
-        @BeforePhase(UPDATE_MODEL_VALUES)
-        public void initial_state_havent_changed_yet() {
-            assertEquals("John", myBean.getName());
-        }
-
-        @AfterPhase(UPDATE_MODEL_VALUES)
-        public void changed_input_value_has_been_applied() {
-            assertEquals("JohnX", myBean.getName());
-            updatedName = myBean.getName();
-        }
-
-        public String getUpdatedName() {
-            return updatedName;
+            fail("AssertionError should be correctly handled and propagated to the client-side");
         }
     }
 }
