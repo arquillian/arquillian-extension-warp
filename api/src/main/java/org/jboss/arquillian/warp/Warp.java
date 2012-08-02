@@ -20,27 +20,35 @@ import java.lang.reflect.Constructor;
 
 /**
  * Utility class for invoking client action followed by server request, enriched with assertion.
- *
+ * 
  * @author Lukas Fryc
  */
-public class Warp {
+public final class Warp {
 
     private static final String REQUEST_EXECUTION_IMPL = "org.jboss.arquillian.warp.client.execution.RequestExecutionImpl";
 
     /**
      * Takes client action which should be fired in order to cause server request.
-     *
+     * 
      * @param action the client action to execute
      * @return {@link RequestExecution} instance
      */
     public static RequestExecution execute(ClientAction action) {
+        return instantiate(ClientAction.class, action);
+    }
+
+    public static RequestExecution filter(RequestFilter filter) {
+        return instantiate(RequestFilter.class, filter);
+    }
+
+    private static RequestExecution instantiate(Class<?> constructorType, Object constructorParameter) {
         try {
             @SuppressWarnings("unchecked")
             Class<? extends RequestExecution> clazz = (Class<? extends RequestExecution>) Class.forName(REQUEST_EXECUTION_IMPL);
 
-            Constructor<? extends RequestExecution> constructor = clazz.getConstructor(ClientAction.class);
+            Constructor<? extends RequestExecution> constructor = clazz.getConstructor(constructorType);
 
-            return constructor.newInstance(action);
+            return constructor.newInstance(constructorParameter);
 
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Cannot find class " + REQUEST_EXECUTION_IMPL
@@ -48,6 +56,5 @@ public class Warp {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-
     }
 }

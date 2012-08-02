@@ -16,12 +16,18 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Set;
 
+import org.jboss.arquillian.warp.RequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
-import org.jboss.arquillian.warp.server.filter.WarpFilter;
 import org.jboss.arquillian.warp.shared.RequestPayload;
 import org.jboss.arquillian.warp.shared.ResponsePayload;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.utils.SerializationUtils;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.littleshoot.proxy.HttpRequestFilter;
@@ -30,17 +36,84 @@ public class RequestEnrichmentFilter implements HttpRequestFilter {
 
     @Override
     public void filter(HttpRequest request) {
-        if (AssertionHolder.isWaitingForProcessing()) {
+        if (AssertionHolder.isWaitingForRequests()) {
             try {
-                RequestPayload assertion = AssertionHolder.popRequest();
-                String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
-                request.setHeader(WarpFilter.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
+
+                Collection<RequestPayload> payloads = getMatchingPayloads(request);
+                if (!payloads.isEmpty()) {
+                    RequestPayload assertion = payloads.iterator().next();
+                    String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
+                    request.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
+                }
             } catch (Exception originalException) {
                 ClientWarpExecutionException wrappedException = new ClientWarpExecutionException("enriching request failed: "
                         + originalException.getMessage(), originalException);
                 ResponsePayload exceptionPayload = new ResponsePayload(wrappedException);
-                AssertionHolder.pushResponse(exceptionPayload);
+                ResponseEnrichment responseEnrichment = new ResponseEnrichment(exceptionPayload);
+                AssertionHolder.addResponse(responseEnrichment);
             }
         }
+    }
+
+    private Collection<RequestPayload> getMatchingPayloads(HttpRequest request) {
+        final Set<RequestEnrichment> requests = AssertionHolder.getRequests();
+        final org.jboss.arquillian.warp.HttpRequest httpRequest = new HttpRequestWrapper(request);
+        final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
+
+        for (RequestEnrichment enrichment : requests) {
+            RequestFilter<?> filter = enrichment.getFilter();
+
+            if (filter == null) {
+                payloads.add(enrichment.getPayload());
+                continue;
+            }
+
+            if (isType(filter, org.jboss.arquillian.warp.HttpRequest.class)) {
+
+                @SuppressWarnings("unchecked")
+                RequestFilter<org.jboss.arquillian.warp.HttpRequest> httpRequestFilter = (RequestFilter<org.jboss.arquillian.warp.HttpRequest>) filter;
+
+                if (httpRequestFilter.matches(httpRequest)) {
+                    payloads.add(enrichment.getPayload());
+                }
+            }
+        }
+
+        return payloads;
+    }
+
+    private boolean isType(RequestFilter<?> filter, Type expectedType) {
+        Type[] interfaces = filter.getClass().getGenericInterfaces();
+
+        for (Type type : interfaces) {
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parametrizedType = (ParameterizedType) type;
+                if (parametrizedType.getRawType() == RequestFilter.class) {
+                    return parametrizedType.getActualTypeArguments()[0] == expectedType;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private class HttpRequestWrapper implements org.jboss.arquillian.warp.HttpRequest {
+
+        private HttpRequest request;
+
+        public HttpRequestWrapper(HttpRequest request) {
+            this.request = request;
+        }
+
+        @Override
+        public String getMethod() {
+            return request.getMethod().getName();
+        }
+
+        @Override
+        public String getUri() {
+            return request.getUri();
+        }
+
     }
 }

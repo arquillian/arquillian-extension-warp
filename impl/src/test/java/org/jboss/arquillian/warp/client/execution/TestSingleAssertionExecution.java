@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Logger;
 
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
-import org.jboss.arquillian.warp.shared.RequestPayload;
 import org.jboss.arquillian.warp.shared.ResponsePayload;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +30,7 @@ import org.junit.Test;
  * @author Lukas Fryc
  */
 @SuppressWarnings("serial")
-public class TestAssertionExecution {
-
-    private static final Logger log = Logger.getLogger(TestAssertionExecution.class.getName());
+public class TestSingleAssertionExecution {
 
     private CountDownLatch requestStarted;
     private CountDownLatch responseFinished;
@@ -51,20 +48,14 @@ public class TestAssertionExecution {
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                RequestPayload requestPayload = AssertionHolder.popRequest();
-                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion());
-                AssertionHolder.pushResponse(responsePayload);
-                log.info("response finished");
+                handshake();
                 responseFinished.countDown();
             }
         }).start();
 
         Warp.execute(new ClientAction() {
             public void action() {
-                log.info("request started");
                 requestStarted.countDown();
-                awaitSafely(responseFinished);
-                log.info("action finished");
                 actionFinished.countDown();
             }
         }).verify(new ServerAssertion() {
@@ -74,26 +65,20 @@ public class TestAssertionExecution {
     }
 
     @Test(timeout = 5000)
-    public void testBlocking_modified() {
+    public void testBlocking_with_waiting_for_requests() {
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                if (AssertionHolder.isWaitingForProcessing()) {
-                    RequestPayload requestPayload = AssertionHolder.popRequest();
-                    ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion());
-                    AssertionHolder.pushResponse(responsePayload);
+                if (AssertionHolder.isWaitingForRequests()) {
+                    handshake();
                 }
-                log.info("response finished");
                 responseFinished.countDown();
             }
         }).start();
 
         Warp.execute(new ClientAction() {
             public void action() {
-                log.info("request started");
                 requestStarted.countDown();
-                awaitSafely(responseFinished);
-                log.info("action finished");
                 actionFinished.countDown();
             }
         }).verify(new ServerAssertion() {
@@ -107,22 +92,28 @@ public class TestAssertionExecution {
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                RequestPayload requestPayload = AssertionHolder.popRequest();
-                ResponsePayload responsePayload = new ResponsePayload(requestPayload.getAssertion());
-                AssertionHolder.pushResponse(responsePayload);
-                log.info("response finished");
+                handshake();
                 responseFinished.countDown();
             }
         }).start();
 
         Warp.execute(new ClientAction() {
             public void action() {
-                log.info("request started");
                 requestStarted.countDown();
             }
         }).verify(new ServerAssertion() {
         });
         awaitSafely(responseFinished);
+    }
+
+    private static void handshake() {
+        Set<RequestEnrichment> requests = AssertionHolder.getRequests();
+
+        RequestEnrichment request = requests.iterator().next();
+        ResponsePayload responsePayload = new ResponsePayload(request.getPayload().getAssertion());
+        ResponseEnrichment response = new ResponseEnrichment(responsePayload);
+
+        AssertionHolder.addResponse(response);
     }
 
     private void awaitSafely(CountDownLatch latch) {

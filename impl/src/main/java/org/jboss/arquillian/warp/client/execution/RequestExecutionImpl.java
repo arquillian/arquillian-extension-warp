@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,6 +24,7 @@ import java.util.concurrent.FutureTask;
 
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.RequestExecution;
+import org.jboss.arquillian.warp.RequestFilter;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
@@ -31,20 +33,25 @@ import org.jboss.arquillian.warp.shared.ResponsePayload;
 
 /**
  * The implementation of execution of client action and server assertion.
- *
+ * 
  * @author Lukas Fryc
- *
+ * 
  */
 public class RequestExecutionImpl implements RequestExecution {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private ClientAction action;
+    private RequestFilter<?> filter;
     private ServerAssertion assertion;
     private FutureTask<ResponsePayload> payloadFuture;
 
     public RequestExecutionImpl(ClientAction action) {
         this.action = action;
+    }
+
+    public RequestExecutionImpl(RequestFilter<?> filter) {
+        this.filter = filter;
     }
 
     @SuppressWarnings("unchecked")
@@ -54,14 +61,34 @@ public class RequestExecutionImpl implements RequestExecution {
         return (T) this.assertion;
     }
 
+    @Override
+    public RequestExecution filter(RequestFilter<?> filter) {
+        this.filter = filter;
+        return this;
+    }
+
+    @Override
+    public RequestExecution execute(ClientAction action) {
+        this.action = action;
+        return this;
+    }
+
     private void execute() {
         setupServerAssertion();
         executeClientAction();
         awaitServerExecution();
+        cleanup();
     }
 
     private void setupServerAssertion() {
         AssertionHolder.advertise();
+        AssertionHolder.setExpectedRequests(1);
+
+        RequestPayload payload = new RequestPayload(assertion);
+        RequestEnrichment request = new RequestEnrichment(payload, filter);
+        AssertionHolder.addRequest(request);
+
+        AssertionHolder.finished();
 
         payloadFuture = new FutureTask<ResponsePayload>(new PushAssertion());
         executor.submit(payloadFuture);
@@ -92,6 +119,10 @@ public class RequestExecutionImpl implements RequestExecution {
         assertion = responsePayload.getAssertion();
     }
 
+    private void cleanup() {
+        AssertionHolder.finishEnrichmentRound();
+    }
+
     private void propagateFailure(Throwable throwable) {
         if (throwable instanceof AssertionError) {
             throw (AssertionError) throwable;
@@ -105,8 +136,10 @@ public class RequestExecutionImpl implements RequestExecution {
     public class PushAssertion implements Callable<ResponsePayload> {
         @Override
         public ResponsePayload call() throws Exception {
-            AssertionHolder.pushRequest(new RequestPayload(assertion));
-            return AssertionHolder.popResponse();
+            Set<ResponseEnrichment> responses = AssertionHolder.getResponses();
+            ResponseEnrichment response = responses.iterator().next();
+            return response.getPayload();
+
         }
     }
 
