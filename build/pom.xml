@@ -135,7 +135,7 @@
                     <executions>
                         <execution>
                             <id>checkstyle-report</id>
-                            <phase>process-sources</phase>
+                            <phase>verify</phase>
                             <goals>
                                 <goal>check</goal>
                             </goals>
@@ -177,7 +177,7 @@
                     <executions>
                         <execution>
                             <id>license-check</id>
-                            <phase>process-sources</phase>
+                            <phase>verify</phase>
                             <goals>
                                 <goal>check</goal>
                             </goals>
