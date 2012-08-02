@@ -21,9 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:a4j="http://richfaces.org/a4j"
-      xmlns:rich="http://richfaces.org/rich">
+      xmlns:f="http://java.sun.com/jsf/core">
 
 <body>
 <ui:composition template="/templates/template.xhtml">
@@ -47,18 +45,16 @@
                 To see this example in action, begin typing in the input box, and watch as your text is echoed with
                 html generated from the application server using an ajax call.
             </p>
-            <rich:panel header="Ajax enabled inputText">
-                <h:form id="helloWorldJsf">
-                    <h:outputLabel value="Name:" for="nameInput"/>
-                    <h:inputText id="nameInput" value="#{cdiBean.name}">
-                        <f:ajax event="keyup" render="output"/>
-                    </h:inputText>
-                    <h:panelGroup id="output">
-                        <h:outputText value="Hello #{cdiBean.name}!"
-                                      rendered="#{not empty cdiBean.name}"/>
-                    </h:panelGroup>
-                </h:form>
-            </rich:panel>
+            <h:form id="helloWorldJsf">
+                <h:outputLabel value="Name:" for="nameInput"/>
+                <h:inputText id="nameInput" value="#{cdiBean.name}">
+                    <f:ajax event="keyup" render="output"/>
+                </h:inputText>
+                <h:panelGroup id="output">
+                    <h:outputText value="Hello #{cdiBean.name}!"
+                                  rendered="#{not empty cdiBean.name}"/>
+                </h:panelGroup>
+            </h:form>
         </fieldset>
     </ui:define>
 </ui:composition>
