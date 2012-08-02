@@ -27,6 +27,7 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
 import org.jboss.arquillian.warp.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.server.enrich.HttpServletRequestEnricher;
 import org.jboss.arquillian.warp.server.filter.WarpFilter;
 import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.server.request.RequestContext;
@@ -92,6 +93,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             archive.addPackage(LifecycleEvent.class.getPackage());
             archive.addPackage(BeforeServletEvent.class.getPackage());
             archive.addPackage(ResponsePayload.class.getPackage());
+            archive.addPackage(HttpServletRequestEnricher.class.getPackage());
 
             // add all required classes
             archive.addClass(ServerAssertion.class);
