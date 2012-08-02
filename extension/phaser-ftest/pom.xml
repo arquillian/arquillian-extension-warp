@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,6 +12,11 @@
 
     <artifactId>arquillian-warp-phaser-ftest</artifactId>
     <name>Arquillian Warp Extension: Phaser Tests</name>
+
+    <properties>
+        <browser>htmlUnit</browser>
+        <remoteReusable>false</remoteReusable>
+    </properties>
 
     <dependencies>
 
@@ -161,9 +167,36 @@
                 </plugins>
             </build>
         </profile>
+        
+        <profile>
+            <id>webdriver-chrome</id>
+            <properties>
+                <browser>chrome</browser>
+            </properties>
+        </profile>
+        
+        <profile>
+            <id>webdriver-firefox</id>
+            <properties>
+                <browser>firefox</browser>
+            </properties>
+        </profile>
+        
+        <profile>
+            <id>webdriver-remote-reusable</id>
+            <properties>
+                <remoteReusable>true</remoteReusable>
+            </properties>
+        </profile>
     </profiles>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -31,11 +31,9 @@
     <extension qualifier="webdriver">
         <property name="useJavaScript">true</property>
         
-        <!--
-        <property name="implementationClass">org.openqa.selenium.remote.RemoteWebDriver</property>
-        <property name="browserCapabilities">firefox</property>
-        <property name="reusable">true</property>
-        -->
+        <property name="browserCapabilities">${browser}</property>
+        <property name="remoteReusable">${remoteReusable}</property>
+        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
     </extension>
 
 </arquillian>

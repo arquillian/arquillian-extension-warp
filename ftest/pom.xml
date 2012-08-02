@@ -10,6 +10,11 @@
 
     <artifactId>arquillian-warp-ftest</artifactId>
     <name>Arquillian Warp Extension: Tests</name>
+    
+    <properties>
+        <browser>htmlUnit</browser>
+        <remoteReusable>false</remoteReusable>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -49,6 +54,12 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -136,6 +147,27 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        
+        <profile>
+            <id>webdriver-chrome</id>
+            <properties>
+                <browser>chrome</browser>
+            </properties>
+        </profile>
+        
+        <profile>
+            <id>webdriver-firefox</id>
+            <properties>
+                <browser>firefox</browser>
+            </properties>
+        </profile>
+        
+        <profile>
+            <id>webdriver-remote-reusable</id>
+            <properties>
+                <remoteReusable>true</remoteReusable>
+            </properties>
         </profile>
     </profiles>
 </project>
