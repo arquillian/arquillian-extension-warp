@@ -54,8 +54,8 @@
     <properties>
         <!-- Arquillian -->
         <version.servlet_api>3.0.1</version.servlet_api>
-        <version.arquillian_core>1.0.0.Final</version.arquillian_core>
-        <version.arquillian_drone>1.0.0.Final</version.arquillian_drone>
+        <version.arquillian_core>1.0.2.Final</version.arquillian_core>
+        <version.arquillian_drone>1.1.0.CR2</version.arquillian_drone>
 
         <version.littleproxy>0.4</version.littleproxy>
 
