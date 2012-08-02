@@ -74,10 +74,13 @@ public class RequestExecutionImpl implements RequestExecution {
     }
 
     private void execute() {
-        setupServerAssertion();
-        executeClientAction();
-        awaitServerExecution();
-        cleanup();
+        try {
+            setupServerAssertion();
+            executeClientAction();
+            awaitServerExecution();
+        } finally {
+            cleanup();
+        }
     }
 
     private void setupServerAssertion() {

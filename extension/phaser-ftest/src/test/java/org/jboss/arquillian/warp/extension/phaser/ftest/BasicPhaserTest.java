@@ -44,8 +44,12 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.google.common.base.Predicate;
 
 @WarpTest
 @RunWith(Arquillian.class)
@@ -83,6 +87,18 @@ public class BasicPhaserTest {
             public void action() {
                 WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
                 nameInput.sendKeys("X");
+
+                new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
+                    @Override
+                    public boolean apply(WebDriver browser) {
+                        WebElement output = browser.findElement(By.id("helloWorldJsf:output"));
+                        try {
+                            return output.getText().contains("JohnX");
+                        } catch (StaleElementReferenceException e) {
+                            return false;
+                        }
+                    }
+                });
             }
         }).verify(new NameChangedToX());
 
