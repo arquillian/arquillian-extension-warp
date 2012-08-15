@@ -116,13 +116,17 @@ public class WarpRequestProcessor {
 
         @Override
         public ServletOutputStream getOutputStream() throws IOException {
-            stream = new NonWritingServletOutputStream();
+            if (stream == null) {
+                stream = new NonWritingServletOutputStream();
+            }
             return stream;
         }
 
         @Override
         public PrintWriter getWriter() throws IOException {
-            writer = NonWritingPrintWriter.newInstance();
+            if (writer == null) {
+                writer = NonWritingPrintWriter.newInstance();
+            }
             return writer;
         }
     }
