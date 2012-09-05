@@ -24,7 +24,7 @@ Just add impl module to classpath and run test either from IDE or maven.
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-impl</artifactId>
-        <version>1.0.0.Alpha1-SNAPSHOT</version>
+        <version>1.0.0.Alpha2-SNAPSHOT</version>
     </dependency>
 
 or any framework-specific extension:
@@ -32,7 +32,7 @@ or any framework-specific extension:
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-phaser</artifactId>
-        <version>1.0.0.Alpha1-SNAPSHOT</version>
+        <version>1.0.0.Alpha2-SNAPSHOT</version>
     </dependency>
 
 Use the servlet protocol in `arquillian.xml` configuration:
