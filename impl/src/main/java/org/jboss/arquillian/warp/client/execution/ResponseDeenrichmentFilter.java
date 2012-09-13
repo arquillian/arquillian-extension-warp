@@ -16,9 +16,13 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
+import java.nio.charset.Charset;
+
 import org.jboss.arquillian.warp.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.utils.SerializationUtils;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.littleshoot.proxy.HttpFilter;
@@ -37,9 +41,19 @@ public class ResponseDeenrichmentFilter implements HttpFilter {
 
     @Override
     public HttpResponse filterResponse(HttpResponse response) {
-        String responseEnrichment = response.getHeader(WarpCommons.ENRICHMENT_RESPONSE);
 
-        if (responseEnrichment != null) {
+        String header = response.getHeader(WarpCommons.ENRICHMENT_RESPONSE);
+
+        if (header != null) {
+            int payloadLength = Integer.valueOf(header);
+            ChannelBuffer content = response.getContent();
+            String responseEnrichment = content.toString(0, payloadLength, Charset.defaultCharset());
+            content.readerIndex(payloadLength);
+            content.discardReadBytes();
+
+            long originalLength = HttpHeaders.getContentLength(response);
+            HttpHeaders.setContentLength(response, originalLength - payloadLength);
+
             ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
             ResponseEnrichment enrichment = new ResponseEnrichment(payload);
             AssertionHolder.addResponse(enrichment);

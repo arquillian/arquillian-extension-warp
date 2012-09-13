@@ -44,7 +44,7 @@ public class WarpRequestProcessor {
     private NonWritingServletOutputStream stream;
     private NonWritingPrintWriter writer;
 
-    private HttpServletResponseWrapper nonWritingResponse;
+    private NonWritingResponseWrapper nonWritingResponse;
 
     public WarpRequestProcessor(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
@@ -87,28 +87,46 @@ public class WarpRequestProcessor {
             responsePayload.getThrowable().printStackTrace();
         }
 
-        enrichResponse(response, responsePayload);
+        try {
+            enrichResponse(response, responsePayload);
 
-        if (writer != null) {
-            writer.finallyWriteAndClose(response.getOutputStream());
-        }
-        if (stream != null) {
-            stream.finallyWriteAndClose(response.getOutputStream());
-        }
-
-        if (requestFailed) {
-            if (!response.isCommitted()) {
-                response.sendError(500);
+            if (writer != null) {
+                writer.finallyWriteAndClose(response.getOutputStream());
             }
+            if (stream != null) {
+                stream.finallyWriteAndClose(response.getOutputStream());
+            }
+
+            if (requestFailed) {
+                if (!response.isCommitted()) {
+                    response.sendError(500);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(500, e.getMessage());
         }
     }
 
-    private void enrichResponse(HttpServletResponse httpResp, ResponsePayload payload) {
+    private void enrichResponse(HttpServletResponse response, ResponsePayload payload) throws IOException {
+
         String enrichment = SerializationUtils.serializeToBase64(payload);
-        httpResp.setHeader(WarpCommons.ENRICHMENT_RESPONSE, enrichment);
+
+        // set a header with the size of the payload
+        response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Integer.toString(enrichment.length()));
+
+        if (nonWritingResponse.getContentLength() != null) {
+            nonWritingResponse.setContentLength(nonWritingResponse.getContentLength() + enrichment.length());
+        }
+
+        nonWritingResponse.finalize();
+
+        response.getOutputStream().write(enrichment.getBytes());
     }
 
     private class NonWritingResponseWrapper extends HttpServletResponseWrapper {
+
+        private Integer contentLength = null;
 
         public NonWritingResponseWrapper(HttpServletResponse response) {
             super(response);
@@ -128,6 +146,21 @@ public class WarpRequestProcessor {
                 writer = NonWritingPrintWriter.newInstance();
             }
             return writer;
+        }
+
+        @Override
+        public void setContentLength(int len) {
+            this.contentLength = len;
+        }
+
+        public Integer getContentLength() {
+            return contentLength;
+        }
+
+        public void finalize() {
+            if (contentLength != null) {
+                super.setContentLength(contentLength);
+            }
         }
     }
 }

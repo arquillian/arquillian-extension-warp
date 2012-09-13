@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.server.filter;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -37,6 +38,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class WarpFilter implements Filter {
+    
+    private static final Logger LOG = Logger.getLogger(WarpFilter.class.getName());
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -67,7 +70,9 @@ public class WarpFilter implements Filter {
         WarpRequest warpRequest = new WarpRequest(req);
 
         if (warpRequest.isEnriched()) {
+            LOG.fine("Warp request filtering started");
             doFilterWarp(req, resp, chain, warpRequest);
+            LOG.fine("Warp request filtering ended");
         } else {
             chain.doFilter(req, resp);
         }
