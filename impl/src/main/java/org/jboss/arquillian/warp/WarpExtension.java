@@ -21,10 +21,10 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArch
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.client.execution.DefaultRequestExecutor;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
-import org.jboss.arquillian.warp.client.proxy.ProxyService;
-import org.jboss.arquillian.warp.client.proxy.ProxyURLProvider;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestExecutor;
+import org.jboss.arquillian.warp.impl.client.proxy.ProxyService;
+import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
 
 /**
  * The client side extension for enhancing test with JSFUnit's logic.

@@ -25,22 +25,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
-import org.jboss.arquillian.warp.server.assertion.AssertionRegistry;
-import org.jboss.arquillian.warp.server.enrich.HttpServletRequestEnricher;
-import org.jboss.arquillian.warp.server.filter.WarpFilter;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerImpl;
-import org.jboss.arquillian.warp.server.request.RequestContext;
-import org.jboss.arquillian.warp.server.test.LifecycleTestDriver;
-import org.jboss.arquillian.warp.shared.ResponsePayload;
-import org.jboss.arquillian.warp.spi.LifecycleEvent;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
-import org.jboss.arquillian.warp.spi.event.EnrichResponse;
-import org.jboss.arquillian.warp.utils.Base64;
-import org.jboss.arquillian.warp.utils.BaseNCodec;
-import org.jboss.arquillian.warp.utils.SerializationUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -48,9 +33,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * Adds all parts required by JSFUnit into web archive.
- *
+ * 
  * @author Lukas Fryc
- *
+ * 
  */
 public class DeploymentEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender {
 
@@ -86,25 +71,29 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
         if (testClass.isAnnotationPresent(WarpTest.class)) {
             JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "extension-warp.jar");
 
-            // add all required packages
-            archive.addPackage(WarpFilter.class.getPackage());
-            archive.addPackage(WarpRemoteExtension.class.getPackage());
-            archive.addPackage(LifecycleManagerImpl.class.getPackage());
-            archive.addPackage(RequestContext.class.getPackage());
-            archive.addPackage(LifecycleTestDriver.class.getPackage());
-            archive.addPackage(AssertionRegistry.class.getPackage());
-            archive.addPackage(LifecycleEvent.class.getPackage());
-            archive.addPackage(BeforeServletEvent.class.getPackage());
-            archive.addPackage(ResponsePayload.class.getPackage());
-            archive.addPackage(HttpServletRequestEnricher.class.getPackage());
-            // SPI Events
-            archive.addPackage(EnrichResponse.class.getPackage());
-
-            // add all required classes
+            // API
             archive.addClass(ServerAssertion.class);
-            archive.addClasses(SerializationUtils.class, Base64.class, BaseNCodec.class);
+            
+            // SPI
+            archive.addPackage("org.jboss.arquillian.warp.spi");
+
+            // Implementation
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.assertion");
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.enrichment");
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.event");
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.execution");
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.lifecycle");
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.provider");
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.request");
+            archive.addPackage("org.jboss.arquillian.warp.impl.server.test");
+            archive.addPackage("org.jboss.arquillian.warp.impl.shared");
+            archive.addPackage("org.jboss.arquillian.warp.impl.utils");
+
+            // Servlet Extension
+            archive.addPackage("org.jboss.arquillian.warp.extension.servlet");
 
             // register remote extension
+            archive.addClass(WarpRemoteExtension.class);
             archive.addAsServiceProvider(RemoteLoadableExtension.class, WarpRemoteExtension.class);
 
             return archive;

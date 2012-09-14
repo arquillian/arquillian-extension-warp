@@ -18,16 +18,22 @@ package org.jboss.arquillian.warp;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.server.enrich.HttpServletRequestEnricher;
-import org.jboss.arquillian.warp.server.enrich.HttpServletResponseEnricher;
-import org.jboss.arquillian.warp.server.filter.HttpResponseEnricher;
-import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerService;
-import org.jboss.arquillian.warp.server.request.RequestContextHandler;
-import org.jboss.arquillian.warp.server.request.RequestContextImpl;
-import org.jboss.arquillian.warp.server.test.LifecycleTestClassExecutor;
-import org.jboss.arquillian.warp.server.test.LifecycleTestDeenricher;
-import org.jboss.arquillian.warp.server.test.LifecycleTestDriver;
-import org.jboss.arquillian.warp.server.test.TestResultObserver;
+import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpRequestDeenricher;
+import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpResponseEnricher;
+import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
+import org.jboss.arquillian.warp.impl.server.enrichment.HttpResponseEnricher;
+import org.jboss.arquillian.warp.impl.server.execution.HttpRequestProcessor;
+import org.jboss.arquillian.warp.impl.server.execution.WarpLifecycle;
+import org.jboss.arquillian.warp.impl.server.execution.WarpRequestProcessor;
+import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerService;
+import org.jboss.arquillian.warp.impl.server.provider.HttpServletRequestEnricher;
+import org.jboss.arquillian.warp.impl.server.provider.HttpServletResponseEnricher;
+import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
+import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
+import org.jboss.arquillian.warp.impl.server.test.LifecycleTestClassExecutor;
+import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDeenricher;
+import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
+import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
 
 /**
  * Registers extension logic on the server-side.
@@ -51,7 +57,12 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
         builder.observer(LifecycleTestDeenricher.class);
         builder.observer(TestResultObserver.class);
         
-        builder.observer(HttpResponseEnricher.class);
+        builder.observer(HttpRequestProcessor.class);
+        builder.observer(WarpRequestProcessor.class);
+        builder.observer(WarpLifecycle.class);
+        
+        builder.service(HttpRequestDeenricher.class, DefaultHttpRequestDeenricher.class);
+        builder.service(HttpResponseEnricher.class, DefaultHttpResponseEnricher.class);
     }
 
 }
