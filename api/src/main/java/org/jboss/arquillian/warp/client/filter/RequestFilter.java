@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
+package org.jboss.arquillian.warp.client.filter;
 
-public interface HttpRequest {
+public interface RequestFilter<T> {
 
-    String getMethod();
-
-    String getUri();
+    boolean matches(T httpRequest);
 }

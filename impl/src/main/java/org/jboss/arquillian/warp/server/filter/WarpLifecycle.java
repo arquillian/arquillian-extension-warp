@@ -19,6 +19,8 @@ package org.jboss.arquillian.warp.server.filter;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -30,17 +32,21 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.AfterServletEvent;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
 import org.jboss.arquillian.warp.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.server.enrich.HttpServletRequestEnricher;
+import org.jboss.arquillian.warp.server.enrich.HttpServletResponseEnricher;
+import org.jboss.arquillian.warp.server.filter.WarpRequestProcessor.NonWritingResponse;
 import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.server.request.AfterRequest;
 import org.jboss.arquillian.warp.server.request.BeforeRequest;
+import org.jboss.arquillian.warp.server.request.RequestScoped;
 import org.jboss.arquillian.warp.server.test.TestResultStore;
 import org.jboss.arquillian.warp.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * The lifecycle of Warp request verification
- *
+ * 
  * @author Lukas Fryc
  */
 public class WarpLifecycle {
@@ -56,19 +62,30 @@ public class WarpLifecycle {
 
     @Inject
     private Instance<TestResultStore> testResultStore;
+    
+    @Inject
+    private Instance<Manager> manager;
 
     /**
      * Executes the lifecycle
-     *
+     * 
      * @return {@link ResponsePayload} based on the lifecycle tests results
      */
-    public ResponsePayload execute(Manager manager, ServletRequest request, DoFilterCommand filterCommand,
-            ServerAssertion serverAssertion) throws Throwable {
+    public ResponsePayload execute(HttpServletRequest request, HttpServletResponse response,
+            NonWritingResponse nonWritingResponse, DoFilterCommand filterCommand, ServerAssertion serverAssertion)
+            throws Throwable {
         try {
             request.setAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
 
-            manager.fire(new BeforeSuite());
-            manager.fire(new BeforeRequest(request));
+            manager.get().fire(new BeforeSuite());
+            manager.get().fire(new BeforeRequest(request));
+            
+            manager.get().bind(RequestScoped.class, HttpServletRequest.class, request);
+            manager.get().bind(RequestScoped.class, HttpServletResponse.class, response);
+            manager.get().bind(RequestScoped.class, NonWritingResponse.class, nonWritingResponse);
+            
+            HttpServletRequestEnricher.setRequest(request);
+            HttpServletResponseEnricher.setResponse(response);
 
             lifecycleManagerStore.get().bind(ServletRequest.class, request);
             assertionRegistry.get().registerAssertion(serverAssertion);
@@ -84,20 +101,23 @@ public class WarpLifecycle {
             e.printStackTrace();
             throw e;
         } finally {
+            HttpServletRequestEnricher.setRequest(null);
+            HttpServletResponseEnricher.setResponse(null);
+            
             assertionRegistry.get().unregisterAssertion(serverAssertion);
 
             lifecycleManagerStore.get().unbind(ServletRequest.class, request);
 
-            manager.fire(new AfterRequest(request));
-            manager.fire(new AfterSuite());
+            manager.get().fire(new AfterRequest(request));
+            manager.get().fire(new AfterSuite());
         }
     }
 
     /**
      * Processes the test results and returns appropriate {@link ResponsePayload} for successful or failed lifecycle tests.
-     *
+     * 
      * The successful lifecycle tests is where no test failed. Failed test is test where at least on lifecycle test failed.
-     *
+     * 
      * @param serverAssertion
      * @return appropriate {@link ResponsePayload} for successful or failed lifecycle tests
      */

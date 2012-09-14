@@ -28,11 +28,9 @@ import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.server.enrich.HttpServletRequestEnricher;
-import org.jboss.arquillian.warp.server.enrich.HttpServletResponseEnricher;
 import org.jboss.arquillian.warp.shared.ResponsePayload;
-import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.arquillian.warp.utils.SerializationUtils;
+import org.jboss.arquillian.warp.spi.event.WarpRequestFinished;
+import org.jboss.arquillian.warp.spi.event.WarpRequestStarted;
 
 public class WarpRequestProcessor {
 
@@ -44,12 +42,12 @@ public class WarpRequestProcessor {
     private NonWritingServletOutputStream stream;
     private NonWritingPrintWriter writer;
 
-    private NonWritingResponseWrapper nonWritingResponse;
+    private NonWritingResponse nonWritingResponse;
 
     public WarpRequestProcessor(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-        this.nonWritingResponse = new NonWritingResponseWrapper(response);
+        this.nonWritingResponse = new NonWritingResponse(response);
     }
 
     public void process(WarpRequest warpRequest, DoFilterCommand filterCommand) throws IOException {
@@ -61,74 +59,56 @@ public class WarpRequestProcessor {
             ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
             Manager manager = builder.create();
             manager.start();
-            manager.bind(ApplicationScoped.class, Manager.class, manager);
 
-            WarpLifecycle warpLifecycle = new WarpLifecycle();
-            manager.inject(warpLifecycle);
+            try {
 
-            ServerAssertion serverAssertion = warpRequest.getServerAssertion();
+                manager.bind(ApplicationScoped.class, Manager.class, manager);
+                manager.fire(new WarpRequestStarted());
 
-            filterCommand.setRequest(request);
-            filterCommand.setResponse(nonWritingResponse);
+                WarpLifecycle warpLifecycle = new WarpLifecycle();
+                manager.inject(warpLifecycle);
 
-            HttpServletRequestEnricher.setRequest(request);
-            HttpServletResponseEnricher.setResponse(response);
+                ServerAssertion serverAssertion = warpRequest.getServerAssertion();
 
-            responsePayload = warpLifecycle.execute(manager, request, filterCommand, serverAssertion);
-        } catch (Throwable e) {
-            responsePayload = new ResponsePayload(e);
-            requestFailed = true;
-        } finally {
-            HttpServletRequestEnricher.setRequest(null);
-            HttpServletResponseEnricher.setResponse(null);
-        }
+                filterCommand.setRequest(request);
+                filterCommand.setResponse(nonWritingResponse);
 
-        if (responsePayload.getThrowable() != null) {
-            responsePayload.getThrowable().printStackTrace();
-        }
-
-        try {
-            enrichResponse(response, responsePayload);
-
-            if (writer != null) {
-                writer.finallyWriteAndClose(response.getOutputStream());
-            }
-            if (stream != null) {
-                stream.finallyWriteAndClose(response.getOutputStream());
+                responsePayload = warpLifecycle.execute(request, response, nonWritingResponse, filterCommand, serverAssertion);
+            } catch (Throwable e) {
+                responsePayload = new ResponsePayload(e);
+                requestFailed = true;
             }
 
-            if (requestFailed) {
-                if (!response.isCommitted()) {
-                    response.sendError(500);
+            if (responsePayload.getThrowable() != null) {
+                responsePayload.getThrowable().printStackTrace();
+            }
+
+            try {
+                manager.fire(new EnrichHttpResponse(responsePayload));
+
+                if (writer != null) {
+                    writer.finallyWriteAndClose(response.getOutputStream());
                 }
+                if (stream != null) {
+                    stream.finallyWriteAndClose(response.getOutputStream());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(500, e.getMessage());
+            
+            manager.fire(new WarpRequestFinished());
+            manager.shutdown();
+
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Default service loader can't be found: " + DEFAULT_EXTENSION_CLASS, e);
         }
     }
 
-    private void enrichResponse(HttpServletResponse response, ResponsePayload payload) throws IOException {
-
-        String enrichment = SerializationUtils.serializeToBase64(payload);
-
-        // set a header with the size of the payload
-        response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Integer.toString(enrichment.length()));
-
-        if (nonWritingResponse.getContentLength() != null) {
-            nonWritingResponse.setContentLength(nonWritingResponse.getContentLength() + enrichment.length());
-        }
-
-        nonWritingResponse.finalize();
-
-        response.getOutputStream().write(enrichment.getBytes());
-    }
-
-    private class NonWritingResponseWrapper extends HttpServletResponseWrapper {
+    public class NonWritingResponse extends HttpServletResponseWrapper {
 
         private Integer contentLength = null;
 
-        public NonWritingResponseWrapper(HttpServletResponse response) {
+        public NonWritingResponse(HttpServletResponse response) {
             super(response);
         }
 
@@ -161,6 +141,38 @@ public class WarpRequestProcessor {
             if (contentLength != null) {
                 super.setContentLength(contentLength);
             }
+        }
+    }
+
+    public class WarpHttpProcessorResponse {
+        private HttpServletRequest request;
+        private HttpServletResponse response;
+        private NonWritingResponse nonWritingResponse;
+        private ResponsePayload payload;
+
+        public WarpHttpProcessorResponse(HttpServletRequest request, HttpServletResponse response,
+                NonWritingResponse nonWritingResponse, ResponsePayload payload) {
+            super();
+            this.request = request;
+            this.response = response;
+            this.nonWritingResponse = nonWritingResponse;
+            this.payload = payload;
+        }
+
+        public HttpServletRequest getRequest() {
+            return request;
+        }
+
+        public HttpServletResponse getResponse() {
+            return response;
+        }
+
+        public NonWritingResponse getNonWritingResponse() {
+            return nonWritingResponse;
+        }
+
+        public ResponsePayload getPayload() {
+            return payload;
         }
     }
 }

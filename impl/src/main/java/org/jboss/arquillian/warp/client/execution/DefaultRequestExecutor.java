@@ -23,9 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.RequestExecution;
-import org.jboss.arquillian.warp.RequestFilter;
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.shared.RequestPayload;
@@ -37,7 +36,7 @@ import org.jboss.arquillian.warp.shared.ResponsePayload;
  * @author Lukas Fryc
  *
  */
-public class RequestExecutionImpl implements RequestExecution {
+public class DefaultRequestExecutor implements RequestExecutor {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -45,14 +44,6 @@ public class RequestExecutionImpl implements RequestExecution {
     private RequestFilter<?> filter;
     private ServerAssertion assertion;
     private FutureTask<ResponsePayload> payloadFuture;
-
-    public RequestExecutionImpl(ClientAction action) {
-        this.action = action;
-    }
-
-    public RequestExecutionImpl(RequestFilter<?> filter) {
-        this.filter = filter;
-    }
 
     @SuppressWarnings("unchecked")
     public <T extends ServerAssertion> T verify(T assertion) {
@@ -62,13 +53,13 @@ public class RequestExecutionImpl implements RequestExecution {
     }
 
     @Override
-    public RequestExecution filter(RequestFilter<?> filter) {
+    public RequestExecutor filter(RequestFilter<?> filter) {
         this.filter = filter;
         return this;
     }
 
     @Override
-    public RequestExecution execute(ClientAction action) {
+    public RequestExecutor execute(ClientAction action) {
         this.action = action;
         return this;
     }
@@ -153,5 +144,4 @@ public class RequestExecutionImpl implements RequestExecution {
             super(cause);
         }
     }
-
 }

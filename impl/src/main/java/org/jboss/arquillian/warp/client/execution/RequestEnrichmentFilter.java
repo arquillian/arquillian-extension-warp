@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.jboss.arquillian.warp.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.shared.RequestPayload;
 import org.jboss.arquillian.warp.shared.ResponsePayload;
@@ -57,7 +57,7 @@ public class RequestEnrichmentFilter implements HttpRequestFilter {
 
     private Collection<RequestPayload> getMatchingPayloads(HttpRequest request) {
         final Set<RequestEnrichment> requests = AssertionHolder.getRequests();
-        final org.jboss.arquillian.warp.HttpRequest httpRequest = new HttpRequestWrapper(request);
+        final org.jboss.arquillian.warp.client.filter.HttpRequest httpRequest = new HttpRequestWrapper(request);
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
         for (RequestEnrichment enrichment : requests) {
@@ -68,10 +68,10 @@ public class RequestEnrichmentFilter implements HttpRequestFilter {
                 continue;
             }
 
-            if (isType(filter, org.jboss.arquillian.warp.HttpRequest.class)) {
+            if (isType(filter, org.jboss.arquillian.warp.client.filter.HttpRequest.class)) {
 
                 @SuppressWarnings("unchecked")
-                RequestFilter<org.jboss.arquillian.warp.HttpRequest> httpRequestFilter = (RequestFilter<org.jboss.arquillian.warp.HttpRequest>) filter;
+                RequestFilter<org.jboss.arquillian.warp.client.filter.HttpRequest> httpRequestFilter = (RequestFilter<org.jboss.arquillian.warp.client.filter.HttpRequest>) filter;
 
                 if (httpRequestFilter.matches(httpRequest)) {
                     payloads.add(enrichment.getPayload());
@@ -97,7 +97,7 @@ public class RequestEnrichmentFilter implements HttpRequestFilter {
         return false;
     }
 
-    private class HttpRequestWrapper implements org.jboss.arquillian.warp.HttpRequest {
+    private class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filter.HttpRequest {
 
         private HttpRequest request;
 

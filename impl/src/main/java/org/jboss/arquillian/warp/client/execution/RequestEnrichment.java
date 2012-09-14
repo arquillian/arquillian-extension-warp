@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
-import org.jboss.arquillian.warp.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.shared.RequestPayload;
 
 public class RequestEnrichment {

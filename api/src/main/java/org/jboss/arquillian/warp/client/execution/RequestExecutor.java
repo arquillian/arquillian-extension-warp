@@ -14,14 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
+package org.jboss.arquillian.warp.client.execution;
+
+import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
+
 
 /**
  * The execution of client action and server assertion.
  *
  * @author Lukas Fryc
  */
-public interface RequestExecution {
+public interface RequestExecutor {
 
     /**
      * Asserts given server state
@@ -31,7 +36,7 @@ public interface RequestExecution {
      */
     <T extends ServerAssertion> T verify(T assertion);
 
-    RequestExecution filter(RequestFilter<?> filter);
+    RequestExecutor filter(RequestFilter<?> filter);
 
-    RequestExecution execute(ClientAction action);
+    RequestExecutor execute(ClientAction action);
 }
