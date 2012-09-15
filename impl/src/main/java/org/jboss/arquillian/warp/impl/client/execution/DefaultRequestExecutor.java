@@ -16,35 +16,58 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
+import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
+import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
+import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
+import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
+import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
+import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 /**
  * The implementation of execution of client action and server assertion.
- *
+ * 
  * @author Lukas Fryc
- *
+ * 
  */
 public class DefaultRequestExecutor implements RequestExecutor {
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private ClientAction action;
     private RequestFilter<?> filter;
     private ServerAssertion assertion;
-    private FutureTask<ResponsePayload> payloadFuture;
+
+    @Inject
+    private Event<AdvertiseEnrichment> advertiseEnrichment;
+
+    @Inject
+    private Event<InstallEnrichment> addEnrichment;
+
+    @Inject
+    private Event<FinishEnrichment> finishEnrichment;
+
+    @Inject
+    private Event<CleanEnrichment> cleanEnrichment;
+
+    @Inject
+    private Event<AwaitResponse> awaitResponse;
+
+    @Inject
+    @WarpExecutionScoped
+    private InstanceProducer<RequestEnrichment> requestEnrichment;
+
+    @Inject
+    private Instance<ResponsePayload> responsePayload;
 
     @SuppressWarnings("unchecked")
     public <T extends ServerAssertion> T verify(T assertion) {
@@ -76,17 +99,14 @@ public class DefaultRequestExecutor implements RequestExecutor {
     }
 
     private void setupServerAssertion() {
-        AssertionHolder.advertise();
-        AssertionHolder.setExpectedRequests(1);
+        advertiseEnrichment.fire(new AdvertiseEnrichment(1));
 
         RequestPayload payload = new RequestPayload(assertion);
-        RequestEnrichment request = new RequestEnrichment(payload, filter);
-        AssertionHolder.addRequest(request);
+        requestEnrichment.set(new RequestEnrichment(payload, filter));
 
-        AssertionHolder.finished();
+        addEnrichment.fire(new InstallEnrichment());
 
-        payloadFuture = new FutureTask<ResponsePayload>(new PushAssertion());
-        executor.submit(payloadFuture);
+        finishEnrichment.fire(new FinishEnrichment());
     }
 
     private void executeClientAction() {
@@ -98,24 +118,18 @@ public class DefaultRequestExecutor implements RequestExecutor {
     }
 
     private void awaitServerExecution() {
-        ResponsePayload responsePayload;
+        awaitResponse.fire(new AwaitResponse());
 
-        try {
-            responsePayload = payloadFuture.get();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-
-        Throwable throwable = responsePayload.getThrowable();
+        Throwable throwable = responsePayload.get().getThrowable();
         if (throwable != null) {
             propagateFailure(throwable);
         }
 
-        assertion = responsePayload.getAssertion();
+        assertion = responsePayload.get().getAssertion();
     }
 
     private void cleanup() {
-        AssertionHolder.finishEnrichmentRound();
+        cleanEnrichment.fire(new CleanEnrichment());
     }
 
     private void propagateFailure(Throwable throwable) {
@@ -125,16 +139,6 @@ public class DefaultRequestExecutor implements RequestExecutor {
             throw (ClientWarpExecutionException) throwable;
         } else {
             throw new ServerWarpExecutionException(throwable);
-        }
-    }
-
-    public class PushAssertion implements Callable<ResponsePayload> {
-        @Override
-        public ResponsePayload call() throws Exception {
-            Set<ResponseEnrichment> responses = AssertionHolder.getResponses();
-            ResponseEnrichment response = responses.iterator().next();
-            return response.getPayload();
-
         }
     }
 

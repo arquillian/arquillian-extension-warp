@@ -22,8 +22,8 @@ import java.util.concurrent.CountDownLatch;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
+import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
 import org.jboss.arquillian.warp.impl.client.execution.AssertionHolder;
-import org.jboss.arquillian.warp.impl.client.execution.RequestEnrichment;
 import org.jboss.arquillian.warp.impl.client.execution.ResponseEnrichment;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.Before;
@@ -110,9 +110,9 @@ public class TestSingleAssertionExecution {
     }
 
     private static void handshake() {
-        Set<RequestEnrichment> requests = AssertionHolder.getRequests();
+        Set<InstallEnrichment> requests = AssertionHolder.getRequests();
 
-        RequestEnrichment request = requests.iterator().next();
+        InstallEnrichment request = requests.iterator().next();
         ResponsePayload responsePayload = new ResponsePayload();
         responsePayload.setAssertion(request.getPayload().getAssertion());
         ResponseEnrichment response = new ResponseEnrichment(responsePayload);

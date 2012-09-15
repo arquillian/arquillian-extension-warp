@@ -22,9 +22,14 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.impl.client.execution.AssertionSynchronizer;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultAssertionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestExecutor;
+import org.jboss.arquillian.warp.impl.client.execution.RequestExecutionObserver;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
+import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextHandler;
+import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
 
 /**
  * The client side extension for enhancing test with JSFUnit's logic.
@@ -47,5 +52,9 @@ public class WarpExtension implements LoadableExtension {
         // action executor
         builder.service(RequestExecutor.class, DefaultRequestExecutor.class);
         builder.observer(ServiceInjector.class);
+        builder.observer(RequestExecutionObserver.class);
+        builder.service(AssertionSynchronizer.class, DefaultAssertionSynchronizer.class);
+        builder.context(WarpExecutionContextImpl.class);
+        builder.observer(WarpExecutionContextHandler.class);
     }
 }

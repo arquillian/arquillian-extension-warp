@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 /**
@@ -100,7 +101,7 @@ class AssertionHolder {
 
     /**
      * <p>
-     * Pushes the {@link RequestEnrichment} to verify on the server.
+     * Pushes the {@link InstallEnrichment} to verify on the server.
      * </p>
      *
      * <p>
