@@ -20,35 +20,34 @@ import java.lang.annotation.Annotation;
 import java.net.URL;
 
 import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.impl.client.event.StartProxy;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 
 /**
  * Provides the proxy URL instead of real URL.
- *
+ * 
  * Stores the mapping between real URL and proxy URL in {@link URLMapping}.
- *
+ * 
  * @author Lukas Fryc
- *
+ * 
  */
 public class ProxyURLProvider implements ResourceProvider {
 
     @Inject
-    Instance<ServiceLoader> serviceLoader;
+    private Instance<ServiceLoader> serviceLoader;
 
     @Inject
-    Instance<URLMapping> mapping;
+    private Instance<Injector> injector;
 
     @Inject
-    Instance<ProxyHolder> proxyHolder;
-
-    @Inject
-    Instance<Injector> injector;
+    private Event<StartProxy> startProxy;
 
     URLResourceProvider urlResourceProvider = new URLResourceProvider();
 
@@ -59,24 +58,33 @@ public class ProxyURLProvider implements ResourceProvider {
 
     @Override
     public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
-        injector.get().inject(urlResourceProvider);
+        injector().inject(urlResourceProvider);
 
-        URL realUrl = (URL) urlResourceProvider.lookup(resource, qualifiers);
-        if ("http".equals(realUrl.getProtocol())) {
-            return getProxyUrl(realUrl);
+        URL realURL = (URL) urlResourceProvider.lookup(resource, qualifiers);
+
+        if ("http".equals(realURL.getProtocol())) {
+            return getProxyUrl(realURL);
         } else {
-            return realUrl;
+            return realURL;
         }
     }
 
-    private URL getProxyUrl(URL realUrl) {
-        URL baseRealUrl = URLUtils.getUrlBase(realUrl);
-        URL baseProxyUrl = mapping.get().getProxyURL(baseRealUrl);
-        URL proxyUrl = URLUtils.buildUrl(baseProxyUrl, realUrl.getPath());
+    private URL getProxyUrl(URL realURL) {
+        URL baseRealURL = URLUtils.getUrlBase(realURL);
+        URL baseProxyURL = urlMapping().getProxyURL(baseRealURL);
+        URL proxyURL = URLUtils.buildUrl(baseProxyURL, realURL.getPath());
 
-        proxyHolder.get().startProxyForUrl(baseProxyUrl, baseRealUrl);
+        startProxy.fire(new StartProxy(baseRealURL, baseProxyURL));
 
-        return proxyUrl;
+        return proxyURL;
+    }
+
+    private Injector injector() {
+        return injector.get();
+    }
+
+    private URLMapping urlMapping() {
+        return serviceLoader.get().onlyOne(URLMapping.class);
     }
 
 }

@@ -24,10 +24,18 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.AssertionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultAssertionSynchronizer;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestExecutor;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.RequestExecutionObserver;
+import org.jboss.arquillian.warp.impl.client.proxy.DefaultProxyService;
+import org.jboss.arquillian.warp.impl.client.proxy.DefaultURLMapping;
+import org.jboss.arquillian.warp.impl.client.proxy.ProxyObserver;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
+import org.jboss.arquillian.warp.impl.client.proxy.RequestEnrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.proxy.ResponseDeenrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.proxy.URLMapping;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextHandler;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
 
@@ -43,7 +51,6 @@ public class WarpExtension implements LoadableExtension {
 
         // proxy
         builder.override(ResourceProvider.class, URLResourceProvider.class, ProxyURLProvider.class);
-        builder.observer(ProxyService.class);
 
         // deployment enrichment
         builder.service(ApplicationArchiveProcessor.class, DeploymentEnricher.class);
@@ -56,5 +63,10 @@ public class WarpExtension implements LoadableExtension {
         builder.service(AssertionSynchronizer.class, DefaultAssertionSynchronizer.class);
         builder.context(WarpExecutionContextImpl.class);
         builder.observer(WarpExecutionContextHandler.class);
+        builder.service(URLMapping.class, DefaultURLMapping.class);
+        builder.service(ProxyService.class, DefaultProxyService.class);
+        builder.service(RequestEnrichmentFilter.class, DefaultRequestEnrichmentFilter.class);
+        builder.service(ResponseDeenrichmentFilter.class, DefaultResponseDeenrichmentFilter.class);
+        builder.observer(ProxyObserver.class);
     }
 }

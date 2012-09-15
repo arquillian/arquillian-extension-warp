@@ -25,14 +25,14 @@ import java.util.Set;
 
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
+import org.jboss.arquillian.warp.impl.client.proxy.RequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.littleshoot.proxy.HttpRequestFilter;
 
-public class RequestEnrichmentFilter implements HttpRequestFilter {
+public class DefaultRequestEnrichmentFilter implements RequestEnrichmentFilter {
 
     @Override
     public void filter(HttpRequest request) {

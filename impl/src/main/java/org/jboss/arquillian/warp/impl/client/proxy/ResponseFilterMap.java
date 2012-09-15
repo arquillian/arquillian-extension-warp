@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.client.execution;
+package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.util.HashMap;
 
@@ -24,8 +24,8 @@ public class ResponseFilterMap extends HashMap<String, HttpFilter> {
 
     private static final long serialVersionUID = -8290386846314981260L;
 
-    public ResponseFilterMap(String hostPort) {
-        this.put(hostPort, new ResponseDeenrichmentFilter());
+    public ResponseFilterMap(String hostPort, ResponseDeenrichmentFilter filter) {
+        this.put(hostPort, filter);
     }
 
 }

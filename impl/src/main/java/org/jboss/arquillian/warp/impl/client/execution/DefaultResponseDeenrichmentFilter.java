@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.nio.charset.Charset;
 
+import org.jboss.arquillian.warp.impl.client.proxy.ResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -25,9 +26,8 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
-import org.littleshoot.proxy.HttpFilter;
 
-public class ResponseDeenrichmentFilter implements HttpFilter {
+public class DefaultResponseDeenrichmentFilter implements ResponseDeenrichmentFilter {
 
     @Override
     public boolean shouldFilterResponses(HttpRequest httpRequest) {
