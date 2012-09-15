@@ -22,11 +22,16 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.impl.client.enrichment.EnrichmentObserver;
+import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.AssertionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultAssertionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestEnrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.RequestExecutionObserver;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultURLMapping;
@@ -68,5 +73,8 @@ public class WarpExtension implements LoadableExtension {
         builder.service(RequestEnrichmentFilter.class, DefaultRequestEnrichmentFilter.class);
         builder.service(ResponseDeenrichmentFilter.class, DefaultResponseDeenrichmentFilter.class);
         builder.observer(ProxyObserver.class);
+        builder.observer(EnrichmentObserver.class);
+        builder.service(RequestEnrichmentService.class, DefaultRequestEnrichmentService.class);
+        builder.service(ResponseDeenrichmentService.class, DefaultResponseDeenrichmentService.class);
     }
 }

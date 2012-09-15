@@ -16,18 +16,20 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.nio.charset.Charset;
-
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.event.FilterHttpResponse;
 import org.jboss.arquillian.warp.impl.client.proxy.ResponseDeenrichmentFilter;
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
-import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 public class DefaultResponseDeenrichmentFilter implements ResponseDeenrichmentFilter {
+
+    @Inject
+    private Event<FilterHttpResponse> tryDeenrichResponse;
+
+    private ResponseDeenrichmentService deenrichmentService;
 
     @Override
     public boolean shouldFilterResponses(HttpRequest httpRequest) {
@@ -42,23 +44,14 @@ public class DefaultResponseDeenrichmentFilter implements ResponseDeenrichmentFi
     @Override
     public HttpResponse filterResponse(HttpResponse response) {
 
-        String header = response.getHeader(WarpCommons.ENRICHMENT_RESPONSE);
-
-        if (header != null) {
-            int payloadLength = Integer.valueOf(header);
-            ChannelBuffer content = response.getContent();
-            String responseEnrichment = content.toString(0, payloadLength, Charset.defaultCharset());
-            content.readerIndex(payloadLength);
-            content.discardReadBytes();
-
-            long originalLength = HttpHeaders.getContentLength(response);
-            HttpHeaders.setContentLength(response, originalLength - payloadLength);
-
-            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
-            ResponseEnrichment enrichment = new ResponseEnrichment(payload);
-            AssertionHolder.addResponse(enrichment);
-        }
+        tryDeenrichResponse.fire(new FilterHttpResponse(response, deenrichmentService));
 
         return response;
     }
+
+    @Override
+    public void setDeenrichmentService(ResponseDeenrichmentService deenrichmentService) {
+        this.deenrichmentService = deenrichmentService;
+    }
+
 }

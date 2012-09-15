@@ -12,8 +12,8 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
+import org.jboss.arquillian.warp.impl.server.enrichment.HttpResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.event.EnrichResponse;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
@@ -50,6 +50,7 @@ public class HttpRequestProcessor {
     }
     
     public void enrichHttpResponse(@Observes EnrichResponse e, ServiceLoader services) {
-        services.onlyOne(DefaultHttpResponseEnricher.class);
+        HttpResponseEnricher responseEnricher = services.onlyOne(HttpResponseEnricher.class);
+        responseEnricher.enrichResponse();
     }
 }
