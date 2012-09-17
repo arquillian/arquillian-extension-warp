@@ -18,13 +18,13 @@ public class ServiceInjector {
     public void injectRequestExecutor(@Observes BeforeClass event) {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
             RequestExecutor executor = serviceLoader.get().onlyOne(RequestExecutor.class);
-            Warp.executor.set(executor);
+            Warp.setExecutor(executor);
         }
     }
     
     public void cleanRequestExecutor(@Observes AfterClass event) {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            Warp.executor.set(null);
+            Warp.setExecutor(null);
         }
     }
 }

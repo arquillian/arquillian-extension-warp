@@ -29,8 +29,8 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
 import org.jboss.arquillian.warp.impl.client.event.StartProxy;
-import org.jboss.arquillian.warp.impl.client.event.StopProxy;
 
 /**
  * Initializes and finalizes proxies.
@@ -48,7 +48,7 @@ public class ProxyObserver {
     private Instance<ServiceLoader> serviceLoader;
 
     @Inject
-    private Event<StopProxy> stopProxy;
+    private Event<StartProxy> startProxy;
 
     public void initializeProxies(@Observes BeforeSuite event, ServiceLoader services) {
         proxyHolder.set(new ProxyHolder());
@@ -60,8 +60,16 @@ public class ProxyObserver {
         }
     }
 
+    public void requireProxy(@Observes RequireProxy event, ServiceLoader services) {
+        Object proxy = proxyHolder().getProxy(event.getRealUrl());
+        if (proxy == null) {
+            startProxy.fire(new StartProxy(event));
+        }
+    }
+
     public void startProxy(@Observes StartProxy event, ServiceLoader services) {
-        proxyService().startProxy(event.getRealUrl(), event.getProxyUrl());
+        Object proxy = proxyService().startProxy(event.getRealUrl(), event.getProxyUrl());
+        proxyHolder().storeProxy(event.getRealUrl(), proxy);
     }
 
     private ProxyHolder proxyHolder() {

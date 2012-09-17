@@ -22,15 +22,19 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.AfterServletEvent;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
+import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleFinished;
+import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleStarted;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.impl.server.test.TestResultStore;
@@ -57,13 +61,19 @@ public class WarpLifecycle {
     @Inject
     private Instance<TestResultStore> testResultStore;
 
+    @Inject
+    private Event<WarpLifecycleStarted> warpLifecycleStarted;
+
+    @Inject
+    private Event<WarpLifecycleFinished> warpLifecycleFinished;
+
     /**
      * Executes the lifecycle
      * 
      * @return {@link ResponsePayload} based on the lifecycle tests results
      */
     public void execute(@Observes ExecuteWarp event, HttpServletRequest request, NonWritingResponse nonWritingResponse,
-            FilterChain filterChain, RequestPayload requestPayload, ResponsePayload responsePayload) throws Throwable {
+            FilterChain filterChain, RequestPayload requestPayload) throws Throwable {
 
         final ServerAssertion serverAssertion = requestPayload.getAssertion();
 
@@ -72,14 +82,16 @@ public class WarpLifecycle {
 
             lifecycleManagerStore.get().bind(ServletRequest.class, request);
             assertionRegistry.get().registerAssertion(serverAssertion);
+
+            warpLifecycleStarted.fire(new WarpLifecycleStarted());
             lifecycleManager.get().fireLifecycleEvent(new BeforeServletEvent());
 
             filterChain.doFilter(request, nonWritingResponse);
 
             lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
-        } catch (Throwable e) {
-            responsePayload.setThrowable(e);
         } finally {
+            warpLifecycleFinished.fire(new WarpLifecycleFinished());
+
             assertionRegistry.get().unregisterAssertion(serverAssertion);
 
             lifecycleManagerStore.get().unbind(ServletRequest.class, request);
@@ -90,23 +102,28 @@ public class WarpLifecycle {
      * Processes the test results and returns appropriate {@link ResponsePayload} for successful or failed lifecycle tests.
      * 
      * The successful lifecycle tests is where no test failed. Failed test is test where at least on lifecycle test failed.
-     * 
-     * @param serverAssertion
-     * @return appropriate {@link ResponsePayload} for successful or failed lifecycle tests
      */
-    public void processTestResult(@Observes AfterServletEvent e, ServerAssertion serverAssertion,
+    public void divergeTestResult(@Observes EventContext<ExecuteWarp> context, RequestPayload requestPayload,
             ResponsePayload responsePayload) {
 
-        TestResult firstFailedResult = testResultStore.get().getFirstFailed();
+        try {
+            context.proceed();
 
-        if (firstFailedResult == null) {
-            responsePayload.setAssertion(serverAssertion);
-        } else {
-            Throwable throwable = firstFailedResult.getThrowable();
-            if (throwable instanceof InvocationTargetException) {
-                throwable = throwable.getCause();
+            final ServerAssertion serverAssertion = requestPayload.getAssertion();
+
+            TestResult firstFailedResult = testResultStore.get().getFirstFailed();
+
+            if (firstFailedResult == null) {
+                responsePayload.setAssertion(serverAssertion);
+            } else {
+                Throwable throwable = firstFailedResult.getThrowable();
+                if (throwable instanceof InvocationTargetException) {
+                    throwable = throwable.getCause();
+                }
+                responsePayload.setThrowable(throwable);
             }
-            responsePayload.setThrowable(throwable);
+        } catch (Throwable e) {
+            responsePayload.setThrowable(e);
         }
     }
 }

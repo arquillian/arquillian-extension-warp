@@ -1,23 +1,10 @@
 package org.jboss.arquillian.warp.impl.client.event;
 
-import java.net.URL;
 
-public class StartProxy {
+public class StartProxy extends AbstractProxyInitializationEvent {
 
-    private URL realUrl;
-    private URL proxyUrl;
-
-    public StartProxy(URL realUrl, URL proxyUrl) {
-        super();
-        this.realUrl = realUrl;
-        this.proxyUrl = proxyUrl;
+    public StartProxy(RequireProxy event) {
+        super(event);
     }
 
-    public URL getRealUrl() {
-        return realUrl;
-    }
-
-    public URL getProxyUrl() {
-        return proxyUrl;
-    }
 }

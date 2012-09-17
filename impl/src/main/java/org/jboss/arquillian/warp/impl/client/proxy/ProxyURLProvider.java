@@ -27,7 +27,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.impl.client.event.StartProxy;
+import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 
 /**
@@ -47,7 +47,7 @@ public class ProxyURLProvider implements ResourceProvider {
     private Instance<Injector> injector;
 
     @Inject
-    private Event<StartProxy> startProxy;
+    private Event<RequireProxy> requireProxy;
 
     URLResourceProvider urlResourceProvider = new URLResourceProvider();
 
@@ -74,7 +74,7 @@ public class ProxyURLProvider implements ResourceProvider {
         URL baseProxyURL = urlMapping().getProxyURL(baseRealURL);
         URL proxyURL = URLUtils.buildUrl(baseProxyURL, realURL.getPath());
 
-        startProxy.fire(new StartProxy(baseRealURL, baseProxyURL));
+        requireProxy.fire(new RequireProxy(baseRealURL, baseProxyURL));
 
         return proxyURL;
     }
