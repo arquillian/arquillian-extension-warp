@@ -71,6 +71,13 @@
                 <version>${version.littleproxy}</version>
             </dependency>
 
+            <!-- Javassist -->
+            <dependency>
+                <groupId>javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${version.javassist}</version>
+            </dependency>
+
             <!-- JUnit -->
             <dependency>
                 <groupId>junit</groupId>

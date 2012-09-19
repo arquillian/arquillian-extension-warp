@@ -57,6 +57,12 @@
             <artifactId>littleproxy</artifactId>
         </dependency>
 
+        <!-- Javasist -->
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
+
         <!-- TESTS -->
         <dependency>
             <groupId>junit</groupId>

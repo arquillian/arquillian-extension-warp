@@ -58,6 +58,7 @@
         <version.arquillian_drone>1.1.0.CR3</version.arquillian_drone>
 
         <version.littleproxy>0.4</version.littleproxy>
+        <version.javassist>3.12.1.GA</version.javassist>
 
         <!-- Tests -->
         <version.junit>4.10</version.junit>
