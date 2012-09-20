@@ -27,7 +27,7 @@ import java.io.Serializable;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDeenricher;
+import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,7 +39,7 @@ import org.mockito.stubbing.Answer;
  * @author Lukas Fryc
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestLifecycleTestDeenricher {
+public class TestLifecycleTestEnrichmentWatcher {
 
     @Mock
     EventContext<Before> beforeContext;
@@ -76,12 +76,12 @@ public class TestLifecycleTestDeenricher {
     public void testEnrichment() {
 
         // given
-        LifecycleTestDeenricher deenricher = new LifecycleTestDeenricher();
+        LifecycleTestEnrichmentWatcher deenricher = new LifecycleTestEnrichmentWatcher();
         assertEquals(1, testInstance.injectedInteger);
         assertNull(testInstance.injectedObject);
 
         // when
-        deenricher.beforeTest(beforeContext);
+        deenricher.rememberFieldValues(beforeContext);
 
         // then
         assertEquals(2, testInstance.injectedInteger);
@@ -92,13 +92,13 @@ public class TestLifecycleTestDeenricher {
     public void testDeenrichment() {
 
         // given
-        LifecycleTestDeenricher deenricher = new LifecycleTestDeenricher();
+        LifecycleTestEnrichmentWatcher deenricher = new LifecycleTestEnrichmentWatcher();
         assertEquals(1, testInstance.injectedInteger);
         assertNull(testInstance.injectedObject);
 
         // when
-        deenricher.beforeTest(beforeContext);
-        deenricher.afterTest(afterContext);
+        deenricher.rememberFieldValues(beforeContext);
+        deenricher.restoreOriginalFieldValues(afterContext);
 
         // then
         assertEquals(1, testInstance.injectedInteger);
@@ -109,18 +109,18 @@ public class TestLifecycleTestDeenricher {
     public void testValueChanged() {
 
         // given
-        LifecycleTestDeenricher deenricher = new LifecycleTestDeenricher();
+        LifecycleTestEnrichmentWatcher deenricher = new LifecycleTestEnrichmentWatcher();
         assertEquals(false, testInstance.bool);
         assertEquals(1, testInstance.injectedInteger);
         assertNull(testInstance.injectedObject);
 
         // when
-        deenricher.beforeTest(beforeContext);
+        deenricher.rememberFieldValues(beforeContext);
         testInstance.bool = true;
         testInstance.object = "string";
         testInstance.injectedInteger = 4;
         testInstance.injectedObject = "string";
-        deenricher.afterTest(afterContext);
+        deenricher.restoreOriginalFieldValues(afterContext);
 
         // then
         assertEquals(true, testInstance.bool);

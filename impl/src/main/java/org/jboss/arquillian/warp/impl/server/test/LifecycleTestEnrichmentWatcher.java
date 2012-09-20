@@ -40,12 +40,12 @@ import org.jboss.arquillian.warp.ServerAssertion;
  * @author Lukas Fryc
  *
  */
-public class LifecycleTestDeenricher {
+public class LifecycleTestEnrichmentWatcher {
 
     private Map<Field, Object> backupAll = new HashMap<Field, Object>();
     private Map<Field, Object> backupUpdated = new HashMap<Field, Object>();
 
-    public void beforeTest(@Observes(precedence = 100) EventContext<Before> context) {
+    public void rememberFieldValues(@Observes(precedence = 100) EventContext<Before> context) {
         final Object testInstance = context.getEvent().getTestInstance();
         backupAllFields(testInstance);
         try {
@@ -55,7 +55,7 @@ public class LifecycleTestDeenricher {
         }
     }
 
-    public void afterTest(@Observes(precedence = 100) EventContext<After> context) {
+    public void restoreOriginalFieldValues(@Observes(precedence = 100) EventContext<After> context) {
         final Object testInstance = context.getEvent().getTestInstance();
         try {
             context.proceed();
