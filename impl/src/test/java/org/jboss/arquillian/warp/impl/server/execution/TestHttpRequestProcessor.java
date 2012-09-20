@@ -16,20 +16,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
-import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.core.spi.context.Context;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.event.EnrichHttpResponse;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
-import org.jboss.arquillian.warp.impl.server.execution.HttpRequestProcessor;
 import org.jboss.arquillian.warp.impl.server.request.RequestContext;
-import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
+import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.Before;
@@ -39,7 +35,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestHttpRequestProcessor extends AbstractContainerTestTestBase {
+public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
 
     @Mock
     private ServiceLoader services;
@@ -66,18 +62,6 @@ public class TestHttpRequestProcessor extends AbstractContainerTestTestBase {
     protected void addExtensions(List<Class<?>> extensions) {
         super.addExtensions(extensions);
         extensions.add(HttpRequestProcessor.class);
-    }
-
-    @Override
-    protected void addContexts(List<Class<? extends Context>> contexts) {
-        super.addContexts(contexts);
-        contexts.add(RequestContextImpl.class);
-    }
-
-    @Override
-    protected void startContexts(Manager manager) {
-        super.startContexts(manager);
-        manager.getContext(RequestContext.class).activate();
     }
 
     @Before

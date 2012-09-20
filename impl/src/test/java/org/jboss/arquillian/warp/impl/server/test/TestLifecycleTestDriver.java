@@ -1,0 +1,237 @@
+package org.jboss.arquillian.warp.impl.server.test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.jboss.arquillian.container.test.impl.execution.ContainerTestExecuter;
+import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
+import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
+import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpTestTestBase;
+import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
+public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
+
+    @Mock
+    private AssertionRegistry assertionRegistry;
+
+    @Spy
+    private ResponsePayload responsePayload = new ResponsePayload();
+
+    @Mock
+    private ServiceLoader services;
+
+    @Inject
+    private Instance<TestResult> testResult;
+
+    @Mock
+    private RuntimeException exception;
+
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(LifecycleTestDriver.class);
+        extensions.add(LocalTestExecuter.class);
+        extensions.add(ContainerTestExecuter.class);
+        extensions.add(ExceptionThrowingSuiteEventObserver.class);
+    }
+
+    @Before
+    public void setup() {
+        // having
+        bind(ApplicationScoped.class, ServiceLoader.class, services);
+        bind(RequestScoped.class, AssertionRegistry.class, assertionRegistry);
+        bind(RequestScoped.class, ResponsePayload.class, responsePayload);
+        when(services.all(TestEnricher.class)).thenReturn(Arrays.<TestEnricher>asList());
+    }
+
+    @Test
+    public void when_registry_contains_assertion_with_annotated_method__matching_current_lifecycle_event_then_method_is_fired() {
+
+        // having
+        TestingAssertion assertion = mock(TestingAssertion.class);
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion));
+
+        // when
+        fire(new BeforeServletEvent());
+
+        // then
+        verify(assertion).test();
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.Before.class, 1);
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 1);
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.After.class, 1);
+    }
+
+    @Test
+    public void when_registry_contains_two_assertion_then_all_methods_are_executed() {
+
+        // having
+        TestingAssertion assertion1 = mock(TestingAssertion.class);
+        TestingAssertionForMultipleAssertions assertion2 = mock(TestingAssertionForMultipleAssertions.class);
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion1, assertion2));
+
+        // when
+        fire(new BeforeServletEvent());
+
+        // then
+        verify(assertion1).test();
+        verify(assertion2).test();
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.Before.class, 2);
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 2);
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.After.class, 2);
+    }
+
+    @Test
+    public void when_registry_contains_assertion_with_multiple_methods_annotated_with_given_lifecycle_event_annotation_then_all_methods_are_executed() {
+
+        // having
+        TestingAssertionForMultipleMethods assertion = mock(TestingAssertionForMultipleMethods.class);
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion));
+
+        // when
+        fire(new BeforeServletEvent());
+
+        // then
+        verify(assertion).test1();
+        verify(assertion).test2();
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.Before.class, 2);
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 2);
+        assertEventFired(org.jboss.arquillian.test.spi.event.suite.After.class, 2);
+    }
+
+    @Test
+    public void when_lifecycle_test_execution_fails_then_test_result_is_filled() {
+
+        // having
+        TestingAssertion assertion = mock(TestingAssertion.class);
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion));
+        doThrow(exception).when(assertion).test();
+
+        // when
+        fire(new BeforeServletEvent());
+
+        // then
+        assertNotNull(testResult());
+        assertEquals(TestResult.Status.FAILED, testResult().getStatus());
+        assertEquals(exception, testResult().getThrowable().getCause());
+
+        verifyZeroInteractions(responsePayload);
+    }
+
+    @Test
+    public void when_before_event_fails_then_request_payload_is_filled_with_exception() {
+
+        // having
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(new TestingAssertionForFailingBeforeTest()));
+
+        // when
+        fire(new BeforeServletEvent());
+
+        // then
+        Throwable throwable = responsePayload.getThrowable();
+        assertNotNull("response payload throwable must be set", throwable);
+        assertEquals("before failed", throwable.getMessage());
+    }
+
+    @Test
+    public void when_after_event_fails_then_request_payload_is_filled_with_exception() {
+
+        // having
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(new TestingAssertionForFailingAfterTest()));
+
+        // when
+        fire(new BeforeServletEvent());
+
+        // then
+        Throwable throwable = responsePayload.getThrowable();
+        assertNotNull("response payload throwable must be set", throwable);
+        assertEquals("after failed", throwable.getMessage());
+    }
+
+    private TestResult testResult() {
+        return testResult.get();
+    }
+
+    public static class TestingAssertion extends ServerAssertion {
+        private static final long serialVersionUID = -1L;
+
+        @BeforeServlet
+        public void test() {
+        }
+    }
+
+    public static class TestingAssertionForMultipleAssertions extends ServerAssertion {
+        private static final long serialVersionUID = -1L;
+
+        @BeforeServlet
+        public void test() {
+        }
+    }
+
+    public static class TestingAssertionForMultipleMethods extends ServerAssertion {
+        private static final long serialVersionUID = -1L;
+
+        @BeforeServlet
+        public void test1() {
+        }
+
+        @BeforeServlet
+        public void test2() {
+        }
+    }
+
+    public static class TestingAssertionForFailingBeforeTest extends ServerAssertion {
+        private static final long serialVersionUID = -1L;
+
+        @BeforeServlet
+        public void test() {
+        }
+    }
+
+    public static class TestingAssertionForFailingAfterTest extends ServerAssertion {
+        private static final long serialVersionUID = -1L;
+
+        @BeforeServlet
+        public void test() {
+        }
+    }
+
+    public static class ExceptionThrowingSuiteEventObserver {
+
+        public void beforeTest(@Observes org.jboss.arquillian.test.spi.event.suite.Before event) {
+            if (event.getTestClass().getJavaClass() == TestingAssertionForFailingBeforeTest.class) {
+                throw new RuntimeException("before failed");
+            }
+        }
+
+        public void afterTest(@Observes org.jboss.arquillian.test.spi.event.suite.After event) {
+            if (event.getTestClass().getJavaClass() == TestingAssertionForFailingAfterTest.class) {
+                throw new RuntimeException("after failed");
+            }
+        }
+    }
+}

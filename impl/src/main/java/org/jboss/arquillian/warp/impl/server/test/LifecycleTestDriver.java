@@ -31,16 +31,17 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
 /**
  * Observes {@link LifecycleEvent} events and executed verification methods annotated with
  * {@link LifecycleEvent#getAnnotation()} annotation.
- *
+ * 
  * See {@link LifecycleTestClassExecutor} which executes {@link BeforeClass} and {@link AfterClass} events.
- *
+ * 
  * @author Lukas Fryc
- *
+ * 
  */
 public class LifecycleTestDriver {
 
@@ -56,25 +57,35 @@ public class LifecycleTestDriver {
     @Inject
     private Event<Test> test;
 
-    public void fireTest(@Observes LifecycleEvent event) {
-        final AssertionRegistry registry = getRegistry();
+    @Inject
+    private Instance<ResponsePayload> responsePayload;
 
-        for (final Object assertionObject : registry.getAssertions()) {
+    public void fireTest(@Observes LifecycleEvent event) {
+
+        for (final Object assertionObject : registry().getAssertions()) {
             final Annotation annotation = event.getAnnotation();
 
             List<Method> methods = SecurityActions.getMethodsWithAnnotation(assertionObject.getClass(), annotation);
 
             for (final Method testMethod : methods) {
-                before.fire(new Before(assertionObject, testMethod));
-
-                test.fire(new Test(new LifecycleMethodExecutor(assertionObject, testMethod)));
-
-                after.fire(new After(assertionObject, testMethod));
+                executeTest(assertionObject, testMethod);
             }
         }
     }
 
-    private AssertionRegistry getRegistry() {
+    private void executeTest(Object assertionObject, Method testMethod) {
+        try {
+            before.fire(new Before(assertionObject, testMethod));
+
+            test.fire(new Test(new LifecycleMethodExecutor(assertionObject, testMethod)));
+
+            after.fire(new After(assertionObject, testMethod));
+        } catch (Throwable e) {
+            responsePayload.get().setThrowable(e);
+        }
+    }
+
+    private AssertionRegistry registry() {
         return registry.get();
     }
 
