@@ -19,22 +19,26 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
 
     @Override
     public void deenrichResponse(HttpResponse response) {
-        int payloadLength = Integer.valueOf(getHeader(response));
-        ChannelBuffer content = response.getContent();
-        String responseEnrichment = content.toString(0, payloadLength, Charset.defaultCharset());
-        content.readerIndex(payloadLength);
-        content.discardReadBytes();
+        try {
+            int payloadLength = Integer.valueOf(getHeader(response));
+            ChannelBuffer content = response.getContent();
+            String responseEnrichment = content.toString(0, payloadLength, Charset.defaultCharset());
+            content.readerIndex(payloadLength);
+            content.discardReadBytes();
 
-        long originalLength = HttpHeaders.getContentLength(response);
-        HttpHeaders.setContentLength(response, originalLength - payloadLength);
+            long originalLength = HttpHeaders.getContentLength(response);
+            HttpHeaders.setContentLength(response, originalLength - payloadLength);
 
-        ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
-        ResponseEnrichment enrichment = new ResponseEnrichment(payload);
-        AssertionHolder.addResponse(enrichment);
+            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
+            AssertionHolder.addResponse(new ResponseEnrichment(payload));
+        } catch (Exception e) {
+            ResponsePayload exceptionPayload = new ResponsePayload();
+            exceptionPayload.setThrowable(e);
+            AssertionHolder.addResponse(new ResponseEnrichment(exceptionPayload));
+        }
     }
-    
+
     private String getHeader(HttpResponse response) {
         return response.getHeader(WarpCommons.ENRICHMENT_RESPONSE);
     }
-
 }
