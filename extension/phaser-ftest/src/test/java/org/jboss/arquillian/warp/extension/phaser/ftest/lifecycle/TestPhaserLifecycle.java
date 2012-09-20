@@ -83,7 +83,7 @@ public class TestPhaserLifecycle {
         }).verify(new ExecuteAllPhases());
 
         assertFalse(executed.isPostback());
-        verifyExecutedPhases(executed);
+        ExecuteAllPhases.verifyExecutedPhases(executed);
 
         executed = Warp.execute(new ClientAction() {
             public void action() {
@@ -105,15 +105,10 @@ public class TestPhaserLifecycle {
         }).verify(new ExecuteAllPhases());
 
         assertTrue(executed.isPostback());
-        verifyExecutedPhases(executed);
+        ExecuteAllPhases.verifyExecutedPhases(executed);
     }
 
-    private static void verifyExecutedPhases(ExecuteAllPhases executed) {
-        EnumSet<Phase> expectedPhases = executed.isPostback() ? EnumSet.allOf(Phase.class) : EnumSet.of(Phase.RESTORE_VIEW,
-                Phase.RENDER_RESPONSE);
-        assertEquals("before", expectedPhases, executed.getBefore());
-        assertEquals("after", expectedPhases, executed.getAfter());
-    }
+    
 
     public static class ExecuteAllPhases extends ServerAssertion {
 
@@ -205,6 +200,13 @@ public class TestPhaserLifecycle {
 
         public boolean isPostback() {
             return postback;
+        }
+        
+        private static void verifyExecutedPhases(ExecuteAllPhases executed) {
+            EnumSet<Phase> expectedPhases = executed.isPostback() ? EnumSet.allOf(Phase.class) : EnumSet.of(Phase.RESTORE_VIEW,
+                    Phase.RENDER_RESPONSE);
+            assertEquals("before", expectedPhases, executed.getBefore());
+            assertEquals("after", expectedPhases, executed.getAfter());
         }
     }
 }
