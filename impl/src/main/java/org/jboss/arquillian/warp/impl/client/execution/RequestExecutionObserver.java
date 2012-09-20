@@ -5,6 +5,7 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
@@ -35,6 +36,10 @@ public class RequestExecutionObserver {
 
     public void finishEnrichment(@Observes FinishEnrichment event) {
         assertionSynchronizer().finish();
+    }
+    
+    public void executeClientAction(@Observes ClientAction action) {
+        action.action();
     }
 
     public void awaitResponse(@Observes AwaitResponse event) {
