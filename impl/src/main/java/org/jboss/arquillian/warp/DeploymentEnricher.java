@@ -17,16 +17,21 @@
 package org.jboss.arquillian.warp;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
+import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -37,13 +42,13 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  * @author Lukas Fryc
  * 
  */
-public class DeploymentEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender {
+public class DeploymentEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender, ProtocolArchiveProcessor {
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
     @Inject
-    Instance<TestClass> testClass;
+    private Instance<TestClass> testClass;
 
     @Override
     public void process(Archive<?> applicationArchive, TestClass testClass) {
@@ -60,6 +65,9 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
                     }
                     extension.enrichWebArchive(webArchive);
                 }
+                
+                JavaArchive testClassArchive = ShrinkWrap.create(JavaArchive.class, "arquillian-warp-test-classes.jar").addClass(testClass.getJavaClass());
+                webArchive.addAsLibrary(testClassArchive);
             }
         }
     }
@@ -99,6 +107,26 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             return archive;
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Removes test class from web archive
+     */
+    @Override
+    public void process(TestDeployment testDeployment, Archive<?> protocolArchive) {
+        // TODO must be web archive
+        Archive<?> applicationArchive = testDeployment.getApplicationArchive();
+        List<ArchivePath> classPathsToRemove = new LinkedList<ArchivePath>();
+        for (ArchivePath archivePath : applicationArchive.getContent().keySet()) {
+            String path = archivePath.get();
+            String classPath = testClass.get().getName().replace(".", "/");
+            if (path.matches("/WEB-INF/classes/" + classPath + "(\\$.*)?\\.class")) {
+                classPathsToRemove.add(archivePath);
+            }
+        }
+        for (ArchivePath archivePath : classPathsToRemove) {
+            applicationArchive.delete(archivePath);
         }
     }
 }
