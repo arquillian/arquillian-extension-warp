@@ -16,9 +16,11 @@
  */
 package org.jboss.arquillian.warp.ftest.failure;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -30,6 +32,7 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -43,6 +46,7 @@ import org.openqa.selenium.WebDriver;
  */
 @RunWith(Arquillian.class)
 @WarpTest
+@RunAsClient
 public class TestServerAssertionFailurePropagation {
 
     @Drone
@@ -54,27 +58,70 @@ public class TestServerAssertionFailurePropagation {
     @Deployment
     public static WebArchive createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html")).addAsWebInfResource("beans.xml");
+        return ShrinkWrap
+                .create(WebArchive.class, "test.war")
+                .addClass(TestingServlet.class)
+                .addAsWebResource(new File("src/main/webapp/index.html"))
+                .addAsWebInfResource("beans.xml");
     }
 
     @Test(expected = AssertionError.class)
-    @RunAsClient
-    public void test() {
+    public void testAssertionErrorPropagation() {
 
         Warp.execute(new ClientAction() {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");
             }
-        }).verify(new InitialRequestAssertion());
+        }).verify(new AssertionErrorAssertion());
     }
 
-    public static class InitialRequestAssertion extends ServerAssertion {
+    @Test
+    public void testCheckedExceptionPropagation() {
+
+        try {
+            Warp.execute(new ClientAction() {
+                public void action() {
+                    browser.navigate().to(contextPath + "index.html");
+                }
+            }).verify(new CheckedExceptionAssertion());
+        } catch (ServerWarpExecutionException e) {
+            assertTrue(e.getCause() instanceof IOException);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRuntimeExceptionPropagation() {
+        Warp.execute(new ClientAction() {
+            public void action() {
+                browser.navigate().to(contextPath + "index.html");
+            }
+        }).verify(new RuntimeExceptionAssertion());
+    }
+
+    public static class AssertionErrorAssertion extends ServerAssertion {
         private static final long serialVersionUID = 1L;
 
         @BeforeServlet
         public void beforeServlet() {
             fail("AssertionError should be correctly handled and propagated to the client-side");
+        }
+    }
+
+    public static class CheckedExceptionAssertion extends ServerAssertion {
+        private static final long serialVersionUID = 1L;
+
+        @BeforeServlet
+        public void beforeServlet() throws Exception {
+            throw new IOException();
+        }
+    }
+
+    public static class RuntimeExceptionAssertion extends ServerAssertion {
+        private static final long serialVersionUID = 1L;
+
+        @BeforeServlet
+        public void beforeServlet() {
+            throw new IllegalArgumentException();
         }
     }
 

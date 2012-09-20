@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.ftest.failure;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.net.URL;
@@ -31,7 +32,6 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
-import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -64,13 +64,17 @@ public class TestBigResponsePayload {
     @RunAsClient
     public void test() {
 
-        Assertion assertion = Warp.execute(new ClientAction() {
+        Assertion requestAssertion = new Assertion();
+        
+        Assertion responseAssertion = Warp.execute(new ClientAction() {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");
             }
-        }).verify(new Assertion());
+        }).verify(requestAssertion);
 
-        assertEquals(assertion.payload.length, Assertion.LENGTH);
+        assertNotNull("responseAssertion must not be null", responseAssertion);
+        assertNotNull("payload must not be null", responseAssertion.payload);
+        assertEquals(responseAssertion.payload.length, Assertion.LENGTH);
     }
 
     public static class Assertion extends ServerAssertion {
@@ -80,11 +84,6 @@ public class TestBigResponsePayload {
         private static final long serialVersionUID = 1L;
 
         private byte[] payload;
-
-        @BeforeServlet
-        public void beforeServlet() {
-            System.out.println("test");
-        }
 
         @AfterServlet
         public void afterServlet() {

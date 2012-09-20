@@ -18,6 +18,8 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpRequest;
@@ -26,24 +28,24 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
 public class DefaultRequestEnrichmentFilter implements RequestEnrichmentFilter {
-    
+
     @Inject
     private Event<FilterHttpRequest> tryEnrichRequest;
-    
+
     private RequestEnrichmentService enrichmentService;
 
     @Override
     public void filter(HttpRequest request) {
         if (AssertionHolder.isWaitingForRequests()) {
             try {
-                
+
                 tryEnrichRequest.fire(new FilterHttpRequest(request, enrichmentService));
-                
+
             } catch (Exception originalException) {
-                ClientWarpExecutionException wrappedException = new ClientWarpExecutionException("enriching request failed: "
-                        + originalException.getMessage(), originalException);
+                ClientWarpExecutionException explainingException = new ClientWarpExecutionException(
+                        "enriching request failed: " + originalException.getMessage(), originalException);
                 ResponsePayload exceptionPayload = new ResponsePayload();
-                exceptionPayload.setThrowable(wrappedException);
+                exceptionPayload.setTestResult(new TestResult(Status.FAILED, explainingException));
                 ResponseEnrichment responseEnrichment = new ResponseEnrichment(exceptionPayload);
                 AssertionHolder.addResponse(responseEnrichment);
             }

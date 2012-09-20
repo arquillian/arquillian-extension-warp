@@ -17,6 +17,8 @@
 package org.jboss.arquillian.warp.impl.server.execution;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +26,8 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.impl.server.event.EnrichHttpResponse;
 import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
@@ -33,6 +37,8 @@ import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public class WarpRequestProcessor {
+    
+    private Logger log = Logger.getLogger(WarpRequestProcessor.class.getName());
 
     @Inject
     private Event<RequestProcessingStarted> requestProcessingStarted;
@@ -48,6 +54,9 @@ public class WarpRequestProcessor {
 
     @Inject
     private Event<ExecuteWarp> executeWarp;
+    
+    @Inject
+    private Event<TestResult> testResult;
 
     
 
@@ -62,11 +71,11 @@ public class WarpRequestProcessor {
             executeWarp.fire(new ExecuteWarp());
 
         } catch (Throwable e) {
-            responsePayload.setThrowable(e);
+            testResult.fire(new TestResult(Status.FAILED, e));
         }
 
-        if (responsePayload.getThrowable() != null) {
-            responsePayload.getThrowable().printStackTrace();
+        if (responsePayload.getTestResult() != null && responsePayload.getTestResult().getThrowable() != null) {
+            log.log(Level.SEVERE, "exception was thrown during Warp execution", responsePayload.getTestResult().getThrowable());
         }
 
         try {

@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.server.test;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -31,7 +32,6 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
 /**
@@ -57,9 +57,6 @@ public class LifecycleTestDriver {
     @Inject
     private Event<Test> test;
 
-    @Inject
-    private Instance<ResponsePayload> responsePayload;
-
     public void fireTest(@Observes LifecycleEvent event) {
 
         for (final Object assertionObject : registry().getAssertions()) {
@@ -74,15 +71,11 @@ public class LifecycleTestDriver {
     }
 
     private void executeTest(Object assertionObject, Method testMethod) {
-        try {
-            before.fire(new Before(assertionObject, testMethod));
+        before.fire(new Before(assertionObject, testMethod));
 
-            test.fire(new Test(new LifecycleMethodExecutor(assertionObject, testMethod)));
+        test.fire(new Test(new LifecycleMethodExecutor(assertionObject, testMethod)));
 
-            after.fire(new After(assertionObject, testMethod));
-        } catch (Throwable e) {
-            responsePayload.get().setThrowable(e);
-        }
+        after.fire(new After(assertionObject, testMethod));
     }
 
     private AssertionRegistry registry() {
@@ -112,7 +105,11 @@ public class LifecycleTestDriver {
 
         @Override
         public void invoke(Object... parameters) throws Throwable {
-            method.invoke(instance, parameters);
+            try {
+                method.invoke(instance, parameters);
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
+            }
         }
 
     }

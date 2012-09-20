@@ -27,7 +27,6 @@ public class ResponsePayload implements Serializable {
 
     private ServerAssertion assertion;
     private TestResult testResult;
-    private Throwable throwable;
 
     public ServerAssertion getAssertion() {
         return assertion;
@@ -42,15 +41,9 @@ public class ResponsePayload implements Serializable {
     }
 
     public void setTestResult(TestResult testResult) {
+        if (this.testResult != null) {
+            throw new IllegalStateException("test result was already set");
+        }
         this.testResult = testResult;
     }
-
-    public Throwable getThrowable() {
-        return throwable;
-    }
-
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
-    }
-
 }

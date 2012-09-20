@@ -46,7 +46,7 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
     private void enrich(ResponsePayload payload, HttpServletResponse response, NonWritingResponse nonWritingResponse)
             throws IOException {
 
-        String enrichment = SerializationUtils.serializeToBase64(responsePayload.get());
+        String enrichment = SerializationUtils.serializeToBase64(payload);
 
         // set a header with the size of the payload
         response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Integer.toString(enrichment.length()));

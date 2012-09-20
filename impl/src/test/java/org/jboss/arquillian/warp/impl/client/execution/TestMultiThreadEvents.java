@@ -7,7 +7,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Test;
-import org.junit.experimental.theories.suppliers.TestedOn;
 
 public class TestMultiThreadEvents {
 
@@ -65,7 +64,6 @@ public class TestMultiThreadEvents {
     public static class Observer {
 
         public void observer(@Observes Event event) {
-            System.out.println(event);
             latch.countDown();
         }
     }

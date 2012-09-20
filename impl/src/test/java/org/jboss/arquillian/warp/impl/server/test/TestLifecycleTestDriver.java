@@ -2,10 +2,10 @@ package org.jboss.arquillian.warp.impl.server.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -58,6 +58,7 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         extensions.add(LocalTestExecuter.class);
         extensions.add(ContainerTestExecuter.class);
         extensions.add(ExceptionThrowingSuiteEventObserver.class);
+        extensions.add(TestResultObserver.class);
     }
 
     @Before
@@ -135,11 +136,12 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         fire(new BeforeServletEvent());
 
         // then
-        assertNotNull(testResult());
-        assertEquals(TestResult.Status.FAILED, testResult().getStatus());
-        assertEquals(exception, testResult().getThrowable().getCause());
+        TestResult testResult = responsePayload.getTestResult();
+        assertNotNull("response payload test result must be set", testResult);
 
-        verifyZeroInteractions(responsePayload);
+        Throwable throwable = testResult.getThrowable();
+        assertNotNull("response payload throwable must be set", throwable);
+        assertEquals(exception, throwable.getCause());
     }
 
     @Test
@@ -149,10 +151,17 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(new TestingAssertionForFailingBeforeTest()));
 
         // when
-        fire(new BeforeServletEvent());
+        try {
+            fire(new BeforeServletEvent());
+            fail();
+        } catch (RuntimeException e) {
+        }
 
         // then
-        Throwable throwable = responsePayload.getThrowable();
+        TestResult testResult = responsePayload.getTestResult();
+        assertNotNull("response payload test result must be set", testResult);
+
+        Throwable throwable = testResult.getThrowable();
         assertNotNull("response payload throwable must be set", throwable);
         assertEquals("before failed", throwable.getMessage());
     }
@@ -164,19 +173,25 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(new TestingAssertionForFailingAfterTest()));
 
         // when
-        fire(new BeforeServletEvent());
+        try {
+            fire(new BeforeServletEvent());
+        } catch (RuntimeException e) {
+        }
 
         // then
-        Throwable throwable = responsePayload.getThrowable();
+        TestResult testResult = responsePayload.getTestResult();
+        assertNotNull("response payload test result must be set", testResult);
+
+        Throwable throwable = testResult.getThrowable();
         assertNotNull("response payload throwable must be set", throwable);
         assertEquals("after failed", throwable.getMessage());
     }
 
-    private TestResult testResult() {
+    TestResult testResult() {
         return testResult.get();
     }
 
-    public static class TestingAssertion extends ServerAssertion {
+    static class TestingAssertion extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
         @BeforeServlet
@@ -184,7 +199,7 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         }
     }
 
-    public static class TestingAssertionForMultipleAssertions extends ServerAssertion {
+    static class TestingAssertionForMultipleAssertions extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
         @BeforeServlet
@@ -192,7 +207,7 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         }
     }
 
-    public static class TestingAssertionForMultipleMethods extends ServerAssertion {
+    static class TestingAssertionForMultipleMethods extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
         @BeforeServlet
@@ -204,7 +219,7 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         }
     }
 
-    public static class TestingAssertionForFailingBeforeTest extends ServerAssertion {
+    static class TestingAssertionForFailingBeforeTest extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
         @BeforeServlet
@@ -212,7 +227,7 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         }
     }
 
-    public static class TestingAssertionForFailingAfterTest extends ServerAssertion {
+    static class TestingAssertionForFailingAfterTest extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
         @BeforeServlet
@@ -220,7 +235,7 @@ public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
         }
     }
 
-    public static class ExceptionThrowingSuiteEventObserver {
+    static class ExceptionThrowingSuiteEventObserver {
 
         public void beforeTest(@Observes org.jboss.arquillian.test.spi.event.suite.Before event) {
             if (event.getTestClass().getJavaClass() == TestingAssertionForFailingBeforeTest.class) {

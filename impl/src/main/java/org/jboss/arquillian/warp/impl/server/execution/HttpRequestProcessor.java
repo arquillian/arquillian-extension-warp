@@ -42,12 +42,7 @@ public class HttpRequestProcessor {
         if (requestDeenricher.isEnriched()) {
             
             responsePayload.set(new ResponsePayload());
-            
-            try {
-                requestPayload.set(requestDeenricher.resolvePayload());
-            } catch (Throwable e) {
-                responsePayload.get().setThrowable(e);
-            }
+            requestPayload.set(requestDeenricher.resolvePayload());
             
             processWarpRequest.fire(new ProcessWarpRequest());
             
@@ -57,11 +52,7 @@ public class HttpRequestProcessor {
     }
     
     public void enrichHttpResponse(@Observes EnrichHttpResponse event, ServiceLoader services) {
-        try {
-            HttpResponseEnricher responseEnricher = services.onlyOne(HttpResponseEnricher.class);
-            responseEnricher.enrichResponse();
-        } catch (Exception e) {
-            responsePayload.get().setThrowable(e);
-        }
+        HttpResponseEnricher responseEnricher = services.onlyOne(HttpResponseEnricher.class);
+        responseEnricher.enrichResponse();
     }
 }

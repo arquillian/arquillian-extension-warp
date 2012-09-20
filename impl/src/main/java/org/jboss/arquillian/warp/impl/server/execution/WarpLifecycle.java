@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.server.execution;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -26,8 +24,6 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.EventContext;
-import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.AfterServletEvent;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
@@ -37,7 +33,6 @@ import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleFinished;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleStarted;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
-import org.jboss.arquillian.warp.impl.server.test.TestResultStore;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -59,9 +54,6 @@ public class WarpLifecycle {
     private Instance<AssertionRegistry> assertionRegistry;
 
     @Inject
-    private Instance<TestResultStore> testResultStore;
-
-    @Inject
     private Event<WarpLifecycleStarted> warpLifecycleStarted;
 
     @Inject
@@ -73,7 +65,7 @@ public class WarpLifecycle {
      * @return {@link ResponsePayload} based on the lifecycle tests results
      */
     public void execute(@Observes ExecuteWarp event, HttpServletRequest request, NonWritingResponse nonWritingResponse,
-            FilterChain filterChain, RequestPayload requestPayload) throws Throwable {
+            FilterChain filterChain, RequestPayload requestPayload, ResponsePayload responsePayload) throws Throwable {
 
         final ServerAssertion serverAssertion = requestPayload.getAssertion();
 
@@ -89,41 +81,14 @@ public class WarpLifecycle {
             filterChain.doFilter(request, nonWritingResponse);
 
             lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
+
+            responsePayload.setAssertion(serverAssertion);
         } finally {
             warpLifecycleFinished.fire(new WarpLifecycleFinished());
 
             assertionRegistry.get().unregisterAssertion(serverAssertion);
 
             lifecycleManagerStore.get().unbind(ServletRequest.class, request);
-        }
-    }
-
-    /**
-     * Processes the test results and returns appropriate {@link ResponsePayload} for successful or failed lifecycle tests.
-     * 
-     * The successful lifecycle tests is where no test failed. Failed test is test where at least on lifecycle test failed.
-     */
-    public void divergeTestResult(@Observes EventContext<ExecuteWarp> context, RequestPayload requestPayload,
-            ResponsePayload responsePayload) {
-
-        try {
-            context.proceed();
-
-            final ServerAssertion serverAssertion = requestPayload.getAssertion();
-
-            TestResult firstFailedResult = testResultStore.get().getFirstFailed();
-
-            if (firstFailedResult == null) {
-                responsePayload.setAssertion(serverAssertion);
-            } else {
-                Throwable throwable = firstFailedResult.getThrowable();
-                if (throwable instanceof InvocationTargetException) {
-                    throwable = throwable.getCause();
-                }
-                responsePayload.setThrowable(throwable);
-            }
-        } catch (Throwable e) {
-            responsePayload.setThrowable(e);
         }
     }
 }

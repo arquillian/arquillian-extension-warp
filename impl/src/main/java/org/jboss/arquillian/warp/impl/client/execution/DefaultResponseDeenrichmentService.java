@@ -2,6 +2,9 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.nio.charset.Charset;
 
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
+import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
@@ -31,9 +34,11 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
 
             ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
             AssertionHolder.addResponse(new ResponseEnrichment(payload));
-        } catch (Exception e) {
+        } catch (Exception originalException) {
             ResponsePayload exceptionPayload = new ResponsePayload();
-            exceptionPayload.setThrowable(e);
+            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("deenriching response failed: "
+                    + originalException.getMessage(), originalException);
+            exceptionPayload.setTestResult(new TestResult(Status.FAILED, explainingException));
             AssertionHolder.addResponse(new ResponseEnrichment(exceptionPayload));
         }
     }

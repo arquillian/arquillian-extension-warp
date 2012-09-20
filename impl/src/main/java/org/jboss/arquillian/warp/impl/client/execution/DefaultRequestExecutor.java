@@ -20,6 +20,7 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
@@ -45,7 +46,8 @@ public class DefaultRequestExecutor implements RequestExecutor {
 
     private ClientAction action;
     private RequestFilter<?> filter;
-    private ServerAssertion assertion;
+    private ServerAssertion requestAssertion;
+    private ServerAssertion responseAssertion;
 
     @Inject
     private Event<AdvertiseEnrichment> advertiseEnrichment;
@@ -71,9 +73,9 @@ public class DefaultRequestExecutor implements RequestExecutor {
 
     @SuppressWarnings("unchecked")
     public <T extends ServerAssertion> T verify(T assertion) {
-        this.assertion = assertion;
+        this.requestAssertion = assertion;
         execute();
-        return (T) this.assertion;
+        return (T) this.responseAssertion;
     }
 
     @Override
@@ -101,7 +103,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
     private void setupServerAssertion() {
         advertiseEnrichment.fire(new AdvertiseEnrichment(1));
 
-        RequestPayload payload = new RequestPayload(assertion);
+        RequestPayload payload = new RequestPayload(requestAssertion);
         requestEnrichment.set(new RequestEnrichment(payload, filter));
 
         addEnrichment.fire(new InstallEnrichment());
@@ -120,26 +122,42 @@ public class DefaultRequestExecutor implements RequestExecutor {
     private void awaitServerExecution() {
         awaitResponse.fire(new AwaitResponse());
 
-        Throwable throwable = responsePayload.get().getThrowable();
-        if (throwable != null) {
-            propagateFailure(throwable);
+        TestResult testResult = responsePayload().getTestResult();
+        
+        if (testResult != null) {
+            switch (testResult.getStatus()) {
+                case FAILED:
+                    propagateFailure(testResult);
+                    break;
+                case SKIPPED:
+                    propagateSkip();
+                    break;
+            }
         }
 
-        assertion = responsePayload.get().getAssertion();
+        responseAssertion = responsePayload().getAssertion();
     }
 
     private void cleanup() {
         cleanEnrichment.fire(new CleanEnrichment());
     }
 
-    private void propagateFailure(Throwable throwable) {
-        if (throwable instanceof AssertionError) {
-            throw (AssertionError) throwable;
-        } else if (throwable instanceof ClientWarpExecutionException) {
-            throw (ClientWarpExecutionException) throwable;
+    private void propagateFailure(TestResult testResult) {
+        Throwable e = testResult.getThrowable();
+        
+        if (e instanceof AssertionError) {
+            throw (AssertionError) e;
+        } else if (e instanceof ClientWarpExecutionException) {
+            throw (ClientWarpExecutionException) e;
+        } else if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
         } else {
-            throw new ServerWarpExecutionException(throwable);
+            throw new ServerWarpExecutionException(e);
         }
+    }
+    
+    private void propagateSkip() {
+        throw new ServerWarpExecutionException("execution was skipped");
     }
 
     public static class ClientActionException extends RuntimeException {
@@ -148,5 +166,9 @@ public class DefaultRequestExecutor implements RequestExecutor {
         public ClientActionException(Throwable cause) {
             super(cause);
         }
+    }
+    
+    private ResponsePayload responsePayload() {
+        return responsePayload.get();
     }
 }

@@ -19,21 +19,33 @@ package org.jboss.arquillian.warp.impl.server.test;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.TestResult.Status;
+import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public class TestResultObserver {
-
+    
     @Inject
-    Instance<TestResult> testResult;
+    private Instance<ResponsePayload> responsePayload;
+    
+    public void propagateTestResult(@Observes TestResult testResult) {
+        storeFirstFailure(testResult);
+    }
 
-    @Inject
-    Instance<TestResultStore> testResultStore;
-
-    public void destroyRequestContext(@Observes(precedence = 50) EventContext<Test> context) {
-        context.proceed();
-        TestResult result = testResult.get();
-        testResultStore.get().pushResult(result);
+    public void propagateThrowableAsTestResult(@Observes Throwable throwable) {
+        storeFirstFailure(new TestResult(Status.FAILED, throwable));
+    }
+    
+    private void storeFirstFailure(TestResult testResult) {
+        // setup just a first failure
+        if (testResult.getStatus() != Status.PASSED) {
+            if (responsePayload().getTestResult() == null) {
+                responsePayload().setTestResult(testResult);
+            }
+        }
+    }
+    
+    private ResponsePayload responsePayload() {
+        return responsePayload.get();
     }
 }

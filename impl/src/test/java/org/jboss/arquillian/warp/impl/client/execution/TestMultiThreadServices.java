@@ -54,7 +54,6 @@ public class TestMultiThreadServices {
 
         @Override
         public void invokeService() {
-            System.out.println(component);
             latch.countDown();
         }
     }

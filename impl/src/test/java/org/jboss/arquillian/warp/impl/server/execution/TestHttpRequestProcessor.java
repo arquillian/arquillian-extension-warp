@@ -1,9 +1,10 @@
 package org.jboss.arquillian.warp.impl.server.execution;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.event.EnrichHttpResponse;
@@ -25,6 +27,7 @@ import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.server.request.RequestContext;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
+import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
 import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
@@ -62,6 +65,7 @@ public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
     protected void addExtensions(List<Class<?>> extensions) {
         super.addExtensions(extensions);
         extensions.add(HttpRequestProcessor.class);
+        extensions.add(TestResultObserver.class);
     }
 
     @Before
@@ -107,6 +111,7 @@ public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
 
         // having
         when(deenricher.isEnriched()).thenReturn(true);
+        when(deenricher.resolvePayload()).thenReturn(requestPayload);
 
         // when
         fire(new ProcessHttpRequest());
@@ -146,7 +151,6 @@ public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
                 .get(ResponsePayload.class);
         assertNotNull("response payload is not null", responsePayload);
         assertNull("response payload has empty assertion", responsePayload.getAssertion());
-        assertNull("response payload has empty throwable", responsePayload.getThrowable());
         assertNull("response payload has empty test result", responsePayload.getTestResult());
     }
 
@@ -154,20 +158,27 @@ public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
     public void when_request_deenrichment_fails_then_response_payload_is_filled_with_throwable() {
 
         // having
+        RuntimeException exception = new RuntimeException();
         when(deenricher.isEnriched()).thenReturn(true);
-        when(deenricher.resolvePayload()).thenThrow(IllegalStateException.class);
+        when(deenricher.resolvePayload()).thenThrow(exception);
 
         // when
-        fire(new ProcessHttpRequest());
+        try {
+            fire(new ProcessHttpRequest());
+            fail();
+        } catch (Exception e) {
+            assertEquals(exception, e);
+        }
 
         // then
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
                 .get(ResponsePayload.class);
         assertNotNull("response payload is not null", responsePayload);
         assertNull("response payload has empty assertion", responsePayload.getAssertion());
-        assertTrue("response payload has set throwable with deenrichment exception",
-                responsePayload.getThrowable() instanceof IllegalStateException);
-        assertNull("response payload has empty test result", responsePayload.getTestResult());
+
+        TestResult testResult = responsePayload.getTestResult();
+        assertNotNull("response payload has test result", testResult);
+        assertEquals(testResult.getThrowable(), exception);
     }
 
     @Test
@@ -184,12 +195,18 @@ public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
     public void when_response_enrichment_fails_then_response_payload_throwable_is_filled() {
 
         // having
+        RuntimeException exception = new RuntimeException();
         ResponsePayload responsePayload = new ResponsePayload();
         bind(RequestScoped.class, ResponsePayload.class, responsePayload);
-        doThrow(IllegalStateException.class).when(enricher).enrichResponse();
+        doThrow(exception).when(enricher).enrichResponse();
 
         // when
-        fire(new EnrichHttpResponse());
+        try {
+            fire(new EnrichHttpResponse());
+            fail();
+        } catch (Exception e) {
+            assertEquals(exception, e);
+        }
 
         // then
         verify(enricher).enrichResponse();
@@ -197,9 +214,9 @@ public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
                 .get(ResponsePayload.class);
         assertSame(responsePayload, resolvedResponsePayload);
         assertNull("response payload has empty assertion", responsePayload.getAssertion());
-        assertNull("response payload has empty test result", responsePayload.getTestResult());
-        assertTrue("response payload has set throwable with response enrichment exception",
-                responsePayload.getThrowable() instanceof IllegalStateException);
+
+        TestResult testResult = responsePayload.getTestResult();
+        assertEquals(exception, testResult.getThrowable());
     }
 
 }
