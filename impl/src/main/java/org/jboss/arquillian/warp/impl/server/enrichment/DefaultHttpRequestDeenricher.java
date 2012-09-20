@@ -23,7 +23,7 @@ public class DefaultHttpRequestDeenricher implements HttpRequestDeenricher {
     }
 
     @Override
-    public RequestPayload getPayload() {
+    public RequestPayload resolvePayload() {
         String payload = getStringPayload();
         return SerializationUtils.deserializeFromBase64(payload);
     }

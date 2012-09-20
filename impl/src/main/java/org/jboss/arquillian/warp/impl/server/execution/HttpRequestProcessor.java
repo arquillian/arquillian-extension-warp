@@ -14,7 +14,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpResponseEnricher;
-import org.jboss.arquillian.warp.impl.server.event.EnrichResponse;
+import org.jboss.arquillian.warp.impl.server.event.EnrichHttpResponse;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
@@ -34,23 +34,34 @@ public class HttpRequestProcessor {
     @RequestScoped
     private InstanceProducer<ResponsePayload> responsePayload;
 
-    public void processHttpRequest(@Observes ProcessHttpRequest e, ServiceLoader services, HttpServletRequest request,
+    public void processHttpRequest(@Observes ProcessHttpRequest event, ServiceLoader services, HttpServletRequest request,
             HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         HttpRequestDeenricher requestDeenricher = services.onlyOne(HttpRequestDeenricher.class);
 
         if (requestDeenricher.isEnriched()) {
-            requestPayload.set(requestDeenricher.getPayload());
+            
             responsePayload.set(new ResponsePayload());
-
+            
+            try {
+                requestPayload.set(requestDeenricher.resolvePayload());
+            } catch (Throwable e) {
+                responsePayload.get().setThrowable(e);
+            }
+            
             processWarpRequest.fire(new ProcessWarpRequest());
+            
         } else {
             filterChain.doFilter(request, response);
         }
     }
     
-    public void enrichHttpResponse(@Observes EnrichResponse e, ServiceLoader services) {
-        HttpResponseEnricher responseEnricher = services.onlyOne(HttpResponseEnricher.class);
-        responseEnricher.enrichResponse();
+    public void enrichHttpResponse(@Observes EnrichHttpResponse event, ServiceLoader services) {
+        try {
+            HttpResponseEnricher responseEnricher = services.onlyOne(HttpResponseEnricher.class);
+            responseEnricher.enrichResponse();
+        } catch (Exception e) {
+            responsePayload.get().setThrowable(e);
+        }
     }
 }

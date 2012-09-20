@@ -4,5 +4,5 @@ public interface RequestDeenricher<P> {
 
     boolean isEnriched();
 
-    P getPayload();
+    P resolvePayload();
 }
