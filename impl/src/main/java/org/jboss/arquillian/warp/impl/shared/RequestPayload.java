@@ -26,7 +26,7 @@ import java.io.ObjectStreamClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
-import org.jboss.arquillian.warp.utils.SerializationUtils;
+import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 
 public class RequestPayload implements Externalizable {
 
@@ -71,7 +71,7 @@ public class RequestPayload implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        if (assertion.getClass().isAnonymousClass()) {
+        if (assertion.getClass().isAnonymousClass() || assertion.getClass().isMemberClass()) {
             try {
                 byte[] classFile = AssertionTransformer.transform(assertion.getClass());
                 ServerAssertion clone = (ServerAssertion) AssertionTransformer.cloneToNew(assertion, classFile);
