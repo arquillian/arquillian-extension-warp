@@ -5,17 +5,14 @@ import org.jboss.arquillian.warp.ServerAssertion;
 @SuppressWarnings("unused")
 public class SharingClass {
 
-    public void client() {
+    public Shared client() {
 
         ClientInterface client = new ClientImplementation();
 
-        new ServerAssertion() {
-        };
-
-        new Shared();
+        return new Shared();
     }
 
-    public class Shared extends ServerAssertion {
+    public static class Shared extends ServerAssertion {
 
         public void server() {
             ServerInterface server = new ServerImplemenation();

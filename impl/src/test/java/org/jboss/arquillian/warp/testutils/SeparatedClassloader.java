@@ -135,6 +135,11 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
             throw new InitializationError(e);
         }
     }
+    
+    public static ClassLoader getShrinkWrapClassLoader(JavaArchive archive, Class<?> testClass) throws InitializationError {
+        ClassLoader classLoader = getModuleClassLoader();
+        return getShrinkWrapClassLoader(classLoader, archive, testClass);
+    }
 
     private static TestResourceLoader getTestResourceLoader() throws Exception {
         TestResourceLoaderBuilder builder = new TestResourceLoaderBuilder();
