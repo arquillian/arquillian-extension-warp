@@ -2,12 +2,20 @@ package org.jboss.arquillian.warp.server.assertion;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Collection;
+
+import javassist.ClassPool;
+import javassist.CtClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
+import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.testutils.SeparatedClassloader;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Test;
 
 public class TestAssertionLoading {
@@ -31,9 +39,12 @@ public class TestAssertionLoading {
         byte[] serialized = serialize(clientClassLoader, shared);
         
         // when
-        Object deserialized = deserialize(serverClassLoader, serialized);
-        Method serverMethod = deserialized.getClass().getMethod("server");
-        serverMethod.invoke(deserialized);
+        Object deserializedPayload = deserialize(serverClassLoader, serialized);
+        Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
+        Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
+        
+        Method serverMethod = deserializedAssertion.getClass().getMethod("server");
+        serverMethod.invoke(deserializedAssertion);
     }
     
     @Test
@@ -79,9 +90,12 @@ public class TestAssertionLoading {
         byte[] serialized = serialize(clientClassLoader, shared);
         
         // when
-        Object deserialized = deserialize(serverClassLoader, serialized);
-        Method serverMethod = deserialized.getClass().getMethod("server");
-        serverMethod.invoke(deserialized);
+        Object deserializedPayload = deserialize(serverClassLoader, serialized);
+        Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
+        Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
+        
+        Method serverMethod = deserializedAssertion.getClass().getMethod("server");
+        serverMethod.invoke(deserializedAssertion);
     }
 
     private Object getStaticInnerClass(ClassLoader classLoader) throws Throwable {
@@ -137,17 +151,26 @@ public class TestAssertionLoading {
     }
 
     private static JavaArchive clientArchive() {
-        return ShrinkWrap.create(JavaArchive.class)
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
                 .addClasses(ClientInterface.class, ClientImplementation.class)
                 .addClasses(ServerInterface.class)
-                .addClasses(SharingClass.class, ServerAssertion.class)
-                .addClasses(SerializationUtils.class);
+                .addClasses(SharingClass.class, ServerAssertion.class, RequestPayload.class)
+                .addClasses(SerializationUtils.class)
+                .addClasses(AssertionTransformer.class);
+        
+        JavaArchive javassist = DependencyResolvers
+            .use(MavenDependencyResolver.class)
+            .artifact("javassist:javassist:3.12.1.GA")
+            .resolveAs(JavaArchive.class)
+            .iterator().next();
+        
+        return archive.merge(javassist);
     }
 
     private static JavaArchive serverArchive() {
         return ShrinkWrap.create(JavaArchive.class).addClasses(ClientInterface.class)
                 .addClasses(ServerInterface.class, ServerImplemenation.class)
-                .addClasses(ServerAssertion.class)
+                .addClasses(ServerAssertion.class, RequestPayload.class)
                 .addClasses(SerializationUtils.class);
     }
 

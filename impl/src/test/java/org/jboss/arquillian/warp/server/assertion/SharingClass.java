@@ -3,33 +3,34 @@ package org.jboss.arquillian.warp.server.assertion;
 import java.io.Serializable;
 
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 
 @SuppressWarnings("unused")
 public class SharingClass implements Serializable {
 
-    public StaticInnerClass getStaticInnerClass() {
+    public RequestPayload getStaticInnerClass() {
 
         ClientInterface client = new ClientImplementation();
 
-        return new StaticInnerClass();
+        return new RequestPayload(new StaticInnerClass());
     }
     
-    public InnerClass getInnerClass() {
+    public RequestPayload getInnerClass() {
 
         ClientInterface client = new ClientImplementation();
 
-        return new InnerClass();
+        return new RequestPayload(new InnerClass());
     }
     
-    public ServerAssertion getAnonymousClass() {
+    public RequestPayload getAnonymousClass() {
 
         ClientInterface client = new ClientImplementation();
 
-        return new ServerAssertion() {
+        return new RequestPayload(new ServerAssertion() {
             public void server() {
                 ServerInterface server = new ServerImplemenation();
             }
-        };
+        });
     }
     
     public class InnerClass extends ServerAssertion {

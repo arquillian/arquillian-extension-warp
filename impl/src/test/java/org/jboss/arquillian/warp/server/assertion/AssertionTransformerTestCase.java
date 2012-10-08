@@ -1,24 +1,48 @@
 package org.jboss.arquillian.warp.server.assertion;
 
-import java.io.ByteArrayInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import javassist.ClassPool;
+import java.util.Arrays;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class AssertionTransformerTestCase {
-    @Test
-    public void removeInnerClass() throws Exception {
 
+    @Test
+    public void testAnonymousClass() throws Exception {
+
+        ServerAssertion assertion = getAnonymousServerAssertion();
+
+        byte[] classFile = AssertionTransformer.transform(assertion.getClass());
+        Object modifiedAssertion = AssertionTransformer.cloneToNew(assertion, classFile);
+
+        verifyServerAssertionClass(modifiedAssertion);
+    }
+
+    @Test
+    public void testSerialization() throws Exception {
+
+        ServerAssertion assertion = getAnonymousServerAssertion();
+
+        RequestPayload payload = new RequestPayload(assertion);
+
+        RequestPayload deserializedPayload = SerializationUtils.deserializeFromBytes(SerializationUtils
+                .serializeToBytes(payload));
+        ServerAssertion deserializedAssertion = deserializedPayload.getAssertion();
+
+        verifyServerAssertionClass(deserializedAssertion);
+    }
+
+    public static ServerAssertion getAnonymousServerAssertion() {
         ServerAssertion assertion = new ServerAssertion() {
             private static final long serialVersionUID = 1L;
 
@@ -31,22 +55,19 @@ public class AssertionTransformerTestCase {
 
         print(assertion.getClass());
 
-        byte[] classFile = AssertionTransformer.transform(assertion.getClass());
+        return assertion;
+    }
 
-        ClassPool pool = ClassPool.getDefault();
-        Class<?> newClass = pool.toClass(pool.makeClassIfNew(new ByteArrayInputStream(classFile)));
+    public static void verifyServerAssertionClass(Object modifiedAssertion) throws Exception {
+        Class<?> newClass = modifiedAssertion.getClass();
 
         print(newClass);
-        // ?
-        // Assert.assertTrue(
-        // "Verify class is public",
-        // Modifier.isPublic(newClass.getModifiers()));
+
         Assert.assertNotNull("Verify default constructor", newClass.getConstructor());
 
-        Constructor<?> constructor = newClass.getConstructor();
-        Object modifiedAssertion = constructor.newInstance();
-
-        Assert.assertTrue("Verify new class is of tpye ServerAssertion", modifiedAssertion instanceof ServerAssertion);
+        System.out.println(modifiedAssertion.getClass().getSuperclass());
+        Assert.assertTrue("Verify new class is of type ServerAssertion", modifiedAssertion instanceof ServerAssertion);
+        
 
         Method method = modifiedAssertion.getClass().getMethod("get");
         Assert.assertTrue("Verify Annotations are preserved", method.isAnnotationPresent(BeforeServlet.class));
@@ -54,10 +75,12 @@ public class AssertionTransformerTestCase {
         Assert.assertEquals("Test", method.invoke(modifiedAssertion));
     }
 
-    private void print(Class<?> clazz) {
+    private static void print(Class<?> clazz) {
 
         System.out.println();
         System.out.println("Class: " + clazz.getName());
+        System.out.println("SuperClass: " + clazz.getSuperclass());
+        System.out.println("Interfaces: " + Arrays.asList(clazz.getInterfaces()));
         System.out.println("Fields");
         for (Field field : clazz.getDeclaredFields()) {
             printAnnotation(field);
@@ -77,7 +100,7 @@ public class AssertionTransformerTestCase {
         }
     }
 
-    public void printAnnotation(AnnotatedElement elem) {
+    public static void printAnnotation(AnnotatedElement elem) {
         StringBuilder sb = new StringBuilder();
         sb.append("\t");
         for (Annotation annotation : elem.getAnnotations()) {
