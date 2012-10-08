@@ -13,35 +13,104 @@ import org.junit.Test;
 public class TestAssertionLoading {
 
     @Test
-    public void testOnClient() throws Throwable {
+    public void testStaticInnerClassOnClient() throws Throwable {
 
         // having
         ClassLoader classLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
 
         // when
-        getShared(classLoader);
+        getStaticInnerClass(classLoader);
     }
 
     @Test
-    public void testOnServer() throws Throwable {
+    public void testStaticInnerClassOnOnServer() throws Throwable {
         // having
         ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
         ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
-        Object shared = getShared(clientClassLoader);
+        Object shared = getStaticInnerClass(clientClassLoader);
         byte[] serialized = serialize(clientClassLoader, shared);
         
         // when
         Object deserialized = deserialize(serverClassLoader, serialized);
         Method serverMethod = deserialized.getClass().getMethod("server");
         serverMethod.invoke(deserialized);
+    }
+    
+    @Test
+    public void testInnerClassOnClient() throws Throwable {
+
+        // having
+        ClassLoader classLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+
+        // when
+        getInnerClass(classLoader);
+    }
+    
+    @Test
+    public void testInnerClassOnOnServer() throws Throwable {
+        // having
+        ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+        ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+        Object shared = getInnerClass(clientClassLoader);
+        byte[] serialized = serialize(clientClassLoader, shared);
         
+        // when
+        Object deserialized = deserialize(serverClassLoader, serialized);
+        Method serverMethod = deserialized.getClass().getMethod("server");
+        serverMethod.invoke(deserialized);
+    }
+    
+    @Test
+    public void testAnonymousClassOnClient() throws Throwable {
+
+        // having
+        ClassLoader classLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+
+        // when
+        getAnonymousClass(classLoader);
+    }
+    
+    @Test
+    public void testAnonymousClassOnOnServer() throws Throwable {
+        // having
+        ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+        ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+        Object shared = getAnonymousClass(clientClassLoader);
+        byte[] serialized = serialize(clientClassLoader, shared);
+        
+        // when
+        Object deserialized = deserialize(serverClassLoader, serialized);
+        Method serverMethod = deserialized.getClass().getMethod("server");
+        serverMethod.invoke(deserialized);
     }
 
-    private Object getShared(ClassLoader classLoader) throws Throwable {
+    private Object getStaticInnerClass(ClassLoader classLoader) throws Throwable {
 
         Class<?> clazz = classLoader.loadClass(SharingClass.class.getName());
         Object instance = clazz.newInstance();
-        Method method = clazz.getMethod("client");
+        Method method = clazz.getMethod("getStaticInnerClass");
+
+        // when
+        Object shared = method.invoke(instance);
+        return shared;
+    }
+    
+    private Object getInnerClass(ClassLoader classLoader) throws Throwable {
+
+        Class<?> clazz = classLoader.loadClass(SharingClass.class.getName());
+        Object instance = clazz.newInstance();
+        Method method = clazz.getMethod("getInnerClass");
+
+        // when
+        Object shared = method.invoke(instance);
+        return shared;
+    }
+    
+    private Object getAnonymousClass(ClassLoader classLoader) throws Throwable {
+
+        Class<?> clazz = classLoader.loadClass(SharingClass.class.getName());
+        Object instance = clazz.newInstance();
+        Method method = clazz.getMethod("getAnonymousClass");
 
         // when
         Object shared = method.invoke(instance);
