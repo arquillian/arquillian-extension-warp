@@ -25,8 +25,8 @@ import java.io.ObjectOutput;
 import java.io.ObjectStreamClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
+import org.jboss.arquillian.warp.server.assertion.TransformedAssertion;
 
 public class RequestPayload implements Externalizable {
 
@@ -73,11 +73,12 @@ public class RequestPayload implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         if (assertion.getClass().isAnonymousClass() || assertion.getClass().isMemberClass()) {
             try {
-                byte[] classFile = AssertionTransformer.transform(assertion.getClass());
-                ServerAssertion clone = (ServerAssertion) AssertionTransformer.cloneToNew(assertion, classFile);
+                TransformedAssertion transformed = new TransformedAssertion(assertion.getClass());
+                
+                ServerAssertion clone = (ServerAssertion) transformed.cloneToNew(assertion);
 
                 out.writeBoolean(true);
-                out.writeObject(classFile);
+                out.writeObject(transformed.toBytecode());
                 out.writeObject(SerializationUtils.serializeToBytes(clone));
             } catch (Exception e) {
                 throw new RuntimeException("Could not transform and replicate anonymous class", e);
@@ -88,7 +89,7 @@ public class RequestPayload implements Externalizable {
         }
     }
 
-    private static class DynamicClassLoader extends ClassLoader {
+    public static class DynamicClassLoader extends ClassLoader {
         public DynamicClassLoader(ClassLoader parent) {
             super(parent);
         }

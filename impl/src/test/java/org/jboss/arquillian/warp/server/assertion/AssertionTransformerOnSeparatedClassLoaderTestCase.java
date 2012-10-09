@@ -45,7 +45,7 @@ public class AssertionTransformerOnSeparatedClassLoaderTestCase {
 
         ServerAssertion assertion = AssertionTransformerTestCase.getAnonymousServerAssertion();
 
-        byte[] classFile = AssertionTransformer.transform(assertion.getClass());
+        byte[] classFile = AssertionTransformer.transform(assertion.getClass()).toBytecode();
         Object modifiedAssertion = AssertionTransformer.cloneToNew(assertion, classFile);
 
         AssertionTransformerTestCase.verifyServerAssertionClass(modifiedAssertion);
