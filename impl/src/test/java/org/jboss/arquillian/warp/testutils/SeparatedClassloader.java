@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 
 public class SeparatedClassloader extends BlockJUnit4ClassRunner {
 
@@ -38,11 +39,47 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
 
     private static ThreadLocal<ClassLoader> initializedClassLoader = new ThreadLocal<ClassLoader>();
     private ClassLoader classLoader;
+    private ClassLoader originalClassLoader;
 
     public SeparatedClassloader(Class<?> testClass) throws InitializationError {
         super(getFromTestClassloader(initializeClassLoader(testClass), testClass));
         this.classLoader = initializedClassLoader.get();
         initializedClassLoader.set(null);
+    }
+
+    @Override
+    protected Statement withBeforeClasses(Statement statement) {
+        Statement original = super.withBeforeClasses(statement);
+
+        Statement backupAndReplaceClassLoader = new Statement() {
+
+            @Override
+            public void evaluate() throws Throwable {
+                if (originalClassLoader == null) {
+                    originalClassLoader = Thread.currentThread().getContextClassLoader();
+                }
+                Thread.currentThread().setContextClassLoader(classLoader);
+            }
+        };
+
+        return new ComposedStatement(backupAndReplaceClassLoader, original);
+    }
+
+    @Override
+    protected Statement withAfterClasses(Statement statement) {
+        Statement original = super.withAfterClasses(statement);
+
+        Statement restoreOriginalClassLoader = new Statement() {
+
+            @Override
+            public void evaluate() throws Throwable {
+                if (originalClassLoader != null) {
+                    Thread.currentThread().setContextClassLoader(originalClassLoader);
+                }
+            }
+        };
+
+        return new ComposedStatement(original, restoreOriginalClassLoader);
     }
 
     static ClassLoader initializeClassLoader(Class<?> testClass) throws InitializationError {
@@ -116,9 +153,10 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
         }
     }
 
-    static ClassLoader getShrinkWrapClassLoader(ClassLoader classLoader, JavaArchive archive, Class<?> testClass) throws InitializationError {
+    static ClassLoader getShrinkWrapClassLoader(ClassLoader classLoader, JavaArchive archive, Class<?> testClass)
+            throws InitializationError {
         try {
-            
+
             JavaArchive finalArchive = ShrinkWrap.create(JavaArchive.class);
             // JUnit
             finalArchive.addClasses(Test.class);
@@ -128,14 +166,14 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
             finalArchive.addClasses(SecurityActions.getAncestors(testClass));
             // merge with user-provided archive
             finalArchive.merge(archive);
-            
+
             ShrinkWrapClassLoader shrinkwrapClassLoader = new ShrinkWrapClassLoader(classLoader, finalArchive);
             return shrinkwrapClassLoader;
         } catch (Exception e) {
             throw new InitializationError(e);
         }
     }
-    
+
     public static ClassLoader getShrinkWrapClassLoader(JavaArchive archive, Class<?> testClass) throws InitializationError {
         ClassLoader classLoader = getModuleClassLoader();
         return getShrinkWrapClassLoader(classLoader, archive, testClass);
@@ -190,6 +228,22 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
         @Override
         public Module loadModule(ModuleIdentifier identifier) throws ModuleLoadException {
             return super.loadModule(identifier);
+        }
+    }
+
+    private static class ComposedStatement extends Statement {
+
+        private Statement[] statements;
+
+        public ComposedStatement(Statement... statements) {
+            this.statements = statements;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            for (Statement statement : statements) {
+                statement.evaluate();
+            }
         }
     }
 }

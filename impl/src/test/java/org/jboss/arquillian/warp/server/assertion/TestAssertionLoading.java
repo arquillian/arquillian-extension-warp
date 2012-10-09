@@ -2,10 +2,6 @@ package org.jboss.arquillian.warp.server.assertion;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Collection;
-
-import javassist.ClassPool;
-import javassist.CtClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
@@ -20,82 +16,136 @@ import org.junit.Test;
 
 public class TestAssertionLoading {
 
+    private ClassLoader originalClassLoader = null;
+
     @Test
     public void testStaticInnerClassOnClient() throws Throwable {
+        try {
+            // having
+            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
 
-        // having
-        ClassLoader classLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-
-        // when
-        getStaticInnerClass(classLoader);
+            // when
+            replaceClassLoader(clientClassLoader);
+            getStaticInnerClass(clientClassLoader);
+        } finally {
+            restoreOriginalClassLoader();
+        }
     }
 
     @Test
     public void testStaticInnerClassOnOnServer() throws Throwable {
-        // having
-        ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-        ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
-        Object shared = getStaticInnerClass(clientClassLoader);
-        byte[] serialized = serialize(clientClassLoader, shared);
-        
-        // when
-        Object deserializedPayload = deserialize(serverClassLoader, serialized);
-        Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
-        Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
-        
-        Method serverMethod = deserializedAssertion.getClass().getMethod("server");
-        serverMethod.invoke(deserializedAssertion);
+        try {
+            // having
+            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+            ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+
+            replaceClassLoader(clientClassLoader);
+            Object shared = getStaticInnerClass(clientClassLoader);
+            byte[] serialized = serialize(clientClassLoader, shared);
+
+            // when
+            replaceClassLoader(serverClassLoader);
+            Object deserializedPayload = deserialize(serverClassLoader, serialized);
+            Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
+            Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
+
+            Method serverMethod = deserializedAssertion.getClass().getMethod("server");
+            serverMethod.invoke(deserializedAssertion);
+        } finally {
+            restoreOriginalClassLoader();
+        }
     }
-    
+
     @Test
     public void testInnerClassOnClient() throws Throwable {
+        try {
+            // having
+            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
 
-        // having
-        ClassLoader classLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-
-        // when
-        getInnerClass(classLoader);
+            // when
+            replaceClassLoader(clientClassLoader);
+            getInnerClass(clientClassLoader);
+        } finally {
+            restoreOriginalClassLoader();
+        }
     }
-    
+
     @Test
     public void testInnerClassOnOnServer() throws Throwable {
-        // having
-        ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-        ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
-        Object shared = getInnerClass(clientClassLoader);
-        byte[] serialized = serialize(clientClassLoader, shared);
-        
-        // when
-        Object deserialized = deserialize(serverClassLoader, serialized);
-        Method serverMethod = deserialized.getClass().getMethod("server");
-        serverMethod.invoke(deserialized);
+        try {
+            // having
+            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+            ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+
+            replaceClassLoader(clientClassLoader);
+            Object shared = getInnerClass(clientClassLoader);
+            byte[] serialized = serialize(clientClassLoader, shared);
+
+            // when
+            replaceClassLoader(serverClassLoader);
+            Object deserializedPayload = deserialize(serverClassLoader, serialized);
+            Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
+            Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
+
+            Method serverMethod = deserializedAssertion.getClass().getMethod("server");
+            serverMethod.invoke(deserializedAssertion);
+        } finally {
+            restoreOriginalClassLoader();
+        }
     }
-    
+
     @Test
     public void testAnonymousClassOnClient() throws Throwable {
+        try {
+            // having
+            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
 
-        // having
-        ClassLoader classLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+            // when
+            replaceClassLoader(clientClassLoader);
 
-        // when
-        getAnonymousClass(classLoader);
+            // when
+            getAnonymousClass(clientClassLoader);
+        } finally {
+            restoreOriginalClassLoader();
+        }
     }
-    
+
     @Test
     public void testAnonymousClassOnOnServer() throws Throwable {
-        // having
-        ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-        ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
-        Object shared = getAnonymousClass(clientClassLoader);
-        byte[] serialized = serialize(clientClassLoader, shared);
-        
-        // when
-        Object deserializedPayload = deserialize(serverClassLoader, serialized);
-        Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
-        Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
-        
-        Method serverMethod = deserializedAssertion.getClass().getMethod("server");
-        serverMethod.invoke(deserializedAssertion);
+
+        try {
+            // having
+            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+            ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+
+            replaceClassLoader(clientClassLoader);
+            Object shared = getAnonymousClass(clientClassLoader);
+            byte[] serialized = serialize(clientClassLoader, shared);
+
+            // when
+            replaceClassLoader(serverClassLoader);
+            Object deserializedPayload = deserialize(serverClassLoader, serialized);
+            Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
+            Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
+
+            Method serverMethod = deserializedAssertion.getClass().getMethod("server");
+            serverMethod.invoke(deserializedAssertion);
+        } finally {
+            restoreOriginalClassLoader();
+        }
+    }
+
+    private void replaceClassLoader(ClassLoader classLoader) {
+        if (originalClassLoader == null) {
+            originalClassLoader = Thread.currentThread().getContextClassLoader();
+        }
+        Thread.currentThread().setContextClassLoader(classLoader);
+    }
+
+    private void restoreOriginalClassLoader() {
+        if (originalClassLoader != null) {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
     }
 
     private Object getStaticInnerClass(ClassLoader classLoader) throws Throwable {
@@ -108,7 +158,7 @@ public class TestAssertionLoading {
         Object shared = method.invoke(instance);
         return shared;
     }
-    
+
     private Object getInnerClass(ClassLoader classLoader) throws Throwable {
 
         Class<?> clazz = classLoader.loadClass(SharingClass.class.getName());
@@ -119,7 +169,7 @@ public class TestAssertionLoading {
         Object shared = method.invoke(instance);
         return shared;
     }
-    
+
     private Object getAnonymousClass(ClassLoader classLoader) throws Throwable {
 
         Class<?> clazz = classLoader.loadClass(SharingClass.class.getName());
@@ -137,7 +187,7 @@ public class TestAssertionLoading {
         byte[] serialized = (byte[]) serializeToBytes.invoke(null, object);
         return serialized;
     }
-    
+
     private Object deserialize(ClassLoader classLoader, byte[] bytes) throws Throwable {
         Class<?> serializationUtilsClass = serializationUtils(classLoader);
         Method deserializeFromBytes = serializationUtilsClass.getMethod("deserializeFromBytes", (new byte[0]).getClass());
@@ -152,26 +202,20 @@ public class TestAssertionLoading {
 
     private static JavaArchive clientArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-                .addClasses(ClientInterface.class, ClientImplementation.class)
-                .addClasses(ServerInterface.class)
+                .addClasses(ClientInterface.class, ClientImplementation.class).addClasses(ServerInterface.class)
                 .addClasses(SharingClass.class, ServerAssertion.class, RequestPayload.class)
-                .addClasses(SerializationUtils.class)
-                .addClasses(AssertionTransformer.class);
-        
-        JavaArchive javassist = DependencyResolvers
-            .use(MavenDependencyResolver.class)
-            .artifact("javassist:javassist:3.12.1.GA")
-            .resolveAs(JavaArchive.class)
-            .iterator().next();
-        
+                .addClasses(SerializationUtils.class).addClasses(AssertionTransformer.class);
+
+        JavaArchive javassist = DependencyResolvers.use(MavenDependencyResolver.class)
+                .artifact("javassist:javassist:3.12.1.GA").resolveAs(JavaArchive.class).iterator().next();
+
         return archive.merge(javassist);
     }
 
     private static JavaArchive serverArchive() {
         return ShrinkWrap.create(JavaArchive.class).addClasses(ClientInterface.class)
                 .addClasses(ServerInterface.class, ServerImplemenation.class)
-                .addClasses(ServerAssertion.class, RequestPayload.class)
-                .addClasses(SerializationUtils.class);
+                .addClasses(ServerAssertion.class, RequestPayload.class).addClasses(SerializationUtils.class);
     }
 
 }

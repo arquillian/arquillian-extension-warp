@@ -2,6 +2,7 @@ package org.jboss.arquillian.warp.server.assertion;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
+import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.testutils.SeparatedClassPath;
@@ -19,7 +20,7 @@ public class AssertionTransformerOnSeparatedClassLoaderTestCase {
     @SeparatedClassPath
     public static JavaArchive archive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-                .addClasses(ServerAssertion.class, RequestPayload.class)
+                .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
                 .addClasses(SerializationUtils.class)
                 .addClasses(AssertionTransformer.class)
                 .addClasses(AssertionTransformerTestCase.class);
@@ -48,5 +49,19 @@ public class AssertionTransformerOnSeparatedClassLoaderTestCase {
         Object modifiedAssertion = AssertionTransformer.cloneToNew(assertion, classFile);
 
         AssertionTransformerTestCase.verifyServerAssertionClass(modifiedAssertion);
+    }
+    
+    @Test
+    public void testSerialization() throws Exception {
+
+        ServerAssertion assertion = AssertionTransformerTestCase.getAnonymousServerAssertion();
+
+        RequestPayload payload = new RequestPayload(assertion);
+
+        RequestPayload deserializedPayload = SerializationUtils.deserializeFromBytes(SerializationUtils
+                .serializeToBytes(payload));
+        ServerAssertion deserializedAssertion = deserializedPayload.getAssertion();
+
+        AssertionTransformerTestCase.verifyServerAssertionClass(deserializedAssertion);
     }
 }

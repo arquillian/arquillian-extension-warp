@@ -9,12 +9,17 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtNewConstructor;
+import javassist.Loader;
 import javassist.Modifier;
 import javassist.bytecode.EnclosingMethodAttribute;
 
 public class AssertionTransformer {
     public static Object cloneToNew(Object obj, byte[] clazzFile) throws Exception {
+        
         ClassPool pool = ClassPool.getDefault();
+        
+        
+        
         CtClass ctClass = pool.makeClassIfNew(new ByteArrayInputStream(clazzFile));
         Class<?> newClass = pool.toClass(ctClass);
 

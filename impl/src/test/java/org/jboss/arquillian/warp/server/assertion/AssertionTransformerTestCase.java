@@ -79,7 +79,7 @@ public class AssertionTransformerTestCase {
 
         System.out.println();
         System.out.println("Class: " + clazz.getName());
-        System.out.println("SuperClass: " + clazz.getSuperclass());
+        System.out.println("SuperClass: " + clazz.getSuperclass() + " " + clazz.getSuperclass().hashCode());
         System.out.println("Interfaces: " + Arrays.asList(clazz.getInterfaces()));
         System.out.println("Fields");
         for (Field field : clazz.getDeclaredFields()) {
