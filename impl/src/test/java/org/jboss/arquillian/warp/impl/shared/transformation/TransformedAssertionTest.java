@@ -61,48 +61,6 @@ public class TransformedAssertionTest {
         verifyServerAssertionClass(deserializedAssertion);
     }
 
-    // @Test
-    // public void testRenamingToOriginalName() throws Exception {
-    //
-    // ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-    //
-    // try {
-    // ServerAssertion assertion = getAnonymousServerAssertion();
-    //
-    // RequestPayload requestPayload = new RequestPayload(assertion);
-    //
-    // CtClass clazz = AssertionTransformer.transformNamed(assertion.getClass(), "Testing");
-    // CtClassAsset clazzAsset = new CtClassAsset(clazz);
-    //
-    // JavaArchive javassist = DependencyResolvers.use(MavenDependencyResolver.class)
-    // .artifact("javassist:javassist:3.12.1.GA").resolveAs(JavaArchive.class).iterator().next();
-    //
-    // JavaArchive archive = ShrinkWrap
-    // .create(JavaArchive.class)
-    // .addClasses(RunTransformationToOriginalName.class)
-    // .addClasses(SerializationUtils.class, RequestPayload.class, ServerAssertion.class,
-    // AssertionTransformer.class).add(clazzAsset);
-    //
-    // System.out.println(archive.toString(true));
-    //
-    // archive = archive.merge(javassist);
-    //
-    // ClassLoader separatedClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(archive, SharingClass.class);
-    // Thread.currentThread().setContextClassLoader(separatedClassLoader);
-    //
-    // Class<?> runTransformationToOriginalName = separatedClassLoader.loadClass(RunTransformationToOriginalName.class
-    // .getName());
-    // Method runMethod = runTransformationToOriginalName.getMethod("run", String.class, String.class,
-    // new byte[0].getClass());
-    //
-    // runMethod.invoke(null, "Testing", assertion.getClass().getName(), clazz.toBytecode());
-    //
-    // } finally {
-    // Thread.currentThread().setContextClassLoader(originalClassLoader);
-    // }
-    //
-    // }
-
     public static ServerAssertion getAnonymousServerAssertion() {
         ServerAssertion assertion = new ServerAssertion() {
             private static final long serialVersionUID = 1L;
