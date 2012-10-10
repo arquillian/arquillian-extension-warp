@@ -12,7 +12,7 @@ public class MigratedAssertion {
 
     private byte[] migrate() throws AssertionTransformationException {
         byte[] oldClassFile = transformed.toBytecode();
-        String oldClassName = transformed.toClass().getName();
+        String oldClassName = transformed.getTransformedClass().getName();
         String newClassName = transformed.getOriginalClass().getName();
 
         try {

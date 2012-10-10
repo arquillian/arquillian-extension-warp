@@ -25,6 +25,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectStreamClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.impl.shared.transformation.MigratedAssertion;
 import org.jboss.arquillian.warp.impl.shared.transformation.TransformedAssertion;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 
@@ -74,14 +75,15 @@ public class RequestPayload implements Externalizable {
         if (assertion.getClass().isAnonymousClass() || assertion.getClass().isMemberClass()) {
             try {
                 TransformedAssertion transformed = new TransformedAssertion(assertion.getClass());
+                MigratedAssertion migrated = new MigratedAssertion(transformed);
                 
                 ServerAssertion clone = (ServerAssertion) transformed.cloneToNew(assertion);
 
                 out.writeBoolean(true);
-                out.writeObject(transformed.toBytecode());
+                out.writeObject(migrated.toBytecode());
                 out.writeObject(SerializationUtils.serializeToBytes(clone));
             } catch (Exception e) {
-                throw new RuntimeException("Could not transform and replicate anonymous class", e);
+                throw new RuntimeException("Could not transform and replicate class " + assertion.getClass(), e);
             }
         } else {
             out.writeBoolean(false);

@@ -16,7 +16,8 @@ public class TransformedAssertion {
     private ClassPool classPool;
 
     private Class<?> originalClass;
-    private CtClass transformedClass;
+    private CtClass transformed;
+    private Class<?> transformedClass;
 
     public TransformedAssertion(Class<?> originalClass) throws AssertionTransformationException {
         this(originalClass, "org.jboss.arquillian.warp.generated.A" + UUID.randomUUID().toString());
@@ -26,7 +27,8 @@ public class TransformedAssertion {
         this.classPool = ClassPool.getDefault();
         this.originalClass = originalClass;
 
-        this.transformedClass = transform(newClassName);
+        this.transformed = transform(newClassName);
+        this.transformedClass = toClass();
     }
 
     private CtClass transform(String newClassName) throws AssertionTransformationException {
@@ -60,11 +62,9 @@ public class TransformedAssertion {
 
     public Object cloneToNew(Object obj) throws AssertionTransformationException {
         try {
-            Class<?> newClass = toClass();
-
             Class<?> oldClass = obj.getClass();
-            Object newObj = newClass.newInstance();
-            for (Field newF : newClass.getDeclaredFields()) {
+            Object newObj = transformedClass.newInstance();
+            for (Field newF : transformedClass.getDeclaredFields()) {
                 if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
                         && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
                     continue;
@@ -77,23 +77,27 @@ public class TransformedAssertion {
             return newObj;
         } catch (Exception e) {
             throw new AssertionTransformationException("Unable to clone " + obj.getClass().getName() + " to "
-                    + transformedClass.getName(), e);
+                    + transformed.getName(), e);
         }
     }
 
     public byte[] toBytecode() throws AssertionTransformationException {
         try {
-            return transformedClass.toBytecode();
+            return transformed.toBytecode();
         } catch (Exception e) {
-            throw new AssertionTransformationException("Unable to convert " + transformedClass.getName() + " to bytecode", e);
+            throw new AssertionTransformationException("Unable to convert " + transformed.getName() + " to bytecode", e);
         }
     }
+    
+    public Class<?> getTransformedClass() {
+        return transformedClass;
+    }
 
-    public Class<?> toClass() throws AssertionTransformationException {
+    private Class<?> toClass() throws AssertionTransformationException {
         try {
-            return transformedClass.toClass();
+            return transformed.toClass();
         } catch (Exception e) {
-            throw new AssertionTransformationException("Unable to convert " + transformedClass.getName() + " to bytecode", e);
+            throw new AssertionTransformationException("Unable to convert " + transformed.getName() + " to class", e);
         }
     }
     

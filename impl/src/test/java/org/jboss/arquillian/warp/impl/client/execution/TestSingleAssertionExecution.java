@@ -38,7 +38,6 @@ import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -49,7 +48,6 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @SuppressWarnings("serial")
 @RunWith(MockitoJUnitRunner.class)
-@Ignore
 public class TestSingleAssertionExecution extends AbstractManagerTestBase {
 
     private CountDownLatch requestStarted;

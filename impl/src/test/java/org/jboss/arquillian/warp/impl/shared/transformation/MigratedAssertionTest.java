@@ -19,7 +19,6 @@ public class MigratedAssertionTest {
         byte[] bytecode = migratedAssertion.toBytecode();
 
         Class<?> migratedClass = MigrationTestRunnable.invokeSeparately(bytecode);
-
         assertEquals(originalAssertion.getClass().getName(), migratedClass.getName());
     }
 }

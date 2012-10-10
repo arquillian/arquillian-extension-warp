@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.transformation.AssertionTransformationException;
+import org.jboss.arquillian.warp.impl.shared.transformation.MigratedAssertion;
+import org.jboss.arquillian.warp.impl.shared.transformation.MigrationRunnable;
 import org.jboss.arquillian.warp.impl.shared.transformation.TransformedAssertion;
 import org.jboss.arquillian.warp.impl.testutils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.testutils.ShrinkWrapUtils;
@@ -13,6 +15,8 @@ import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
+import org.jboss.shrinkwrap.spi.MemoryMapArchive;
 import org.junit.Test;
 
 public class TestAssertionLoading {
@@ -201,25 +205,31 @@ public class TestAssertionLoading {
         return serializationUtilsClass;
     }
 
-    private static JavaArchive clientArchive() {
+    private static JavaArchive[] clientArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
                 .addClasses(ClientInterface.class, ClientImplementation.class).addClasses(ServerInterface.class)
                 .addClasses(SharingClass.class, ServerAssertion.class, RequestPayload.class)
-                .addClasses(TransformedAssertion.class, AssertionTransformationException.class)
-                .addClasses(SerializationUtils.class);
+                .addClasses(TransformedAssertion.class, MigratedAssertion.class, MigrationRunnable.class, AssertionTransformationException.class)
+                .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
+        
+        JavaArchive shrinkWrapSpi = ShrinkWrapUtils.getJavaArchiveFromClass(MemoryMapArchive.class);
+        JavaArchive shrinkWrapApi = ShrinkWrapUtils.getJavaArchiveFromClass(JavaArchive.class);
+        JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
 
-        return archive.merge(javassistArchive);
+        return new JavaArchive[] { archive, javassistArchive, shrinkWrapSpi, shrinkWrapApi, shrinkWrapImpl };
     }
 
-    private static JavaArchive serverArchive() {
-        return ShrinkWrap.create(JavaArchive.class).addClasses(ClientInterface.class)
+    private static JavaArchive[] serverArchive() {
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class).addClasses(ClientInterface.class)
                 .addClasses(ServerInterface.class, ServerImplemenation.class)
                 .addClasses(ServerAssertion.class, RequestPayload.class).addClasses(SerializationUtils.class);
+        
+        return new JavaArchive[] { archive };
     }
 
-    private ClassLoader separatedClassLoader(JavaArchive archive) {
+    private ClassLoader separatedClassLoader(JavaArchive... archive) {
         return new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
     }
 

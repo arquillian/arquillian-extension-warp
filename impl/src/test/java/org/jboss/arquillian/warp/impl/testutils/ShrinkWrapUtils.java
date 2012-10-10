@@ -10,16 +10,20 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 public final class ShrinkWrapUtils {
 
     public static JavaArchive getJavaArchiveFromClass(Class<?> clazz) {
-
         URL url = clazz.getResource(clazz.getSimpleName() + ".class");
 
-        // get a absolute file system path
-        String file = url.getFile();
-        file = file.substring(file.indexOf(":") + 1);
-        file = file.substring(0, file.indexOf('!'));
+        try {
 
-        JavaArchive jar = ShrinkWrap.create(ZipImporter.class).importFrom(new File(file)).as(JavaArchive.class);
+            // get a absolute file system path
+            String file = url.getFile();
+            file = file.substring(file.indexOf(":") + 1);
+            file = file.substring(0, file.indexOf('!'));
 
-        return jar;
+            JavaArchive jar = ShrinkWrap.create(ZipImporter.class, file + "!").importFrom(new File(file)).as(JavaArchive.class);
+
+            return jar;
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot get JAR from class " + clazz.getName() + " from URL " + url, e);
+        }
     }
 }
