@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.testutils.SeparatedClassloader;
@@ -204,7 +203,7 @@ public class TestAssertionLoading {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
                 .addClasses(ClientInterface.class, ClientImplementation.class).addClasses(ServerInterface.class)
                 .addClasses(SharingClass.class, ServerAssertion.class, RequestPayload.class)
-                .addClasses(SerializationUtils.class).addClasses(AssertionTransformer.class);
+                .addClasses(SerializationUtils.class);
 
         JavaArchive javassist = DependencyResolvers.use(MavenDependencyResolver.class)
                 .artifact("javassist:javassist:3.12.1.GA").resolveAs(JavaArchive.class).iterator().next();

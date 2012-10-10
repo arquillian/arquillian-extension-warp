@@ -1,7 +1,8 @@
 package org.jboss.arquillian.warp.server.assertion;
 
+import static org.junit.Assert.fail;
+
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.AssertionTransformer;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
@@ -22,7 +23,6 @@ public class AssertionTransformerOnSeparatedClassLoaderTestCase {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
                 .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
                 .addClasses(SerializationUtils.class)
-                .addClasses(AssertionTransformer.class)
                 .addClasses(AssertionTransformerTestCase.class);
         
         JavaArchive javassist = DependencyResolvers
@@ -43,12 +43,13 @@ public class AssertionTransformerOnSeparatedClassLoaderTestCase {
     @Test
     public void testAnonymousClass() throws Exception {
 
-        ServerAssertion assertion = AssertionTransformerTestCase.getAnonymousServerAssertion();
-
-        byte[] classFile = AssertionTransformer.transform(assertion.getClass()).toBytecode();
-        Object modifiedAssertion = AssertionTransformer.cloneToNew(assertion, classFile);
-
-        AssertionTransformerTestCase.verifyServerAssertionClass(modifiedAssertion);
+        fail();
+//        ServerAssertion assertion = AssertionTransformerTestCase.getAnonymousServerAssertion();
+//
+//        byte[] classFile = AssertionTransformer.transform(assertion.getClass()).toBytecode();
+//        Object modifiedAssertion = AssertionTransformer.cloneToNew(assertion, classFile);
+//
+//        AssertionTransformerTestCase.verifyServerAssertionClass(modifiedAssertion);
     }
     
     @Test

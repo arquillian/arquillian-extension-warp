@@ -11,7 +11,8 @@ public class MigratedAssertion {
     }
     
     private byte[] migrate() {
-        
+        // TODO
+        return null;
     }
     
     public byte[] toBytecode() {

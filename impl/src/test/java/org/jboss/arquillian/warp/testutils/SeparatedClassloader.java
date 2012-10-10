@@ -9,6 +9,8 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javassist.CtClass;
+
 import org.jboss.arquillian.warp.testutils.TestResourceLoader.TestResourceLoaderBuilder;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleClassLoader;
