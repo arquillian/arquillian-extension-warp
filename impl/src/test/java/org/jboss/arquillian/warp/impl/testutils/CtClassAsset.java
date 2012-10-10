@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.testutils;
+package org.jboss.arquillian.warp.impl.testutils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.arquillian.warp.testutils;
+package org.jboss.arquillian.warp.impl.testutils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

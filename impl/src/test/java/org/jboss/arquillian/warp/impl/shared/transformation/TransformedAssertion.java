@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.server.assertion;
+package org.jboss.arquillian.warp.impl.shared.transformation;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -18,11 +18,11 @@ public class TransformedAssertion {
     private Class<?> originalClass;
     private CtClass transformedClass;
 
-    public TransformedAssertion(Class<?> originalClass) throws Exception {
+    public TransformedAssertion(Class<?> originalClass) throws AssertionTransformationException {
         this(originalClass, "org.jboss.arquillian.warp.generated.A" + UUID.randomUUID().toString());
     }
 
-    public TransformedAssertion(Class<?> originalClass, String newClassName) throws Exception {
+    public TransformedAssertion(Class<?> originalClass, String newClassName) throws AssertionTransformationException {
         this.classPool = ClassPool.getDefault();
         this.originalClass = originalClass;
 
@@ -95,6 +95,10 @@ public class TransformedAssertion {
         } catch (Exception e) {
             throw new AssertionTransformationException("Unable to convert " + transformedClass.getName() + " to bytecode", e);
         }
+    }
+    
+    public Class<?> getOriginalClass() {
+        return originalClass;
     }
 
 }

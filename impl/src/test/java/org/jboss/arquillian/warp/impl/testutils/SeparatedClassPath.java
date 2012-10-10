@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.testutils;
+package org.jboss.arquillian.warp.impl.testutils;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

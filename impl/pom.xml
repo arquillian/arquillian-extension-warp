@@ -101,20 +101,6 @@
             <version>${version.arquillian_core}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.jboss.modules</groupId>
-            <artifactId>jboss-modules</artifactId>
-            <version>1.1.3.GA</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.modules</groupId>
-            <artifactId>jboss-modules</artifactId>
-            <version>1.1.3.GA</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
         
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>

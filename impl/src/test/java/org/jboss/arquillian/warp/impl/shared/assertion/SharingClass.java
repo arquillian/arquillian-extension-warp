@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.server.assertion;
+package org.jboss.arquillian.warp.impl.shared.assertion;
 
 import java.io.Serializable;
 

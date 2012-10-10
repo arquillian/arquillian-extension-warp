@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.testutils;
+package org.jboss.arquillian.warp.impl.testutils;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

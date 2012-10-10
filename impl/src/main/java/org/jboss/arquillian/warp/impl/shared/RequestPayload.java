@@ -25,8 +25,8 @@ import java.io.ObjectOutput;
 import java.io.ObjectStreamClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.impl.shared.transformation.TransformedAssertion;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
-import org.jboss.arquillian.warp.server.assertion.TransformedAssertion;
 
 public class RequestPayload implements Externalizable {
 

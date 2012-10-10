@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.server.assertion;
+package org.jboss.arquillian.warp.impl.shared.transformation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -10,17 +10,37 @@ import java.util.Arrays;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
+import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloader;
+import org.jboss.arquillian.warp.impl.testutils.ShrinkWrapUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class AssertionTransformerTestCase {
+@RunWith(SeparatedClassloader.class)
+public class TransformedAssertionTest {
+
+    @SeparatedClassPath
+    public static JavaArchive archive() {
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+                .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
+                .addClasses(SerializationUtils.class)
+                .addClasses(TransformedAssertionTest.class, TransformedAssertion.class, AssertionTransformationException.class);
+
+        JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
+        JavaArchive junitArchive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
+
+        return archive.merge(javassistArchive).merge(junitArchive);
+    }
 
     @Test
     public void testAnonymousClass() throws Exception {
 
         ServerAssertion assertion = getAnonymousServerAssertion();
-        
+
         TransformedAssertion transformedAssertion = new TransformedAssertion(assertion.getClass());
         Object modifiedAssertion = transformedAssertion.cloneToNew(assertion);
 
@@ -41,47 +61,47 @@ public class AssertionTransformerTestCase {
         verifyServerAssertionClass(deserializedAssertion);
     }
 
-//    @Test
-//    public void testRenamingToOriginalName() throws Exception {
-//
-//        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-//
-//        try {
-//            ServerAssertion assertion = getAnonymousServerAssertion();
-//
-//            RequestPayload requestPayload = new RequestPayload(assertion);
-//
-//            CtClass clazz = AssertionTransformer.transformNamed(assertion.getClass(), "Testing");
-//            CtClassAsset clazzAsset = new CtClassAsset(clazz);
-//
-//            JavaArchive javassist = DependencyResolvers.use(MavenDependencyResolver.class)
-//                    .artifact("javassist:javassist:3.12.1.GA").resolveAs(JavaArchive.class).iterator().next();
-//
-//            JavaArchive archive = ShrinkWrap
-//                    .create(JavaArchive.class)
-//                    .addClasses(RunTransformationToOriginalName.class)
-//                    .addClasses(SerializationUtils.class, RequestPayload.class, ServerAssertion.class,
-//                            AssertionTransformer.class).add(clazzAsset);
-//
-//            System.out.println(archive.toString(true));
-//
-//            archive = archive.merge(javassist);
-//
-//            ClassLoader separatedClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(archive, SharingClass.class);
-//            Thread.currentThread().setContextClassLoader(separatedClassLoader);
-//
-//            Class<?> runTransformationToOriginalName = separatedClassLoader.loadClass(RunTransformationToOriginalName.class
-//                    .getName());
-//            Method runMethod = runTransformationToOriginalName.getMethod("run", String.class, String.class,
-//                    new byte[0].getClass());
-//
-//            runMethod.invoke(null, "Testing", assertion.getClass().getName(), clazz.toBytecode());
-//
-//        } finally {
-//            Thread.currentThread().setContextClassLoader(originalClassLoader);
-//        }
-//
-//    }
+    // @Test
+    // public void testRenamingToOriginalName() throws Exception {
+    //
+    // ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+    //
+    // try {
+    // ServerAssertion assertion = getAnonymousServerAssertion();
+    //
+    // RequestPayload requestPayload = new RequestPayload(assertion);
+    //
+    // CtClass clazz = AssertionTransformer.transformNamed(assertion.getClass(), "Testing");
+    // CtClassAsset clazzAsset = new CtClassAsset(clazz);
+    //
+    // JavaArchive javassist = DependencyResolvers.use(MavenDependencyResolver.class)
+    // .artifact("javassist:javassist:3.12.1.GA").resolveAs(JavaArchive.class).iterator().next();
+    //
+    // JavaArchive archive = ShrinkWrap
+    // .create(JavaArchive.class)
+    // .addClasses(RunTransformationToOriginalName.class)
+    // .addClasses(SerializationUtils.class, RequestPayload.class, ServerAssertion.class,
+    // AssertionTransformer.class).add(clazzAsset);
+    //
+    // System.out.println(archive.toString(true));
+    //
+    // archive = archive.merge(javassist);
+    //
+    // ClassLoader separatedClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(archive, SharingClass.class);
+    // Thread.currentThread().setContextClassLoader(separatedClassLoader);
+    //
+    // Class<?> runTransformationToOriginalName = separatedClassLoader.loadClass(RunTransformationToOriginalName.class
+    // .getName());
+    // Method runMethod = runTransformationToOriginalName.getMethod("run", String.class, String.class,
+    // new byte[0].getClass());
+    //
+    // runMethod.invoke(null, "Testing", assertion.getClass().getName(), clazz.toBytecode());
+    //
+    // } finally {
+    // Thread.currentThread().setContextClassLoader(originalClassLoader);
+    // }
+    //
+    // }
 
     public static ServerAssertion getAnonymousServerAssertion() {
         ServerAssertion assertion = new ServerAssertion() {

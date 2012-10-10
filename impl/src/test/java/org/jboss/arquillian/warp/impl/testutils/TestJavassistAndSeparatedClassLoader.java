@@ -1,9 +1,11 @@
-package org.jboss.arquillian.warp.testutils;
+package org.jboss.arquillian.warp.impl.testutils;
 
+import static org.junit.Assert.assertNotNull;
 import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
@@ -19,12 +21,8 @@ public class TestJavassistAndSeparatedClassLoader {
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).add(new CtClassAsset(ctClass));
 
-        System.out.println(archive.toString(true));
+        ClassLoader classLoader = new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
 
-        ClassLoader classLoader = SeparatedClassloader.getShrinkWrapClassLoader(archive,
-                TestJavassistAndSeparatedClassLoader.class);
-
-        classLoader.loadClass(CLASS_NAME);
-
+        assertNotNull(classLoader.loadClass(CLASS_NAME));
     }
 }

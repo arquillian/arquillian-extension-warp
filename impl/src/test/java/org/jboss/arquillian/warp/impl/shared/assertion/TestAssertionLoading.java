@@ -1,16 +1,18 @@
-package org.jboss.arquillian.warp.server.assertion;
+package org.jboss.arquillian.warp.impl.shared.assertion;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+import org.jboss.arquillian.warp.impl.shared.transformation.AssertionTransformationException;
+import org.jboss.arquillian.warp.impl.shared.transformation.TransformedAssertion;
+import org.jboss.arquillian.warp.impl.testutils.ClassLoaderUtils;
+import org.jboss.arquillian.warp.impl.testutils.ShrinkWrapUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
-import org.jboss.arquillian.warp.testutils.SeparatedClassloader;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Test;
 
 public class TestAssertionLoading {
@@ -21,7 +23,7 @@ public class TestAssertionLoading {
     public void testStaticInnerClassOnClient() throws Throwable {
         try {
             // having
-            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+            ClassLoader clientClassLoader = separatedClassLoader(clientArchive());
 
             // when
             replaceClassLoader(clientClassLoader);
@@ -35,8 +37,8 @@ public class TestAssertionLoading {
     public void testStaticInnerClassOnOnServer() throws Throwable {
         try {
             // having
-            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-            ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+            ClassLoader clientClassLoader = separatedClassLoader(clientArchive());
+            ClassLoader serverClassLoader = separatedClassLoader(serverArchive());
 
             replaceClassLoader(clientClassLoader);
             Object shared = getStaticInnerClass(clientClassLoader);
@@ -59,7 +61,7 @@ public class TestAssertionLoading {
     public void testInnerClassOnClient() throws Throwable {
         try {
             // having
-            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+            ClassLoader clientClassLoader = separatedClassLoader(clientArchive());
 
             // when
             replaceClassLoader(clientClassLoader);
@@ -73,8 +75,8 @@ public class TestAssertionLoading {
     public void testInnerClassOnOnServer() throws Throwable {
         try {
             // having
-            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-            ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+            ClassLoader clientClassLoader = separatedClassLoader(clientArchive());
+            ClassLoader serverClassLoader = separatedClassLoader(serverArchive());
 
             replaceClassLoader(clientClassLoader);
             Object shared = getInnerClass(clientClassLoader);
@@ -97,7 +99,7 @@ public class TestAssertionLoading {
     public void testAnonymousClassOnClient() throws Throwable {
         try {
             // having
-            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
+            ClassLoader clientClassLoader = separatedClassLoader(clientArchive());
 
             // when
             replaceClassLoader(clientClassLoader);
@@ -114,8 +116,8 @@ public class TestAssertionLoading {
 
         try {
             // having
-            ClassLoader clientClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(clientArchive(), SharingClass.class);
-            ClassLoader serverClassLoader = SeparatedClassloader.getShrinkWrapClassLoader(serverArchive(), SharingClass.class);
+            ClassLoader clientClassLoader = separatedClassLoader(clientArchive());
+            ClassLoader serverClassLoader = separatedClassLoader(serverArchive());
 
             replaceClassLoader(clientClassLoader);
             Object shared = getAnonymousClass(clientClassLoader);
@@ -203,18 +205,22 @@ public class TestAssertionLoading {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
                 .addClasses(ClientInterface.class, ClientImplementation.class).addClasses(ServerInterface.class)
                 .addClasses(SharingClass.class, ServerAssertion.class, RequestPayload.class)
+                .addClasses(TransformedAssertion.class, AssertionTransformationException.class)
                 .addClasses(SerializationUtils.class);
 
-        JavaArchive javassist = DependencyResolvers.use(MavenDependencyResolver.class)
-                .artifact("javassist:javassist:3.12.1.GA").resolveAs(JavaArchive.class).iterator().next();
+        JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
 
-        return archive.merge(javassist);
+        return archive.merge(javassistArchive);
     }
 
     private static JavaArchive serverArchive() {
         return ShrinkWrap.create(JavaArchive.class).addClasses(ClientInterface.class)
                 .addClasses(ServerInterface.class, ServerImplemenation.class)
                 .addClasses(ServerAssertion.class, RequestPayload.class).addClasses(SerializationUtils.class);
+    }
+
+    private ClassLoader separatedClassLoader(JavaArchive archive) {
+        return new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
     }
 
 }
