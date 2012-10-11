@@ -7,9 +7,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.handler.codec.http.HttpRequest;
@@ -18,9 +22,17 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
 
     @Override
     public void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads) {
-        RequestPayload assertion = payloads.iterator().next();
-        String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
-        request.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
+        try {
+            RequestPayload assertion = payloads.iterator().next();
+            String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
+            request.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
+        } catch (Throwable originalException) {
+            ResponsePayload exceptionPayload = new ResponsePayload();
+            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed: "
+                    + originalException.getMessage(), originalException);
+            exceptionPayload.setTestResult(new TestResult(Status.FAILED, explainingException));
+            AssertionHolder.addResponse(new ResponseEnrichment(exceptionPayload));
+        }
     }
 
     @Override

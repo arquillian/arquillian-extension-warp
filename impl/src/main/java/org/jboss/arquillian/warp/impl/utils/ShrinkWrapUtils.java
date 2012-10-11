@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.testutils;
+package org.jboss.arquillian.warp.impl.utils;
 
 import java.io.File;
 import java.net.URL;

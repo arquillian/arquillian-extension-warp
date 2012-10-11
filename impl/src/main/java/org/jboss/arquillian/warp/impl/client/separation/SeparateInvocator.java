@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.testutils;
+package org.jboss.arquillian.warp.impl.client.separation;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 
+import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;

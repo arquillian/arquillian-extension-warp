@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.shared.transformation;
+package org.jboss.arquillian.warp.impl.client.transformation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -9,14 +9,16 @@ import java.util.Arrays;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
+import org.jboss.arquillian.warp.impl.client.transformation.AssertionTransformationException;
+import org.jboss.arquillian.warp.impl.client.transformation.MigratedAssertion;
+import org.jboss.arquillian.warp.impl.client.transformation.TransformedAssertion;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
-import org.jboss.arquillian.warp.impl.testutils.ClassLoaderUtils;
-import org.jboss.arquillian.warp.impl.testutils.CtClassAsset;
-import org.jboss.arquillian.warp.impl.testutils.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloader;
-import org.jboss.arquillian.warp.impl.testutils.ShrinkWrapUtils;
+import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
+import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
@@ -26,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SeparatedClassloader.class)
-public class TransformedAssertionTest {
+public class TestTransformedAssertion {
 
     @SeparatedClassPath
     public static JavaArchive[] archive() {
@@ -34,7 +36,7 @@ public class TransformedAssertionTest {
                 .create(JavaArchive.class)
                 .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
-                .addClasses(TransformedAssertionTest.class, TransformedAssertion.class, MigratedAssertion.class,
+                .addClasses(TestTransformedAssertion.class, TransformedAssertion.class, MigratedAssertion.class,
                         AssertionTransformationException.class).addClasses(SeparateInvocator.class, CtClassAsset.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);

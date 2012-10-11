@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.testutils;
+package org.jboss.arquillian.warp.impl.utils;
 
 public final class ClassLoaderUtils {
 

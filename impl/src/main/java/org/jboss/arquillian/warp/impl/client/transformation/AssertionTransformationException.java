@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.shared.transformation;
+package org.jboss.arquillian.warp.impl.client.transformation;
 
 public class AssertionTransformationException extends Exception {
 

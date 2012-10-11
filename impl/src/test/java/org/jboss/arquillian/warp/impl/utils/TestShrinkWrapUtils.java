@@ -1,12 +1,14 @@
-package org.jboss.arquillian.warp.impl.testutils;
+package org.jboss.arquillian.warp.impl.utils;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
+import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-public class ShrinkWrapUtilsTest {
+public class TestShrinkWrapUtils {
 
     @Test
     public void testJavaArchiveFromClass() throws Throwable {

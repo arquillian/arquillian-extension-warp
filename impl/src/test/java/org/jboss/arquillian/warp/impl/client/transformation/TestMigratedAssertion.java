@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.shared.transformation;
+package org.jboss.arquillian.warp.impl.client.transformation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,18 +9,20 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.testutils.SeparateInvocator;
-import org.jboss.arquillian.warp.impl.testutils.ShrinkWrapUtils;
+import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
+import org.jboss.arquillian.warp.impl.client.transformation.MigratedAssertion;
+import org.jboss.arquillian.warp.impl.client.transformation.TransformedAssertion;
+import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-public class MigratedAssertionTest {
+public class TestMigratedAssertion {
 
     @Test
     public void testMigrate() throws Throwable {
-        ServerAssertion originalAssertion = TransformedAssertionTest.getAnonymousServerAssertion();
+        ServerAssertion originalAssertion = TestTransformedAssertion.getAnonymousServerAssertion();
         assertTrue(originalAssertion.getClass().isAnonymousClass());
 
         TransformedAssertion transformedAssertion = new TransformedAssertion(originalAssertion);

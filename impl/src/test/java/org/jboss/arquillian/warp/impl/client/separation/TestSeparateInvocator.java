@@ -1,17 +1,18 @@
-package org.jboss.arquillian.warp.impl.testutils;
+package org.jboss.arquillian.warp.impl.client.separation;
 
 import java.io.Serializable;
 
+import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-public class SeparateInvocatorTest {
+public class TestSeparateInvocator {
 
     @Test
     public void test() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).addClasses(Implementation.class, Interface.class,
-                Argument.class, Result.class, SeparateInvocatorTest.class);
+                Argument.class, Result.class, TestSeparateInvocator.class);
 
         SeparateInvocator.<Interface, Implementation>invoke(Implementation.class, archive).run(new Argument(), "xyz");
     }

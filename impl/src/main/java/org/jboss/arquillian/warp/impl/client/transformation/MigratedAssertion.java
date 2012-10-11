@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.shared.transformation;
+package org.jboss.arquillian.warp.impl.client.transformation;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
@@ -8,10 +8,9 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.testutils.CtClassAsset;
-import org.jboss.arquillian.warp.impl.testutils.SeparateInvocator;
-import org.jboss.arquillian.warp.impl.testutils.ShrinkWrapUtils;
+import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
+import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.NamedAsset;

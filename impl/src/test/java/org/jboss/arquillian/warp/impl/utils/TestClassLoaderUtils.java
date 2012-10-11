@@ -1,12 +1,13 @@
-package org.jboss.arquillian.warp.impl.testutils;
+package org.jboss.arquillian.warp.impl.utils;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.junit.Test;
 
-public class ClassLoaderUtilsTest {
+public class TestClassLoaderUtils {
 
     @Test
     public void testBootstrapClassLoader() throws Exception {

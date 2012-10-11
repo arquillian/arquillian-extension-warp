@@ -1,4 +1,4 @@
-package org.jboss.arquillian.warp.impl.shared.transformation;
+package org.jboss.arquillian.warp.impl.client.transformation;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -12,7 +12,6 @@ import javassist.Modifier;
 import javassist.bytecode.EnclosingMethodAttribute;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.testutils.CtClassAsset;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.NamedAsset;
 
