@@ -8,7 +8,7 @@ import org.jboss.arquillian.core.spi.context.Context;
 import org.jboss.arquillian.warp.impl.server.request.RequestContext;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 
-public abstract class AbstractWarpTestTestBase extends AbstractContainerTestTestBase  {
+public abstract class AbstractWarpServerTestTestBase extends AbstractContainerTestTestBase  {
 
     @Override
     protected void addContexts(List<Class<? extends Context>> contexts) {

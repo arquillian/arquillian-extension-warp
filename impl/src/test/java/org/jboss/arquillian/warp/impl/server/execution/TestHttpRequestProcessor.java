@@ -28,7 +28,7 @@ import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.server.request.RequestContext;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
-import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpTestTestBase;
+import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.Before;
@@ -38,7 +38,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestHttpRequestProcessor extends AbstractWarpTestTestBase {
+public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
 
     @Mock
     private ServiceLoader services;

@@ -18,14 +18,14 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.core.spi.context.Context;
-import org.jboss.arquillian.core.test.AbstractManagerTestBase;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.warp.ClientAction;
@@ -34,7 +34,8 @@ import org.jboss.arquillian.warp.ServiceInjector;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
-import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
+import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
+import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.After;
 import org.junit.Before;
@@ -48,49 +49,59 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @SuppressWarnings("serial")
 @RunWith(MockitoJUnitRunner.class)
-public class TestSingleAssertionExecution extends AbstractManagerTestBase {
+public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase {
 
     private CountDownLatch requestStarted;
     private CountDownLatch responseFinished;
     private CountDownLatch actionFinished;
-    
-    @Mock
+
+    private @Mock
     ServiceLoader serviceLoader;
 
+    private AtomicReference<Exception> failure = new AtomicReference<Exception>(null);
+
     @Before
-    public void initialize() {
+    public void initialize() throws Exception {
         requestStarted = new CountDownLatch(1);
         responseFinished = new CountDownLatch(1);
         actionFinished = new CountDownLatch(1);
-        
-        
+
         RequestExecutor requestExecutor = new DefaultRequestExecutor();
         getManager().inject(requestExecutor);
-        
+
+        // setup Warp utility
+        Method method = Warp.class.getDeclaredMethod("setExecutor", RequestExecutor.class);
+        method.setAccessible(true);
+        method.invoke(null, requestExecutor);
+        method.setAccessible(false);
+
+        AssertionSynchronizer assertionSynchronizer = new DefaultAssertionSynchronizer();
+        getManager().inject(assertionSynchronizer);
+
         when(serviceLoader.onlyOne(RequestExecutor.class)).thenReturn(requestExecutor);
+        when(serviceLoader.onlyOne(AssertionSynchronizer.class)).thenReturn(assertionSynchronizer);
+
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-        
+        bind(WarpExecutionScoped.class, ResponsePayload.class, new ResponsePayload());
+
         fire(new BeforeClass(TestingClass.class));
     }
-    
+
     @After
     public void finalize() {
         fire(new AfterClass(TestingClass.class));
     }
-    
+
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ServiceInjector.class);
         extensions.add(DefaultRequestExecutor.class);
-    }
-    
-    @Override
-    protected void addContexts(List<Class<? extends Context>> contexts) {
-        contexts.add(WarpExecutionContextImpl.class);
+        extensions.add(RequestExecutionObserver.class);
     }
 
-    @Test //(timeout = 5000)
-    public void testBlocking() {
+    @Test
+    public void testBlocking() throws Exception {
+
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
@@ -110,7 +121,7 @@ public class TestSingleAssertionExecution extends AbstractManagerTestBase {
         awaitSafely(actionFinished);
     }
 
-    @Test(timeout = 5000)
+    @Test
     public void testBlocking_with_waiting_for_requests() {
         new Thread(new Runnable() {
             public void run() {
@@ -133,13 +144,20 @@ public class TestSingleAssertionExecution extends AbstractManagerTestBase {
         awaitSafely(actionFinished);
     }
 
-    @Test(timeout = 5000)
-    public void testNonBlocking() {
+    @Test
+    // (timeout = 5000)
+    public void testNonBlocking() throws Exception {
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                handshake();
-                responseFinished.countDown();
+                try {
+                    handshake();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    failure.set(e);
+                } finally {
+                    responseFinished.countDown();
+                }
             }
         }).start();
 
@@ -150,6 +168,10 @@ public class TestSingleAssertionExecution extends AbstractManagerTestBase {
         }).verify(new ServerAssertion() {
         });
         awaitSafely(responseFinished);
+
+        if (failure.get() != null) {
+            throw failure.get();
+        }
     }
 
     private static void handshake() {
@@ -170,7 +192,7 @@ public class TestSingleAssertionExecution extends AbstractManagerTestBase {
             throw new IllegalStateException(e);
         }
     }
-    
+
     @WarpTest
     public static final class TestingClass {
     }

@@ -14,12 +14,12 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
-import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpTestTestBase;
+import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestTestResultObserver extends AbstractWarpTestTestBase {
+public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
 
     private ResponsePayload responsePayload;
 

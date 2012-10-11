@@ -25,7 +25,7 @@ import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
-import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpTestTestBase;
+import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestLifecycleTestDriver extends AbstractWarpTestTestBase {
+public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
     @Mock
     private AssertionRegistry assertionRegistry;
