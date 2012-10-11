@@ -6,7 +6,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(SeparatedClassloader.class)
+@RunWith(SeparatedClassloaderRunner.class)
 public class TestDynamicClassLoading {
 
     private ServerAssertion assertion = new ServerAssertion() {

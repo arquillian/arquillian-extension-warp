@@ -18,17 +18,17 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-public class SeparatedClassloader extends BlockJUnit4ClassRunner {
+public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
 
     private static String ARCHIVE_MESSAGE = "There must be exactly one no-arg static method which returns JavaArchive with annotation @SeparatedClassPath defined";
 
-    private static Logger log = Logger.getLogger(SeparatedClassloader.class.getName());
+    private static Logger log = Logger.getLogger(SeparatedClassloaderRunner.class.getName());
 
     private static ThreadLocal<ClassLoader> initializedClassLoader = new ThreadLocal<ClassLoader>();
     private ClassLoader classLoader;
     private ClassLoader originalClassLoader;
 
-    public SeparatedClassloader(Class<?> testClass) throws InitializationError {
+    public SeparatedClassloaderRunner(Class<?> testClass) throws InitializationError {
         super(getFromTestClassloader(initializeClassLoader(testClass), testClass));
         this.classLoader = initializedClassLoader.get();
         initializedClassLoader.set(null);

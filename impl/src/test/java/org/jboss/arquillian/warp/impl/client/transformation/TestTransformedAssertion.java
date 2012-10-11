@@ -15,7 +15,7 @@ import org.jboss.arquillian.warp.impl.client.transformation.MigratedAssertion;
 import org.jboss.arquillian.warp.impl.client.transformation.TransformedAssertion;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
-import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloader;
+import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
 import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
@@ -27,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(SeparatedClassloader.class)
+@RunWith(SeparatedClassloaderRunner.class)
 public class TestTransformedAssertion {
 
     @SeparatedClassPath

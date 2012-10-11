@@ -13,9 +13,9 @@ public class TestSeparateClassLoader {
     @Test
     public void test() throws Throwable {
 
-        ClassLoader classLoader = SeparatedClassloader.initializeClassLoader(TestDynamicClassLoading.class);
+        ClassLoader classLoader = SeparatedClassloaderRunner.initializeClassLoader(TestDynamicClassLoading.class);
 
-        Class<?> loadedClass = SeparatedClassloader.getFromTestClassloader(classLoader, TestDynamicClassLoading.class);
+        Class<?> loadedClass = SeparatedClassloaderRunner.getFromTestClassloader(classLoader, TestDynamicClassLoading.class);
 
         Method method = loadedClass.getMethod("test");
 
@@ -28,7 +28,7 @@ public class TestSeparateClassLoader {
     @Test
     public void testCreatingRunner() throws InitializationError {
         try {
-            new SeparatedClassloader(TestDynamicClassLoading.class);
+            new SeparatedClassloaderRunner(TestDynamicClassLoading.class);
         } catch (InitializationError e) {
             e.printStackTrace();
             for (Throwable cause : e.getCauses()) {
