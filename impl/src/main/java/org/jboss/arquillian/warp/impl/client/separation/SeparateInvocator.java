@@ -38,7 +38,7 @@ public class SeparateInvocator<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T invoke(Class<T> clazz, ClassLoader separatedClassLoader) {
+    public static <I, T extends I> I invoke(Class<T> clazz, ClassLoader separatedClassLoader) {
         SeparateInvocator<T> magic = new SeparateInvocator<T>(clazz, separatedClassLoader);
 
         Class<?>[] interfaces = clazz.getInterfaces();

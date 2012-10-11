@@ -8,12 +8,16 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.impl.client.separation.PreventingClassLoader;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
+import org.jboss.arquillian.warp.impl.client.separation.SeparatedClassLoader;
+import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.NamedAsset;
+import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 public class MigratedAssertion {
@@ -35,14 +39,22 @@ public class MigratedAssertion {
 
         try {
 
-            JavaArchive baseArchive = ShrinkWrap
-                    .create(JavaArchive.class)
-                    .addClasses(MigratedAssertion.class, MigratedAssertion.MigrationImpl.class,
-                            MigratedAssertion.Migration.class, MigratedAssertion.MigrationResult.class, ServerAssertion.class)
-                    .add(transformedAsset);
+//            JavaArchive baseArchive = ShrinkWrap
+//                    .create(JavaArchive.class)
+//                    .addClasses(MigratedAssertion.class, MigratedAssertion.MigrationImpl.class,
+//                            MigratedAssertion.Migration.class, MigratedAssertion.MigrationResult.class, ServerAssertion.class)
+//                    .add(transformedAsset);
             JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.ClassPath.class);
 
-            return SeparateInvocator.<Migration, MigrationImpl>invoke(MigrationImpl.class, baseArchive, javassistArchive)
+            JavaArchive archive = ShrinkWrap.create(JavaArchive.class).add(transformedAsset);
+            
+            ShrinkWrapClassLoader shrinkWrapClassLoader = new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), javassistArchive, archive);
+            
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            PreventingClassLoader preventingClassLoader = new PreventingClassLoader(contextClassLoader, newClassName, oldClassName);
+            SeparatedClassLoader separationClassLoader = new SeparatedClassLoader(shrinkWrapClassLoader, preventingClassLoader, contextClassLoader);
+
+            return SeparateInvocator.<Migration, MigrationImpl>invoke(MigrationImpl.class, separationClassLoader)
                     .process(oldClassName, newClassName, oldClassFile, serverAssertion);
         } catch (Throwable e) {
             throw new IllegalStateException("Cannot migrate transformed assertion back to original name", e);

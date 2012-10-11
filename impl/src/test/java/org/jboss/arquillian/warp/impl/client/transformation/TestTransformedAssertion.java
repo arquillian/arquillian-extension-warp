@@ -9,7 +9,9 @@ import java.util.Arrays;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.impl.client.separation.PreventingClassLoader;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
+import org.jboss.arquillian.warp.impl.client.separation.SeparatedClassLoader;
 import org.jboss.arquillian.warp.impl.client.transformation.AssertionTransformationException;
 import org.jboss.arquillian.warp.impl.client.transformation.MigratedAssertion;
 import org.jboss.arquillian.warp.impl.client.transformation.TransformedAssertion;
@@ -37,7 +39,7 @@ public class TestTransformedAssertion {
                 .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
                 .addClasses(TestTransformedAssertion.class, TransformedAssertion.class, MigratedAssertion.class,
-                        AssertionTransformationException.class).addClasses(SeparateInvocator.class, CtClassAsset.class);
+                        AssertionTransformationException.class).addClasses(SeparateInvocator.class, CtClassAsset.class, PreventingClassLoader.class, SeparatedClassLoader.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
         JavaArchive junitArchive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
