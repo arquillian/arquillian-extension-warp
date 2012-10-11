@@ -141,7 +141,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         Throwable throwable = testResult.getThrowable();
         assertNotNull("response payload throwable must be set", throwable);
-        assertEquals(exception, throwable.getCause());
+        assertEquals(exception, throwable);
     }
 
     @Test
