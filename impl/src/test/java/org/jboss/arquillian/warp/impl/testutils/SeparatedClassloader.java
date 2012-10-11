@@ -1,8 +1,10 @@
 package org.jboss.arquillian.warp.impl.testutils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -65,6 +67,26 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
 
         return new ComposedStatement(original, restoreOriginalClassLoader);
     }
+    
+    private static boolean checkClassPathMethodType(Method method) {
+        if (!Modifier.isStatic(method.getModifiers())) {
+            return false;
+        }
+        
+        if (method.getParameterTypes().length != 0) {
+            return false;
+        }
+        
+        if (method.getReturnType().isAssignableFrom(JavaArchive.class)) {
+            return true;
+        }
+        
+        if (method.getReturnType().isAssignableFrom(Array.newInstance(JavaArchive.class, 0).getClass())) {
+            return true;
+        }
+        
+        return false;
+    }
 
     static ClassLoader initializeClassLoader(Class<?> testClass) throws InitializationError {
         List<Method> classPath = SecurityActions.getMethodsWithAnnotation(testClass, SeparatedClassPath.class);
@@ -75,19 +97,23 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
 
         Method method = classPath.iterator().next();
 
-        if (!Modifier.isStatic(method.getModifiers()) || method.getParameterTypes().length != 0
-                || !method.getReturnType().isAssignableFrom(JavaArchive.class)) {
+        if (!checkClassPathMethodType(method)) {
             throw new InitializationError(ARCHIVE_MESSAGE);
         }
 
-        JavaArchive archive;
+        JavaArchive[] archives;
         try {
-            archive = (JavaArchive) classPath.get(0).invoke(null);
+            Object result = classPath.get(0).invoke(null);
+            if (result instanceof JavaArchive) {
+                archives = new JavaArchive[] { (JavaArchive) result };
+            } else {
+                archives = (JavaArchive[]) result;
+            }
         } catch (Exception e) {
             throw new IllegalStateException("Failed to retrieve @SeparatedClassPath archive", e);
         }
 
-        ClassLoader shrinkWrapClassLoader = getSeparatedClassLoader(archive, testClass);
+        ClassLoader shrinkWrapClassLoader = getSeparatedClassLoader(archives, testClass);
 
         initializedClassLoader.set(shrinkWrapClassLoader);
 
@@ -108,21 +134,22 @@ public class SeparatedClassloader extends BlockJUnit4ClassRunner {
         }
     }
 
-    private static ClassLoader getSeparatedClassLoader(JavaArchive archive, Class<?> testClass) throws InitializationError {
+    private static ClassLoader getSeparatedClassLoader(JavaArchive[] archives, Class<?> testClass) throws InitializationError {
         try {
             ClassLoader bootstrapClassLoader = ClassLoaderUtils.getBootstrapClassLoader();
 
-            JavaArchive finalArchive = ShrinkWrap.create(JavaArchive.class);
+            JavaArchive baseArchive = ShrinkWrap.create(JavaArchive.class);
             // JUnit
-            finalArchive.addClasses(Test.class);
+            baseArchive.addClasses(Test.class);
             // ShrinkWrap - JavaArchive
-            finalArchive.addClasses(SecurityActions.getAncestors(JavaArchive.class));
+            baseArchive.addClasses(SecurityActions.getAncestors(JavaArchive.class));
             // testClass
-            finalArchive.addClasses(SecurityActions.getAncestors(testClass));
-            // merge with user-provided archive
-            finalArchive.merge(archive);
+            baseArchive.addClasses(SecurityActions.getAncestors(testClass));
+            
+            archives = Arrays.copyOf(archives, archives.length + 1);
+            archives[archives.length - 1] = baseArchive;
 
-            ShrinkWrapClassLoader shrinkwrapClassLoader = new ShrinkWrapClassLoader(bootstrapClassLoader, finalArchive);
+            ShrinkWrapClassLoader shrinkwrapClassLoader = new ShrinkWrapClassLoader(bootstrapClassLoader, archives);
             return shrinkwrapClassLoader;
         } catch (Exception e) {
             throw new InitializationError(e);

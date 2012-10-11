@@ -11,24 +11,33 @@ import javassist.CtNewConstructor;
 import javassist.Modifier;
 import javassist.bytecode.EnclosingMethodAttribute;
 
+import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.impl.testutils.CtClassAsset;
+import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.NamedAsset;
+
 public class TransformedAssertion {
 
     private ClassPool classPool;
 
     private Class<?> originalClass;
     private CtClass transformed;
-    private Class<?> transformedClass;
+    private Class<ServerAssertion> transformedClass;
+    private ServerAssertion transformedAssertion;
 
-    public TransformedAssertion(Class<?> originalClass) throws AssertionTransformationException {
-        this(originalClass, "org.jboss.arquillian.warp.generated.A" + UUID.randomUUID().toString());
+    public TransformedAssertion(ServerAssertion serverAssertion) throws AssertionTransformationException {
+        this(serverAssertion.getClass(), "org.jboss.arquillian.warp.generated.A" + UUID.randomUUID().toString(),
+                serverAssertion);
     }
 
-    public TransformedAssertion(Class<?> originalClass, String newClassName) throws AssertionTransformationException {
+    private TransformedAssertion(Class<?> originalClass, String newClassName, ServerAssertion serverAssertion)
+            throws AssertionTransformationException {
         this.classPool = ClassPool.getDefault();
         this.originalClass = originalClass;
 
         this.transformed = transform(newClassName);
         this.transformedClass = toClass();
+        this.transformedAssertion = cloneToNew(serverAssertion);
     }
 
     private CtClass transform(String newClassName) throws AssertionTransformationException {
@@ -60,10 +69,10 @@ public class TransformedAssertion {
         }
     }
 
-    public Object cloneToNew(Object obj) throws AssertionTransformationException {
+    private ServerAssertion cloneToNew(ServerAssertion obj) throws AssertionTransformationException {
         try {
-            Class<?> oldClass = obj.getClass();
-            Object newObj = transformedClass.newInstance();
+            Class<? extends ServerAssertion> oldClass = obj.getClass();
+            ServerAssertion newObj = transformedClass.newInstance();
             for (Field newF : transformedClass.getDeclaredFields()) {
                 if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
                         && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
@@ -89,18 +98,26 @@ public class TransformedAssertion {
         }
     }
     
+    public NamedAsset toShrinkWrapAsset() {
+        return new CtClassAsset(transformed);
+    }
+
     public Class<?> getTransformedClass() {
         return transformedClass;
     }
 
-    private Class<?> toClass() throws AssertionTransformationException {
+    public ServerAssertion getTransformedAssertion() {
+        return transformedAssertion;
+    }
+
+    private Class<ServerAssertion> toClass() throws AssertionTransformationException {
         try {
             return transformed.toClass();
         } catch (Exception e) {
             throw new AssertionTransformationException("Unable to convert " + transformed.getName() + " to class", e);
         }
     }
-    
+
     public Class<?> getOriginalClass() {
         return originalClass;
     }

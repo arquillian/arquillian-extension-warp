@@ -74,14 +74,12 @@ public class RequestPayload implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         if (assertion.getClass().isAnonymousClass() || assertion.getClass().isMemberClass()) {
             try {
-                TransformedAssertion transformed = new TransformedAssertion(assertion.getClass());
+                TransformedAssertion transformed = new TransformedAssertion(assertion);
                 MigratedAssertion migrated = new MigratedAssertion(transformed);
-                
-                ServerAssertion clone = (ServerAssertion) transformed.cloneToNew(assertion);
 
                 out.writeBoolean(true);
                 out.writeObject(migrated.toBytecode());
-                out.writeObject(SerializationUtils.serializeToBytes(clone));
+                out.writeObject(migrated.toSerializedForm());
             } catch (Exception e) {
                 throw new RuntimeException("Could not transform and replicate class " + assertion.getClass(), e);
             }

@@ -10,12 +10,17 @@ import java.util.Arrays;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+import org.jboss.arquillian.warp.impl.testutils.ClassLoaderUtils;
+import org.jboss.arquillian.warp.impl.testutils.CtClassAsset;
+import org.jboss.arquillian.warp.impl.testutils.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloader;
 import org.jboss.arquillian.warp.impl.testutils.ShrinkWrapUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
+import org.jboss.shrinkwrap.spi.MemoryMapArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,16 +29,24 @@ import org.junit.runner.RunWith;
 public class TransformedAssertionTest {
 
     @SeparatedClassPath
-    public static JavaArchive archive() {
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+    public static JavaArchive[] archive() {
+        JavaArchive archive = ShrinkWrap
+                .create(JavaArchive.class)
                 .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
-                .addClasses(SerializationUtils.class)
-                .addClasses(TransformedAssertionTest.class, TransformedAssertion.class, AssertionTransformationException.class);
+                .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
+                .addClasses(TransformedAssertionTest.class, TransformedAssertion.class, MigratedAssertion.class,
+                        AssertionTransformationException.class).addClasses(SeparateInvocator.class, CtClassAsset.class);
+        
+        System.out.println(archive.toString(true));
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
         JavaArchive junitArchive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
 
-        return archive.merge(javassistArchive).merge(junitArchive);
+        JavaArchive shrinkWrapSpi = ShrinkWrapUtils.getJavaArchiveFromClass(MemoryMapArchive.class);
+        JavaArchive shrinkWrapApi = ShrinkWrapUtils.getJavaArchiveFromClass(JavaArchive.class);
+        JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
+
+        return new JavaArchive[] { archive, javassistArchive, junitArchive, shrinkWrapSpi, shrinkWrapApi, shrinkWrapImpl };
     }
 
     @Test
@@ -41,8 +54,8 @@ public class TransformedAssertionTest {
 
         ServerAssertion assertion = getAnonymousServerAssertion();
 
-        TransformedAssertion transformedAssertion = new TransformedAssertion(assertion.getClass());
-        Object modifiedAssertion = transformedAssertion.cloneToNew(assertion);
+        TransformedAssertion transformedAssertion = new TransformedAssertion(assertion);
+        Object modifiedAssertion = transformedAssertion.getTransformedAssertion();
 
         verifyServerAssertionClass(modifiedAssertion);
     }

@@ -13,7 +13,7 @@ public class MigratedAssertionTest {
         ServerAssertion originalAssertion = TransformedAssertionTest.getAnonymousServerAssertion();
         assertTrue(originalAssertion.getClass().isAnonymousClass());
 
-        TransformedAssertion transformedAssertion = new TransformedAssertion(originalAssertion.getClass());
+        TransformedAssertion transformedAssertion = new TransformedAssertion(originalAssertion);
         MigratedAssertion migratedAssertion = new MigratedAssertion(transformedAssertion);
 
         byte[] bytecode = migratedAssertion.toBytecode();

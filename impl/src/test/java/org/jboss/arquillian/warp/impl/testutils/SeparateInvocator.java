@@ -11,7 +11,6 @@ import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
 
 public class SeparateInvocator<T> {
 
@@ -57,7 +56,7 @@ public class SeparateInvocator<T> {
             return (R) adoptedMethod.invoke(null, adoptedArgs);
         } catch (Exception e) {
             throw new IllegalStateException("Unable to invoke static method " + method.getName() + " from class "
-                    + clazz.getName());
+                    + clazz.getName(), e);
         }
 
     }
@@ -71,15 +70,6 @@ public class SeparateInvocator<T> {
 
             final Object[] adoptedArgs = adaptArgs(args, contextClassLoader, separatedClassLoader);
             final Method adoptedMethod = adoptMethod(method);
-
-            for (int i = 0; i < adoptedArgs.length; i++) {
-                System.out.println(args[i].getClass().hashCode() + " " + method.getParameterTypes()[i].hashCode());
-                Assert.assertEquals(args[i].getClass(), method.getParameterTypes()[i]);
-
-                System.out
-                        .println(adoptedArgs[i].getClass().hashCode() + " " + adoptedMethod.getParameterTypes()[i].hashCode());
-                Assert.assertEquals(adoptedArgs[i].getClass(), adoptedMethod.getParameterTypes()[i]);
-            }
 
             Object result = new InvokeSeparately<Object>() {
 
@@ -132,7 +122,7 @@ public class SeparateInvocator<T> {
 
                 return Array.newInstance(adoptedComponentType, 0).getClass();
             } else {
-                return separatedClassLoader.loadClass(type.getName());
+                return loadSeparatedClassSafely(type);
             }
         } catch (Exception e) {
             throw new IllegalArgumentException("Unable to adopt type of " + type.getName(), e);
@@ -141,7 +131,7 @@ public class SeparateInvocator<T> {
 
     private Object instantiate() {
         try {
-            separatedClass = separatedClassLoader.loadClass(clazz.getName());
+            separatedClass = loadSeparatedClassSafely(clazz);
             return separatedClass.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to instantiate class " + clazz.getName() + " on separated classloader", e);
@@ -218,6 +208,15 @@ public class SeparateInvocator<T> {
             return clazz.getMethod(methodName, parameterTypes);
         } catch (Exception e) {
             throw new IllegalStateException("Cannot obtain method " + methodName + " from class " + clazz.getName(), e);
+        }
+    }
+
+    private Class<?> loadSeparatedClassSafely(Class<?> clazz) {
+        try {
+            String className = clazz.getName();
+            return separatedClassLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Class " + clazz.getName() + " wasn't found on separated class loader", e);
         }
     }
 }
