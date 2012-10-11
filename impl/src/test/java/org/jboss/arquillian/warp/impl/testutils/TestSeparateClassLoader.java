@@ -17,8 +17,6 @@ public class TestSeparateClassLoader {
 
         Class<?> loadedClass = SeparatedClassloader.getFromTestClassloader(classLoader, TestDynamicClassLoading.class);
 
-        System.out.println(loadedClass.hashCode() + " " + TestDynamicClassLoading.class.hashCode());
-
         Method method = loadedClass.getMethod("test");
 
         Class<? extends Annotation> testAnnotation = (Class<? extends Annotation>) classLoader.loadClass(Test.class.getName());

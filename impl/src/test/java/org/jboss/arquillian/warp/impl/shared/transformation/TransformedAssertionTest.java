@@ -36,8 +36,6 @@ public class TransformedAssertionTest {
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
                 .addClasses(TransformedAssertionTest.class, TransformedAssertion.class, MigratedAssertion.class,
                         AssertionTransformationException.class).addClasses(SeparateInvocator.class, CtClassAsset.class);
-        
-        System.out.println(archive.toString(true));
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
         JavaArchive junitArchive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
@@ -97,7 +95,6 @@ public class TransformedAssertionTest {
 
         Assert.assertNotNull("Verify default constructor", newClass.getConstructor());
 
-        System.out.println(modifiedAssertion.getClass().getSuperclass());
         Assert.assertTrue("Verify new class is of type ServerAssertion", modifiedAssertion instanceof ServerAssertion);
 
         Method method = modifiedAssertion.getClass().getMethod("get");
@@ -107,27 +104,30 @@ public class TransformedAssertionTest {
     }
 
     private static void print(Class<?> clazz) {
+        
+        if (System.getProperty("arquillian.debug") != null) {
 
-        System.out.println();
-        System.out.println("Class: " + clazz.getName());
-        System.out.println("SuperClass: " + clazz.getSuperclass() + " " + clazz.getSuperclass().hashCode());
-        System.out.println("Interfaces: " + Arrays.asList(clazz.getInterfaces()));
-        System.out.println("Fields");
-        for (Field field : clazz.getDeclaredFields()) {
-            printAnnotation(field);
-            System.out.println("\t" + field);
-        }
-
-        System.out.println("Constructors");
-        for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-            printAnnotation(constructor);
-            System.out.println("\t" + constructor);
-        }
-
-        System.out.println("Methods");
-        for (Method method : clazz.getDeclaredMethods()) {
-            printAnnotation(method);
-            System.out.println("\t" + method);
+            System.out.println();
+            System.out.println("Class: " + clazz.getName());
+            System.out.println("SuperClass: " + clazz.getSuperclass() + " " + clazz.getSuperclass().hashCode());
+            System.out.println("Interfaces: " + Arrays.asList(clazz.getInterfaces()));
+            System.out.println("Fields");
+            for (Field field : clazz.getDeclaredFields()) {
+                printAnnotation(field);
+                System.out.println("\t" + field);
+            }
+    
+            System.out.println("Constructors");
+            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                printAnnotation(constructor);
+                System.out.println("\t" + constructor);
+            }
+    
+            System.out.println("Methods");
+            for (Method method : clazz.getDeclaredMethods()) {
+                printAnnotation(method);
+                System.out.println("\t" + method);
+            }
         }
     }
 

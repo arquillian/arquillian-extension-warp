@@ -20,6 +20,5 @@ public class TestDynamicClassLoading {
     @Test
     public void test() {
         String test = "xyz";
-        System.out.println(test);
     }
 }

@@ -43,8 +43,6 @@ public class MigratedAssertion {
                     .add(transformedAsset);
             JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.ClassPath.class);
 
-            System.out.println(baseArchive.toString(true));
-
             return SeparateInvocator.<Migration, MigrationImpl>invoke(MigrationImpl.class, baseArchive, javassistArchive)
                     .process(oldClassName, newClassName, oldClassFile, serverAssertion);
         } catch (Throwable e) {
