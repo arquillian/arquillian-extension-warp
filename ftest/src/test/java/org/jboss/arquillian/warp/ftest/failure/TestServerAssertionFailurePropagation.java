@@ -36,6 +36,7 @@ import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +63,7 @@ public class TestServerAssertionFailurePropagation {
                 .create(WebArchive.class, "test.war")
                 .addClass(TestingServlet.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource("beans.xml");
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test(expected = AssertionError.class)

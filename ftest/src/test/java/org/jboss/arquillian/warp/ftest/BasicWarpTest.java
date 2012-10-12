@@ -39,6 +39,7 @@ import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,8 +62,10 @@ public class BasicWarpTest {
     @Deployment
     public static WebArchive createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html")).addAsWebInfResource("beans.xml");
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClass(TestingServlet.class)
+                .addAsWebResource(new File("src/main/webapp/index.html"))
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
