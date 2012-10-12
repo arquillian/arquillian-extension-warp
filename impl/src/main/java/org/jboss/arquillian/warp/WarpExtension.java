@@ -62,7 +62,7 @@ public class WarpExtension implements LoadableExtension {
         builder.service(ApplicationArchiveProcessor.class, DeploymentEnricher.class);
         builder.service(AuxiliaryArchiveAppender.class, DeploymentEnricher.class);
         builder.service(ProtocolArchiveProcessor.class, DeploymentEnricher.class);
-        
+
         // action executor
         builder.service(RequestExecutor.class, DefaultRequestExecutor.class);
         builder.observer(ServiceInjector.class);

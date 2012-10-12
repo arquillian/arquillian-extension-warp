@@ -26,7 +26,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 public class HttpServletResponseEnricher implements ResourceProvider {
-    
+
     @Inject
     Instance<HttpServletResponse> response;
 

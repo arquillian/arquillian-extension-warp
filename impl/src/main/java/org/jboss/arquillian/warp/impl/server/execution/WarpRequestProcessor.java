@@ -37,7 +37,7 @@ import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public class WarpRequestProcessor {
-    
+
     private Logger log = Logger.getLogger(WarpRequestProcessor.class.getName());
 
     @Inject
@@ -49,16 +49,15 @@ public class WarpRequestProcessor {
     @Inject
     private Event<EnrichHttpResponse> enrichHttpResponse;
 
-    @Inject @RequestScoped
+    @Inject
+    @RequestScoped
     private InstanceProducer<NonWritingResponse> nonWritingResponse;
 
     @Inject
     private Event<ExecuteWarp> executeWarp;
-    
+
     @Inject
     private Event<TestResult> testResult;
-
-    
 
     public void processWarpRequest(@Observes ProcessWarpRequest event, HttpServletResponse response,
             ResponsePayload responsePayload) throws IOException {
@@ -80,7 +79,7 @@ public class WarpRequestProcessor {
 
         try {
             enrichHttpResponse.fire(new EnrichHttpResponse());
-            
+
             NonWritingPrintWriter writer = nonWritingResponse.get().getNonWritingPrintWriter();
             NonWritingServletOutputStream stream = nonWritingResponse.get().getNonWritingServletOutputStream();
 
@@ -98,5 +97,4 @@ public class WarpRequestProcessor {
         requestProcessingFinished.fire(new RequestProcessingFinished());
     }
 
-    
 }

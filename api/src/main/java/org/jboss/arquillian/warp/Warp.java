@@ -25,7 +25,7 @@ import org.jboss.arquillian.warp.client.filter.RequestFilter;
  * @author Lukas Fryc
  */
 public final class Warp {
-    
+
     private static final ThreadLocal<RequestExecutor> executor = new ThreadLocal<RequestExecutor>();
 
     /**
@@ -38,10 +38,10 @@ public final class Warp {
         return executor.get().execute(action);
     }
 
-    public static RequestExecutor filter(RequestFilter filter) {
+    public static RequestExecutor filter(RequestFilter<?> filter) {
         return executor.get().filter(filter);
     }
-    
+
     static void setExecutor(RequestExecutor e) {
         executor.set(e);
     }

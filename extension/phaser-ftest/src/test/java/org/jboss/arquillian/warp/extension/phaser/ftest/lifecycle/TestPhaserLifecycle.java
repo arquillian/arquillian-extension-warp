@@ -108,7 +108,7 @@ public class TestPhaserLifecycle {
         ExecuteAllPhases.verifyExecutedPhases(executed);
     }
 
-    
+
 
     public static class ExecuteAllPhases extends ServerAssertion {
 
@@ -201,7 +201,7 @@ public class TestPhaserLifecycle {
         public boolean isPostback() {
             return postback;
         }
-        
+
         private static void verifyExecutedPhases(ExecuteAllPhases executed) {
             EnumSet<Phase> expectedPhases = executed.isPostback() ? EnumSet.allOf(Phase.class) : EnumSet.of(Phase.RESTORE_VIEW,
                     Phase.RENDER_RESPONSE);

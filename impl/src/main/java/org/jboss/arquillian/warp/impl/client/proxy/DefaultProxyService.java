@@ -28,9 +28,9 @@ import org.littleshoot.proxy.HttpProxyServer;
 
 /**
  * The holder for instantiated proxies.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 

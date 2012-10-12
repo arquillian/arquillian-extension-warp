@@ -27,7 +27,6 @@ import java.io.Serializable;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

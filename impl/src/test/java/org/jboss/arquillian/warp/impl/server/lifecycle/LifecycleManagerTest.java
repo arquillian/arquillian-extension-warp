@@ -28,8 +28,6 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.context.Context;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
-import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerImpl;
-import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerService;
 import org.jboss.arquillian.warp.impl.server.request.AfterRequest;
 import org.jboss.arquillian.warp.impl.server.request.BeforeRequest;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;

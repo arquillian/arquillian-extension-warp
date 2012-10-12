@@ -66,7 +66,7 @@ public class TestBigResponsePayload {
     public void test() {
 
         Assertion requestAssertion = new Assertion();
-        
+
         Assertion responseAssertion = Warp.execute(new ClientAction() {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");

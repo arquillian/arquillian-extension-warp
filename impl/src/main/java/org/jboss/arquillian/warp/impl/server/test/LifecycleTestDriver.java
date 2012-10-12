@@ -37,11 +37,11 @@ import org.jboss.arquillian.warp.spi.LifecycleEvent;
 /**
  * Observes {@link LifecycleEvent} events and executed verification methods annotated with
  * {@link LifecycleEvent#getAnnotation()} annotation.
- * 
+ *
  * See {@link LifecycleTestClassExecutor} which executes {@link BeforeClass} and {@link AfterClass} events.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class LifecycleTestDriver {
 

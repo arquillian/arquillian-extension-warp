@@ -24,10 +24,10 @@ import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public class TestResultObserver {
-    
+
     @Inject
     private Instance<ResponsePayload> responsePayload;
-    
+
     public void propagateTestResult(@Observes TestResult testResult) {
         storeFirstFailure(testResult);
     }
@@ -35,7 +35,7 @@ public class TestResultObserver {
     public void propagateThrowableAsTestResult(@Observes Throwable throwable) {
         storeFirstFailure(new TestResult(Status.FAILED, throwable));
     }
-    
+
     private void storeFirstFailure(TestResult testResult) {
         // setup just a first failure
         if (testResult.getStatus() != Status.PASSED) {
@@ -44,7 +44,7 @@ public class TestResultObserver {
             }
         }
     }
-    
+
     private ResponsePayload responsePayload() {
         return responsePayload.get();
     }

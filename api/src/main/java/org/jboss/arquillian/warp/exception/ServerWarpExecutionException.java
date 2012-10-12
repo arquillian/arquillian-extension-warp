@@ -23,7 +23,7 @@ public class ServerWarpExecutionException extends RuntimeException {
     public ServerWarpExecutionException(String message) {
         super("The error occured during server request: " + message);
     }
-    
+
     public ServerWarpExecutionException(Throwable cause) {
         super("The error occured during server request: " + cause.getMessage(), cause);
     }

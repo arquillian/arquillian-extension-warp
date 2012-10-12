@@ -27,20 +27,20 @@ import org.jboss.arquillian.warp.client.execution.RequestExecutor;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
-import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
+import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 /**
  * The implementation of execution of client action and server assertion.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class DefaultRequestExecutor implements RequestExecutor {
 
@@ -63,7 +63,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
 
     @Inject
     private Event<AwaitResponse> awaitResponse;
-    
+
     @Inject
     private Event<ClientAction> executeClientAction;
 
@@ -127,7 +127,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
         awaitResponse.fire(new AwaitResponse());
 
         TestResult testResult = responsePayload().getTestResult();
-        
+
         if (testResult != null) {
             switch (testResult.getStatus()) {
                 case FAILED:
@@ -148,7 +148,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
 
     private void propagateFailure(TestResult testResult) {
         Throwable e = testResult.getThrowable();
-        
+
         if (e instanceof AssertionError) {
             throw (AssertionError) e;
         } else if (e instanceof ClientWarpExecutionException) {
@@ -159,7 +159,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
             throw new ServerWarpExecutionException(e);
         }
     }
-    
+
     private void propagateSkip() {
         throw new ServerWarpExecutionException("execution was skipped");
     }
@@ -171,7 +171,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
             super(cause);
         }
     }
-    
+
     private ResponsePayload responsePayload() {
         return responsePayload.get();
     }

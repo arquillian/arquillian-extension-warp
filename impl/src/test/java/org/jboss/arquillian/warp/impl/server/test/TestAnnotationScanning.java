@@ -22,7 +22,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.jboss.arquillian.warp.impl.server.test.SecurityActions;
 import org.junit.Test;
 
 public class TestAnnotationScanning {

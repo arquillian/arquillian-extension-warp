@@ -39,7 +39,7 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * The lifecycle of Warp request verification
- * 
+ *
  * @author Lukas Fryc
  */
 public class WarpLifecycle {
@@ -61,7 +61,7 @@ public class WarpLifecycle {
 
     /**
      * Executes the lifecycle
-     * 
+     *
      * @return {@link ResponsePayload} based on the lifecycle tests results
      */
     public void execute(@Observes ExecuteWarp event, HttpServletRequest request, NonWritingResponse nonWritingResponse,

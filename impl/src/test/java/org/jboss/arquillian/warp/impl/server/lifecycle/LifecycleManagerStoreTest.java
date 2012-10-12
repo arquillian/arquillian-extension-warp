@@ -23,8 +23,6 @@ import java.util.List;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
-import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerService;
-import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

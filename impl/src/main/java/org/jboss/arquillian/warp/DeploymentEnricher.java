@@ -38,9 +38,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * Adds all parts required by JSFUnit into web archive.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class DeploymentEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender, ProtocolArchiveProcessor {
 
@@ -78,7 +78,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             // API
             archive.addClass(ServerAssertion.class);
-            
+
             // SPI
             archive.addPackage("org.jboss.arquillian.warp.spi");
 

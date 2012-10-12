@@ -31,8 +31,8 @@ import org.jboss.arquillian.warp.impl.server.provider.HttpServletResponseEnriche
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestClassExecutor;
-import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
+import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher;
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
 
 /**
@@ -56,11 +56,11 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
         builder.observer(LifecycleTestClassExecutor.class);
         builder.observer(LifecycleTestEnrichmentWatcher.class);
         builder.observer(TestResultObserver.class);
-        
+
         builder.observer(HttpRequestProcessor.class);
         builder.observer(WarpRequestProcessor.class);
         builder.observer(WarpLifecycle.class);
-        
+
         builder.service(HttpRequestDeenricher.class, DefaultHttpRequestDeenricher.class);
         builder.service(HttpResponseEnricher.class, DefaultHttpResponseEnricher.class);
     }

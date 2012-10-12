@@ -55,8 +55,8 @@ public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase
     private CountDownLatch responseFinished;
     private CountDownLatch actionFinished;
 
-    private @Mock
-    ServiceLoader serviceLoader;
+    @Mock
+    private ServiceLoader serviceLoader;
 
     private AtomicReference<Exception> failure = new AtomicReference<Exception>(null);
 

@@ -32,11 +32,11 @@ import org.jboss.arquillian.warp.impl.utils.URLUtils;
 
 /**
  * Provides the proxy URL instead of real URL.
- * 
+ *
  * Stores the mapping between real URL and proxy URL in {@link URLMapping}.
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  */
 public class ProxyURLProvider implements ResourceProvider {
 

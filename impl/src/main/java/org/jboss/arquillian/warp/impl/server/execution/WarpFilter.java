@@ -42,7 +42,7 @@ import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
  * <p>
  * Filter that detects whenever the incoming request is enriched and thus should be processed by {@link WarpRequestProcessor}.
  * </p>
- * 
+ *
  * @author Lukas Fryc
  */
 @WebFilter(urlPatterns = "/*", asyncSupported = true)

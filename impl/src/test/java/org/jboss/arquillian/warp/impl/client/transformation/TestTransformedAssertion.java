@@ -1,3 +1,19 @@
+/**
+ * JBoss, Home of Professional Open Source
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.warp.impl.client.transformation;
 
 import java.lang.annotation.Annotation;
@@ -12,9 +28,6 @@ import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.impl.client.separation.PreventingClassLoader;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.client.separation.SeparatedClassLoader;
-import org.jboss.arquillian.warp.impl.client.transformation.AssertionTransformationException;
-import org.jboss.arquillian.warp.impl.client.transformation.MigratedAssertion;
-import org.jboss.arquillian.warp.impl.client.transformation.TransformedAssertion;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
@@ -39,7 +52,9 @@ public class TestTransformedAssertion {
                 .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
                 .addClasses(TestTransformedAssertion.class, TransformedAssertion.class, MigratedAssertion.class,
-                        AssertionTransformationException.class).addClasses(SeparateInvocator.class, CtClassAsset.class, PreventingClassLoader.class, SeparatedClassLoader.class);
+                        AssertionTransformationException.class)
+                .addClasses(SeparateInvocator.class, CtClassAsset.class, PreventingClassLoader.class,
+                        SeparatedClassLoader.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
         JavaArchive junitArchive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
@@ -108,7 +123,7 @@ public class TestTransformedAssertion {
     }
 
     private static void print(Class<?> clazz) {
-        
+
         if (System.getProperty("arquillian.debug") != null) {
 
             System.out.println();
@@ -120,13 +135,13 @@ public class TestTransformedAssertion {
                 printAnnotation(field);
                 System.out.println("\t" + field);
             }
-    
+
             System.out.println("Constructors");
             for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
                 printAnnotation(constructor);
                 System.out.println("\t" + constructor);
             }
-    
+
             System.out.println("Methods");
             for (Method method : clazz.getDeclaredMethods()) {
                 printAnnotation(method);
