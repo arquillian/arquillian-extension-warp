@@ -65,9 +65,6 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
                     }
                     extension.enrichWebArchive(webArchive);
                 }
-                
-                JavaArchive testClassArchive = ShrinkWrap.create(JavaArchive.class, "arquillian-warp-test-classes.jar").addClass(testClass.getJavaClass());
-                webArchive.addAsLibrary(testClassArchive);
             }
         }
     }

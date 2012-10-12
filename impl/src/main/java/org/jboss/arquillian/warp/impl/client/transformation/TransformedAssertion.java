@@ -10,9 +10,9 @@ import javassist.CtField;
 import javassist.CtNewConstructor;
 import javassist.Modifier;
 import javassist.bytecode.EnclosingMethodAttribute;
+import javassist.bytecode.InnerClassesAttribute;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.NamedAsset;
 
 public class TransformedAssertion {
@@ -46,6 +46,8 @@ public class TransformedAssertion {
 
             // remove enclosing reference to the method.
             output.getClassFile2().getAttributes().remove(output.getClassFile2().getAttribute(EnclosingMethodAttribute.tag));
+            output.getClassFile2().getAttributes().remove(output.getClassFile2().getAttribute(InnerClassesAttribute.tag));
+            
             output.setModifiers(Modifier.PUBLIC);
             for (CtField field : output.getDeclaredFields()) {
                 if (field.getName().equals("this$0")) {
