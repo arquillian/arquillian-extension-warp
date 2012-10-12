@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>arquillian-warp-build-resources</artifactId>
-    <name>Arquillian Warp Extension: Build Resources</name>
+    <name>Arquillian Warp: Build Resources</name>
 
     <build>
         <plugins>

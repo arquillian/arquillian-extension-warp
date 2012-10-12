@@ -28,6 +28,7 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
 public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentService {
 
@@ -39,16 +40,22 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
     @Override
     public void deenrichResponse(HttpResponse response) {
         try {
+            final ChannelBuffer content = response.getContent();
+
+            long originalLength = HttpHeaders.getContentLength(response);
             int payloadLength = Integer.valueOf(getHeader(response));
-            ChannelBuffer content = response.getContent();
+
             String responseEnrichment = content.toString(0, payloadLength, Charset.defaultCharset());
             content.readerIndex(payloadLength);
             content.discardReadBytes();
 
-            long originalLength = HttpHeaders.getContentLength(response);
+            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
+
             HttpHeaders.setContentLength(response, originalLength - payloadLength);
 
-            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
+            HttpResponseStatus status = HttpResponseStatus.valueOf(payload.getStatus());
+            response.setStatus(status);
+
             AssertionHolder.addResponse(new ResponseEnrichment(payload));
         } catch (Exception originalException) {
             ResponsePayload exceptionPayload = new ResponsePayload();

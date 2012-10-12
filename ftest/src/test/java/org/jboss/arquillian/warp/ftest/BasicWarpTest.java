@@ -100,6 +100,8 @@ public class BasicWarpTest {
             @AfterServlet
             public void afterServlet() {
 
+                System.out.println("Servlet just processed my initial request!");
+
                 assertNull("response still isn't senriched, that happens little bit later",
                         response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
 
@@ -112,9 +114,9 @@ public class BasicWarpTest {
                 browser.findElement(By.id("sendAjax")).click();
             }
         }).verify(new ServerAssertion() {
-            
+
             private static final long serialVersionUID = 1L;
-            
+
             @BeforeServlet
             public void beforeServlet() {
                 System.out.println("Hi server, here is AJAX request!");

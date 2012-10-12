@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>arquillian-warp-build</artifactId>
-    <name>Arquillian Warp Extension: Build Parent</name>
+    <name>Arquillian Warp: Build Parent</name>
     <packaging>pom</packaging>
 
     <dependencyManagement>

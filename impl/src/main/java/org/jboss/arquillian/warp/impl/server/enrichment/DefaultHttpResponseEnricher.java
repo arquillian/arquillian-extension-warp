@@ -62,14 +62,25 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
     private void enrich(ResponsePayload payload, HttpServletResponse response, NonWritingResponse nonWritingResponse)
             throws IOException {
 
+        Integer originalLength = nonWritingResponse.getContentLength();
+
+        payload.setStatus(response.getStatus());
+
         String enrichment = SerializationUtils.serializeToBase64(payload);
 
         // set a header with the size of the payload
         response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Integer.toString(enrichment.length()));
 
-        if (nonWritingResponse.getContentLength() != null) {
-            nonWritingResponse.setContentLength(nonWritingResponse.getContentLength() + enrichment.length());
+        // update context-length
+        if (originalLength != null) {
+            int enrichmentLength = enrichment.length();
+
+            int newLength = originalLength + enrichmentLength;
+            nonWritingResponse.setContentLength(newLength);
         }
+
+        // must be set to OK:200 to deliver payload - will be switched on proxy filter
+        response.setStatus(200);
 
         nonWritingResponse.finalize();
 

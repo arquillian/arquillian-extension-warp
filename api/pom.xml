@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>arquillian-warp-api</artifactId>
-    <name>Arquillian Warp Extension: API</name>
+    <name>Arquillian Warp: API</name>
 
     <build>
         <plugins>

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>arquillian-warp-phaser</artifactId>
-    <name>Arquillian Warp Extension: Phaser</name>
+    <name>Arquillian Warp: Phaser</name>
 
     <dependencies>
 

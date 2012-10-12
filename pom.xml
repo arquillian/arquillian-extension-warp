@@ -18,7 +18,7 @@
     <version>1.0.0.Alpha2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Arquillian Warp Extension: Parent</name>
+    <name>Arquillian Warp: Parent</name>
     <description>Taking tests from Client to the Server and back</description>
 
     <licenses>

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>arquillian-warp-ftest</artifactId>
-    <name>Arquillian Warp Extension: Tests</name>
+    <name>Arquillian Warp: Functional Test</name>
     
     <properties>
         <browser>htmlUnit</browser>

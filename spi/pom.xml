@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>arquillian-warp-spi</artifactId>
-    <name>Arquillian Warp Extension: SPI</name>
+    <name>Arquillian Warp: SPI</name>
 
     <dependencies>
         <dependency>

@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>arquillian-warp-phaser-ftest</artifactId>
-    <name>Arquillian Warp Extension: Phaser Tests</name>
+    <name>Arquillian Warp: Phaser Functional Tests</name>
 
     <properties>
         <browser>htmlUnit</browser>

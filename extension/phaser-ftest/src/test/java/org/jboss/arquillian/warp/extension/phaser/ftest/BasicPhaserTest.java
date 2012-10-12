@@ -75,7 +75,7 @@ public class BasicPhaserTest {
     @Test
     @RunAsClient
     public void test() {
-        Warp.execute(new ClientAction() {
+        Warp.filter(new JsfRequestFilter()).execute(new ClientAction() {
 
             @Override
             public void action() {
@@ -133,6 +133,8 @@ public class BasicPhaserTest {
                 return updatedName;
             }
         });
+
+
     }
 
     public static class JsfRequestFilter implements RequestFilter<HttpRequest> {

@@ -34,7 +34,7 @@ public class TestResultObserver {
 
     public void propagateThrowableAsTestResultAndRethrow(@Observes Throwable throwable) throws Throwable {
         storeFirstFailure(new TestResult(Status.FAILED, throwable));
-        
+
         // throwable must be rethrown, because Arquillian Core checks whether throwable was observed
         // and if yes, it does not let it bubble down the stack
         throw throwable;

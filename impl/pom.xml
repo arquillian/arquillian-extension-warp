@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>arquillian-warp-impl</artifactId>
-    <name>Arquillian Warp Extension: Implementation</name>
+    <name>Arquillian Warp: Implementation</name>
 
     <dependencies>
 

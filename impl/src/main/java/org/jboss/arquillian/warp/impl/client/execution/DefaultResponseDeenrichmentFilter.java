@@ -43,7 +43,6 @@ public class DefaultResponseDeenrichmentFilter implements ResponseDeenrichmentFi
 
     @Override
     public HttpResponse filterResponse(HttpResponse response) {
-
         tryDeenrichResponse.fire(new FilterHttpResponse(response, deenrichmentService));
 
         return response;

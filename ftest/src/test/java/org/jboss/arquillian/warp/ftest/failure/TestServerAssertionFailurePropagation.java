@@ -32,6 +32,8 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.client.filter.HttpRequest;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
@@ -69,7 +71,7 @@ public class TestServerAssertionFailurePropagation {
     @Test(expected = AssertionError.class)
     public void testAssertionErrorPropagation() {
 
-        Warp.execute(new ClientAction() {
+        Warp.filter(new FaviconIgnore()).execute(new ClientAction() {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");
             }
@@ -87,7 +89,7 @@ public class TestServerAssertionFailurePropagation {
     public void testCheckedExceptionPropagation() {
 
         try {
-            Warp.execute(new ClientAction() {
+            Warp.filter(new FaviconIgnore()).execute(new ClientAction() {
                 public void action() {
                     browser.navigate().to(contextPath + "index.html");
                 }
@@ -106,7 +108,7 @@ public class TestServerAssertionFailurePropagation {
 
     @Test(expected = IllegalArgumentException.class)
     public void testRuntimeExceptionPropagation() {
-        Warp.execute(new ClientAction() {
+        Warp.filter(new FaviconIgnore()).execute(new ClientAction() {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");
             }
@@ -118,6 +120,13 @@ public class TestServerAssertionFailurePropagation {
                 throw new IllegalArgumentException();
             }
         });
+    }
+
+    private static class FaviconIgnore implements RequestFilter<HttpRequest> {
+        @Override
+        public boolean matches(HttpRequest httpRequest) {
+            return !httpRequest.getUri().contains("favicon.ico");
+        }
     }
 
 }

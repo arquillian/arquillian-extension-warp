@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -36,8 +38,19 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 
 public class DefaultRequestEnrichmentService implements RequestEnrichmentService {
 
+    private Logger log = Logger.getLogger("Warp");
+
     @Override
     public void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads) {
+
+        if (System.getProperty("arquillian.debug") != null) {
+            System.out.println("                (W) " + request.getUri());
+        }
+
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Warp request: " + request.getUri());
+        }
+
         try {
             RequestPayload assertion = payloads.iterator().next();
             String requestEnrichment = SerializationUtils.serializeToBase64(assertion);

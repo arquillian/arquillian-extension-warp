@@ -116,7 +116,6 @@ public class DefaultRequestExecutor implements RequestExecutor {
 
     private void executeClientAction() {
         try {
-            action.action();
             executeClientAction.fire(action);
         } catch (Exception e) {
             throw new ClientActionException(e);
