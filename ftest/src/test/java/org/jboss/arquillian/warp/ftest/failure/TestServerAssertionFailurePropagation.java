@@ -73,7 +73,14 @@ public class TestServerAssertionFailurePropagation {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");
             }
-        }).verify(new AssertionErrorAssertion());
+        }).verify(new ServerAssertion() {
+            private static final long serialVersionUID = 1L;
+
+            @BeforeServlet
+            public void beforeServlet() {
+                fail("AssertionError should be correctly handled and propagated to the client-side");
+            }
+        });
     }
 
     @Test
@@ -84,7 +91,14 @@ public class TestServerAssertionFailurePropagation {
                 public void action() {
                     browser.navigate().to(contextPath + "index.html");
                 }
-            }).verify(new CheckedExceptionAssertion());
+            }).verify(new ServerAssertion() {
+                private static final long serialVersionUID = 1L;
+
+                @BeforeServlet
+                public void beforeServlet() throws Exception {
+                    throw new IOException();
+                }
+            });
         } catch (ServerWarpExecutionException e) {
             assertTrue(e.getCause() instanceof IOException);
         }
@@ -96,34 +110,14 @@ public class TestServerAssertionFailurePropagation {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");
             }
-        }).verify(new RuntimeExceptionAssertion());
-    }
+        }).verify(new ServerAssertion() {
+            private static final long serialVersionUID = 1L;
 
-    public static class AssertionErrorAssertion extends ServerAssertion {
-        private static final long serialVersionUID = 1L;
-
-        @BeforeServlet
-        public void beforeServlet() {
-            fail("AssertionError should be correctly handled and propagated to the client-side");
-        }
-    }
-
-    public static class CheckedExceptionAssertion extends ServerAssertion {
-        private static final long serialVersionUID = 1L;
-
-        @BeforeServlet
-        public void beforeServlet() throws Exception {
-            throw new IOException();
-        }
-    }
-
-    public static class RuntimeExceptionAssertion extends ServerAssertion {
-        private static final long serialVersionUID = 1L;
-
-        @BeforeServlet
-        public void beforeServlet() {
-            throw new IllegalArgumentException();
-        }
+            @BeforeServlet
+            public void beforeServlet() {
+                throw new IllegalArgumentException();
+            }
+        });
     }
 
 }

@@ -76,54 +76,49 @@ public class BasicWarpTest {
             public void action() {
                 browser.navigate().to(contextPath + "index.html");
             }
-        }).verify(new InitialRequestAssertion());
+        }).verify(new ServerAssertion() {
+
+            private static final long serialVersionUID = 1L;
+
+            @ArquillianResource
+            HttpServletRequest request;
+
+            @ArquillianResource
+            HttpServletResponse response;
+
+            @BeforeServlet
+            public void beforeServlet() {
+
+                System.out.println("Hi server, here is my initial request!");
+
+                assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
+
+                assertNull("response is not enriched before servlet processing",
+                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+            }
+
+            @AfterServlet
+            public void afterServlet() {
+
+                assertNull("response still isn't senriched, that happens little bit later",
+                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+
+                assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
+            }
+        });
 
         Warp.execute(new ClientAction() {
             public void action() {
                 browser.findElement(By.id("sendAjax")).click();
             }
-        }).verify(new AjaxRequestAssertion());
+        }).verify(new ServerAssertion() {
+            
+            private static final long serialVersionUID = 1L;
+            
+            @BeforeServlet
+            public void beforeServlet() {
+                System.out.println("Hi server, here is AJAX request!");
+            }
+        });
     }
-
-    public static class InitialRequestAssertion extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @ArquillianResource
-        HttpServletRequest request;
-
-        @ArquillianResource
-        HttpServletResponse response;
-
-        @BeforeServlet
-        public void beforeServlet() {
-
-            System.out.println("Hi server, here is my initial request!");
-
-            assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
-
-            assertNull("response is not enriched before servlet processing",
-                    response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
-        }
-
-        @AfterServlet
-        public void afterServlet() {
-
-            assertNull("response still isn't senriched, that happens little bit later",
-                    response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
-
-            assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
-        }
-    }
-
-    public static class AjaxRequestAssertion extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @BeforeServlet
-        public void beforeServlet() {
-            System.out.println("Hi server, here is AJAX request!");
-        }
-    }
-
 }

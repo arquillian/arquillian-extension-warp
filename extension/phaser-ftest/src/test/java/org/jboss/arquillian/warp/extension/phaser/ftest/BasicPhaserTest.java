@@ -81,9 +81,19 @@ public class BasicPhaserTest {
             public void action() {
                 browser.navigate().to(contextPath + "index.jsf");
             }
-        }).verify(new InitialRequestVerification());
+        }).verify(new ServerAssertion() {
+            private static final long serialVersionUID = 1L;
 
-        NameChangedToX x = Warp.filter(new JsfRequestFilter()).execute(new ClientAction() {
+            @Inject
+            CdiBean myBean;
+
+            @AfterPhase(RENDER_RESPONSE)
+            public void initial_state_havent_changed_yet() {
+                assertEquals("John", myBean.getName());
+            }
+        });
+
+        Warp.filter(new JsfRequestFilter()).execute(new ClientAction() {
             public void action() {
                 WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
                 nameInput.sendKeys("X");
@@ -100,54 +110,35 @@ public class BasicPhaserTest {
                     }
                 });
             }
-        }).verify(new NameChangedToX());
+        }).verify(new ServerAssertion() {
+            private static final long serialVersionUID = 1L;
 
-        // verify Object was Deserialized with Server state
-        assertEquals("JohnX", x.getUpdatedName());
+            @Inject
+            CdiBean myBean;
+
+            private String updatedName;
+
+            @BeforePhase(UPDATE_MODEL_VALUES)
+            public void initial_state_havent_changed_yet() {
+                assertEquals("John", myBean.getName());
+            }
+
+            @AfterPhase(UPDATE_MODEL_VALUES)
+            public void changed_input_value_has_been_applied() {
+                assertEquals("JohnX", myBean.getName());
+                updatedName = myBean.getName();
+            }
+
+            public String getUpdatedName() {
+                return updatedName;
+            }
+        });
     }
 
     public static class JsfRequestFilter implements RequestFilter<HttpRequest> {
         @Override
         public boolean matches(HttpRequest httpRequest) {
             return httpRequest.getUri().contains("index.jsf");
-        }
-    }
-
-    public static class InitialRequestVerification extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @Inject
-        CdiBean myBean;
-
-        @AfterPhase(RENDER_RESPONSE)
-        public void initial_state_havent_changed_yet() {
-            assertEquals("John", myBean.getName());
-        }
-    }
-
-    public static class NameChangedToX extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @Inject
-        CdiBean myBean;
-
-        private String updatedName;
-
-        @BeforePhase(UPDATE_MODEL_VALUES)
-        public void initial_state_havent_changed_yet() {
-            assertEquals("John", myBean.getName());
-        }
-
-        @AfterPhase(UPDATE_MODEL_VALUES)
-        public void changed_input_value_has_been_applied() {
-            assertEquals("JohnX", myBean.getName());
-            updatedName = myBean.getName();
-        }
-
-        public String getUpdatedName() {
-            return updatedName;
         }
     }
 }

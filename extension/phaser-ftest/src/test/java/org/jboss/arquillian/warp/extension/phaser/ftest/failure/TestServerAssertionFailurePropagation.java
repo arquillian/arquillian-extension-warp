@@ -70,23 +70,20 @@ public class TestServerAssertionFailurePropagation {
             public void action() {
                 browser.navigate().to(contextPath + "index.jsf");
             }
-        }).verify(new InitialRequestVerification());
+        }).verify(new ServerAssertion() {
+            private static final long serialVersionUID = 1L;
+
+            @BeforeServlet
+            public void initial_state_havent_changed_yet() {
+                fail("AssertionError should be correctly handled and propagated to the client-side");
+            }
+        });
     }
 
     public static class JsfRequestFilter implements RequestFilter<HttpRequest> {
         @Override
         public boolean matches(HttpRequest httpRequest) {
             return httpRequest.getUri().contains("index.jsf");
-        }
-    }
-
-    public static class InitialRequestVerification extends ServerAssertion {
-
-        private static final long serialVersionUID = 1L;
-
-        @BeforeServlet
-        public void initial_state_havent_changed_yet() {
-            fail("AssertionError should be correctly handled and propagated to the client-side");
         }
     }
 }
