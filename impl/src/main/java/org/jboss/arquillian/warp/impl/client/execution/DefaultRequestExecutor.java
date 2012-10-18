@@ -49,6 +49,8 @@ public class DefaultRequestExecutor implements RequestExecutor {
     private ServerAssertion requestAssertion;
     private ServerAssertion responseAssertion;
 
+    private ClientActionException actionException;
+
     @Inject
     private Event<AdvertiseEnrichment> advertiseEnrichment;
 
@@ -98,6 +100,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
             setupServerAssertion();
             executeClientAction();
             awaitServerExecution();
+            checkClientActionFailure();
         } finally {
             cleanup();
         }
@@ -115,10 +118,17 @@ public class DefaultRequestExecutor implements RequestExecutor {
     }
 
     private void executeClientAction() {
+        actionException = null;
         try {
             executeClientAction.fire(action);
         } catch (Exception e) {
-            throw new ClientActionException(e);
+            actionException = new ClientActionException(e);
+        }
+    }
+
+    private void checkClientActionFailure() {
+        if (actionException != null) {
+            throw actionException;
         }
     }
 
