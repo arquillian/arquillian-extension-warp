@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
@@ -55,7 +56,6 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
             } catch (Exception ex) {
                 log.log(Level.SEVERE, "Response enrichment failed to attach enrichment failure", ex);
             }
-
         }
     }
 
@@ -74,7 +74,6 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
         // update context-length
         if (originalLength != null) {
             int enrichmentLength = enrichment.length();
-
             int newLength = originalLength + enrichmentLength;
             nonWritingResponse.setContentLength(newLength);
         }
@@ -82,8 +81,11 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
         // must be set to OK:200 to deliver payload - will be switched on proxy filter
         response.setStatus(200);
 
-        nonWritingResponse.finalize();
+        // write enrichment
+        ServletOutputStream servletOutputStream = response.getOutputStream();
+        servletOutputStream.write(enrichment.getBytes());
 
-        response.getOutputStream().write(enrichment.getBytes());
+        // finalize
+        nonWritingResponse.finallyWriteAndClose(servletOutputStream);
     }
 }

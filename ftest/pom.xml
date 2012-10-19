@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,7 +11,7 @@
 
     <artifactId>arquillian-warp-ftest</artifactId>
     <name>Arquillian Warp: Functional Test</name>
-    
+
     <properties>
         <browser>htmlUnit</browser>
         <remoteReusable>false</remoteReusable>
@@ -21,7 +22,7 @@
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_3.0_spec</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-warp-impl</artifactId>
@@ -68,22 +69,16 @@
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.properties</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <profile>
-            <id>jbossas-remote-7</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-arquillian-container-remote</artifactId>
-                    <version>${version.org.jboss.jbossas}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
 
         <profile>
             <id>jbossas-managed-7</id>
@@ -148,26 +143,76 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <profile>
-            <id>webdriver-chrome</id>
+            <id>jbossas-remote-7</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-arquillian-container-remote</artifactId>
+                    <version>${version.org.jboss.jbossas}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>browser-chrome</id>
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>chrome</value>
+                </property>
+            </activation>
             <properties>
                 <browser>chrome</browser>
             </properties>
         </profile>
-        
+
         <profile>
-            <id>webdriver-firefox</id>
+            <id>browser-firefox</id>
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>firefox</value>
+                </property>
+            </activation>
             <properties>
                 <browser>firefox</browser>
             </properties>
         </profile>
-        
+
         <profile>
-            <id>webdriver-remote-reusable</id>
+            <id>browser-remote-reusable</id>
             <properties>
                 <remoteReusable>true</remoteReusable>
             </properties>
         </profile>
+
+        <profile>
+            <id>arquillian-debug</id>
+            <activation>
+                <property>
+                    <name>arquillian.debug</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>java.util.logging.config.file</name>
+                                    <value>src/test/resources/logging.properties</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 </project>

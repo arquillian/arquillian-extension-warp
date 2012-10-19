@@ -79,17 +79,6 @@ public class WarpRequestProcessor {
 
         try {
             enrichHttpResponse.fire(new EnrichHttpResponse());
-
-            NonWritingPrintWriter writer = nonWritingResponse.get().getNonWritingPrintWriter();
-            NonWritingServletOutputStream stream = nonWritingResponse.get().getNonWritingServletOutputStream();
-
-            if (writer != null) {
-                writer.finallyWriteAndClose(response.getOutputStream());
-            }
-            if (stream != null) {
-                stream.finallyWriteAndClose(response.getOutputStream());
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -59,17 +59,24 @@ public class NonWritingResponse extends HttpServletResponseWrapper {
         return contentLength;
     }
 
-    public void finalize() {
-        if (contentLength != null) {
-            super.setContentLength(contentLength);
-        }
-    }
-
     public NonWritingServletOutputStream getNonWritingServletOutputStream() {
         return stream;
     }
 
     public NonWritingPrintWriter getNonWritingPrintWriter() {
         return writer;
+    }
+
+    public void finallyWriteAndClose(ServletOutputStream delegateStream) throws IOException {
+        if (contentLength != null) {
+            super.setContentLength(contentLength);
+        }
+
+        if (writer != null) {
+            writer.finallyWriteAndClose(delegateStream);
+        }
+        if (stream != null) {
+            stream.finallyWriteAndClose(delegateStream);
+        }
     }
 }

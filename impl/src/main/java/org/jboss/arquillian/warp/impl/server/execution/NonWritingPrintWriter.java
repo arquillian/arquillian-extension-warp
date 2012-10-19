@@ -49,7 +49,7 @@ public class NonWritingPrintWriter extends PrintWriter {
         wasClosed = true;
     }
 
-    void finallyWriteAndClose(ServletOutputStream delegateStream) throws IOException {
+    public void finallyWriteAndClose(ServletOutputStream delegateStream) throws IOException {
         this.flush();
         baos.flush();
 
@@ -58,7 +58,7 @@ public class NonWritingPrintWriter extends PrintWriter {
         delegateStream.write(byteArray);
 
         if (wasClosed) {
-            super.close();
+            delegateStream.close();
         }
     }
 }

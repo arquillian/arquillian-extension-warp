@@ -33,7 +33,7 @@
     </container>
 
     <extension qualifier="webdriver">
-        <property name="useJavaScript">true</property>
+        <property name="javascriptEnabled">true</property>
 
         <property name="browserCapabilities">${browser}</property>
         <property name="remoteReusable">${remoteReusable}</property>
