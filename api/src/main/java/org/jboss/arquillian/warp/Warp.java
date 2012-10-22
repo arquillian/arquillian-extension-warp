@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp;
 
+import org.jboss.arquillian.warp.client.execution.ClientActionExecutor;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
 
 /**
  * Utility class for invoking client action followed by server request, enriched with assertion.
@@ -34,12 +34,8 @@ public final class Warp {
      * @param action the client action to execute
      * @return {@link RequestExecution} instance
      */
-    public static RequestExecutor execute(ClientAction action) {
+    public static ClientActionExecutor execute(ClientAction action) {
         return executor.get().execute(action);
-    }
-
-    public static RequestExecutor filter(RequestFilter<?> filter) {
-        return executor.get().filter(filter);
     }
 
     static void setExecutor(RequestExecutor e) {

@@ -67,7 +67,7 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
     @Override
     public Collection<RequestPayload> getMatchingPayloads(HttpRequest request) {
         final Set<RequestEnrichment> requests = AssertionHolder.getRequests();
-        final org.jboss.arquillian.warp.client.filter.HttpRequest httpRequest = new HttpRequestWrapper(request);
+        final org.jboss.arquillian.warp.client.filter.http.HttpRequest httpRequest = new HttpRequestWrapper(request);
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
         for (RequestEnrichment enrichment : requests) {
@@ -78,10 +78,10 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
                 continue;
             }
 
-            if (isType(filter, org.jboss.arquillian.warp.client.filter.HttpRequest.class)) {
+            if (isType(filter, org.jboss.arquillian.warp.client.filter.http.HttpRequest.class)) {
 
                 @SuppressWarnings("unchecked")
-                RequestFilter<org.jboss.arquillian.warp.client.filter.HttpRequest> httpRequestFilter = (RequestFilter<org.jboss.arquillian.warp.client.filter.HttpRequest>) filter;
+                RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest> httpRequestFilter = (RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest>) filter;
 
                 if (httpRequestFilter.matches(httpRequest)) {
                     payloads.add(enrichment.getPayload());
@@ -107,7 +107,7 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
         return false;
     }
 
-    private class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filter.HttpRequest {
+    private class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filter.http.HttpRequest {
 
         private HttpRequest request;
 

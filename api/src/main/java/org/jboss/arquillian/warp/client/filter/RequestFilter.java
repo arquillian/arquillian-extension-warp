@@ -18,5 +18,5 @@ package org.jboss.arquillian.warp.client.filter;
 
 public interface RequestFilter<T> {
 
-    boolean matches(T httpRequest);
+    boolean matches(T request);
 }
