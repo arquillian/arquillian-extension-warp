@@ -29,7 +29,7 @@ public final class Warp {
     private static final ThreadLocal<RequestExecutor> executor = new ThreadLocal<RequestExecutor>();
 
     /**
-     * Takes client action which should be fired in order to cause server request.
+     * Takes client action which should be executed in order to cause server request.
      *
      * @param action the client action to execute
      * @return {@link RequestExecution} instance
@@ -38,6 +38,9 @@ public final class Warp {
         return executor.get().execute(action);
     }
 
+    /**
+     * Setup the {@link RequestExecutor} for current Warp test
+     */
     static void setExecutor(RequestExecutor e) {
         executor.set(e);
     }

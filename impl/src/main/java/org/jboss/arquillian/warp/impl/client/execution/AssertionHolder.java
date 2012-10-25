@@ -17,7 +17,9 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +45,7 @@ class AssertionHolder {
 
     private static final AtomicBoolean enrichmentAdvertised = new AtomicBoolean(false);
     private static final AtomicBoolean enrichmentFinished = new AtomicBoolean(false);
-    private static final Set<RequestEnrichment> requests = new CopyOnWriteArraySet<RequestEnrichment>();
-    private static final Set<ResponseEnrichment> responses = new CopyOnWriteArraySet<ResponseEnrichment>();
+    private static final Map<RequestEnrichment, ResponseEnrichment> map = new ConcurrentHashMap<RequestEnrichment, ResponseEnrichment>();
     private static CountDownLatch responsesLatch;
 
     /**
@@ -112,7 +113,7 @@ class AssertionHolder {
     public static void addRequest(RequestEnrichment request) {
         Validate.notNull(request, "enrichment can't be null");
 
-        requests.add(request);
+        map.put(request, null);
     }
 
     /**
@@ -125,7 +126,7 @@ class AssertionHolder {
 
         awaitRequests();
 
-        return Collections.unmodifiableSet(requests);
+        return Collections.unmodifiableSet(map.keySet());
     }
 
     /**
@@ -133,10 +134,11 @@ class AssertionHolder {
      *
      * @param payload verified {@link ResponsePayload} to be obtained by test.
      */
-    static void addResponse(ResponseEnrichment response) {
+    static void addResponse(RequestEnrichment request, ResponseEnrichment response) {
+        Validate.notNull(response, "request can't be null");
         Validate.notNull(response, "response can't be null");
 
-        responses.add(response);
+        map.put(request, response);
         responsesLatch.countDown();
     }
 
@@ -144,8 +146,7 @@ class AssertionHolder {
         responsesLatch = null;
         enrichmentAdvertised.set(false);
         enrichmentFinished.set(false);
-        requests.clear();
-        responses.clear();
+        map.clear();
     }
 
     /**
@@ -154,11 +155,11 @@ class AssertionHolder {
      * @return the {@link ResponsePayload}
      * @throws ServerResponseTimeoutException when the response wasn't returned in time
      */
-    public static Set<ResponseEnrichment> getResponses() {
+    public static Map<RequestEnrichment, ResponseEnrichment> getResponses() {
 
         awaitResponses();
 
-        return Collections.unmodifiableSet(responses);
+        return Collections.unmodifiableMap(map);
     }
 
     private static void awaitRequests() {

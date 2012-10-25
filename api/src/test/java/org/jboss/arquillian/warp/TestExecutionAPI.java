@@ -1,22 +1,30 @@
-package org.jboss.arquillian.warp.execution;
+package org.jboss.arquillian.warp;
 
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.Warp;
+import static org.mockito.Mockito.mock;
+
+import java.lang.reflect.Modifier;
+
+import org.jboss.arquillian.warp.client.execution.RequestExecutor;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.result.WarpResult;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
+@SuppressWarnings({"unused", "serial"})
 public class TestExecutionAPI {
 
-    @Mock
     private ClientAction clientAction;
 
-    @Mock
     private ServerAssertion serverAssertion;
 
-    @Mock
     private RequestFilter<?> requestFilter;
 
 
@@ -24,7 +32,6 @@ public class TestExecutionAPI {
      * Single client action paired with single server assertion for most simplest
      * cases
      */
-    @Test
     public void testSimpleExecution() {
         Warp.execute(clientAction)
             .verify(serverAssertion);
@@ -34,7 +41,6 @@ public class TestExecutionAPI {
      * Single client action and server assertion applied for request matching
      * given filter
      */
-    @Test
     public void testSimpleFiltering() {
         Warp.execute(clientAction)
             .filter(requestFilter)
@@ -45,7 +51,6 @@ public class TestExecutionAPI {
      * The result of simplest possible execution is ServerAssertion (modified
      * on the server)
      */
-    @Test
     public void testSimpleResult() {
         ServerAssertion assertion = Warp.execute(clientAction)
             .verify(serverAssertion);
@@ -54,13 +59,12 @@ public class TestExecutionAPI {
     /**
      * Two requests caused by single client action are verified concurrently.
      */
-    @Test
     public void testGroupOfTwoRequests() {
         Warp.execute(clientAction)
-            .group("first")
+            .group()
                 .filter(requestFilter)
                 .verify(serverAssertion)
-            .group("second")
+            .group()
                 .filter(requestFilter)
                 .verify(serverAssertion)
             .verifyAll();
@@ -71,7 +75,6 @@ public class TestExecutionAPI {
      * object where result of assertion and other details (e.g. filter hit
      * count) is stored.
      */
-    @Test
     public void testResultOfComplexGroupExecution() {
         WarpResult result = Warp.execute(clientAction)
             .group("first")
@@ -82,8 +85,56 @@ public class TestExecutionAPI {
                 .verify(serverAssertion)
             .verifyAll();
 
+
         ServerAssertion firstAssertion = result.getGroup("first").getAssertion();
 
         int hitCount = result.getGroup("second").getHitCount();
+    }
+
+    /**
+     * Test may specify multiple assertions verified in one request.
+     *
+     * These assertions will preserve order of definition and execution.
+     */
+    public void testMultipleAssertions() {
+        WarpResult result = Warp.execute(clientAction)
+            .verifyAll(serverAssertion, serverAssertion, serverAssertion);
+
+        result = Warp.execute(clientAction)
+            .group()
+                .filter(requestFilter)
+                .verify(serverAssertion, serverAssertion)
+            .group()
+                .filter(requestFilter)
+                .verify(serverAssertion, serverAssertion, serverAssertion)
+            .verifyAll();
+    }
+
+    /**
+     * Filters can be specified by annotation - then they will be applied in any
+     * Warp execution where no other filter was specified.
+     */
+    @Filter(TestingFilter.class)
+    public void testFilterSpecifiedByAnnotation() {
+        Warp.execute(clientAction)
+            .verify(serverAssertion);
+    }
+
+    /**
+     * Assertions can be specified by annotation - all specified assertions
+     * will be used for all requests.
+     */
+    @Verify({TestingAssertion1.class, TestingAssertion2.class})
+    public void testSpecifyAssertionByAnnotation() {
+        clientAction.action();
+    }
+
+    private static abstract class TestingFilter implements RequestFilter<HttpRequest> {
+    }
+
+    private static abstract class TestingAssertion1 extends ServerAssertion {
+    }
+
+    private static abstract class TestingAssertion2 extends ServerAssertion {
     }
 }

@@ -24,5 +24,7 @@ public class WarpCommons {
     private static final String ENRICHMENT = "X-Arq-Enrichment";
     public static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
     public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
+    
+    public static final String ENRICHMENT_SEQUENCE_NUMBER = "X-Arq-Enrichment-Id";
 
 }

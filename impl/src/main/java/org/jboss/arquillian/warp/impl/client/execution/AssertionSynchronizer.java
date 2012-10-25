@@ -16,17 +16,17 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import java.util.Collection;
 
 public interface AssertionSynchronizer {
 
-    void advertise();
+    void advertise(int numberOfRequests);
 
     void addEnrichment(RequestEnrichment enrichment);
 
     void finish();
 
-    ResponsePayload waitForResponse();
+    Collection<ResponseEnrichment> waitForResponse();
 
     void clean();
 }

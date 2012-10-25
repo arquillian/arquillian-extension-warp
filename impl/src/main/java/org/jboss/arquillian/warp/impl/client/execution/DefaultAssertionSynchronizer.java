@@ -36,9 +36,9 @@ public class DefaultAssertionSynchronizer implements AssertionSynchronizer {
     private InstanceProducer<FutureTask<ResponsePayload>> payloadFuture;
 
     @Override
-    public void advertise() {
+    public void advertise(int numberOfRequests) {
         AssertionHolder.advertise();
-        AssertionHolder.setExpectedRequests(1);
+        AssertionHolder.setExpectedRequests(numberOfRequests);
     }
 
     @Override

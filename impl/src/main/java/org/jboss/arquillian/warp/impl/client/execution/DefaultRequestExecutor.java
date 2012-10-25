@@ -16,38 +16,53 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.arquillian.core.api.Event;
-import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.client.execution.ClientActionExecutor;
+import org.jboss.arquillian.warp.client.execution.ExecutionGroup;
+import org.jboss.arquillian.warp.client.execution.GroupAssertionSpecifier;
+import org.jboss.arquillian.warp.client.execution.GroupsExecutor;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.client.execution.SingleRequestExecutor;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.result.ResponseGroup;
+import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
-import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 /**
  * The implementation of execution of client action and server assertion.
- *
+ * 
  * @author Lukas Fryc
- *
+ * 
  */
-public class DefaultRequestExecutor implements RequestExecutor {
+public class DefaultRequestExecutor implements RequestExecutor, ClientActionExecutor, GroupsExecutor, SingleRequestExecutor {
+
+    private int groupSequenceNumber = 0;
 
     private ClientAction action;
-    private RequestFilter<?> filter;
-    private ServerAssertion requestAssertion;
-    private ServerAssertion responseAssertion;
+
+    private WarpContext context = new WarpContext();
+
+    private Group singleGroup;
 
     private ClientActionException actionException;
 
@@ -55,7 +70,7 @@ public class DefaultRequestExecutor implements RequestExecutor {
     private Event<AdvertiseEnrichment> advertiseEnrichment;
 
     @Inject
-    private Event<InstallEnrichment> addEnrichment;
+    private Event<RequestEnrichment> requestEnrichment;
 
     @Inject
     private Event<FinishEnrichment> finishEnrichment;
@@ -71,48 +86,81 @@ public class DefaultRequestExecutor implements RequestExecutor {
 
     @Inject
     @WarpExecutionScoped
-    private InstanceProducer<RequestEnrichment> requestEnrichment;
-
-    @Inject
-    private Instance<ResponsePayload> responsePayload;
+    private InstanceProducer<WarpResultStore> warpResultStore;
 
     @SuppressWarnings("unchecked")
     public <T extends ServerAssertion> T verify(T assertion) {
-        this.requestAssertion = assertion;
-        execute();
-        return (T) this.responseAssertion;
+        singleGroup.addAssertion(assertion);
+        WarpResult result = execute();
+        return (T) result.getGroup(SingleRequestExecutor.KEY).getAssertion();
     }
 
     @Override
-    public RequestExecutor filter(RequestFilter<?> filter) {
-        this.filter = filter;
-        return this;
-    }
-
-    @Override
-    public RequestExecutor execute(ClientAction action) {
+    public ClientActionExecutor execute(ClientAction action) {
         this.action = action;
         return this;
     }
 
-    private void execute() {
+    @Override
+    public WarpResult verifyAll(ServerAssertion... assertions) {
+        singleGroup.addAssertions(assertions);
+        return execute();
+    }
+
+    @Override
+    public WarpResult verifyAll() {
+        return execute();
+    }
+
+    @Override
+    public ExecutionGroup group() {
+        return group(groupSequenceNumber++);
+    }
+
+    @Override
+    public ExecutionGroup group(Object identifier) {
+        return new Group(identifier);
+    }
+
+    @Override
+    public SingleRequestExecutor filter(RequestFilter<?> filter) {
+        singleGroup = new Group(SingleRequestExecutor.KEY);
+        context.addGroup(singleGroup);
+        return this;
+    }
+
+    @Override
+    public SingleRequestExecutor filter(Class<RequestFilter<?>> filterClass) {
+        singleGroup = new Group(SingleRequestExecutor.KEY);
+        singleGroup.filter = SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {},
+                RequestFilter.class);
+        context.addGroup(singleGroup);
+        return this;
+    }
+
+    private WarpResult execute() {
         try {
+            warpResultStore.set(context);
+
             setupServerAssertion();
             executeClientAction();
             awaitServerExecution();
             checkClientActionFailure();
+
+            return context;
         } finally {
             cleanup();
         }
     }
 
     private void setupServerAssertion() {
-        advertiseEnrichment.fire(new AdvertiseEnrichment(1));
+        final Collection<Group> groups = context.getAllGroups();
 
-        RequestPayload payload = new RequestPayload(requestAssertion);
-        requestEnrichment.set(new RequestEnrichment(payload, filter));
+        advertiseEnrichment.fire(new AdvertiseEnrichment(groups.size()));
 
-        addEnrichment.fire(new InstallEnrichment());
+        for (Group group : groups) {
+            requestEnrichment.fire(group);
+        }
 
         finishEnrichment.fire(new FinishEnrichment());
     }
@@ -135,20 +183,17 @@ public class DefaultRequestExecutor implements RequestExecutor {
     private void awaitServerExecution() {
         awaitResponse.fire(new AwaitResponse());
 
-        TestResult testResult = responsePayload().getTestResult();
+        TestResult testResult = context.getFirstNonSuccessfulResult();
 
-        if (testResult != null) {
-            switch (testResult.getStatus()) {
-                case FAILED:
-                    propagateFailure(testResult);
-                    break;
-                case SKIPPED:
-                    propagateSkip();
-                    break;
-            }
+        switch (testResult.getStatus()) {
+            case FAILED:
+                propagateFailure(testResult);
+                break;
+            case SKIPPED:
+                propagateSkip();
+                break;
+            case PASSED:
         }
-
-        responseAssertion = responsePayload().getAssertion();
     }
 
     private void cleanup() {
@@ -181,7 +226,117 @@ public class DefaultRequestExecutor implements RequestExecutor {
         }
     }
 
-    private ResponsePayload responsePayload() {
-        return responsePayload.get();
+    private class WarpContext implements WarpResult, WarpResultStore {
+
+        private Map<Object, Group> groups = new HashMap<Object, Group>();
+
+        @Override
+        public ResponseGroup getGroup(Object identifier) {
+            return groups.get(identifier);
+        }
+
+        private void addGroup(Group group) {
+            groups.put(group.id, group);
+        }
+
+        private Collection<Group> getAllGroups() {
+            return groups.values();
+        }
+
+        private Collection<ResponsePayload> getAllResponsePayloads() {
+            List<ResponsePayload> paylods = new LinkedList<ResponsePayload>();
+            for (Group group : getAllGroups()) {
+                paylods.addAll(group.getResponsePayloads());
+            }
+            return paylods;
+        }
+
+        private TestResult getFirstNonSuccessfulResult() {
+            for (ResponsePayload payload : getAllResponsePayloads()) {
+                TestResult testResult = payload.getTestResult();
+
+                if (testResult != null) {
+                    switch (testResult.getStatus()) {
+                        case FAILED:
+                            return testResult;
+                        case SKIPPED:
+                            return testResult;
+                        case PASSED:
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private class Group implements ExecutionGroup, GroupAssertionSpecifier, ResponseGroup, RequestEnrichment,
+            ResponseEnrichment {
+
+        private Object id;
+        private RequestFilter<?> filter;
+
+        private Map<RequestPayload, ResponsePayload> payloads = new LinkedHashMap<RequestPayload, ResponsePayload>();
+
+        public Group(Object identifier) {
+            this.id = identifier;
+        }
+
+        @Override
+        public GroupAssertionSpecifier filter(RequestFilter<?> filter) {
+            this.filter = filter;
+            return this;
+        }
+
+        @Override
+        public GroupAssertionSpecifier filter(Class<RequestFilter<?>> filterClass) {
+            this.filter = SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {},
+                    RequestFilter.class);
+            return this;
+        }
+
+        @Override
+        public GroupsExecutor verify(ServerAssertion... assertions) {
+            addAssertions(assertions);
+            return DefaultRequestExecutor.this;
+        }
+
+        private void addAssertions(ServerAssertion... assertions) {
+            for (ServerAssertion assertion : assertions) {
+                addAssertion(assertion);
+            }
+        }
+
+        private void addAssertion(ServerAssertion assertion) {
+            RequestPayload payload = new RequestPayload(assertion);
+            payloads.put(payload, null);
+        }
+
+        @Override
+        public RequestFilter<?> getFilter() {
+            return filter;
+        }
+
+        @Override
+        public <T extends ServerAssertion> T getAssertion() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getHitCount() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public Collection<RequestPayload> getRequestPayloads() {
+            return payloads.keySet();
+        }
+
+        @Override
+        public Collection<ResponsePayload> getResponsePayloads() {
+            return payloads.values();
+        }
     }
 }

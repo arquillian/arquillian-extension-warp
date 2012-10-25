@@ -18,9 +18,12 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,11 +31,13 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
+import org.jboss.arquillian.warp.impl.utils.URLUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
@@ -116,8 +121,8 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
         }
 
         @Override
-        public String getMethod() {
-            return request.getMethod().getName();
+        public HttpMethod getMethod() {
+            return HttpMethod.valueOf(request.getMethod().getName());
         }
 
         @Override
@@ -125,6 +130,34 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
             return request.getUri();
         }
 
-    }
+        @Override
+        public URL getUrl() {
+            return URLUtils.buildUrl(request.getUri());
+        }
 
+        @Override
+        public String getHeader(String name) {
+            return request.getHeader(name);
+        }
+
+        @Override
+        public List<String> getHeaders(String name) {
+            return request.getHeaders(name);
+        }
+
+        @Override
+        public List<Entry<String, String>> getHeaders() {
+            return request.getHeaders();
+        }
+
+        @Override
+        public boolean containsHeader(String name) {
+            return request.containsHeader(name);
+        }
+
+        @Override
+        public Set<String> getHeaderNames() {
+            return request.getHeaderNames();
+        }
+    }
 }

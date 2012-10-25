@@ -16,17 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.util.Collection;
+
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-public class ResponseEnrichment {
+public interface ResponseEnrichment {
 
-    private ResponsePayload payload;
-
-    public ResponseEnrichment(ResponsePayload payload) {
-        this.payload = payload;
-    }
-
-    public ResponsePayload getPayload() {
-        return payload;
-    }
+    public Collection<ResponsePayload> getResponsePayloads();
 }

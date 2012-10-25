@@ -16,24 +16,14 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.util.Collection;
+
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 
-public class RequestEnrichment {
+public interface RequestEnrichment {
+    
+    public Collection<RequestPayload> getRequestPayloads();
 
-    private RequestPayload payload;
-    private RequestFilter<?> filter;
-
-    public RequestEnrichment(RequestPayload payload, RequestFilter<?> filter) {
-        this.payload = payload;
-        this.filter = filter;
-    }
-
-    public RequestPayload getPayload() {
-        return payload;
-    }
-
-    public RequestFilter<?> getFilter() {
-        return filter;
-    }
+    public RequestFilter<?> getFilter();
 }

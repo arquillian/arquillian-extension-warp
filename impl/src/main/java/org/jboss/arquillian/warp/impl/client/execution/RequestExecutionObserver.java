@@ -43,7 +43,7 @@ public class RequestExecutionObserver {
     private InstanceProducer<ResponsePayload> responsePayload;
 
     public void advertiseEnrichment(@Observes AdvertiseEnrichment event) {
-        assertionSynchronizer().advertise();
+        assertionSynchronizer().advertise(event.getNumberOfRequests());
     }
 
     public void installEnrichment(@Observes InstallEnrichment enrichment) {
