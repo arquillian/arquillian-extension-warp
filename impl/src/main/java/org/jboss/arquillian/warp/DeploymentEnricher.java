@@ -112,18 +112,22 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
      */
     @Override
     public void process(TestDeployment testDeployment, Archive<?> protocolArchive) {
-        // TODO must be web archive
-        Archive<?> applicationArchive = testDeployment.getApplicationArchive();
-        List<ArchivePath> classPathsToRemove = new LinkedList<ArchivePath>();
-        for (ArchivePath archivePath : applicationArchive.getContent().keySet()) {
-            String path = archivePath.get();
-            String classPath = testClass.get().getName().replace(".", "/");
-            if (path.matches("/WEB-INF/classes/" + classPath + "(\\$.*)?\\.class")) {
-                classPathsToRemove.add(archivePath);
+        TestClass testClass = this.testClass.get();
+
+        if (testClass.isAnnotationPresent(WarpTest.class)) {
+            Archive<?> applicationArchive = testDeployment.getApplicationArchive();
+            List<ArchivePath> classPathsToRemove = new LinkedList<ArchivePath>();
+            for (ArchivePath archivePath : applicationArchive.getContent().keySet()) {
+                String path = archivePath.get();
+                String classPath = testClass.getName().replace(".", "/");
+                if (path.matches("/WEB-INF/classes/" + classPath + "(\\$.*)?\\.class")) {
+                    classPathsToRemove.add(archivePath);
+                }
             }
-        }
-        for (ArchivePath archivePath : classPathsToRemove) {
-            applicationArchive.delete(archivePath);
+            for (ArchivePath archivePath : classPathsToRemove) {
+                applicationArchive.delete(archivePath);
+            }
+
         }
     }
 }
