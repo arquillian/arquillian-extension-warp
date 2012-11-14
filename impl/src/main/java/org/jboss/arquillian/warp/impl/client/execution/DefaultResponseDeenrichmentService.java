@@ -17,7 +17,11 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
@@ -31,6 +35,8 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
 public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentService {
+    
+    private final Logger log = Logger.getLogger(ResponseDeenrichmentService.class.getName());
 
     @Override
     public boolean isEnriched(HttpResponse response) {
@@ -39,7 +45,9 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
 
     @Override
     public void deenrichResponse(HttpResponse response) {
+        final WarpContext context = WarpContextStore.getCurrentInstance();
         try {
+            
             final ChannelBuffer content = response.getContent();
 
             long originalLength = HttpHeaders.getContentLength(response);
@@ -55,14 +63,19 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
 
             HttpResponseStatus status = HttpResponseStatus.valueOf(payload.getStatus());
             response.setStatus(status);
-
-            AssertionHolder.addResponse(new ResponseEnrichment(payload));
+            
+            if (context != null) {
+                context.pushResponsePayload(payload);
+            }
         } catch (Exception originalException) {
-            ResponsePayload exceptionPayload = new ResponsePayload();
-            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("deenriching response failed: "
+            if (context != null) {
+                ClientWarpExecutionException explainingException = new ClientWarpExecutionException("deenriching response failed: "
                     + originalException.getMessage(), originalException);
-            exceptionPayload.setTestResult(new TestResult(Status.FAILED, explainingException));
-            AssertionHolder.addResponse(new ResponseEnrichment(exceptionPayload));
+            
+                context.pushException(explainingException);
+            } else {
+                log.log(Level.WARNING, "Unable to push exception to WarpContext", originalException);
+            }
         }
     }
 

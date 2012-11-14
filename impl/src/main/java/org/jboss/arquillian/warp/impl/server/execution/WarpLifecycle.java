@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.server.execution;
 
+import java.util.List;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -67,13 +69,13 @@ public class WarpLifecycle {
     public void execute(@Observes ExecuteWarp event, HttpServletRequest request, NonWritingResponse nonWritingResponse,
             FilterChain filterChain, RequestPayload requestPayload, ResponsePayload responsePayload) throws Throwable {
 
-        final ServerAssertion serverAssertion = requestPayload.getAssertion();
+        List<ServerAssertion> assertions = requestPayload.getAssertions();
 
         try {
             request.setAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
 
             lifecycleManagerStore.get().bind(ServletRequest.class, request);
-            assertionRegistry.get().registerAssertion(serverAssertion);
+            assertionRegistry.get().registerAssertions(assertions);
 
             warpLifecycleStarted.fire(new WarpLifecycleStarted());
             lifecycleManager.get().fireLifecycleEvent(new BeforeServletEvent());
@@ -82,11 +84,11 @@ public class WarpLifecycle {
 
             lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
 
-            responsePayload.setAssertion(serverAssertion);
+            responsePayload.setAssertions(assertions);
         } finally {
             warpLifecycleFinished.fire(new WarpLifecycleFinished());
 
-            assertionRegistry.get().unregisterAssertion(serverAssertion);
+            assertionRegistry.get().unregisterAssertions(assertions);
 
             lifecycleManagerStore.get().unbind(ServletRequest.class, request);
         }

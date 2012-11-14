@@ -51,7 +51,7 @@ public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
     @Before
     public void setup() {
         // having
-        responsePayload = new ResponsePayload();
+        responsePayload = new ResponsePayload(-1L);
         bind(RequestScoped.class, ResponsePayload.class, responsePayload);
     }
 

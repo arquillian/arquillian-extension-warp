@@ -33,7 +33,10 @@ import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestEnrichmentS
 import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.RequestExecutionObserver;
+import org.jboss.arquillian.warp.impl.client.execution.WarpExecutionInitializer;
+import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultURLMapping;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyObserver;
@@ -69,7 +72,9 @@ public class WarpExtension implements LoadableExtension {
         builder.observer(RequestExecutionObserver.class);
         builder.service(AssertionSynchronizer.class, DefaultAssertionSynchronizer.class);
         builder.context(WarpExecutionContextImpl.class);
-        builder.observer(WarpExecutionContextHandler.class);
+        builder.service(WarpExecutor.class, DefaultWarpExecutor.class);
+        builder.observer(WarpExecutionInitializer.class);
+//        builder.observer(WarpExecutionContextHandler.class);
         builder.service(URLMapping.class, DefaultURLMapping.class);
         builder.service(ProxyService.class, DefaultProxyService.class);
         builder.service(RequestEnrichmentFilter.class, DefaultRequestEnrichmentFilter.class);
@@ -78,5 +83,6 @@ public class WarpExtension implements LoadableExtension {
         builder.observer(EnrichmentObserver.class);
         builder.service(RequestEnrichmentService.class, DefaultRequestEnrichmentService.class);
         builder.service(ResponseDeenrichmentService.class, DefaultResponseDeenrichmentService.class);
+        
     }
 }

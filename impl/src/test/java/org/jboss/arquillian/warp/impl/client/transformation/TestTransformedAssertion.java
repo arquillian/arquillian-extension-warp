@@ -86,7 +86,7 @@ public class TestTransformedAssertion {
 
         RequestPayload deserializedPayload = SerializationUtils.deserializeFromBytes(SerializationUtils
                 .serializeToBytes(payload));
-        ServerAssertion deserializedAssertion = deserializedPayload.getAssertion();
+        ServerAssertion deserializedAssertion = deserializedPayload.getAssertions().get(0);
 
         verifyServerAssertionClass(deserializedAssertion);
     }

@@ -23,6 +23,10 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamClass;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.impl.client.transformation.MigratedAssertion;
@@ -32,59 +36,87 @@ public class RequestPayload implements Externalizable {
 
     private static final long serialVersionUID = -5537112559937896153L;
 
-    private ServerAssertion assertion;
+    public static final long FAILURE_SERIAL_ID = -1L;
+
+    private List<ServerAssertion> assertions;
+    private long serialId;
 
     public RequestPayload() {
     }
 
-    public RequestPayload(ServerAssertion assertion) {
-        this.assertion = assertion;
+    public RequestPayload(ServerAssertion... assertions) {
+        this(Arrays.asList(assertions));
+    }
+    
+    public RequestPayload(List<ServerAssertion> assertions) {
+        this.assertions = assertions;
+        this.serialId = UUID.randomUUID().getMostSignificantBits();
     }
 
-    public ServerAssertion getAssertion() {
-        return assertion;
+    public List<ServerAssertion> getAssertions() {
+        return assertions;
+    }
+    
+    public long getSerialId() {
+        return serialId;
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        serialId = in.readLong();
         boolean isAnonymous = in.readBoolean();
         if (isAnonymous) {
-            byte[] classFile = (byte[]) in.readObject();
-            byte[] obj = (byte[]) in.readObject();
-
-            final DynamicClassLoader cl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
-
-            final Class<?> clazz = cl.load(classFile);
-            ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(obj)) {
-                protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                    if (desc.getName().equals(clazz.getName())) {
-                        return clazz;
+            int size = in.read();
+            
+            for (int i = 0; i < size; i++) {
+            
+                byte[] classFile = (byte[]) in.readObject();
+                byte[] obj = (byte[]) in.readObject();
+                
+                assertions = new ArrayList<ServerAssertion>(size);
+    
+                final DynamicClassLoader cl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
+    
+                final Class<?> clazz = cl.load(classFile);
+                ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(obj)) {
+                    protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                        if (desc.getName().equals(clazz.getName())) {
+                            return clazz;
+                        }
+                        return super.resolveClass(desc);
                     }
-                    return super.resolveClass(desc);
-                }
-            };
-            assertion = (ServerAssertion) input.readObject();
+                };
+                
+                ServerAssertion assertion = (ServerAssertion) input.readObject();
+                assertions.add(assertion);
+            }
         } else {
-            assertion = (ServerAssertion) in.readObject();
+            assertions = (List<ServerAssertion>) in.readObject();
         }
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        if (assertion.getClass().isAnonymousClass() || assertion.getClass().isMemberClass()) {
+        if (assertions.getClass().isAnonymousClass() || assertions.getClass().isMemberClass()) {
+            
             try {
-                TransformedAssertion transformed = new TransformedAssertion(assertion);
-                MigratedAssertion migrated = new MigratedAssertion(transformed);
-
+                out.writeLong(serialId);
                 out.writeBoolean(true);
-                out.writeObject(migrated.toBytecode());
-                out.writeObject(migrated.toSerializedForm());
+                out.write(assertions.size());
+                
+                for (ServerAssertion assertion : assertions) {
+                    TransformedAssertion transformed = new TransformedAssertion(assertion);
+                    MigratedAssertion migrated = new MigratedAssertion(transformed);
+                    
+                    out.writeObject(migrated.toBytecode());
+                    out.writeObject(migrated.toSerializedForm());
+                }
             } catch (Exception e) {
-                throw new RuntimeException("Could not transform and replicate class " + assertion.getClass(), e);
+                throw new RuntimeException("Could not transform and replicate class " + assertions.getClass(), e);
             }
         } else {
             out.writeBoolean(false);
-            out.writeObject(assertion);
+            out.writeObject(assertions);
         }
     }
 

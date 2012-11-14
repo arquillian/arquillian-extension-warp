@@ -17,9 +17,11 @@
 package org.jboss.arquillian.warp.impl.client.proxy;
 
 import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.execution.SynchronizationPoint;
+import org.jboss.arquillian.warp.impl.client.execution.WarpContext;
 import org.littleshoot.proxy.HttpRequestFilter;
 
 public interface RequestEnrichmentFilter extends HttpRequestFilter {
 
-    void setEnrichmentService(RequestEnrichmentService service);
+    void initialize(RequestEnrichmentService service);
 }

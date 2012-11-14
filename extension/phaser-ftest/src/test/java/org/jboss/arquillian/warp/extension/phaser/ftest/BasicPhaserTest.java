@@ -34,8 +34,6 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
 import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
 import org.jboss.arquillian.warp.extension.phaser.ftest.cdi.CdiBean;
@@ -51,8 +49,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
 
-@WarpTest
 @RunWith(Arquillian.class)
+@WarpTest
+@RunAsClient
 public class BasicPhaserTest {
 
     @Drone
@@ -73,74 +72,69 @@ public class BasicPhaserTest {
     }
 
     @Test
-    @RunAsClient
     public void test() {
-        Warp.filter(new JsfRequestFilter()).execute(new ClientAction() {
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    browser.navigate().to(contextPath + "index.jsf");
+                }})
+            .filter(JsfPageRequestFilter.class)
+            .verify(new ServerAssertion() {
+                private static final long serialVersionUID = 1L;
+    
+                @Inject
+                CdiBean myBean;
+    
+                @AfterPhase(RENDER_RESPONSE)
+                public void initial_state_havent_changed_yet() {
+                    assertEquals("John", myBean.getName());
+                }
+            }
+        );
 
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
+                    nameInput.sendKeys("X");
+                    browser.findElement(By.tagName("body")).click();
+                }})
+            .filter(JsfPageRequestFilter.class)
+            .verify(new ServerAssertion() {
+                private static final long serialVersionUID = 1L;
+    
+                @Inject
+                CdiBean myBean;
+    
+                private String updatedName;
+    
+                @BeforePhase(UPDATE_MODEL_VALUES)
+                public void initial_state_havent_changed_yet() {
+                    assertEquals("John", myBean.getName());
+                }
+    
+                @AfterPhase(UPDATE_MODEL_VALUES)
+                public void changed_input_value_has_been_applied() {
+                    assertEquals("JohnX", myBean.getName());
+                    updatedName = myBean.getName();
+                }
+    
+                public String getUpdatedName() {
+                    return updatedName;
+                }
+            }
+        );
+        
+        new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
             @Override
-            public void action() {
-                browser.navigate().to(contextPath + "index.jsf");
-            }
-        }).verify(new ServerAssertion() {
-            private static final long serialVersionUID = 1L;
-
-            @Inject
-            CdiBean myBean;
-
-            @AfterPhase(RENDER_RESPONSE)
-            public void initial_state_havent_changed_yet() {
-                assertEquals("John", myBean.getName());
+            public boolean apply(WebDriver browser) {
+                WebElement output = browser.findElement(By.id("helloWorldJsf:output"));
+                try {
+                    return output.getText().contains("JohnX");
+                } catch (StaleElementReferenceException e) {
+                    return false;
+                }
             }
         });
-
-        Warp.filter(new JsfRequestFilter()).execute(new ClientAction() {
-            public void action() {
-                WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
-                nameInput.sendKeys("X");
-
-                new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
-                    @Override
-                    public boolean apply(WebDriver browser) {
-                        WebElement output = browser.findElement(By.id("helloWorldJsf:output"));
-                        try {
-                            return output.getText().contains("JohnX");
-                        } catch (StaleElementReferenceException e) {
-                            return false;
-                        }
-                    }
-                });
-            }
-        }).verify(new ServerAssertion() {
-            private static final long serialVersionUID = 1L;
-
-            @Inject
-            CdiBean myBean;
-
-            private String updatedName;
-
-            @BeforePhase(UPDATE_MODEL_VALUES)
-            public void initial_state_havent_changed_yet() {
-                assertEquals("John", myBean.getName());
-            }
-
-            @AfterPhase(UPDATE_MODEL_VALUES)
-            public void changed_input_value_has_been_applied() {
-                assertEquals("JohnX", myBean.getName());
-                updatedName = myBean.getName();
-            }
-
-            public String getUpdatedName() {
-                return updatedName;
-            }
-        });
-
-
-    }
-
-    public static class JsfRequestFilter implements RequestFilter<HttpRequest> {
-        @Override
-        public boolean matches(HttpRequest httpRequest) {
-            return httpRequest.getUri().contains("index.jsf");
-        }
     }
 }

@@ -17,7 +17,6 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -25,29 +24,27 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
+import org.jboss.arquillian.warp.impl.client.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
-import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
-import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public class RequestExecutionObserver {
 
     @Inject
     private Instance<ServiceLoader> services;
-
+    
     @Inject
-    private Instance<RequestEnrichment> requestEnrichment;
+    private Instance<WarpContext> warpContext;
 
-    @Inject
-    @WarpExecutionScoped
-    private InstanceProducer<ResponsePayload> responsePayload;
-
-    public void advertiseEnrichment(@Observes AdvertiseEnrichment event) {
-        assertionSynchronizer().advertise(event.getNumberOfRequests());
+    public void executeWarp(@Observes ExecuteWarp event) throws Exception {
+        try {
+            warpExecutor().execute(event.getClientAction(), event.getWarpContext());
+        } catch (Exception e) {
+            warpContext.get().pushException(e);
+        }
     }
 
-    public void installEnrichment(@Observes InstallEnrichment enrichment) {
-        assertionSynchronizer().addEnrichment(requestEnrichment.get());
+    public void advertiseEnrichment(@Observes AdvertiseEnrichment event) {
+        assertionSynchronizer().advertise();
     }
 
     public void finishEnrichment(@Observes FinishEnrichment event) {
@@ -59,12 +56,15 @@ public class RequestExecutionObserver {
     }
 
     public void awaitResponse(@Observes AwaitResponse event) {
-        ResponsePayload payload = assertionSynchronizer().waitForResponse();
-        responsePayload.set(payload);
+        assertionSynchronizer().waitForResponse();
     }
 
     public void cleanEnrichment(@Observes CleanEnrichment event) {
         assertionSynchronizer().clean();
+    }
+    
+    private WarpExecutor warpExecutor() {
+        return services.get().onlyOne(WarpExecutor.class);
     }
 
     private AssertionSynchronizer assertionSynchronizer() {

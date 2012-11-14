@@ -166,7 +166,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
                 .get(ResponsePayload.class);
         assertNotNull("response payload is not null", responsePayload);
-        assertNull("response payload has empty assertion", responsePayload.getAssertion());
+        assertNull("response payload has empty assertion", responsePayload.getAssertions());
         assertNull("response payload has empty test result", responsePayload.getTestResult());
     }
 
@@ -183,6 +183,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
             fire(new ProcessHttpRequest());
             fail();
         } catch (Exception e) {
+            e.printStackTrace();
             assertEquals(exception, e);
         }
 
@@ -190,7 +191,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
                 .get(ResponsePayload.class);
         assertNotNull("response payload is not null", responsePayload);
-        assertNull("response payload has empty assertion", responsePayload.getAssertion());
+        assertNull("response payload has empty assertion", responsePayload.getAssertions());
 
         TestResult testResult = responsePayload.getTestResult();
         assertNotNull("response payload has test result", testResult);
@@ -212,7 +213,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
 
         // having
         RuntimeException exception = new RuntimeException();
-        ResponsePayload responsePayload = new ResponsePayload();
+        ResponsePayload responsePayload = new ResponsePayload(-1L);
         bind(RequestScoped.class, ResponsePayload.class, responsePayload);
         doThrow(exception).when(enricher).enrichResponse();
 
@@ -229,7 +230,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         ResponsePayload resolvedResponsePayload = getManager().getContext(RequestContext.class).getObjectStore()
                 .get(ResponsePayload.class);
         assertSame(responsePayload, resolvedResponsePayload);
-        assertNull("response payload has empty assertion", responsePayload.getAssertion());
+        assertNull("response payload has empty assertion", responsePayload.getAssertions());
 
         TestResult testResult = responsePayload.getTestResult();
         assertEquals(exception, testResult.getThrowable());

@@ -16,19 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.client.event.InstallEnrichment;
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 /**
  * The holder for {@link ServerAssertion} object.
@@ -37,30 +29,29 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
  *
  * @author Lukas Fryc
  */
-class AssertionHolder {
+public class SynchronizationPoint {
 
-    private static final long WAIT_TIMEOUT_MILISECONDS = 30000;
+    private static final long WAIT_TIMEOUT_MILISECONDS = 5000;
     private static final long THREAD_SLEEP = 50;
     private static final long NUMBER_OF_WAIT_LOOPS = WAIT_TIMEOUT_MILISECONDS / THREAD_SLEEP;
 
-    private static final AtomicBoolean enrichmentAdvertised = new AtomicBoolean(false);
-    private static final AtomicBoolean enrichmentFinished = new AtomicBoolean(false);
-    private static final Map<RequestEnrichment, ResponseEnrichment> map = new ConcurrentHashMap<RequestEnrichment, ResponseEnrichment>();
-    private static CountDownLatch responsesLatch;
+    private final AtomicBoolean enrichmentAdvertised = new AtomicBoolean(false);
+    private final AtomicBoolean enrichmentClosed = new AtomicBoolean(false);
+    private final CountDownLatch responseFinished = new CountDownLatch(1);
 
     /**
      * Advertizes that there will be taken client action which will lead into request.
      */
-    public static void advertise() {
+    void advertise() {
         enrichmentAdvertised.set(true);
     }
 
-    public static void setExpectedRequests(int requests) {
-        responsesLatch = new CountDownLatch(requests);
+    void close() {
+        enrichmentClosed.set(true);
     }
-
-    public static void finished() {
-        enrichmentFinished.set(true);
+    
+    void finishResponse() {
+        responseFinished.countDown();
     }
 
     /**
@@ -68,7 +59,7 @@ class AssertionHolder {
      *
      * @return true if there is client action advertised, see {@link #advertise()}.
      */
-    private static boolean isEnrichmentAdvertised() {
+    private boolean isEnrichmentAdvertised() {
         return enrichmentAdvertised.get();
     }
 
@@ -77,8 +68,8 @@ class AssertionHolder {
      *
      * @return true if there is {@link ServerAssertion} pushed for current request.
      */
-    private static boolean isEnrichmentFinished() {
-        return enrichmentFinished.get();
+    private boolean isEnrichmentClosed() {
+        return enrichmentClosed.get();
     }
 
     /**
@@ -88,81 +79,19 @@ class AssertionHolder {
      * @return true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
      *         is advertised.
      */
-    static boolean isWaitingForRequests() {
+    boolean isWaitingForRequests() {
         return isEnrichmentAdvertised();
     }
 
-    private static boolean isWaitingForEnriching() {
-        return isEnrichmentAdvertised() && !isEnrichmentFinished();
+    boolean isWaitingForEnriching() {
+        return isEnrichmentAdvertised() && !isEnrichmentClosed();
     }
 
-    static boolean isWaitingForResponses() {
-        return responsesLatch.getCount() > 0L;
+    boolean isWaitingForResponses() {
+        return isEnrichmentAdvertised() && isEnrichmentClosed() && responseFinished.getCount() > 0;
     }
 
-    /**
-     * <p>
-     * Pushes the {@link InstallEnrichment} to verify on the server.
-     * </p>
-     *
-     * <p>
-     * This method cancels flag set by {@link #advertise()}.
-     *
-     * @param request to be verified on the server
-     */
-    public static void addRequest(RequestEnrichment request) {
-        Validate.notNull(request, "enrichment can't be null");
-
-        map.put(request, null);
-    }
-
-    /**
-     * Waits until the {@link ServerAssertion} for request is available and returns it.
-     *
-     * @return the associated {@link ServerAssertion}
-     * @throws SettingRequestTimeoutException when {@link ServerAssertion} isn't setup in time
-     */
-    static Set<RequestEnrichment> getRequests() {
-
-        awaitRequests();
-
-        return Collections.unmodifiableSet(map.keySet());
-    }
-
-    /**
-     * Pushes the verified {@link ResponsePayload} to be obtained by test.
-     *
-     * @param payload verified {@link ResponsePayload} to be obtained by test.
-     */
-    static void addResponse(RequestEnrichment request, ResponseEnrichment response) {
-        Validate.notNull(response, "request can't be null");
-        Validate.notNull(response, "response can't be null");
-
-        map.put(request, response);
-        responsesLatch.countDown();
-    }
-
-    static void finishEnrichmentRound() {
-        responsesLatch = null;
-        enrichmentAdvertised.set(false);
-        enrichmentFinished.set(false);
-        map.clear();
-    }
-
-    /**
-     * Waits until the for response is available and returns it.
-     *
-     * @return the {@link ResponsePayload}
-     * @throws ServerResponseTimeoutException when the response wasn't returned in time
-     */
-    public static Map<RequestEnrichment, ResponseEnrichment> getResponses() {
-
-        awaitResponses();
-
-        return Collections.unmodifiableMap(map);
-    }
-
-    private static void awaitRequests() {
+    void awaitRequests() {
         if (!isWaitingForEnriching()) {
             return;
         }
@@ -179,9 +108,9 @@ class AssertionHolder {
         throw new SettingRequestTimeoutException();
     }
 
-    private static void awaitResponses() {
+    void awaitResponses() {
         try {
-            boolean finishedNicely = responsesLatch.await(WAIT_TIMEOUT_MILISECONDS, TimeUnit.MILLISECONDS);
+            boolean finishedNicely = responseFinished.await(WAIT_TIMEOUT_MILISECONDS, TimeUnit.MILLISECONDS);
             if (!finishedNicely) {
                 throw new ServerResponseTimeoutException();
             }

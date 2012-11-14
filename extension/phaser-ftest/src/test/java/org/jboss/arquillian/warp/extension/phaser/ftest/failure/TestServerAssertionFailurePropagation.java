@@ -32,6 +32,7 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
+import org.jboss.arquillian.warp.extension.phaser.ftest.JsfPageRequestFilter;
 import org.jboss.arquillian.warp.extension.phaser.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @WarpTest
+@RunAsClient
 @RunWith(Arquillian.class)
 public class TestServerAssertionFailurePropagation {
 
@@ -62,22 +64,22 @@ public class TestServerAssertionFailurePropagation {
     }
 
     @Test(expected = AssertionError.class)
-    @RunAsClient
     public void test() {
-        Warp.execute(new ClientAction() {
-
-            @Override
-            public void action() {
-                browser.navigate().to(contextPath + "index.jsf");
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    browser.navigate().to(contextPath + "index.jsf");
+                }})
+            .filter(JsfPageRequestFilter.class)
+            .verify(new ServerAssertion() {
+                private static final long serialVersionUID = 1L;
+    
+                @BeforeServlet
+                public void initial_state_havent_changed_yet() {
+                    fail("AssertionError should be correctly handled and propagated to the client-side");
+                }
             }
-        }).verify(new ServerAssertion() {
-            private static final long serialVersionUID = 1L;
-
-            @BeforeServlet
-            public void initial_state_havent_changed_yet() {
-                fail("AssertionError should be correctly handled and propagated to the client-side");
-            }
-        });
+        );
     }
 
     public static class JsfRequestFilter implements RequestFilter<HttpRequest> {

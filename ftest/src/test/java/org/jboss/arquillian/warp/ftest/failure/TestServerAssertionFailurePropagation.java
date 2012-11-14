@@ -32,10 +32,9 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.ftest.FaviconIgnore;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -71,36 +70,42 @@ public class TestServerAssertionFailurePropagation {
     @Test(expected = AssertionError.class)
     public void testAssertionErrorPropagation() {
 
-        Warp.filter(new FaviconIgnore()).execute(new ClientAction() {
-            public void action() {
-                browser.navigate().to(contextPath + "index.html");
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    browser.navigate().to(contextPath + "index.html");
+                }})
+            .filter(FaviconIgnore.class)
+            .verify(new ServerAssertion() {
+                private static final long serialVersionUID = 1L;
+    
+                @BeforeServlet
+                public void beforeServlet() {
+                    fail("AssertionError should be correctly handled and propagated to the client-side");
+                }
             }
-        }).verify(new ServerAssertion() {
-            private static final long serialVersionUID = 1L;
-
-            @BeforeServlet
-            public void beforeServlet() {
-                fail("AssertionError should be correctly handled and propagated to the client-side");
-            }
-        });
+        );
     }
 
     @Test
     public void testCheckedExceptionPropagation() {
 
         try {
-            Warp.filter(new FaviconIgnore()).execute(new ClientAction() {
-                public void action() {
-                    browser.navigate().to(contextPath + "index.html");
+            Warp
+                .execute(new ClientAction() {
+                    public void action() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }})
+                .filter(FaviconIgnore.class)
+                .verify(new ServerAssertion() {
+                    private static final long serialVersionUID = 1L;
+    
+                    @BeforeServlet
+                    public void beforeServlet() throws Exception {
+                        throw new IOException();
+                    }
                 }
-            }).verify(new ServerAssertion() {
-                private static final long serialVersionUID = 1L;
-
-                @BeforeServlet
-                public void beforeServlet() throws Exception {
-                    throw new IOException();
-                }
-            });
+            );
         } catch (ServerWarpExecutionException e) {
             assertTrue(e.getCause() instanceof IOException);
         }
@@ -108,25 +113,20 @@ public class TestServerAssertionFailurePropagation {
 
     @Test(expected = IllegalArgumentException.class)
     public void testRuntimeExceptionPropagation() {
-        Warp.filter(new FaviconIgnore()).execute(new ClientAction() {
-            public void action() {
-                browser.navigate().to(contextPath + "index.html");
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    browser.navigate().to(contextPath + "index.html");
+                }})
+            .filter(FaviconIgnore.class)
+            .verify(new ServerAssertion() {
+                private static final long serialVersionUID = 1L;
+    
+                @BeforeServlet
+                public void beforeServlet() {
+                    throw new IllegalArgumentException();
+                }
             }
-        }).verify(new ServerAssertion() {
-            private static final long serialVersionUID = 1L;
-
-            @BeforeServlet
-            public void beforeServlet() {
-                throw new IllegalArgumentException();
-            }
-        });
+        );
     }
-
-    private static class FaviconIgnore implements RequestFilter<HttpRequest> {
-        @Override
-        public boolean matches(HttpRequest httpRequest) {
-            return !httpRequest.getUri().contains("favicon.ico");
-        }
-    }
-
 }

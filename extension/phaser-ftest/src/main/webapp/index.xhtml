@@ -48,7 +48,7 @@
             <h:form id="helloWorldJsf">
                 <h:outputLabel value="Name:" for="nameInput"/>
                 <h:inputText id="nameInput" value="#{cdiBean.name}">
-                    <f:ajax event="keyup" render="output"/>
+                    <f:ajax event="change" render="output"/>
                 </h:inputText>
                 <h:panelGroup id="output">
                     <h:outputText value="Hello #{cdiBean.name}!"

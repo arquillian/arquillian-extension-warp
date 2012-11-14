@@ -20,6 +20,8 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
@@ -99,8 +101,9 @@ public class TestAssertionLoading {
 
             replaceClassLoader(serverClassLoader);
             Object deserializedPayload = deserialize(serialized);
-            Method getAssertionMethod = deserializedPayload.getClass().getMethod("getAssertion");
-            Object deserializedAssertion = getAssertionMethod.invoke(deserializedPayload);
+            Method getAssertionsMethod = deserializedPayload.getClass().getMethod("getAssertions");
+            List deserializedAssertionList =  (List) getAssertionsMethod.invoke(deserializedPayload);
+            Object deserializedAssertion = deserializedAssertionList.iterator().next();
 
             Class<?> deserializedClass = deserializedAssertion.getClass();
             Method serverMethod = deserializedAssertion.getClass().getMethod("server");

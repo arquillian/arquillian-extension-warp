@@ -24,6 +24,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
@@ -67,7 +68,7 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
         lifecycleManagerStore.get().bind(ServletRequest.class, request);
 
         TestingAssertion assertion = new TestingAssertion();
-        registry.get().registerAssertion(assertion);
+        registry.get().registerAssertions(assertion);
 
         LifecycleManagerImpl lifecycleManager = LifecycleManagerStoreImpl.get(ServletRequest.class, request);
         lifecycleManager.fireLifecycleEvent(new BeforeServletEvent());
@@ -78,7 +79,8 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
         assertEventFired(After.class, 1);
     }
 
-    public static class TestingAssertion {
+    public static class TestingAssertion extends ServerAssertion {
+        private static final long serialVersionUID = 1L;
 
         @BeforeServlet
         public void assertion() {

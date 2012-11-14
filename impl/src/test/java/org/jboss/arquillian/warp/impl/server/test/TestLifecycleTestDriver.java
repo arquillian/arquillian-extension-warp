@@ -57,7 +57,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     private AssertionRegistry assertionRegistry;
 
     @Spy
-    private ResponsePayload responsePayload = new ResponsePayload();
+    private ResponsePayload responsePayload = new ResponsePayload(-1L);
 
     @Mock
     private ServiceLoader services;
@@ -91,7 +91,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // having
         TestingAssertion assertion = mock(TestingAssertion.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion));
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
 
         // when
         fire(new BeforeServletEvent());
@@ -109,7 +109,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         // having
         TestingAssertion assertion1 = mock(TestingAssertion.class);
         TestingAssertionForMultipleAssertions assertion2 = mock(TestingAssertionForMultipleAssertions.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion1, assertion2));
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion1, assertion2));
 
         // when
         fire(new BeforeServletEvent());
@@ -127,7 +127,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // having
         TestingAssertionForMultipleMethods assertion = mock(TestingAssertionForMultipleMethods.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion));
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
 
         // when
         fire(new BeforeServletEvent());
@@ -145,7 +145,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // having
         TestingAssertion assertion = mock(TestingAssertion.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(assertion));
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
         doThrow(exception).when(assertion).test();
 
         // when
@@ -164,7 +164,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_before_event_fails_then_request_payload_is_filled_with_exception() {
 
         // having
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(new TestingAssertionForFailingBeforeTest()));
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(new TestingAssertionForFailingBeforeTest()));
 
         // when
         try {
@@ -186,7 +186,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_after_event_fails_then_request_payload_is_filled_with_exception() {
 
         // having
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<Object>asList(new TestingAssertionForFailingAfterTest()));
+        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(new TestingAssertionForFailingAfterTest()));
 
         // when
         try {

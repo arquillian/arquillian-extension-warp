@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.impl.server.execution.NonWritingResponse;
+import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -34,6 +35,9 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
 
     private static final Logger log = Logger.getLogger(DefaultHttpResponseEnricher.class.getName());
 
+    @Inject
+    private Instance<RequestPayload> requestPayload;
+    
     @Inject
     private Instance<ResponsePayload> responsePayload;
 
@@ -50,7 +54,7 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
         } catch (Exception e) {
             log.log(Level.WARNING, "Response enrichment failed", e);
 
-            ResponsePayload exceptionPayload = new ResponsePayload();
+            ResponsePayload exceptionPayload = new ResponsePayload(requestPayload.get().getSerialId());
             try {
                 enrich(exceptionPayload, response.get(), nonWritingResponse.get());
             } catch (Exception ex) {

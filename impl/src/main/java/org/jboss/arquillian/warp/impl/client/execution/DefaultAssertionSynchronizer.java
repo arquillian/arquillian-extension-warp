@@ -16,71 +16,36 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-
-import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public class DefaultAssertionSynchronizer implements AssertionSynchronizer {
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
+    
     @Inject
-    @WarpExecutionScoped
-    private InstanceProducer<FutureTask<ResponsePayload>> payloadFuture;
+    private Instance<SynchronizationPoint> synchronization;
+    
+    @Inject
+    private Instance<WarpContext> warpContext;
 
     @Override
-    public void advertise(int numberOfRequests) {
-        AssertionHolder.advertise();
-        AssertionHolder.setExpectedRequests(numberOfRequests);
-    }
-
-    @Override
-    public void addEnrichment(RequestEnrichment enrichment) {
-        AssertionHolder.addRequest(enrichment);
+    public void advertise() {
+        synchronization.get().advertise();
+        warpContext.get().tryFinalizeResponse();
     }
 
     @Override
     public void finish() {
-        AssertionHolder.finished();
-
-        FutureTask<ResponsePayload> future = new FutureTask<ResponsePayload>(new PushAssertion());
-        payloadFuture.set(future);
-        executor.submit(future);
+        synchronization.get().close();
     }
 
     @Override
-    public ResponsePayload waitForResponse() {
-        ResponsePayload responsePayload;
-
-        try {
-            responsePayload = payloadFuture.get().get();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-
-        return responsePayload;
+    public void waitForResponse() {
+        synchronization.get().awaitResponses();
     }
 
     @Override
     public void clean() {
-        AssertionHolder.finishEnrichmentRound();
+        // TODO
+        //synchronization.set(null);
     }
-
-    public class PushAssertion implements Callable<ResponsePayload> {
-        @Override
-        public ResponsePayload call() throws Exception {
-            Set<ResponseEnrichment> responses = AssertionHolder.getResponses();
-            ResponseEnrichment response = responses.iterator().next();
-            return response.getPayload();
-
-        }
-    }
-
 }

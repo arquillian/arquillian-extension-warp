@@ -53,12 +53,16 @@ public class HttpRequestProcessor {
     public void processHttpRequest(@Observes ProcessHttpRequest event, ServiceLoader services, HttpServletRequest request,
             HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
+        // setup responsePayload with temporary serialId before requestPayload is de-serialized
+        responsePayload.set(new ResponsePayload(RequestPayload.FAILURE_SERIAL_ID));
+        
         HttpRequestDeenricher requestDeenricher = services.onlyOne(HttpRequestDeenricher.class);
 
         if (requestDeenricher.isEnriched()) {
 
-            responsePayload.set(new ResponsePayload());
-            requestPayload.set(requestDeenricher.resolvePayload());
+            RequestPayload payload = requestDeenricher.resolvePayload();
+            responsePayload.set(new ResponsePayload(payload.getSerialId()));
+            requestPayload.set(payload);
 
             processWarpRequest.fire(new ProcessWarpRequest());
 

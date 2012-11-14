@@ -49,7 +49,7 @@ public class TestDefaultHttpDeenrichmentService extends AbstractWarpServerTestTe
     public void setUp() throws IOException {
         // given
         enricher = new DefaultHttpResponseEnricher();
-        payload = new ResponsePayload();
+        payload = new ResponsePayload(-1L);
 
         output = new ByteArrayServletOutputStream();
         response = mock(HttpServletResponse.class);

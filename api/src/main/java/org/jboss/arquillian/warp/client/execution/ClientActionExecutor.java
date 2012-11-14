@@ -40,7 +40,7 @@ public interface ClientActionExecutor {
      * @param filterClass the class of the filter which specifies which requests will be enriched and verified
      * @return the interface for executing single server verification
      */
-    SingleRequestExecutor filter(Class<RequestFilter<?>> filterClass);
+    SingleRequestExecutor filter(Class<? extends RequestFilter<?>> filterClass);
 
     /**
      * Specifies anonymous group of execution - each specified group will be independently filtered and executed, providing

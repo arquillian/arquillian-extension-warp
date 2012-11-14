@@ -16,15 +16,19 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
@@ -34,8 +38,9 @@ import org.jboss.arquillian.warp.ServiceInjector;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.client.execution.RequestExecutor;
-import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
+import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
+import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.junit.After;
 import org.junit.Before;
@@ -47,9 +52,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 /**
  * @author Lukas Fryc
  */
-@SuppressWarnings("serial")
 @RunWith(MockitoJUnitRunner.class)
-public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase {
+// TODO add multiple request execution
+public class TestRequestExecutionSynchronization extends AbstractWarpClientTestTestBase {
 
     private CountDownLatch requestStarted;
     private CountDownLatch responseFinished;
@@ -58,7 +63,18 @@ public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase
     @Mock
     private ServiceLoader serviceLoader;
 
-    private AtomicReference<Exception> failure = new AtomicReference<Exception>(null);
+    @Mock
+    private ServerAssertion serverAssertion;
+
+    private static AtomicReference<Exception> failure = new AtomicReference<Exception>(null);
+    private static AtomicReference<RequestExecutor> requestExecutor = new AtomicReference<RequestExecutor>();
+    private static AtomicReference<WarpContext> warpContextReference = new AtomicReference<WarpContext>();
+
+    @Inject
+    private Instance<WarpContext> warpContext;
+
+    @Inject
+    private Instance<WarpExecutionContext> warpExecutionContext;
 
     @Before
     public void initialize() throws Exception {
@@ -68,21 +84,19 @@ public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase
 
         RequestExecutor requestExecutor = new DefaultRequestExecutor();
         getManager().inject(requestExecutor);
-
-        // setup Warp utility
-        Method method = Warp.class.getDeclaredMethod("setExecutor", RequestExecutor.class);
-        method.setAccessible(true);
-        method.invoke(null, requestExecutor);
-        method.setAccessible(false);
+        TestRequestExecutionSynchronization.requestExecutor.set(requestExecutor);
 
         AssertionSynchronizer assertionSynchronizer = new DefaultAssertionSynchronizer();
         getManager().inject(assertionSynchronizer);
+        
+        WarpExecutor warpExecutor = new DefaultWarpExecutor();
+        getManager().inject(warpExecutor);
 
         when(serviceLoader.onlyOne(RequestExecutor.class)).thenReturn(requestExecutor);
         when(serviceLoader.onlyOne(AssertionSynchronizer.class)).thenReturn(assertionSynchronizer);
+        when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-        bind(WarpExecutionScoped.class, ResponsePayload.class, new ResponsePayload());
 
         fire(new BeforeClass(TestingClass.class));
     }
@@ -97,10 +111,27 @@ public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase
         extensions.add(ServiceInjector.class);
         extensions.add(DefaultRequestExecutor.class);
         extensions.add(RequestExecutionObserver.class);
+        extensions.add(WarpExecutionInitializer.class);
     }
 
     @Test
-    public void testBlocking() throws Exception {
+    public void test_zero_requests_execution() {
+
+        assertBefore();
+
+        Warp.execute(new ClientAction() {
+            public void action() {
+                assertDuringClientAction();
+            }
+        }).group().expectCount(0).verify(serverAssertion).verifyAll();
+
+        assertAfter();
+    }
+
+    @Test
+    public void test_single_request_with_blocking_client_action() throws Exception {
+
+        assertBefore();
 
         new Thread(new Runnable() {
             public void run() {
@@ -112,21 +143,27 @@ public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase
 
         Warp.execute(new ClientAction() {
             public void action() {
+                assertDuringClientAction();
+                prepareForRequest();
                 requestStarted.countDown();
                 actionFinished.countDown();
             }
-        }).verify(new ServerAssertion() {
-        });
+        }).verify(serverAssertion);
+
+        assertAfter();
 
         awaitSafely(actionFinished);
     }
 
     @Test
-    public void testBlocking_with_waiting_for_requests() {
+    public void test_single_request_with_blocking_client_action_with_waiting_for_requests() {
+
+        assertBefore();
+
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                if (AssertionHolder.isWaitingForRequests()) {
+                if (warpContextReference.get().getSynchronization().isWaitingForRequests()) {
                     handshake();
                 }
                 responseFinished.countDown();
@@ -135,18 +172,23 @@ public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase
 
         Warp.execute(new ClientAction() {
             public void action() {
+                assertDuringClientAction();
+                prepareForRequest();
                 requestStarted.countDown();
                 actionFinished.countDown();
             }
-        }).verify(new ServerAssertion() {
-        });
+        }).verify(serverAssertion);
+
+        assertAfter();
 
         awaitSafely(actionFinished);
     }
 
     @Test
-    // (timeout = 5000)
-    public void testNonBlocking() throws Exception {
+    public void test_single_request_with_nonblocking_client_action() throws Exception {
+
+        assertBefore();
+
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
@@ -163,31 +205,53 @@ public class TestSingleAssertionExecution extends AbstractWarpClientTestTestBase
 
         Warp.execute(new ClientAction() {
             public void action() {
+                assertDuringClientAction();
+                prepareForRequest();
                 requestStarted.countDown();
             }
-        }).verify(new ServerAssertion() {
-        });
+        }).verify(serverAssertion);
         awaitSafely(responseFinished);
+
+        assertAfter();
 
         if (failure.get() != null) {
             throw failure.get();
         }
     }
 
-    private static void handshake() {
-        Set<RequestEnrichment> requests = AssertionHolder.getRequests();
+    private void prepareForRequest() {
+        WarpContext warpContext = this.warpContext.get();
+        warpContextReference.set(warpContext);
+    }
 
-        RequestEnrichment request = requests.iterator().next();
-        ResponsePayload responsePayload = new ResponsePayload();
-        responsePayload.setAssertion(request.getPayload().getAssertion());
-        ResponseEnrichment response = new ResponseEnrichment(responsePayload);
+    private void handshake() {
+        awaitSafely(requestStarted);
+        WarpContext warpContext = warpContextReference.get();
+        assertNotNull("WarpContext should be available", warpContext);
+        RequestGroupImpl group = warpContext.getAllGroups().iterator().next();
+        RequestPayload requestPayload = group.generateRequestPayload();
+        ResponsePayload responsePayload = new ResponsePayload(requestPayload.getSerialId());
+        responsePayload.setAssertions(requestPayload.getAssertions());
+        warpContext.pushResponsePayload(responsePayload);
+    }
 
-        AssertionHolder.addResponse(response);
+    private void assertDuringClientAction() {
+        assertTrue("warp execution context should be active", warpExecutionContext.get().isActive());
+        WarpContext warpContext = TestRequestExecutionSynchronization.this.warpContext.get();
+        assertNotNull("WarpContext should be available", warpContext);
+    }
+
+    private void assertBefore() {
+        assertFalse("warp execution context shouldn't be active before request", warpExecutionContext.get().isActive());
+    }
+
+    private void assertAfter() {
+        assertFalse("warp execution context shouldn't be active after response", warpExecutionContext.get().isActive());
     }
 
     private void awaitSafely(CountDownLatch latch) {
         try {
-            latch.await();
+            latch.await(1, TimeUnit.SECONDS);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

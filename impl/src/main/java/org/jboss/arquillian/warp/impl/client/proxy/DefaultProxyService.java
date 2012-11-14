@@ -23,6 +23,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.execution.SynchronizationPoint;
+import org.jboss.arquillian.warp.impl.client.execution.WarpContext;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServer;
 
@@ -41,7 +43,10 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     public HttpProxyServer startProxy(URL realUrl, URL proxyUrl) {
 
         RequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(RequestEnrichmentFilter.class);
-        requestFilter.setEnrichmentService(serviceLoader().onlyOne(RequestEnrichmentService.class));
+        RequestEnrichmentService enrichmentService = serviceLoader().onlyOne(RequestEnrichmentService.class);
+        
+        requestFilter.initialize(enrichmentService);
+        
         ResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(ResponseDeenrichmentFilter.class);
         responseDeenrichmentFilter.setDeenrichmentService(serviceLoader().onlyOne(ResponseDeenrichmentService.class));
 

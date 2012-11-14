@@ -18,13 +18,10 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpRequest;
 import org.jboss.arquillian.warp.impl.client.proxy.RequestEnrichmentFilter;
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
 public class DefaultRequestEnrichmentFilter implements RequestEnrichmentFilter {
@@ -36,24 +33,32 @@ public class DefaultRequestEnrichmentFilter implements RequestEnrichmentFilter {
 
     @Override
     public void filter(HttpRequest request) {
-        if (AssertionHolder.isWaitingForRequests()) {
-            try {
+        final WarpContext context = WarpContextStore.getCurrentInstance();
+        try {
+            if (context != null) {
+                final SynchronizationPoint synchronization = context.getSynchronization();
 
-                tryEnrichRequest.fire(new FilterHttpRequest(request, enrichmentService));
+                if (synchronization.isWaitingForRequests()) {
+                    try {
 
-            } catch (Exception originalException) {
-                ClientWarpExecutionException explainingException = new ClientWarpExecutionException(
-                        "enriching request failed: " + originalException.getMessage(), originalException);
-                ResponsePayload exceptionPayload = new ResponsePayload();
-                exceptionPayload.setTestResult(new TestResult(Status.FAILED, explainingException));
-                ResponseEnrichment responseEnrichment = new ResponseEnrichment(exceptionPayload);
-                AssertionHolder.addResponse(responseEnrichment);
+                        tryEnrichRequest.fire(new FilterHttpRequest(request, enrichmentService));
+
+                    } catch (Exception originalException) {
+                        ClientWarpExecutionException explainingException = new ClientWarpExecutionException(
+                                "enriching request failed: " + originalException.getMessage(), originalException);
+                        context.pushException(explainingException);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (context != null) {
+                context.pushException(e);
             }
         }
     }
 
     @Override
-    public void setEnrichmentService(RequestEnrichmentService enrichmentService) {
+    public void initialize(RequestEnrichmentService enrichmentService) {
         this.enrichmentService = enrichmentService;
     }
 }

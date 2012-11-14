@@ -17,6 +17,8 @@
 package org.jboss.arquillian.warp.impl.shared;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ServerAssertion;
@@ -25,16 +27,25 @@ public class ResponsePayload implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private ServerAssertion assertion;
+    private List<ServerAssertion> assertions;
     private TestResult testResult;
     private int status;
-
-    public ServerAssertion getAssertion() {
-        return assertion;
+    private long serialId;
+    
+    public ResponsePayload(long serialId) {
+        this.serialId = serialId;
     }
 
-    public void setAssertion(ServerAssertion assertion) {
-        this.assertion = assertion;
+    public List<ServerAssertion> getAssertions() {
+        return assertions;
+    }
+
+    public void setAssertions(ServerAssertion... assertions) {
+        this.assertions = Arrays.asList(assertions);
+    }
+    
+    public void setAssertions(List<ServerAssertion> assertions) {
+        this.assertions = assertions;
     }
 
     public TestResult getTestResult() {
@@ -54,5 +65,9 @@ public class ResponsePayload implements Serializable {
 
     public int getStatus() {
         return status;
+    }
+    
+    public long getSerialId() {
+        return serialId;
     }
 }

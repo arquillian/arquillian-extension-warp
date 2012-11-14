@@ -4,7 +4,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 
 public interface ExecutionGroup {
-    
+
     /**
      * Specifies filter which will be used to select which requests will be enriched and verified
      * 
@@ -20,7 +20,15 @@ public interface ExecutionGroup {
      * @return the interface for executing single server verification
      */
     GroupAssertionSpecifier filter(Class<RequestFilter<?>> filterClass);
-    
+
+    /**
+     * Specifies how much requests are expected to be validated with this request group settings
+     * 
+     * @param numberOfRequests number of requests expected to be validated with this request group settings
+     * @return the interface for executing single server verification
+     */
+    GroupAssertionSpecifier expectCount(int numberOfRequests);
+
     /**
      * Asserts given server state
      * 
@@ -29,5 +37,5 @@ public interface ExecutionGroup {
      * @return the executor of the groups
      */
     GroupsExecutor verify(ServerAssertion... assertion);
-    
+
 }

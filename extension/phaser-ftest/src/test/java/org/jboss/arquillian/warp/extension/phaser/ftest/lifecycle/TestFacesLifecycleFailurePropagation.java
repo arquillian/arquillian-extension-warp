@@ -54,6 +54,7 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
+import org.jboss.arquillian.warp.extension.phaser.ftest.JsfPageRequestFilter;
 import org.jboss.arquillian.warp.extension.phaser.ftest.cdi.CdiBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -62,6 +63,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 @WarpTest
+@RunAsClient
 @RunWith(Arquillian.class)
 public class TestFacesLifecycleFailurePropagation {
 
@@ -83,22 +85,22 @@ public class TestFacesLifecycleFailurePropagation {
     }
 
     @Test(expected = ServerWarpExecutionException.class)
-    @RunAsClient
     public void test() {
-        Warp.execute(new ClientAction() {
-
-            @Override
-            public void action() {
-                browser.navigate().to(contextPath + "index.jsf");
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    browser.navigate().to(contextPath + "index.jsf");
+                }})
+            .filter(JsfPageRequestFilter.class)
+            .verify(new ServerAssertion() {
+                private static final long serialVersionUID = 1L;
+    
+                @AfterPhase(RENDER_RESPONSE)
+                public void initial_state_havent_changed_yet() {
+                    fail("test should not reach rendering phase");
+                }
             }
-        }).verify(new ServerAssertion() {
-            private static final long serialVersionUID = 1L;
-
-            @AfterPhase(RENDER_RESPONSE)
-            public void initial_state_havent_changed_yet() {
-                fail("test should not reach rendering phase");
-            }
-        });
+        );
 
         fail("warp test should fail");
     }

@@ -32,6 +32,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
+import org.jboss.arquillian.warp.ftest.FaviconIgnore;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -45,6 +46,7 @@ import org.openqa.selenium.WebDriver;
  */
 @RunWith(Arquillian.class)
 @WarpTest
+@RunAsClient
 public class TestBigResponsePayload {
 
     @Drone
@@ -62,16 +64,17 @@ public class TestBigResponsePayload {
     }
 
     @Test
-    @RunAsClient
     public void test() {
 
         Assertion requestAssertion = new Assertion();
 
-        Assertion responseAssertion = Warp.execute(new ClientAction() {
-            public void action() {
-                browser.navigate().to(contextPath + "index.html");
-            }
-        }).verify(requestAssertion);
+        Assertion responseAssertion = Warp
+                .execute(new ClientAction() {
+                    public void action() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }})
+                .filter(FaviconIgnore.class)
+                .verify(requestAssertion);
 
         assertNotNull("responseAssertion must not be null", responseAssertion);
         assertNotNull("payload must not be null", responseAssertion.payload);

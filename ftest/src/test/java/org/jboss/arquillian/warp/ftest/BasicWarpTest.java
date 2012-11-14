@@ -35,6 +35,8 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -51,6 +53,7 @@ import org.openqa.selenium.WebDriver;
  */
 @RunWith(Arquillian.class)
 @WarpTest
+@RunAsClient
 public class BasicWarpTest {
 
     @Drone
@@ -69,58 +72,63 @@ public class BasicWarpTest {
     }
 
     @Test
-    @RunAsClient
     public void test() {
 
-        Warp.execute(new ClientAction() {
-            public void action() {
-                browser.navigate().to(contextPath + "index.html");
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    browser.navigate().to(contextPath + "index.html");
+                }})
+            .filter(FaviconIgnore.class)
+            .verify(new ServerAssertion() {
+
+                private static final long serialVersionUID = 1L;
+    
+                @ArquillianResource
+                HttpServletRequest request;
+    
+                @ArquillianResource
+                HttpServletResponse response;
+    
+                @BeforeServlet
+                public void beforeServlet() {
+    
+                    System.out.println("Hi server, here is my initial request!");
+    
+                    assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
+    
+                    assertNull("response is not enriched before servlet processing",
+                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                }
+    
+                @AfterServlet
+                public void afterServlet() {
+    
+                    System.out.println("Servlet just processed my initial request!");
+    
+                    assertNull("response still isn't senriched, that happens little bit later",
+                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+    
+                    assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
+                }
             }
-        }).verify(new ServerAssertion() {
+        );
 
-            private static final long serialVersionUID = 1L;
+        Warp
+            .execute(new ClientAction() {
+                public void action() {
+                    browser.findElement(By.id("sendAjax")).click();
+                }})
+            .filter(FaviconIgnore.class)
+            .verify(new ServerAssertion() {
 
-            @ArquillianResource
-            HttpServletRequest request;
-
-            @ArquillianResource
-            HttpServletResponse response;
-
-            @BeforeServlet
-            public void beforeServlet() {
-
-                System.out.println("Hi server, here is my initial request!");
-
-                assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
-
-                assertNull("response is not enriched before servlet processing",
-                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                private static final long serialVersionUID = 1L;
+    
+                @BeforeServlet
+                public void beforeServlet() {
+                    System.out.println("Hi server, here is AJAX request!");
+                }
             }
-
-            @AfterServlet
-            public void afterServlet() {
-
-                System.out.println("Servlet just processed my initial request!");
-
-                assertNull("response still isn't senriched, that happens little bit later",
-                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
-
-                assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
-            }
-        });
-
-        Warp.execute(new ClientAction() {
-            public void action() {
-                browser.findElement(By.id("sendAjax")).click();
-            }
-        }).verify(new ServerAssertion() {
-
-            private static final long serialVersionUID = 1L;
-
-            @BeforeServlet
-            public void beforeServlet() {
-                System.out.println("Hi server, here is AJAX request!");
-            }
-        });
+        );
     }
 }

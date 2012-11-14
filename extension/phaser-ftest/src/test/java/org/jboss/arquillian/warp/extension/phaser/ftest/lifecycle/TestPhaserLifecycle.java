@@ -38,6 +38,7 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.phaser.AfterPhase;
 import org.jboss.arquillian.warp.extension.phaser.BeforePhase;
 import org.jboss.arquillian.warp.extension.phaser.Phase;
+import org.jboss.arquillian.warp.extension.phaser.ftest.JsfPageRequestFilter;
 import org.jboss.arquillian.warp.extension.phaser.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
@@ -54,6 +55,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.common.base.Predicate;
 
 @WarpTest
+@RunAsClient
 @RunWith(Arquillian.class)
 public class TestPhaserLifecycle {
 
@@ -74,41 +76,47 @@ public class TestPhaserLifecycle {
     }
 
     @Test
-    @RunAsClient
     public void test() {
-        ExecuteAllPhases executed = Warp.execute(new ClientAction() {
-            public void action() {
-                browser.navigate().to(contextPath + "index.jsf");
-            }
-        }).verify(new ExecuteAllPhases());
+
+        ExecuteAllPhases executed = Warp
+                .execute(new ClientAction() {
+                    public void action() {
+                        browser.navigate().to(contextPath + "index.jsf");
+                    }})
+                .filter(JsfPageRequestFilter.class)
+                .verify(new ExecuteAllPhases());
 
         assertFalse(executed.isPostback());
         ExecuteAllPhases.verifyExecutedPhases(executed);
 
-        executed = Warp.execute(new ClientAction() {
-            public void action() {
-                WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
-                nameInput.sendKeys("X");
-
-                new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
-                    @Override
-                    public boolean apply(WebDriver browser) {
-                        WebElement output = browser.findElement(By.id("helloWorldJsf:output"));
-                        try {
-                            return output.getText().contains("JohnX");
-                        } catch (StaleElementReferenceException e) {
-                            return false;
-                        }
+        executed = Warp
+                .execute(new ClientAction() {
+                    public void action() {
+                        WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
+                        nameInput.sendKeys("X");
+                        browser.findElement(By.tagName("body")).click();
+        
+                        
                     }
-                });
-            }
-        }).verify(new ExecuteAllPhases());
-
+                })
+                .filter(JsfPageRequestFilter.class)
+                .verify(new ExecuteAllPhases());
+        
         assertTrue(executed.isPostback());
         ExecuteAllPhases.verifyExecutedPhases(executed);
+        
+        new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
+            @Override
+            public boolean apply(WebDriver browser) {
+                WebElement output = browser.findElement(By.id("helloWorldJsf:output"));
+                try {
+                    return output.getText().contains("JohnX");
+                } catch (StaleElementReferenceException e) {
+                    return false;
+                }
+            }
+        });
     }
-
-
 
     public static class ExecuteAllPhases extends ServerAssertion {
 
