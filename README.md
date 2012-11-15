@@ -15,6 +15,17 @@ Links
 * [Issue Tracker](https://issues.jboss.org/browse/ARQ/component/12315782)
 * [Continuous Integration](https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/)
 
+Reading
+-------
+
+* [1.0.0.Alpha1 Release Blog](http://arquillian.org/blog/2012/05/27/arquillian-extension-warp-1-0-0-Alpha1/)
+
+Community
+---------
+
+* IRC: #jbosstesting @ irc.freenode.net
+* [Blogs](http://arquillian.org/blog/tags/warp/)
+* [Forums](https://community.jboss.org/en/arquillian/dev)
 
 Configuration
 -------------
