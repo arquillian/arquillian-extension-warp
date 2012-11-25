@@ -29,23 +29,30 @@ public class DefaultAssertionSynchronizer implements AssertionSynchronizer {
 
     @Override
     public void advertise() {
-        synchronization.get().advertise();
-        warpContext.get().tryFinalizeResponse();
+        synchronization().advertise();
+        warpContext().tryFinalizeResponse();
     }
 
     @Override
     public void finish() {
-        synchronization.get().close();
+        synchronization().close();
     }
 
     @Override
     public void waitForResponse() {
-        synchronization.get().awaitResponses();
+        synchronization().awaitResponses();
     }
 
     @Override
     public void clean() {
-        // TODO
-        //synchronization.set(null);
+        // nothing to do - context will be freed automatically
+    }
+    
+    private SynchronizationPoint synchronization() {
+        return synchronization.get();
+    }
+    
+    private WarpContext warpContext() {
+        return warpContext.get();
     }
 }
