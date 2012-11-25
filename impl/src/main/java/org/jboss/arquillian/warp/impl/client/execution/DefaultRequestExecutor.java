@@ -22,11 +22,11 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.ClientActionExecutor;
-import org.jboss.arquillian.warp.client.execution.ExecutionGroup;
-import org.jboss.arquillian.warp.client.execution.GroupsExecutor;
-import org.jboss.arquillian.warp.client.execution.RequestExecutor;
-import org.jboss.arquillian.warp.client.execution.SingleRequestExecutor;
+import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
+import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
+import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
+import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
@@ -39,7 +39,7 @@ import org.jboss.arquillian.warp.impl.client.event.ExecuteWarp;
  * @author Lukas Fryc
  * 
  */
-public class DefaultRequestExecutor implements RequestExecutor, ClientActionExecutor, GroupsExecutor, SingleRequestExecutor {
+public class DefaultRequestExecutor implements WarpClientActionBuilder, WarpVerificationBuilder, GroupVerificationBuilder, SingleVerificationSpecifier {
 
     private int groupSequenceNumber = 0;
 
@@ -56,7 +56,7 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
     private Instance<ServiceLoader> serviceLoader;
 
     @Override
-    public ClientActionExecutor execute(ClientAction action) {
+    public WarpVerificationBuilder execute(ClientAction action) {
         ensureContextInitialized();
         this.action = action;
         return this;
@@ -67,7 +67,7 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
         initializeSingleGroup();
         singleGroup.addAssertions(assertion);
         WarpResult result = execute();
-        return (T) result.getGroup(SingleRequestExecutor.KEY).getAssertion();
+        return (T) result.getGroup(SingleVerificationSpecifier.KEY).getAssertion();
     }
 
     @Override
@@ -83,24 +83,24 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
     }
 
     @Override
-    public ExecutionGroup group() {
+    public GroupVerificationSpecifier group() {
         return group(groupSequenceNumber++);
     }
 
     @Override
-    public ExecutionGroup group(Object identifier) {
+    public GroupVerificationSpecifier group(Object identifier) {
         return new RequestGroupImpl(this, identifier);
     }
 
     @Override
-    public SingleRequestExecutor filter(RequestFilter<?> filter) {
+    public SingleVerificationSpecifier filter(RequestFilter<?> filter) {
         initializeSingleGroup();
         singleGroup.filter(filter);
         return this;
     }
 
     @Override
-    public SingleRequestExecutor filter(Class<? extends RequestFilter<?>> filterClass) {
+    public SingleVerificationSpecifier filter(Class<? extends RequestFilter<?>> filterClass) {
         initializeSingleGroup();
         singleGroup.filter(createFilterInstance(filterClass));
         return this;
@@ -153,7 +153,7 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
 
     private void initializeSingleGroup() {
         if (singleGroup == null) {
-            singleGroup = new RequestGroupImpl(this, SingleRequestExecutor.KEY);
+            singleGroup = new RequestGroupImpl(this, SingleVerificationSpecifier.KEY);
             warpContext.addGroup(singleGroup);
         }
     }

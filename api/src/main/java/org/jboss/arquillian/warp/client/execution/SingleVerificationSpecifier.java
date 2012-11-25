@@ -19,12 +19,12 @@ package org.jboss.arquillian.warp.client.execution;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 
-public interface SingleRequestExecutor {
+public interface SingleVerificationSpecifier {
 
     /**
      * The key for single request executions
      */
-    Object KEY = SingleRequestExecutor.class;
+    Object KEY = SingleVerificationSpecifier.class;
     
     /**
      * Asserts given server state

@@ -22,7 +22,7 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 import org.jboss.arquillian.warp.impl.client.enrichment.EnrichmentObserver;
 import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
@@ -68,7 +68,7 @@ public class WarpExtension implements LoadableExtension {
         builder.service(ProtocolArchiveProcessor.class, DeploymentEnricher.class);
 
         // action executor
-        builder.service(RequestExecutor.class, DefaultRequestExecutor.class);
+        builder.service(WarpClientActionBuilder.class, DefaultRequestExecutor.class);
         builder.observer(ServiceInjector.class);
         builder.observer(RequestExecutionObserver.class);
         builder.service(AssertionSynchronizer.class, DefaultAssertionSynchronizer.class);

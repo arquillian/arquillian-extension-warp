@@ -22,7 +22,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 
 public class ServiceInjector {
 
@@ -31,7 +31,7 @@ public class ServiceInjector {
 
     public void injectRequestExecutor(@Observes BeforeClass event) {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            RequestExecutor executor = serviceLoader.get().onlyOne(RequestExecutor.class);
+            WarpClientActionBuilder executor = serviceLoader.get().onlyOne(WarpClientActionBuilder.class);
             Warp.setExecutor(executor);
         }
     }

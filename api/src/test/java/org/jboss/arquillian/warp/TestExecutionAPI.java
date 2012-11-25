@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Modifier;
 
-import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.result.WarpResult;
@@ -49,7 +49,8 @@ public class TestExecutionAPI {
      * cases
      */
     public void testSimpleExecution() {
-        Warp.execute(clientAction)
+        Warp
+            .execute(clientAction)
             .verify(serverAssertion);
     }
 
@@ -58,7 +59,8 @@ public class TestExecutionAPI {
      * given filter
      */
     public void testSimpleFiltering() {
-        Warp.execute(clientAction)
+        Warp
+            .execute(clientAction)
             .filter(requestFilter)
             .verify(serverAssertion);
     }
@@ -68,7 +70,8 @@ public class TestExecutionAPI {
      * on the server)
      */
     public void testSimpleResult() {
-        ServerAssertion assertion = Warp.execute(clientAction)
+        ServerAssertion assertion = Warp
+            .execute(clientAction)
             .verify(serverAssertion);
     }
 
@@ -76,7 +79,8 @@ public class TestExecutionAPI {
      * Two requests caused by single client action are verified concurrently.
      */
     public void testGroupOfTwoRequests() {
-        Warp.execute(clientAction)
+        Warp
+            .execute(clientAction)
             .group()
                 .filter(requestFilter)
                 .verify(serverAssertion)
@@ -92,7 +96,8 @@ public class TestExecutionAPI {
      * count) is stored.
      */
     public void testResultOfComplexGroupExecution() {
-        WarpResult result = Warp.execute(clientAction)
+        WarpResult result = Warp
+            .execute(clientAction)
             .group("first")
                 .filter(requestFilter)
                 .verify(serverAssertion)
@@ -113,14 +118,37 @@ public class TestExecutionAPI {
      * These assertions will preserve order of definition and execution.
      */
     public void testMultipleAssertions() {
-        WarpResult result = Warp.execute(clientAction)
+        WarpResult result = Warp
+            .execute(clientAction)
             .verifyAll(serverAssertion, serverAssertion, serverAssertion);
 
-        result = Warp.execute(clientAction)
+        result = Warp
+            .execute(clientAction)
             .group()
                 .filter(requestFilter)
                 .verify(serverAssertion, serverAssertion)
             .group()
+                .filter(requestFilter)
+                .verify(serverAssertion, serverAssertion, serverAssertion)
+            .verifyAll();
+    }
+    
+    /**
+     * Once group is defined then it can be configured either with filter or expected count
+     */
+    public void testExceptCount() {
+        Warp
+            .execute(clientAction)
+            .group()
+                .filter(requestFilter)
+                .expectCount(2)
+                .verify(serverAssertion, serverAssertion, serverAssertion)
+            .verifyAll();
+        
+        Warp
+            .execute(clientAction)
+            .group()
+                .expectCount(2)
                 .filter(requestFilter)
                 .verify(serverAssertion, serverAssertion, serverAssertion)
             .verifyAll();
@@ -132,7 +160,8 @@ public class TestExecutionAPI {
      */
     @Filter(TestingFilter.class)
     public void testFilterSpecifiedByAnnotation() {
-        Warp.execute(clientAction)
+        Warp
+            .execute(clientAction)
             .verify(serverAssertion);
     }
 

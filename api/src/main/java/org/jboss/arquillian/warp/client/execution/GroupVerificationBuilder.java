@@ -16,16 +16,14 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.client.result.WarpResult;
 
-public interface GroupAssertionSpecifier {
-    
+public interface GroupVerificationBuilder extends GroupSpecifier<GroupVerificationSpecifier> {
+
     /**
-     * Asserts given server state
-     * 
-     * @param assertions the objects containing assertions which should be verified on the server in the given order of
-     *        execution
-     * @return the executor of the groups
+     * Executes the client action, applying all the assertions in all given groups
+     *
+     * @return the result of execution of execution of all specified groups
      */
-    GroupVerificationBuilder verify(ServerAssertion... assertion);
+    WarpResult verifyAll();
 }

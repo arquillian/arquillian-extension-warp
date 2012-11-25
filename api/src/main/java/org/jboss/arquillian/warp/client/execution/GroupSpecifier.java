@@ -16,17 +16,7 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
-import org.jboss.arquillian.warp.client.result.WarpResult;
-
-public interface GroupsExecutor {
-
-    /**
-     * Executes the client action, applying all the assertions in all given groups
-     *
-     * @return the result of execution of execution of all specified groups
-     */
-    WarpResult verifyAll();
-
+public interface GroupSpecifier<R> {
     /**
      * Specifies anonymous group of execution - each specified group will be independently filtered and executed, providing
      * interface for verifying different assertions for several requests caused by single client action.
@@ -36,7 +26,7 @@ public interface GroupsExecutor {
      * 
      * @return the group executor which specifies what assertions to verify on the server
      */
-    ExecutionGroup group();
+    R group();
 
     /**
      * Specifies named group of execution - each specified group will be independently filtered and executed, providing
@@ -46,5 +36,5 @@ public interface GroupsExecutor {
      * 
      * @return the group executor which specifies what assertions to verify on the server
      */
-    ExecutionGroup group(Object identifier);
+    R group(Object identifier);
 }

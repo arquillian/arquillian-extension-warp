@@ -16,16 +16,16 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
-import org.jboss.arquillian.warp.ServerAssertion;
 
-public interface GroupAssertionSpecifier {
-    
+public interface GroupVerificationSpecifier extends
+    GroupAssertionSpecifier,
+    FilterSpecifier<GroupVerificationSpecifier> {
+
     /**
-     * Asserts given server state
+     * Specifies how much requests are expected to be validated with this request group settings
      * 
-     * @param assertions the objects containing assertions which should be verified on the server in the given order of
-     *        execution
-     * @return the executor of the groups
+     * @param numberOfRequests number of requests expected to be validated with this request group settings
+     * @return the interface for executing single server verification
      */
-    GroupVerificationBuilder verify(ServerAssertion... assertion);
+    GroupVerificationSpecifier expectCount(int numberOfRequests);
 }

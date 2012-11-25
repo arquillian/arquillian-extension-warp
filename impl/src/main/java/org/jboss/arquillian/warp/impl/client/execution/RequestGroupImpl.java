@@ -22,51 +22,51 @@ import java.util.Map.Entry;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.ExecutionGroup;
 import org.jboss.arquillian.warp.client.execution.GroupAssertionSpecifier;
-import org.jboss.arquillian.warp.client.execution.GroupsExecutor;
+import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
+import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.result.ResponseGroup;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-public class RequestGroupImpl implements RequestGroup, ResponseGroup, ExecutionGroup, GroupAssertionSpecifier {
+public class RequestGroupImpl implements RequestGroup, ResponseGroup, GroupVerificationSpecifier, GroupAssertionSpecifier {
 
     private Object id;
     private RequestFilter<?> filter;
-    private GroupsExecutor groupsExecutor;
+    private GroupVerificationBuilder groupsExecutor;
     private int expectCount = 1;
 
     private ServerAssertion[] assertions;
 
     private LinkedHashMap<RequestPayload, ResponsePayload> payloads = new LinkedHashMap<RequestPayload, ResponsePayload>();
 
-    public RequestGroupImpl(GroupsExecutor groupsExecutor, Object identifier) {
+    public RequestGroupImpl(GroupVerificationBuilder groupsExecutor, Object identifier) {
         this.groupsExecutor = groupsExecutor;
         this.id = identifier;
     }
 
     @Override
-    public GroupAssertionSpecifier filter(RequestFilter<?> filter) {
+    public GroupVerificationSpecifier filter(RequestFilter<?> filter) {
         this.filter = filter;
         return this;
     }
 
     @Override
-    public GroupAssertionSpecifier filter(Class<RequestFilter<?>> filterClass) {
+    public GroupVerificationSpecifier filter(Class<? extends RequestFilter<?>> filterClass) {
         this.filter = SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {},
                 RequestFilter.class);
         return this;
     }
 
     @Override
-    public GroupAssertionSpecifier expectCount(int numberOfRequests) {
+    public GroupVerificationSpecifier expectCount(int numberOfRequests) {
         this.expectCount = numberOfRequests;
         return this;
     }
 
     @Override
-    public GroupsExecutor verify(ServerAssertion... assertions) {
+    public GroupVerificationBuilder verify(ServerAssertion... assertions) {
         addAssertions(assertions);
         return groupsExecutor;
     }

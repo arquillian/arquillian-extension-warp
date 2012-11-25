@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp;
 
-import org.jboss.arquillian.warp.client.execution.ClientActionExecutor;
-import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
+import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 
 /**
  * Utility class for invoking client action followed by server request, enriched with assertion.
@@ -26,7 +26,7 @@ import org.jboss.arquillian.warp.client.execution.RequestExecutor;
  */
 public final class Warp {
 
-    private static final ThreadLocal<RequestExecutor> executor = new ThreadLocal<RequestExecutor>();
+    private static final ThreadLocal<WarpClientActionBuilder> executor = new ThreadLocal<WarpClientActionBuilder>();
 
     /**
      * Takes client action which should be executed in order to cause server request.
@@ -34,14 +34,14 @@ public final class Warp {
      * @param action the client action to execute
      * @return {@link RequestExecution} instance
      */
-    public static ClientActionExecutor execute(ClientAction action) {
+    public static WarpVerificationBuilder execute(ClientAction action) {
         return executor.get().execute(action);
     }
 
     /**
-     * Setup the {@link RequestExecutor} for current Warp test
+     * Setup the {@link WarpClientActionBuilder} for current Warp test
      */
-    static void setExecutor(RequestExecutor e) {
+    static void setExecutor(WarpClientActionBuilder e) {
         executor.set(e);
     }
 }

@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.GroupsExecutor;
+import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
@@ -41,7 +41,7 @@ public class TestRequestPayloadClosing extends AbstractWarpClientTestTestBase {
     ServerAssertion serverAssertion;
 
     @Mock
-    GroupsExecutor groupsExecutor;
+    GroupVerificationBuilder groupsExecutor;
 
     @Test
     public void when_request_group_is_new_and_expects_zero_requests_then_is_has_all_generated_payloads_paired() {

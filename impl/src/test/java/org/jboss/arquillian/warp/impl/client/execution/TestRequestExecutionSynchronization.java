@@ -37,7 +37,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.ServiceInjector;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.client.execution.RequestExecutor;
+import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
@@ -67,7 +67,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
     private ServerAssertion serverAssertion;
 
     private static AtomicReference<Exception> failure = new AtomicReference<Exception>(null);
-    private static AtomicReference<RequestExecutor> requestExecutor = new AtomicReference<RequestExecutor>();
+    private static AtomicReference<WarpClientActionBuilder> requestExecutor = new AtomicReference<WarpClientActionBuilder>();
     private static AtomicReference<WarpContext> warpContextReference = new AtomicReference<WarpContext>();
 
     @Inject
@@ -82,7 +82,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         responseFinished = new CountDownLatch(1);
         actionFinished = new CountDownLatch(1);
 
-        RequestExecutor requestExecutor = new DefaultRequestExecutor();
+        WarpClientActionBuilder requestExecutor = new DefaultRequestExecutor();
         getManager().inject(requestExecutor);
         TestRequestExecutionSynchronization.requestExecutor.set(requestExecutor);
 
@@ -94,7 +94,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         
         WarpContext warpContext = new WarpContextImpl();
 
-        when(serviceLoader.onlyOne(RequestExecutor.class)).thenReturn(requestExecutor);
+        when(serviceLoader.onlyOne(WarpClientActionBuilder.class)).thenReturn(requestExecutor);
         when(serviceLoader.onlyOne(AssertionSynchronizer.class)).thenReturn(assertionSynchronizer);
         when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
         when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
