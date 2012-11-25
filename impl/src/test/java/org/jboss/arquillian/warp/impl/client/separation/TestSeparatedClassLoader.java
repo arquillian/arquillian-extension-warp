@@ -153,7 +153,7 @@ public class TestSeparatedClassLoader {
             Class<?> loadedClass = separated.loadClass("SomeNonExistingClassName");
             fail("class should not be found");
         } catch (ClassNotFoundException e) {
-            // TODO: handle exception
+            // this is okay
         }
     }
 

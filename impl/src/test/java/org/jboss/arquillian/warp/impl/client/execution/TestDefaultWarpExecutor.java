@@ -121,7 +121,6 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
             executor.execute(action, warpContext);
             fail("server execution should fail the request");
         } catch (ClientActionException e) {
-            // TODO could throw clientAction failure directly
             String message = e.getCause().getMessage();
             if (!"client".equals(message)) {
                 throw e;
