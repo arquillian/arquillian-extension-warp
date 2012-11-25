@@ -18,6 +18,10 @@ package org.jboss.arquillian.warp.client.filter.http;
 
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 
+/**
+ * Specifies conditions which must be met in order to verify HTTP request
+ * 
+ * @author Lukas Fryc
+ */
 public interface HttpRequestFilter extends RequestFilter<HttpRequest> {
-
 }

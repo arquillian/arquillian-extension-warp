@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.client.result.ResponseGroup;
+import org.jboss.arquillian.warp.client.result.GroupResult;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
@@ -104,7 +104,7 @@ public class WarpContextImpl implements WarpContext {
         public WarpResult getResult() {
             return new WarpResult() {
                 @Override
-                public ResponseGroup getGroup(Object identifier) {
+                public GroupResult getGroup(Object identifier) {
                     return groups.get(identifier);
                 }
             };

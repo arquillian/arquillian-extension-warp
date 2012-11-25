@@ -19,19 +19,36 @@ package org.jboss.arquillian.warp.client.result;
 import java.util.List;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
 
-public interface ResponseGroup {
+/**
+ * The request group verification result.
+ * 
+ * @author Lukas Fryc
+ */
+public interface GroupResult {
 
-    RequestFilter<?> getFilter();
-
+    /**
+     * Returns assertion verified during first request in this group
+     */
     <T extends ServerAssertion> T getAssertion();
     
+    /**
+     * Returns assertion verified during N-th request verified in this group
+     */
     <T extends ServerAssertion> T getAssertionForHitNumber(int hitNumber);
     
+    /**
+     * Returns list of all assertions verified during first request in this group
+     */
     List<ServerAssertion> getAssertions();
     
+    /**
+     * Returns list of all assertions verified during N-th request in this group
+     */
     List<ServerAssertion> getAssertionsForHitNumber(int hitNumber);
     
+    /**
+     * Returns how many requests were verified in this group
+     */
     int getHitCount();
 }

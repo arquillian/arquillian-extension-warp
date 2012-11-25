@@ -26,11 +26,11 @@ import org.jboss.arquillian.warp.client.execution.GroupAssertionSpecifier;
 import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
 import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.result.ResponseGroup;
+import org.jboss.arquillian.warp.client.result.GroupResult;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-public class RequestGroupImpl implements RequestGroup, ResponseGroup, GroupVerificationSpecifier, GroupAssertionSpecifier {
+public class RequestGroupImpl implements RequestGroup, GroupResult, GroupVerificationSpecifier, GroupAssertionSpecifier {
 
     private Object id;
     private RequestFilter<?> filter;

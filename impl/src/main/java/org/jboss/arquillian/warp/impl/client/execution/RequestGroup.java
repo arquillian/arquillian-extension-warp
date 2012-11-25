@@ -17,13 +17,16 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.client.result.ResponseGroup;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.result.GroupResult;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-public interface RequestGroup extends ResponseGroup {
+public interface RequestGroup extends GroupResult {
     
     Object getId();
+    
+    RequestFilter<?> getFilter();
     
     TestResult getFirstNonSuccessfulResult();
     
