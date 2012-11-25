@@ -53,7 +53,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Lukas Fryc
  */
 @RunWith(MockitoJUnitRunner.class)
-// TODO add multiple request execution
+// TODO add multiple request execution tests
 public class TestRequestExecutionSynchronization extends AbstractWarpClientTestTestBase {
 
     private CountDownLatch requestStarted;
@@ -228,7 +228,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         awaitSafely(requestStarted);
         WarpContext warpContext = warpContextReference.get();
         assertNotNull("WarpContext should be available", warpContext);
-        RequestGroupImpl group = warpContext.getAllGroups().iterator().next();
+        RequestGroup group = warpContext.getAllGroups().iterator().next();
         RequestPayload requestPayload = group.generateRequestPayload();
         ResponsePayload responsePayload = new ResponsePayload(requestPayload.getSerialId());
         responsePayload.setAssertions(requestPayload.getAssertions());

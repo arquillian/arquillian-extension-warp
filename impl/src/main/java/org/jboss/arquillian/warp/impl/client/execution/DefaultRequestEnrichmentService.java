@@ -45,12 +45,12 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
     @Override
     public Collection<RequestPayload> getMatchingPayloads(HttpRequest request) {
         
-        final Collection<RequestGroupImpl> groups = warpContext().getAllGroups();
+        final Collection<RequestGroup> groups = warpContext().getAllGroups();
 
         final org.jboss.arquillian.warp.client.filter.http.HttpRequest httpRequest = new HttpRequestWrapper(request);
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
-        for (RequestGroupImpl group : groups) {
+        for (RequestGroup group : groups) {
             final RequestFilter<?> filter = group.getFilter();
             
             if (filter == null) {
@@ -110,7 +110,7 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
     }
     
     private WarpContext warpContext() {
-        return WarpContextStore.getCurrentInstance();
+        return WarpContextStore.get();
     }
 
     private class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filter.http.HttpRequest {

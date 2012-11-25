@@ -30,23 +30,23 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 // TODO diverge interfaces
 public class WarpContextImpl implements WarpContext {
 
-        private Map<Object, RequestGroupImpl> groups = new HashMap<Object, RequestGroupImpl>();
+        private Map<Object, RequestGroup> groups = new HashMap<Object, RequestGroup>();
         private List<Exception> exceptions = new LinkedList<Exception>();
 
         private SynchronizationPoint synchronization = new SynchronizationPoint();
 
         @Override
-        public void addGroup(RequestGroupImpl group) {
+        public void addGroup(RequestGroup group) {
             groups.put(group.getId(), group);
         }
 
         @Override
-        public Collection<RequestGroupImpl> getAllGroups() {
+        public Collection<RequestGroup> getAllGroups() {
             return groups.values();
         }
 
         TestResult getFirstNonSuccessfulResult() {
-            for (RequestGroupImpl group : getAllGroups()) {
+            for (RequestGroup group : getAllGroups()) {
                 TestResult result = group.getFirstNonSuccessfulResult();
                 if (result != null) {
                     return result;
@@ -58,7 +58,7 @@ public class WarpContextImpl implements WarpContext {
         
         @Override
         public void pushResponsePayload(ResponsePayload payload) {
-            for (RequestGroupImpl group : groups.values()) {
+            for (RequestGroup group : groups.values()) {
                 if (group.pushResponsePayload(payload)) {
                     tryFinalizeResponse();
                     return;
@@ -70,7 +70,7 @@ public class WarpContextImpl implements WarpContext {
         @Override
         public void tryFinalizeResponse() {
             boolean allPaired = true;
-            for (RequestGroupImpl group : groups.values()) {
+            for (RequestGroup group : groups.values()) {
                 if (!group.allRequestsPaired()) {
                     allPaired = false;
                     return;

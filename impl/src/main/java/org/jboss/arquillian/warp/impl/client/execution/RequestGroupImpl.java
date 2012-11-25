@@ -30,7 +30,7 @@ import org.jboss.arquillian.warp.client.result.ResponseGroup;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-public class RequestGroupImpl implements ExecutionGroup, GroupAssertionSpecifier, ResponseGroup {
+public class RequestGroupImpl implements RequestGroup, ResponseGroup, ExecutionGroup, GroupAssertionSpecifier {
 
     private Object id;
     private RequestFilter<?> filter;
@@ -110,7 +110,7 @@ public class RequestGroupImpl implements ExecutionGroup, GroupAssertionSpecifier
         return id;
     }
 
-    RequestPayload generateRequestPayload() {
+    public RequestPayload generateRequestPayload() {
         if (payloads.size() + 1 > expectCount) {
             throw new IllegalStateException(String.format("There were more requests executed (%s) then expected (%s)", payloads.size() + 1, expectCount));
         }
@@ -119,7 +119,7 @@ public class RequestGroupImpl implements ExecutionGroup, GroupAssertionSpecifier
         return requestPayload;
     }
 
-    boolean pushResponsePayload(ResponsePayload payload) {
+    public boolean pushResponsePayload(ResponsePayload payload) {
         for (Entry<RequestPayload, ResponsePayload> entry : payloads.entrySet()) {
             if (payload.getSerialId() == entry.getKey().getSerialId()) {
                 if (entry.getValue() != null) {
@@ -132,8 +132,7 @@ public class RequestGroupImpl implements ExecutionGroup, GroupAssertionSpecifier
         return false;
     }
     
-    boolean allRequestsPaired() {
-        // TODO throw an exception when payloads count is bigger then expected
+    public boolean allRequestsPaired() {
         if (payloads.size() < expectCount) {
             return false;
         }
@@ -145,7 +144,7 @@ public class RequestGroupImpl implements ExecutionGroup, GroupAssertionSpecifier
         return true;
     }
     
-    TestResult getFirstNonSuccessfulResult() {
+    public TestResult getFirstNonSuccessfulResult() {
         for (ResponsePayload payload : payloads.values()) {
             TestResult testResult = payload.getTestResult();
 

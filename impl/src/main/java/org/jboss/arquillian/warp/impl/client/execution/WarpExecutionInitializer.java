@@ -43,14 +43,14 @@ public class WarpExecutionInitializer {
         try {
             WarpContextImpl context = eventContext.getEvent().getWarpContext();
             warpContext.set(context);
-            WarpContextStore.setCurrentInstance(context);
+            WarpContextStore.set(context);
 
             synchronization.set(eventContext.getEvent().getWarpContext().getSynchronization());
 
             eventContext.proceed();
 
         } finally {
-            WarpContextStore.setCurrentInstance(null);
+            WarpContextStore.reset();
             warpExecutionContext.get().deactivate();
         }
     }

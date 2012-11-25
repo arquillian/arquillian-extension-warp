@@ -45,7 +45,7 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
 
     @Override
     public void deenrichResponse(HttpResponse response) {
-        final WarpContext context = WarpContextStore.getCurrentInstance();
+        final WarpContext context = WarpContextStore.get();
         try {
             
             final ChannelBuffer content = response.getContent();

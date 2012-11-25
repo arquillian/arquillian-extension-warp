@@ -16,22 +16,20 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.util.Collection;
-
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.warp.client.result.ResponseGroup;
+import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-public interface WarpContext {
+public interface RequestGroup extends ResponseGroup {
     
-    void addGroup(RequestGroup group);
-
-    Collection<RequestGroup> getAllGroups();
+    Object getId();
     
-    void pushResponsePayload(ResponsePayload payload);
+    TestResult getFirstNonSuccessfulResult();
     
-    void pushException(Exception exception);
+    boolean pushResponsePayload(ResponsePayload payload);
     
-    void tryFinalizeResponse();
+    boolean allRequestsPaired();
     
-    SynchronizationPoint getSynchronization();
-    
+    RequestPayload generateRequestPayload();
 }

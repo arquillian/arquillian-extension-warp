@@ -33,7 +33,7 @@ public class DefaultRequestEnrichmentFilter implements RequestEnrichmentFilter {
 
     @Override
     public void filter(HttpRequest request) {
-        final WarpContext context = WarpContextStore.getCurrentInstance();
+        final WarpContext context = WarpContextStore.get();
         try {
             if (context != null) {
                 final SynchronizationPoint synchronization = context.getSynchronization();
