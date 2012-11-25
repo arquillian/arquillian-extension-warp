@@ -40,8 +40,8 @@ import org.jboss.arquillian.warp.impl.client.event.ExecuteWarp;
 public class DefaultRequestExecutor implements RequestExecutor, ClientActionExecutor, GroupsExecutor, SingleRequestExecutor {
 
     private int groupSequenceNumber = 0;
-    
-    private WarpContextImpl warpContext = new WarpContextImpl();
+
+    private WarpContextImpl warpContext;
 
     private ClientAction action;
 
@@ -50,18 +50,19 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
     @Inject
     private Event<ExecuteWarp> executeWarp;
 
+    @Override
+    public ClientActionExecutor execute(ClientAction action) {
+        ensureContextInitialized();
+        this.action = action;
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends ServerAssertion> T verify(T assertion) {
         initializeSingleGroup();
         singleGroup.addAssertions(assertion);
         WarpResult result = execute();
         return (T) result.getGroup(SingleRequestExecutor.KEY).getAssertion();
-    }
-
-    @Override
-    public ClientActionExecutor execute(ClientAction action) {
-        this.action = action;
-        return this;
     }
 
     @Override
@@ -109,21 +110,19 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
 
         try {
             executeWarp.fire(new ExecuteWarp(action, warpContext));
-            
+
             Exception executionException = warpContext.getFirstException();
-            
+
             if (executionException != null) {
                 propagateException(executionException);
             }
-            
+
             return warpContext.getResult();
         } finally {
-            // TODO clean this - move to initialization
-            warpContext = new WarpContextImpl();
-            singleGroup = null;
+            finalizeContext();
         }
     }
-    
+
     private void propagateException(Throwable e) {
         if (e instanceof AssertionError) {
             throw (AssertionError) e;
@@ -134,6 +133,17 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
         } else {
             throw new ServerWarpExecutionException(e);
         }
+    }
+
+    private void ensureContextInitialized() {
+        if (warpContext == null) {
+            warpContext = new WarpContextImpl();
+        }
+    }
+
+    private void finalizeContext() {
+        warpContext = null;
+        singleGroup = null;
     }
 
     private void initializeSingleGroup() {
