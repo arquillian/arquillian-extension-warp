@@ -27,7 +27,6 @@ import org.jboss.arquillian.warp.client.result.ResponseGroup;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-// TODO diverge interfaces
 public class WarpContextImpl implements WarpContext {
 
         private Map<Object, RequestGroup> groups = new HashMap<Object, RequestGroup>();
@@ -45,7 +44,8 @@ public class WarpContextImpl implements WarpContext {
             return groups.values();
         }
 
-        TestResult getFirstNonSuccessfulResult() {
+        @Override
+        public TestResult getFirstNonSuccessfulResult() {
             for (RequestGroup group : getAllGroups()) {
                 TestResult result = group.getFirstNonSuccessfulResult();
                 if (result != null) {
@@ -85,7 +85,8 @@ public class WarpContextImpl implements WarpContext {
         public void pushException(Exception exception) {
             exceptions.add(exception);
         }
-        
+
+        @Override
         public Exception getFirstException() {
             if (exceptions.isEmpty()) {
                 return null;
@@ -93,11 +94,13 @@ public class WarpContextImpl implements WarpContext {
             
             return exceptions.get(0);
         }
-        
+
+        @Override
         public SynchronizationPoint getSynchronization() {
             return synchronization;
         }
-        
+
+        @Override
         public WarpResult getResult() {
             return new WarpResult() {
                 @Override

@@ -26,7 +26,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Verify {
+// TODO not-implemented yet
+@interface Verify {
 
     /**
      * The assertion to be verified during all enriched requests.

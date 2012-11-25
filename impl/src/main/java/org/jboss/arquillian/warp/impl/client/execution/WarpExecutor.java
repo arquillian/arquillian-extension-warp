@@ -21,5 +21,5 @@ import org.jboss.arquillian.warp.client.result.WarpResult;
 
 public interface WarpExecutor {
     
-    WarpResult execute(ClientAction action, WarpContextImpl warpContext);
+    WarpResult execute(ClientAction action, WarpContext warpContext);
 }

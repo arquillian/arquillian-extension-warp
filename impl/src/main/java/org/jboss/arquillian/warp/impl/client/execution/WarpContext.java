@@ -18,6 +18,8 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collection;
 
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public interface WarpContext {
@@ -30,8 +32,13 @@ public interface WarpContext {
     
     void pushException(Exception exception);
     
+    Exception getFirstException();
+    
     void tryFinalizeResponse();
     
     SynchronizationPoint getSynchronization();
     
+    TestResult getFirstNonSuccessfulResult();
+    
+    WarpResult getResult();
 }

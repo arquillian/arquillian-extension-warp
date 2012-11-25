@@ -49,7 +49,7 @@ public class DefaultWarpExecutor implements WarpExecutor {
     private RuntimeException actionException;
 
     @Override
-    public WarpResult execute(ClientAction action, WarpContextImpl warpContext) {
+    public WarpResult execute(ClientAction action, WarpContext warpContext) {
         try {
             setupServerAssertion();
             executeClientAction(action);
@@ -82,7 +82,7 @@ public class DefaultWarpExecutor implements WarpExecutor {
         }
     }
 
-    private void awaitServerExecution(WarpContextImpl warpContext) {
+    private void awaitServerExecution(WarpContext warpContext) {
         awaitResponse.fire(new AwaitResponse());
 
         TestResult testResult = warpContext.getFirstNonSuccessfulResult();
@@ -98,6 +98,8 @@ public class DefaultWarpExecutor implements WarpExecutor {
             case SKIPPED:
                 propagateSkip();
                 break;
+            case PASSED:
+                throw new IllegalStateException("Passed test result should never be propagated as non-successful");
         }
     }
 

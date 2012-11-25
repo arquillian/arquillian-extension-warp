@@ -46,7 +46,7 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
     private ClientAction action;
 
     @Mock
-    private WarpContextImpl warpContext;
+    private WarpContext warpContext;
 
     private WarpExecutor executor;
 

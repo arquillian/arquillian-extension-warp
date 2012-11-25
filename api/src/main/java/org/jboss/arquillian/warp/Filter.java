@@ -28,7 +28,8 @@ import org.jboss.arquillian.warp.client.filter.RequestFilter;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface Filter {
+// TODO not implemented yet
+@interface Filter {
 
     /**
      * Specifies request filter which should be applied on all requests in whole annotated method.

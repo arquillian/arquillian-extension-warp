@@ -41,7 +41,7 @@ public class WarpExecutionInitializer {
     public void setupWarpContext(@Observes EventContext<ExecuteWarp> eventContext) {
         warpExecutionContext.get().activate();
         try {
-            WarpContextImpl context = eventContext.getEvent().getWarpContext();
+            WarpContext context = eventContext.getEvent().getWarpContext();
             warpContext.set(context);
             WarpContextStore.set(context);
 

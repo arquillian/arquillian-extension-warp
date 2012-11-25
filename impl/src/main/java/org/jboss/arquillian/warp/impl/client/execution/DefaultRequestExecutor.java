@@ -17,7 +17,9 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.ClientActionExecutor;
@@ -41,7 +43,7 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
 
     private int groupSequenceNumber = 0;
 
-    private WarpContextImpl warpContext;
+    private WarpContext warpContext;
 
     private ClientAction action;
 
@@ -49,6 +51,9 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
 
     @Inject
     private Event<ExecuteWarp> executeWarp;
+    
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
     @Override
     public ClientActionExecutor execute(ClientAction action) {
@@ -137,7 +142,7 @@ public class DefaultRequestExecutor implements RequestExecutor, ClientActionExec
 
     private void ensureContextInitialized() {
         if (warpContext == null) {
-            warpContext = new WarpContextImpl();
+            warpContext = serviceLoader.get().onlyOne(WarpContext.class);
         }
     }
 

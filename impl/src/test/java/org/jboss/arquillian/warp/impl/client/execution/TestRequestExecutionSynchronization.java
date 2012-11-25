@@ -91,10 +91,13 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         
         WarpExecutor warpExecutor = new DefaultWarpExecutor();
         getManager().inject(warpExecutor);
+        
+        WarpContext warpContext = new WarpContextImpl();
 
         when(serviceLoader.onlyOne(RequestExecutor.class)).thenReturn(requestExecutor);
         when(serviceLoader.onlyOne(AssertionSynchronizer.class)).thenReturn(assertionSynchronizer);
         when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
+        when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
 
