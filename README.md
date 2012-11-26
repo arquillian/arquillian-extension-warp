@@ -105,7 +105,9 @@ In the `InitialRequestVerification` class, you provide test methods annotated wi
 
 Simple assertion may look like:
 
-    public static class InitialRequestVerification implements ServerAssertion {
+    public static class InitialRequestVerification extends ServerAssertion {
+
+        private static final long serialVersionUID = 1L;
 
         @Inject
         CDIBean cdiBean;
