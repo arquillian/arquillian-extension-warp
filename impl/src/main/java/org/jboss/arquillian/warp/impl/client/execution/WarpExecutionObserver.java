@@ -27,11 +27,16 @@ import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
 
-public class RequestExecutionObserver {
+/**
+ * Observes on Warp execution events and invokes associated services.
+ *
+ * @author Lukas Fryc
+ */
+public class WarpExecutionObserver {
 
     @Inject
     private Instance<ServiceLoader> services;
-    
+
     @Inject
     private Instance<WarpContext> warpContext;
 
@@ -62,12 +67,12 @@ public class RequestExecutionObserver {
     public void cleanEnrichment(@Observes CleanEnrichment event) {
         assertionSynchronizer().clean();
     }
-    
+
     private WarpExecutor warpExecutor() {
         return services.get().onlyOne(WarpExecutor.class);
     }
 
-    private AssertionSynchronizer assertionSynchronizer() {
-        return services.get().onlyOne(AssertionSynchronizer.class);
+    private ExecutionSynchronizer assertionSynchronizer() {
+        return services.get().onlyOne(ExecutionSynchronizer.class);
     }
 }

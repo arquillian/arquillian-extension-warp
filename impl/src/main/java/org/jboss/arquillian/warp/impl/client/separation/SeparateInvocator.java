@@ -29,6 +29,11 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
+/**
+ * Invokes given interface on instance migrated to the context of another classloader.
+ *
+ * @author Lukas Fryc
+ */
 public class SeparateInvocator<T> {
 
     private ClassLoader separatedClassLoader;

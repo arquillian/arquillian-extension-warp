@@ -18,16 +18,16 @@ package org.jboss.arquillian.warp.client.filter;
 
 /**
  * Specifies conditions which must be met in order to verify request
- * 
+ *
  * @author Lukas Fryc
- * 
+ *
  * @param <T> the type of requests which can be filtered by this filter
  */
 public interface RequestFilter<T> {
 
     /**
      * Returns true if given request should be verified
-     * 
+     *
      * @return true if given request should be verified; false otherwise
      */
     boolean matches(T request);

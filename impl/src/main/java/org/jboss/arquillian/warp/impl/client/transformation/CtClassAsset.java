@@ -23,6 +23,11 @@ import javassist.CtClass;
 
 import org.jboss.shrinkwrap.api.asset.NamedAsset;
 
+/**
+ * Asset constructed from {@link CtClass}
+ *
+ * @author Lukas Fryc
+ */
 public class CtClassAsset implements NamedAsset {
 
     private CtClass clazz;

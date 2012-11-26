@@ -27,7 +27,6 @@ import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
  * The handler for current context.
  *
  * @author Lukas Fryc
- *
  */
 public class WarpExecutionContextHandler {
 

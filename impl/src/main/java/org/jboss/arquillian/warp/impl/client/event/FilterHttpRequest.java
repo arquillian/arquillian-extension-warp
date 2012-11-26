@@ -16,15 +16,15 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
 public class FilterHttpRequest implements FilterRequest<HttpRequest> {
 
     private HttpRequest request;
-    private RequestEnrichmentService service;
+    private HttpRequestEnrichmentService service;
 
-    public FilterHttpRequest(HttpRequest request, RequestEnrichmentService service) {
+    public FilterHttpRequest(HttpRequest request, HttpRequestEnrichmentService service) {
         super();
         this.request = request;
         this.service = service;
@@ -36,7 +36,7 @@ public class FilterHttpRequest implements FilterRequest<HttpRequest> {
     }
 
     @Override
-    public RequestEnrichmentService getService() {
+    public HttpRequestEnrichmentService getService() {
         return service;
     }
 }

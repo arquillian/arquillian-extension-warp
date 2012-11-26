@@ -16,15 +16,15 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 public class FilterHttpResponse implements FilterResponse<HttpResponse> {
 
     private HttpResponse response;
-    private ResponseDeenrichmentService deenrichmentService;
+    private HttpResponseDeenrichmentService deenrichmentService;
 
-    public FilterHttpResponse(HttpResponse response, ResponseDeenrichmentService deenrichmentService) {
+    public FilterHttpResponse(HttpResponse response, HttpResponseDeenrichmentService deenrichmentService) {
         this.response = response;
         this.deenrichmentService = deenrichmentService;
     }
@@ -34,7 +34,7 @@ public class FilterHttpResponse implements FilterResponse<HttpResponse> {
     }
 
     @Override
-    public ResponseDeenrichmentService getService() {
+    public HttpResponseDeenrichmentService getService() {
         return deenrichmentService;
     }
 

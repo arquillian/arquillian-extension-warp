@@ -23,22 +23,22 @@ import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public interface WarpContext {
-    
-    void addGroup(RequestGroup group);
 
-    Collection<RequestGroup> getAllGroups();
-    
+    void addGroup(WarpGroup group);
+
+    Collection<WarpGroup> getAllGroups();
+
     void pushResponsePayload(ResponsePayload payload);
-    
+
     void pushException(Exception exception);
-    
+
     Exception getFirstException();
-    
+
     void tryFinalizeResponse();
-    
+
     SynchronizationPoint getSynchronization();
-    
+
     TestResult getFirstNonSuccessfulResult();
-    
+
     WarpResult getResult();
 }

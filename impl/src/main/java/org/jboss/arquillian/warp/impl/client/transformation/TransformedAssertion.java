@@ -31,6 +31,11 @@ import javassist.bytecode.InnerClassesAttribute;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.shrinkwrap.api.asset.NamedAsset;
 
+/**
+ * Allows to transform inner classes to be usable as top-level classes.
+ *
+ * @author Lukas Fryc
+ */
 public class TransformedAssertion {
 
     private ClassPool classPool;
@@ -127,6 +132,7 @@ public class TransformedAssertion {
         return transformedAssertion;
     }
 
+    @SuppressWarnings("unchecked")
     private Class<ServerAssertion> toClass() throws AssertionTransformationException {
         try {
             return transformed.toClass();

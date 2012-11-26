@@ -95,16 +95,16 @@ public class TestPhaserLifecycle {
                         WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
                         nameInput.sendKeys("X");
                         browser.findElement(By.tagName("body")).click();
-        
-                        
+
+
                     }
                 })
                 .filter(JsfPageRequestFilter.class)
                 .verify(new ExecuteAllPhases());
-        
+
         assertTrue(executed.isPostback());
         ExecuteAllPhases.verifyExecutedPhases(executed);
-        
+
         new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
             @Override
             public boolean apply(WebDriver browser) {

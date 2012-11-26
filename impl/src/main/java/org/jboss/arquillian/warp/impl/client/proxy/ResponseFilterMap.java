@@ -18,13 +18,14 @@ package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.util.HashMap;
 
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
 import org.littleshoot.proxy.HttpFilter;
 
 public class ResponseFilterMap extends HashMap<String, HttpFilter> {
 
     private static final long serialVersionUID = -8290386846314981260L;
 
-    public ResponseFilterMap(String hostPort, ResponseDeenrichmentFilter filter) {
+    public ResponseFilterMap(String hostPort, HttpResponseDeenrichmentFilter filter) {
         this.put(hostPort, filter);
     }
 

@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
-import org.jboss.arquillian.warp.impl.client.separation.PreventingClassLoader;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.client.separation.SeparatedClassLoader;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
@@ -53,7 +52,7 @@ public class TestTransformedAssertion {
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
                 .addClasses(TestTransformedAssertion.class, TransformedAssertion.class, MigratedAssertion.class,
                         AssertionTransformationException.class)
-                .addClasses(SeparateInvocator.class, CtClassAsset.class, PreventingClassLoader.class,
+                .addClasses(SeparateInvocator.class, CtClassAsset.class,
                         SeparatedClassLoader.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);

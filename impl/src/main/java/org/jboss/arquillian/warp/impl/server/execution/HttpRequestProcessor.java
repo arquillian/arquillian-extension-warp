@@ -55,7 +55,7 @@ public class HttpRequestProcessor {
 
         // setup responsePayload with temporary serialId before requestPayload is de-serialized
         responsePayload.set(new ResponsePayload(RequestPayload.FAILURE_SERIAL_ID));
-        
+
         HttpRequestDeenricher requestDeenricher = services.onlyOne(HttpRequestDeenricher.class);
 
         if (requestDeenricher.isEnriched()) {

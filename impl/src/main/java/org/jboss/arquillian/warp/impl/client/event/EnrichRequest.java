@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp.impl.client.event;
 
 import java.util.Collection;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 
 public interface EnrichRequest<T, P> {
 
@@ -26,5 +26,5 @@ public interface EnrichRequest<T, P> {
 
     Collection<P> getPayloads();
 
-    RequestEnrichmentService getService();
+    HttpRequestEnrichmentService getService();
 }

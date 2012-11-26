@@ -24,7 +24,6 @@ import org.jboss.arquillian.warp.spi.LifecycleEvent;
  * The lifecycle event which binds with {@link BeforeServlet} verification execution.
  *
  * @author Lukas Fryc
- *
  */
 public class BeforeServletEvent extends LifecycleEvent {
 

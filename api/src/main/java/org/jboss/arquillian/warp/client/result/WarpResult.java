@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp.client.result;
 
 /**
  * Return of Warp execution with groups.
- * 
+ *
  * @author Lukas Fryc
  */
 public interface WarpResult {
@@ -26,5 +26,5 @@ public interface WarpResult {
     /**
      * Returns request group result based on identifier used during request group specification
      */
-    GroupResult getGroup(Object identifier);
+    WarpGroupResult getGroup(Object identifier);
 }

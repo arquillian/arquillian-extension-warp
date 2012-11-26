@@ -33,6 +33,18 @@ import org.jboss.shrinkwrap.api.asset.NamedAsset;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
+/**
+ * <p>
+ * Takes {@link TransformedAssertion} and renames it to original name, providing bytecode of transformed and renamed class.
+ * </p>
+ *
+ * <p>
+ * In order to allow renaming transformed class to the name of original class, {@link MigratedAssertion} uses
+ * {@link SeparatedClassLoader} internally.
+ * </p>
+ *
+ * @author Lukas Fryc
+ */
 public class MigratedAssertion {
 
     private TransformedAssertion transformed;
@@ -93,7 +105,8 @@ public class MigratedAssertion {
 
             clazz.replaceClassName(oldClassName, newClassName);
 
-            Class<Serializable> migratedClass = clazz.toClass();
+            @SuppressWarnings("unchecked")
+            Class<Serializable> migratedClass = (Class<Serializable>) clazz.toClass();
 
             result.bytecode = clazz.toBytecode();
 
@@ -121,6 +134,7 @@ public class MigratedAssertion {
     }
 
     public static class MigrationResult implements Serializable {
+        private static final long serialVersionUID = 1L;
         public byte[] bytecode;
         public byte[] serializedMigratedAssertion;
     }

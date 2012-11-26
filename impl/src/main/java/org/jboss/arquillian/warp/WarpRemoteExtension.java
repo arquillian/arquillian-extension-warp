@@ -36,7 +36,9 @@ import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
 
 /**
- * Registers extension logic on the server-side.
+ * <p>The Arquillian Warp extension - server-side.</p>
+ *
+ * <p>For client-side, see {@link WarpExtension}.</p>
  *
  * @author Lukas Fryc
  */

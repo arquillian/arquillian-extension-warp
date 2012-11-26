@@ -29,6 +29,11 @@ import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
+/**
+ * Listens on filter and tries enrich request and de-enrich response
+ *
+ * @author Lukas Fryc
+ */
 public class EnrichmentObserver {
 
     @Inject
@@ -39,7 +44,7 @@ public class EnrichmentObserver {
 
     public void tryEnrichRequest(@Observes FilterHttpRequest event) {
         final HttpRequest request = event.getRequest();
-        final RequestEnrichmentService enrichmentService = event.getService();
+        final HttpRequestEnrichmentService enrichmentService = event.getService();
 
         Collection<RequestPayload> matchingPayloads = enrichmentService.getMatchingPayloads(request);
 
@@ -51,14 +56,14 @@ public class EnrichmentObserver {
     public void enrichRequest(@Observes EnrichHttpRequest event) {
         final HttpRequest request = event.getRequest();
         final Collection<RequestPayload> payloads = event.getPayloads();
-        final RequestEnrichmentService enrichmentService = event.getService();
+        final HttpRequestEnrichmentService enrichmentService = event.getService();
 
         enrichmentService.enrichRequest(request, payloads);
     }
 
     public void tryDeenrichResponse(@Observes FilterHttpResponse event) {
         final HttpResponse response = event.getResponse();
-        final ResponseDeenrichmentService service = event.getService();
+        final HttpResponseDeenrichmentService service = event.getService();
 
         if (service.isEnriched(response)) {
             deenrichHttpResponse.fire(new DeenrichHttpResponse(response, service));
@@ -67,7 +72,7 @@ public class EnrichmentObserver {
 
     public void deenrichResponse(@Observes DeenrichHttpResponse event) {
         final HttpResponse response = event.getResponse();
-        final ResponseDeenrichmentService service = event.getService();
+        final HttpResponseDeenrichmentService service = event.getService();
 
         service.deenrichResponse(response);
     }

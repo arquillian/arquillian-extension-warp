@@ -19,18 +19,27 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
-import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpRequest;
-import org.jboss.arquillian.warp.impl.client.proxy.RequestEnrichmentFilter;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
-public class DefaultRequestEnrichmentFilter implements RequestEnrichmentFilter {
+/**
+ * Default implementation of filters which filters requests and enriches them using provided {@link HttpRequestEnrichmentService}
+ *
+ * @author Lukas Fryc
+ */
+public class DefaultHttpRequestEnrichmentFilter implements HttpRequestEnrichmentFilter {
 
     @Inject
     private Event<FilterHttpRequest> tryEnrichRequest;
 
-    private RequestEnrichmentService enrichmentService;
+    private HttpRequestEnrichmentService enrichmentService;
 
+    /*
+     * (non-Javadoc)
+     * @see org.littleshoot.proxy.HttpRequestFilter#filter(org.jboss.netty.handler.codec.http.HttpRequest)
+     */
     @Override
     public void filter(HttpRequest request) {
         final WarpContext context = WarpContextStore.get();
@@ -57,8 +66,12 @@ public class DefaultRequestEnrichmentFilter implements RequestEnrichmentFilter {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.proxy.HttpRequestEnrichmentFilter#initialize(org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService)
+     */
     @Override
-    public void initialize(RequestEnrichmentService enrichmentService) {
+    public void initialize(HttpRequestEnrichmentService enrichmentService) {
         this.enrichmentService = enrichmentService;
     }
 }

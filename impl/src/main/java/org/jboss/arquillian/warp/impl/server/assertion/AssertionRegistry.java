@@ -26,7 +26,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 
 /**
  * The registry for registered assertions registered for current requests.
- * 
+ *
  * @author Lukas Fryc
  */
 public class AssertionRegistry {

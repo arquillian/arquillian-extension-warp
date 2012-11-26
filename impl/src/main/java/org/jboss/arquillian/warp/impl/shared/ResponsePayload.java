@@ -31,7 +31,7 @@ public class ResponsePayload implements Serializable {
     private TestResult testResult;
     private int status;
     private long serialId;
-    
+
     public ResponsePayload(long serialId) {
         this.serialId = serialId;
     }
@@ -43,7 +43,7 @@ public class ResponsePayload implements Serializable {
     public void setAssertions(ServerAssertion... assertions) {
         this.assertions = Arrays.asList(assertions);
     }
-    
+
     public void setAssertions(List<ServerAssertion> assertions) {
         this.assertions = assertions;
     }
@@ -66,7 +66,7 @@ public class ResponsePayload implements Serializable {
     public int getStatus() {
         return status;
     }
-    
+
     public long getSerialId() {
         return serialId;
     }

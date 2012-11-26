@@ -14,25 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.client.execution;
+package org.jboss.arquillian.warp.impl.client.enrichment;
 
-import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.result.GroupResult;
+import java.util.Collection;
+
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
-import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import org.jboss.netty.handler.codec.http.HttpRequest;
 
-public interface RequestGroup extends GroupResult {
-    
-    Object getId();
-    
-    RequestFilter<?> getFilter();
-    
-    TestResult getFirstNonSuccessfulResult();
-    
-    boolean pushResponsePayload(ResponsePayload payload);
-    
-    boolean allRequestsPaired();
-    
-    RequestPayload generateRequestPayload();
+/**
+ * Service for enriching requests
+ *
+ * @author Lukas Fryc
+ */
+public interface HttpRequestEnrichmentService {
+
+    /**
+     * Returns payloads associated with given request - if no request matches, then request won't be enriched.
+     */
+    Collection<RequestPayload> getMatchingPayloads(HttpRequest request);
+
+    /**
+     * Enrich request with given payloads.
+     */
+    void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads);
 }

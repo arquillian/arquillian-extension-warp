@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * The implementation of {@link WarpExecutionContext}.
  *
  * @author Lukas Fryc
- *
  */
 public class WarpExecutionContextImpl extends AbstractContext<String> implements WarpExecutionContext {
 

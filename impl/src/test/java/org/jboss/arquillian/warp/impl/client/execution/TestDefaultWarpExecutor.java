@@ -27,7 +27,7 @@ import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestExecutor.ClientActionException;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ClientActionException;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.junit.Before;

@@ -19,7 +19,15 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 
+/**
+ * Executes given {@link ClientAction} in given {@link WarpContext}, while returns {@link WarpResult}.
+ *
+ * @author Lukas Fryc
+ */
 public interface WarpExecutor {
-    
+
+    /**
+     * Executes given {@link ClientAction} in given {@link WarpContext}, while returns {@link WarpResult}.
+     */
     WarpResult execute(ClientAction action, WarpContext warpContext);
 }

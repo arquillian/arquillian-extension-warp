@@ -23,30 +23,30 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.client.result.GroupResult;
+import org.jboss.arquillian.warp.client.result.WarpGroupResult;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
 public class WarpContextImpl implements WarpContext {
 
-        private Map<Object, RequestGroup> groups = new HashMap<Object, RequestGroup>();
+        private Map<Object, WarpGroup> groups = new HashMap<Object, WarpGroup>();
         private List<Exception> exceptions = new LinkedList<Exception>();
 
         private SynchronizationPoint synchronization = new SynchronizationPoint();
 
         @Override
-        public void addGroup(RequestGroup group) {
+        public void addGroup(WarpGroup group) {
             groups.put(group.getId(), group);
         }
 
         @Override
-        public Collection<RequestGroup> getAllGroups() {
+        public Collection<WarpGroup> getAllGroups() {
             return groups.values();
         }
 
         @Override
         public TestResult getFirstNonSuccessfulResult() {
-            for (RequestGroup group : getAllGroups()) {
+            for (WarpGroup group : getAllGroups()) {
                 TestResult result = group.getFirstNonSuccessfulResult();
                 if (result != null) {
                     return result;
@@ -55,10 +55,10 @@ public class WarpContextImpl implements WarpContext {
 
             return null;
         }
-        
+
         @Override
         public void pushResponsePayload(ResponsePayload payload) {
-            for (RequestGroup group : groups.values()) {
+            for (WarpGroup group : groups.values()) {
                 if (group.pushResponsePayload(payload)) {
                     tryFinalizeResponse();
                     return;
@@ -66,11 +66,11 @@ public class WarpContextImpl implements WarpContext {
             }
             throw new IllegalStateException("There was no group found for given response payload");
         }
-        
+
         @Override
         public void tryFinalizeResponse() {
             boolean allPaired = true;
-            for (RequestGroup group : groups.values()) {
+            for (WarpGroup group : groups.values()) {
                 if (!group.allRequestsPaired()) {
                     allPaired = false;
                     return;
@@ -91,7 +91,7 @@ public class WarpContextImpl implements WarpContext {
             if (exceptions.isEmpty()) {
                 return null;
             }
-            
+
             return exceptions.get(0);
         }
 
@@ -104,7 +104,7 @@ public class WarpContextImpl implements WarpContext {
         public WarpResult getResult() {
             return new WarpResult() {
                 @Override
-                public GroupResult getGroup(Object identifier) {
+                public WarpGroupResult getGroup(Object identifier) {
                     return groups.get(identifier);
                 }
             };

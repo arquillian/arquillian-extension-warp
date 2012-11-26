@@ -20,12 +20,8 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
-import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -34,20 +30,33 @@ import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
-public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentService {
-    
-    private final Logger log = Logger.getLogger(ResponseDeenrichmentService.class.getName());
+/**
+ * Default service for de-enriching responses.
+ *
+ * @author Lukas Fryc
+ */
+public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichmentService {
 
+    private final Logger log = Logger.getLogger(HttpResponseDeenrichmentService.class.getName());
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService#isEnriched(org.jboss.netty.handler.codec.http.HttpResponse)
+     */
     @Override
     public boolean isEnriched(HttpResponse response) {
         return getHeader(response) != null;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService#deenrichResponse(org.jboss.netty.handler.codec.http.HttpResponse)
+     */
     @Override
     public void deenrichResponse(HttpResponse response) {
         final WarpContext context = WarpContextStore.get();
         try {
-            
+
             final ChannelBuffer content = response.getContent();
 
             long originalLength = HttpHeaders.getContentLength(response);
@@ -63,7 +72,7 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
 
             HttpResponseStatus status = HttpResponseStatus.valueOf(payload.getStatus());
             response.setStatus(status);
-            
+
             if (context != null) {
                 context.pushResponsePayload(payload);
             }
@@ -71,7 +80,7 @@ public class DefaultResponseDeenrichmentService implements ResponseDeenrichmentS
             if (context != null) {
                 ClientWarpExecutionException explainingException = new ClientWarpExecutionException("deenriching response failed: "
                     + originalException.getMessage(), originalException);
-            
+
                 context.pushException(explainingException);
             } else {
                 log.log(Level.WARNING, "Unable to push exception to WarpContext", originalException);

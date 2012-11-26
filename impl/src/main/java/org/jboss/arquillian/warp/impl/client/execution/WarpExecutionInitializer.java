@@ -25,6 +25,11 @@ import org.jboss.arquillian.warp.impl.client.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionScoped;
 
+/**
+ * Initializes {@link WarpExecutionContext}.
+ *
+ * @author Lukas Fryc
+ */
 public class WarpExecutionInitializer {
 
     @Inject
@@ -38,7 +43,16 @@ public class WarpExecutionInitializer {
     @WarpExecutionScoped
     private InstanceProducer<SynchronizationPoint> synchronization;
 
-    public void setupWarpContext(@Observes EventContext<ExecuteWarp> eventContext) {
+    /**
+     * Activates/deactivates {@link WarpExecutionContext}.
+     *
+     * Provides {@link WarpContext} instance.
+     *
+     * Provides {@link SynchronizationPoint} instance.
+     *
+     * Setups/resets {@link WarpContextStore}
+     */
+    public void provideWarpContext(@Observes EventContext<ExecuteWarp> eventContext) {
         warpExecutionContext.get().activate();
         try {
             WarpContext context = eventContext.getEvent().getWarpContext();

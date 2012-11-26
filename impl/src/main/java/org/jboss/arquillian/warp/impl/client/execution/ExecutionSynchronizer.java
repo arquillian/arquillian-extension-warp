@@ -16,14 +16,30 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.util.Collection;
+/**
+ * Provides ability to synchronize Warp request enriching and processing on server.
+ *
+ * @author Lukas Fryc
+ */
+public interface ExecutionSynchronizer {
 
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+    /**
+     * Advertizes enrichment.
+     */
+    void advertise();
 
-public interface RequestEnrichment {
-    
-    public Collection<RequestPayload> getRequestPayloads();
+    /**
+     * Finishes enrichment.
+     */
+    void finish();
 
-    public RequestFilter<?> getFilter();
+    /**
+     * Waits for response from server.
+     */
+    void waitForResponse();
+
+    /**
+     * Clean enrichments.
+     */
+    void clean();
 }

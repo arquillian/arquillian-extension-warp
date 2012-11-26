@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 
 public interface FilterRequest<T> {
 
     T getRequest();
 
-    RequestEnrichmentService getService();
+    HttpRequestEnrichmentService getService();
 }

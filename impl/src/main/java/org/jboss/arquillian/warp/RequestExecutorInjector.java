@@ -22,16 +22,21 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 
-public class ServiceInjector {
+/**
+ * Injects instance of {@link WarpRequestSpecifier} to {@link Warp} API.
+ *
+ * @author Lukas Fryc
+ */
+public class RequestExecutorInjector {
 
     @Inject
-    Instance<ServiceLoader> serviceLoader;
+    private Instance<ServiceLoader> serviceLoader;
 
     public void injectRequestExecutor(@Observes BeforeClass event) {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            WarpClientActionBuilder executor = serviceLoader.get().onlyOne(WarpClientActionBuilder.class);
+            WarpRequestSpecifier executor = serviceLoader.get().onlyOne(WarpRequestSpecifier.class);
             Warp.setExecutor(executor);
         }
     }

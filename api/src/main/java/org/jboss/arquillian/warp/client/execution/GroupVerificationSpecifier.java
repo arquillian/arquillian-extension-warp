@@ -23,7 +23,7 @@ public interface GroupVerificationSpecifier extends
 
     /**
      * Specifies how much requests are expected to be validated with this request group settings
-     * 
+     *
      * @param numberOfRequests number of requests expected to be validated with this request group settings
      * @return the interface for executing single server verification
      */

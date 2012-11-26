@@ -94,7 +94,7 @@ public class TestFacesLifecycleFailurePropagation {
             .filter(JsfPageRequestFilter.class)
             .verify(new ServerAssertion() {
                 private static final long serialVersionUID = 1L;
-    
+
                 @AfterPhase(RENDER_RESPONSE)
                 public void initial_state_havent_changed_yet() {
                     fail("test should not reach rendering phase");

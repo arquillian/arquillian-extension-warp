@@ -21,10 +21,10 @@ import java.net.URL;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
-import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
-import org.jboss.arquillian.warp.impl.client.execution.SynchronizationPoint;
-import org.jboss.arquillian.warp.impl.client.execution.WarpContext;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServer;
 
@@ -32,7 +32,6 @@ import org.littleshoot.proxy.HttpProxyServer;
  * The holder for instantiated proxies.
  *
  * @author Lukas Fryc
- *
  */
 public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
@@ -42,13 +41,13 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     @Override
     public HttpProxyServer startProxy(URL realUrl, URL proxyUrl) {
 
-        RequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(RequestEnrichmentFilter.class);
-        RequestEnrichmentService enrichmentService = serviceLoader().onlyOne(RequestEnrichmentService.class);
-        
+        HttpRequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(HttpRequestEnrichmentFilter.class);
+        HttpRequestEnrichmentService enrichmentService = serviceLoader().onlyOne(HttpRequestEnrichmentService.class);
+
         requestFilter.initialize(enrichmentService);
-        
-        ResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(ResponseDeenrichmentFilter.class);
-        responseDeenrichmentFilter.setDeenrichmentService(serviceLoader().onlyOne(ResponseDeenrichmentService.class));
+
+        HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(HttpResponseDeenrichmentFilter.class);
+        responseDeenrichmentFilter.initialize(serviceLoader().onlyOne(HttpResponseDeenrichmentService.class));
 
         String hostPort = realUrl.getHost() + ":" + realUrl.getPort();
         ResponseFilterMap responseFilterMap = new ResponseFilterMap(hostPort, responseDeenrichmentFilter);

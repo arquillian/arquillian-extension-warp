@@ -47,7 +47,7 @@ public class RequestPayload implements Externalizable {
     public RequestPayload(ServerAssertion... assertions) {
         this(Arrays.asList(assertions));
     }
-    
+
     public RequestPayload(List<ServerAssertion> assertions) {
         this.assertions = assertions;
         this.serialId = UUID.randomUUID().getMostSignificantBits();
@@ -56,7 +56,7 @@ public class RequestPayload implements Externalizable {
     public List<ServerAssertion> getAssertions() {
         return assertions;
     }
-    
+
     public long getSerialId() {
         return serialId;
     }
@@ -67,16 +67,16 @@ public class RequestPayload implements Externalizable {
         boolean isAnonymous = in.readBoolean();
         if (isAnonymous) {
             int size = in.read();
-            
+
             for (int i = 0; i < size; i++) {
-            
+
                 byte[] classFile = (byte[]) in.readObject();
                 byte[] obj = (byte[]) in.readObject();
-                
+
                 assertions = new ArrayList<ServerAssertion>(size);
-    
+
                 final DynamicClassLoader cl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
-    
+
                 final Class<?> clazz = cl.load(classFile);
                 ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(obj)) {
                     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
@@ -86,7 +86,7 @@ public class RequestPayload implements Externalizable {
                         return super.resolveClass(desc);
                     }
                 };
-                
+
                 ServerAssertion assertion = (ServerAssertion) input.readObject();
                 assertions.add(assertion);
             }
@@ -98,16 +98,16 @@ public class RequestPayload implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         if (assertions.getClass().isAnonymousClass() || assertions.getClass().isMemberClass()) {
-            
+
             try {
                 out.writeLong(serialId);
                 out.writeBoolean(true);
                 out.write(assertions.size());
-                
+
                 for (ServerAssertion assertion : assertions) {
                     TransformedAssertion transformed = new TransformedAssertion(assertion);
                     MigratedAssertion migrated = new MigratedAssertion(transformed);
-                    
+
                     out.writeObject(migrated.toBytecode());
                     out.writeObject(migrated.toSerializedForm());
                 }

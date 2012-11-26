@@ -46,7 +46,7 @@ public class TestRequestPayloadClosing extends AbstractWarpClientTestTestBase {
     @Test
     public void when_request_group_is_new_and_expects_zero_requests_then_is_has_all_generated_payloads_paired() {
         // having
-        RequestGroupImpl group = new RequestGroupImpl(groupsExecutor, 1);
+        WarpGroup group = new WarpGroupImpl(groupsExecutor, 1);
         group.expectCount(0);
         group.verify(serverAssertion);
 
@@ -57,7 +57,7 @@ public class TestRequestPayloadClosing extends AbstractWarpClientTestTestBase {
     @Test
     public void when_group_is_created_then_it_should_state_that_all_requests_are_paired() {
         // having
-        RequestGroupImpl group = new RequestGroupImpl(groupsExecutor, 1);
+        WarpGroup group = new WarpGroupImpl(groupsExecutor, 1);
         group.verify(serverAssertion);
         RequestPayload requestPayload = group.generateRequestPayload();
         assertNotNull("serialId must be set", requestPayload.getSerialId());

@@ -16,23 +16,9 @@
  */
 package org.jboss.arquillian.warp;
 
-import static org.mockito.Mockito.mock;
-
-import java.lang.reflect.Modifier;
-
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.result.WarpResult;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 @SuppressWarnings({"unused", "serial"})
 public class TestExecutionAPI {
@@ -132,7 +118,7 @@ public class TestExecutionAPI {
                 .verify(serverAssertion, serverAssertion, serverAssertion)
             .verifyAll();
     }
-    
+
     /**
      * Once group is defined then it can be configured either with filter or expected count
      */
@@ -144,7 +130,7 @@ public class TestExecutionAPI {
                 .expectCount(2)
                 .verify(serverAssertion, serverAssertion, serverAssertion)
             .verifyAll();
-        
+
         Warp
             .execute(clientAction)
             .group()
@@ -174,12 +160,12 @@ public class TestExecutionAPI {
         clientAction.action();
     }
 
-    private static abstract class TestingFilter implements RequestFilter<HttpRequest> {
+    private abstract static class TestingFilter implements RequestFilter<HttpRequest> {
     }
 
-    private static abstract class TestingAssertion1 extends ServerAssertion {
+    private abstract static class TestingAssertion1 extends ServerAssertion {
     }
 
-    private static abstract class TestingAssertion2 extends ServerAssertion {
+    private abstract static class TestingAssertion2 extends ServerAssertion {
     }
 }

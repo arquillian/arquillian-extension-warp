@@ -18,6 +18,11 @@ package org.jboss.arquillian.warp.impl.client.separation;
 
 import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 
+/**
+ * ClassLoader which uses Bootstrap ClassLoader as a parent and thus it provides classpath separated from context classpath
+ *
+ * @author Lukas Fryc
+ */
 public class SeparatedClassLoader extends ClassLoader {
 
     private ClassLoader[] chain;

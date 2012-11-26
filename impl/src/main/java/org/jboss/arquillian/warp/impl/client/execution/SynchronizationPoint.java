@@ -49,7 +49,7 @@ public class SynchronizationPoint {
     void close() {
         enrichmentClosed.set(true);
     }
-    
+
     void finishResponse() {
         responseFinished.countDown();
     }

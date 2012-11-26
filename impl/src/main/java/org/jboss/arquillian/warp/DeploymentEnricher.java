@@ -50,6 +50,9 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
     @Inject
     private Instance<TestClass> testClass;
 
+    /**
+     * Adds Warp lifecycle extensions to the application archive
+     */
     @Override
     public void process(Archive<?> applicationArchive, TestClass testClass) {
         if (testClass.isAnnotationPresent(WarpTest.class)) {
@@ -69,12 +72,15 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
         }
     }
 
+    /**
+     * Creates Warp archive
+     */
     @Override
     public Archive<?> createAuxiliaryArchive() {
         TestClass testClass = this.testClass.get();
 
         if (testClass.isAnnotationPresent(WarpTest.class)) {
-            JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "extension-warp.jar");
+            JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-warp.jar");
 
             // API
             archive.addClass(ServerAssertion.class);
@@ -109,6 +115,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
     /**
      * Removes test class from web archive
+     *
+     * (test class will be suplied by transformed asserions)
      */
     @Override
     public void process(TestDeployment testDeployment, Archive<?> protocolArchive) {

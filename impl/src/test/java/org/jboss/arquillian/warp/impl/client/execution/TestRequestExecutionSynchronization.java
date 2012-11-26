@@ -33,8 +33,8 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.RequestExecutorInjector;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.ServiceInjector;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
@@ -82,20 +82,20 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         responseFinished = new CountDownLatch(1);
         actionFinished = new CountDownLatch(1);
 
-        WarpClientActionBuilder requestExecutor = new DefaultRequestExecutor();
+        WarpRequestSpecifier requestExecutor = new DefaultWarpRequestSpecifier();
         getManager().inject(requestExecutor);
         TestRequestExecutionSynchronization.requestExecutor.set(requestExecutor);
 
-        AssertionSynchronizer assertionSynchronizer = new DefaultAssertionSynchronizer();
+        ExecutionSynchronizer assertionSynchronizer = new DefaultExecutionSynchronizer();
         getManager().inject(assertionSynchronizer);
-        
+
         WarpExecutor warpExecutor = new DefaultWarpExecutor();
         getManager().inject(warpExecutor);
-        
+
         WarpContext warpContext = new WarpContextImpl();
 
-        when(serviceLoader.onlyOne(WarpClientActionBuilder.class)).thenReturn(requestExecutor);
-        when(serviceLoader.onlyOne(AssertionSynchronizer.class)).thenReturn(assertionSynchronizer);
+        when(serviceLoader.onlyOne(WarpRequestSpecifier.class)).thenReturn(requestExecutor);
+        when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(assertionSynchronizer);
         when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
         when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
 
@@ -111,9 +111,9 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(ServiceInjector.class);
-        extensions.add(DefaultRequestExecutor.class);
-        extensions.add(RequestExecutionObserver.class);
+        extensions.add(RequestExecutorInjector.class);
+        extensions.add(DefaultWarpRequestSpecifier.class);
+        extensions.add(WarpExecutionObserver.class);
         extensions.add(WarpExecutionInitializer.class);
     }
 
@@ -231,7 +231,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         awaitSafely(requestStarted);
         WarpContext warpContext = warpContextReference.get();
         assertNotNull("WarpContext should be available", warpContext);
-        RequestGroup group = warpContext.getAllGroups().iterator().next();
+        WarpGroup group = warpContext.getAllGroups().iterator().next();
         RequestPayload requestPayload = group.generateRequestPayload();
         ResponsePayload responsePayload = new ResponsePayload(requestPayload.getSerialId());
         responsePayload.setAssertions(requestPayload.getAssertions());

@@ -44,7 +44,7 @@ public interface HttpRequest extends HttpMessage {
      * Returns the URI (or path) of this request.
      */
     String getUri();
-    
+
     /**
      * Returns the URL of this request
      */

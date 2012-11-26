@@ -81,32 +81,32 @@ public class BasicWarpTest {
             .verify(new ServerAssertion() {
 
                 private static final long serialVersionUID = 1L;
-    
+
                 @ArquillianResource
                 HttpServletRequest request;
-    
+
                 @ArquillianResource
                 HttpServletResponse response;
-    
+
                 @BeforeServlet
                 public void beforeServlet() {
-    
+
                     System.out.println("Hi server, here is my initial request!");
-    
+
                     assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
-    
+
                     assertNull("response is not enriched before servlet processing",
                             response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
                 }
-    
+
                 @AfterServlet
                 public void afterServlet() {
-    
+
                     System.out.println("Servlet just processed my initial request!");
-    
+
                     assertNull("response still isn't senriched, that happens little bit later",
                             response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
-    
+
                     assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
                 }
             }
@@ -121,7 +121,7 @@ public class BasicWarpTest {
             .verify(new ServerAssertion() {
 
                 private static final long serialVersionUID = 1L;
-    
+
                 @BeforeServlet
                 public void beforeServlet() {
                     System.out.println("Hi server, here is AJAX request!");

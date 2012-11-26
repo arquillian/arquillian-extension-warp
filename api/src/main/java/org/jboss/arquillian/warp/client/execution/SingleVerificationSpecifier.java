@@ -25,10 +25,10 @@ public interface SingleVerificationSpecifier {
      * The key for single request executions
      */
     Object KEY = SingleVerificationSpecifier.class;
-    
+
     /**
      * Asserts given server state
-     * 
+     *
      * @param assertion the object containing assertions which should be verified on the server
      * @return the verified server state returned from the server
      */
@@ -36,7 +36,7 @@ public interface SingleVerificationSpecifier {
 
     /**
      * Asserts given server state
-     * 
+     *
      * @param assertions the objects containing assertions which should be verified on the server in the given order of
      *        execution
      * @return the result of server state verification

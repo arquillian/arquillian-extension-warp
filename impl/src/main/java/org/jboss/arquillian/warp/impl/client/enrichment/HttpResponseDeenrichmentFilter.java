@@ -14,12 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.client.proxy;
+package org.jboss.arquillian.warp.impl.client.enrichment;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
 import org.littleshoot.proxy.HttpFilter;
 
-public interface ResponseDeenrichmentFilter extends HttpFilter {
+/**
+ * Filters responses and de-enriches them using provided {@link HttpResponseDeenrichmentService}
+ *
+ * @author Lukas Fryc
+ */
+public interface HttpResponseDeenrichmentFilter extends HttpFilter {
 
-    void setDeenrichmentService(ResponseDeenrichmentService deenrichmentService);
+    /**
+     * Initializes filter with given service
+     */
+    void initialize(HttpResponseDeenrichmentService deenrichmentService);
 }

@@ -78,7 +78,7 @@ public class TestServerAssertionFailurePropagation {
             .filter(FaviconIgnore.class)
             .verify(new ServerAssertion() {
                 private static final long serialVersionUID = 1L;
-    
+
                 @BeforeServlet
                 public void beforeServlet() {
                     fail("AssertionError should be correctly handled and propagated to the client-side");
@@ -99,7 +99,7 @@ public class TestServerAssertionFailurePropagation {
                 .filter(FaviconIgnore.class)
                 .verify(new ServerAssertion() {
                     private static final long serialVersionUID = 1L;
-    
+
                     @BeforeServlet
                     public void beforeServlet() throws Exception {
                         throw new IOException();
@@ -121,7 +121,7 @@ public class TestServerAssertionFailurePropagation {
             .filter(FaviconIgnore.class)
             .verify(new ServerAssertion() {
                 private static final long serialVersionUID = 1L;
-    
+
                 @BeforeServlet
                 public void beforeServlet() {
                     throw new IllegalArgumentException();

@@ -73,7 +73,7 @@ public class TestServerAssertionFailurePropagation {
             .filter(JsfPageRequestFilter.class)
             .verify(new ServerAssertion() {
                 private static final long serialVersionUID = 1L;
-    
+
                 @BeforeServlet
                 public void initial_state_havent_changed_yet() {
                     fail("AssertionError should be correctly handled and propagated to the client-side");

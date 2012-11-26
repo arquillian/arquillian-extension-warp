@@ -81,10 +81,10 @@ public class BasicPhaserTest {
             .filter(JsfPageRequestFilter.class)
             .verify(new ServerAssertion() {
                 private static final long serialVersionUID = 1L;
-    
+
                 @Inject
                 CdiBean myBean;
-    
+
                 @AfterPhase(RENDER_RESPONSE)
                 public void initial_state_havent_changed_yet() {
                     assertEquals("John", myBean.getName());
@@ -102,29 +102,29 @@ public class BasicPhaserTest {
             .filter(JsfPageRequestFilter.class)
             .verify(new ServerAssertion() {
                 private static final long serialVersionUID = 1L;
-    
+
                 @Inject
                 CdiBean myBean;
-    
+
                 private String updatedName;
-    
+
                 @BeforePhase(UPDATE_MODEL_VALUES)
                 public void initial_state_havent_changed_yet() {
                     assertEquals("John", myBean.getName());
                 }
-    
+
                 @AfterPhase(UPDATE_MODEL_VALUES)
                 public void changed_input_value_has_been_applied() {
                     assertEquals("JohnX", myBean.getName());
                     updatedName = myBean.getName();
                 }
-    
+
                 public String getUpdatedName() {
                     return updatedName;
                 }
             }
         );
-        
+
         new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
             @Override
             public boolean apply(WebDriver browser) {

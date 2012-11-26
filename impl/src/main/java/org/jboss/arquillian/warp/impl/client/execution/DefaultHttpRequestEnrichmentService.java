@@ -31,33 +31,42 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
-import org.jboss.arquillian.warp.impl.client.enrichment.RequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
-public class DefaultRequestEnrichmentService implements RequestEnrichmentService {
+/**
+ * Default implementation of service for enriching HTTP requests
+ *
+ * @author Lukas Fryc
+ */
+public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmentService {
 
     private Logger log = Logger.getLogger("Warp");
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService#getMatchingPayloads(org.jboss.netty.handler.codec.http.HttpRequest)
+     */
     @Override
     public Collection<RequestPayload> getMatchingPayloads(HttpRequest request) {
-        
-        final Collection<RequestGroup> groups = warpContext().getAllGroups();
+
+        final Collection<WarpGroup> groups = warpContext().getAllGroups();
 
         final org.jboss.arquillian.warp.client.filter.http.HttpRequest httpRequest = new HttpRequestWrapper(request);
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
-        for (RequestGroup group : groups) {
+        for (WarpGroup group : groups) {
             final RequestFilter<?> filter = group.getFilter();
-            
+
             if (filter == null) {
                 payloads.add(group.generateRequestPayload());
                 continue;
             }
-            
+
             if (isType(filter, org.jboss.arquillian.warp.client.filter.http.HttpRequest.class)) {
 
                 @SuppressWarnings("unchecked")
@@ -72,6 +81,10 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
         return payloads;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService#enrichRequest(org.jboss.netty.handler.codec.http.HttpRequest, java.util.Collection)
+     */
     @Override
     public void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads) {
 
@@ -108,7 +121,7 @@ public class DefaultRequestEnrichmentService implements RequestEnrichmentService
 
         return false;
     }
-    
+
     private WarpContext warpContext() {
         return WarpContextStore.get();
     }

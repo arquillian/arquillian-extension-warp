@@ -27,8 +27,13 @@ import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
-import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestExecutor.ClientActionException;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ClientActionException;
 
+/**
+ * Default {@link WarpExecutor}
+ *
+ * @author Lukas Fryc
+ */
 public class DefaultWarpExecutor implements WarpExecutor {
 
     @Inject
@@ -45,9 +50,13 @@ public class DefaultWarpExecutor implements WarpExecutor {
 
     @Inject
     private Event<ClientAction> executeClientAction;
-    
+
     private RuntimeException actionException;
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpExecutor#execute(org.jboss.arquillian.warp.ClientAction, org.jboss.arquillian.warp.impl.client.execution.WarpContext)
+     */
     @Override
     public WarpResult execute(ClientAction action, WarpContext warpContext) {
         try {
@@ -112,7 +121,7 @@ public class DefaultWarpExecutor implements WarpExecutor {
 
         propagateException(e);
     }
-    
+
     private void propagateException(Throwable e) {
         if (e instanceof AssertionError) {
             throw (AssertionError) e;

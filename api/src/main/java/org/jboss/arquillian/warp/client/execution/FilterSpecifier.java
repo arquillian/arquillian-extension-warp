@@ -22,7 +22,7 @@ public interface FilterSpecifier<R> {
 
     /**
      * Specifies filter which will be used to select which requests will be enriched and verified
-     * 
+     *
      * @param filter the filter which specifies which requests will be enriched and verified
      * @return the interface for executing single server verification
      */
@@ -30,7 +30,7 @@ public interface FilterSpecifier<R> {
 
     /**
      * Specifies class of a filter which will be used to select which requests will be enriched and verified
-     * 
+     *
      * @param filterClass the class of the filter which specifies which requests will be enriched and verified
      * @return the interface for executing single server verification
      */

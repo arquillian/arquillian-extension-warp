@@ -19,10 +19,9 @@ package org.jboss.arquillian.warp.impl.client.scope;
 import org.jboss.arquillian.core.spi.context.NonIdBoundContext;
 
 /**
- * The context bound with current context.
+ * The context bound with current Warp execution.
  *
  * @author Lukas Fryc
- *
  */
 public interface WarpExecutionContext extends NonIdBoundContext {
 

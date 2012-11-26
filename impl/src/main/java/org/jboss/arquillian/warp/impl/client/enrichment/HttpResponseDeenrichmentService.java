@@ -14,15 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.client.execution;
+package org.jboss.arquillian.warp.impl.client.enrichment;
 
-public interface AssertionSynchronizer {
+import org.jboss.netty.handler.codec.http.HttpResponse;
 
-    void advertise();
+/**
+ * Service for de-enriching responses.
+ *
+ * @author Lukas Fryc
+ */
+public interface HttpResponseDeenrichmentService {
 
-    void finish();
+    /**
+     * Determines if given response is enriched.
+     */
+    boolean isEnriched(HttpResponse response);
 
-    void waitForResponse();
-
-    void clean();
+    /**
+     * De-enriches given response
+     */
+    void deenrichResponse(HttpResponse response);
 }

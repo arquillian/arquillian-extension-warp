@@ -18,29 +18,41 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.warp.impl.client.enrichment.ResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpResponse;
-import org.jboss.arquillian.warp.impl.client.proxy.ResponseDeenrichmentFilter;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
-public class DefaultResponseDeenrichmentFilter implements ResponseDeenrichmentFilter {
+public class DefaultResponseDeenrichmentFilter implements HttpResponseDeenrichmentFilter {
 
     @Inject
     private Event<FilterHttpResponse> tryDeenrichResponse;
 
-    private ResponseDeenrichmentService deenrichmentService;
+    private HttpResponseDeenrichmentService deenrichmentService;
 
+    /*
+     * (non-Javadoc)
+     * @see org.littleshoot.proxy.HttpRequestMatcher#shouldFilterResponses(org.jboss.netty.handler.codec.http.HttpRequest)
+     */
     @Override
     public boolean shouldFilterResponses(HttpRequest httpRequest) {
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.littleshoot.proxy.HttpFilter#getMaxResponseSize()
+     */
     @Override
     public int getMaxResponseSize() {
         return Integer.MAX_VALUE;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.littleshoot.proxy.HttpFilter#filterResponse(org.jboss.netty.handler.codec.http.HttpResponse)
+     */
     @Override
     public HttpResponse filterResponse(HttpResponse response) {
         tryDeenrichResponse.fire(new FilterHttpResponse(response, deenrichmentService));
@@ -48,8 +60,12 @@ public class DefaultResponseDeenrichmentFilter implements ResponseDeenrichmentFi
         return response;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter#initialize(org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService)
+     */
     @Override
-    public void setDeenrichmentService(ResponseDeenrichmentService deenrichmentService) {
+    public void initialize(HttpResponseDeenrichmentService deenrichmentService) {
         this.deenrichmentService = deenrichmentService;
     }
 

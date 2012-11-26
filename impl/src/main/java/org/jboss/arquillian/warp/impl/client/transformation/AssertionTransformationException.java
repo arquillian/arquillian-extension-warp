@@ -16,6 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.client.transformation;
 
+/**
+ * Exception throws when assertion couldn't be transformed
+ *
+ * @author Lukas Fryc
+ */
 public class AssertionTransformationException extends Exception {
 
     private static final long serialVersionUID = 4893092835238942740L;

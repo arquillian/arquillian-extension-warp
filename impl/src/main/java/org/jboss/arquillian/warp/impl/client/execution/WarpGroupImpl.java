@@ -22,15 +22,18 @@ import java.util.Map.Entry;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.GroupAssertionSpecifier;
 import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
 import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.result.GroupResult;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-public class RequestGroupImpl implements RequestGroup, GroupResult, GroupVerificationSpecifier, GroupAssertionSpecifier {
+/**
+ * Default implemetnation of {@link WarpGroup}.
+ *
+ * @author Lukas Fryc
+ */
+public class WarpGroupImpl implements WarpGroup {
 
     private Object id;
     private RequestFilter<?> filter;
@@ -41,17 +44,25 @@ public class RequestGroupImpl implements RequestGroup, GroupResult, GroupVerific
 
     private LinkedHashMap<RequestPayload, ResponsePayload> payloads = new LinkedHashMap<RequestPayload, ResponsePayload>();
 
-    public RequestGroupImpl(GroupVerificationBuilder groupsExecutor, Object identifier) {
+    public WarpGroupImpl(GroupVerificationBuilder groupsExecutor, Object identifier) {
         this.groupsExecutor = groupsExecutor;
         this.id = identifier;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(org.jboss.arquillian.warp.client.filter.RequestFilter)
+     */
     @Override
     public GroupVerificationSpecifier filter(RequestFilter<?> filter) {
         this.filter = filter;
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(java.lang.Class)
+     */
     @Override
     public GroupVerificationSpecifier filter(Class<? extends RequestFilter<?>> filterClass) {
         this.filter = SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {},
@@ -59,66 +70,116 @@ public class RequestGroupImpl implements RequestGroup, GroupResult, GroupVerific
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier#expectCount(int)
+     */
     @Override
     public GroupVerificationSpecifier expectCount(int numberOfRequests) {
         this.expectCount = numberOfRequests;
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.execution.GroupAssertionSpecifier#verify(org.jboss.arquillian.warp.ServerAssertion[])
+     */
     @Override
     public GroupVerificationBuilder verify(ServerAssertion... assertions) {
         addAssertions(assertions);
         return groupsExecutor;
     }
 
-    void addAssertions(ServerAssertion... assertions) {
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#addAssertions(org.jboss.arquillian.warp.ServerAssertion[])
+     */
+    @Override
+    public void addAssertions(ServerAssertion... assertions) {
         this.assertions = assertions;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#getFilter()
+     */
     @Override
     public RequestFilter<?> getFilter() {
         return filter;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertion()
+     */
     @Override
     public <T extends ServerAssertion> T getAssertion() {
-        return (T) payloads.values().iterator().next().getAssertions().get(0); 
+        return (T) payloads.values().iterator().next().getAssertions().get(0);
     }
- 
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertionForHitNumber(int)
+     */
     @Override
     public <T extends ServerAssertion> T getAssertionForHitNumber(int hitNumber) {
         return (T) getAssertionsForHitNumber(hitNumber).get(0);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertions()
+     */
     @Override
     public List<ServerAssertion> getAssertions() {
         return payloads.values().iterator().next().getAssertions();
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertionsForHitNumber(int)
+     */
     @Override
     public List<ServerAssertion> getAssertionsForHitNumber(int hitNumber) {
         ResponsePayload payload = (ResponsePayload) payloads.values().toArray()[hitNumber];
         return payload.getAssertions();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getHitCount()
+     */
     @Override
     public int getHitCount() {
         return payloads.size();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#getId()
+     */
     public Object getId() {
         return id;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#generateRequestPayload()
+     */
     public RequestPayload generateRequestPayload() {
         if (payloads.size() + 1 > expectCount) {
-            throw new IllegalStateException(String.format("There were more requests executed (%s) then expected (%s)", payloads.size() + 1, expectCount));
+            throw new IllegalStateException(String.format("There were more requests executed (%s) then expected (%s)",
+                    payloads.size() + 1, expectCount));
         }
         RequestPayload requestPayload = new RequestPayload(assertions);
         payloads.put(requestPayload, null);
         return requestPayload;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#pushResponsePayload(org.jboss.arquillian.warp.impl.shared.ResponsePayload)
+     */
     public boolean pushResponsePayload(ResponsePayload payload) {
         for (Entry<RequestPayload, ResponsePayload> entry : payloads.entrySet()) {
             if (payload.getSerialId() == entry.getKey().getSerialId()) {
@@ -131,7 +192,11 @@ public class RequestGroupImpl implements RequestGroup, GroupResult, GroupVerific
         }
         return false;
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#allRequestsPaired()
+     */
     public boolean allRequestsPaired() {
         if (payloads.size() < expectCount) {
             return false;
@@ -143,7 +208,11 @@ public class RequestGroupImpl implements RequestGroup, GroupResult, GroupVerific
         }
         return true;
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#getFirstNonSuccessfulResult()
+     */
     public TestResult getFirstNonSuccessfulResult() {
         for (ResponsePayload payload : payloads.values()) {
             TestResult testResult = payload.getTestResult();

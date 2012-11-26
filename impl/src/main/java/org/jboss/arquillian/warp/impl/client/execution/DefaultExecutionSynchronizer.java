@@ -19,39 +19,60 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 
-public class DefaultAssertionSynchronizer implements AssertionSynchronizer {
-    
+/**
+ * Default implementation of synchronization of Warp request enriching and processing on server.
+ *
+ * @author Lukas Fryc
+ */
+public class DefaultExecutionSynchronizer implements ExecutionSynchronizer {
+
     @Inject
     private Instance<SynchronizationPoint> synchronization;
-    
+
     @Inject
     private Instance<WarpContext> warpContext;
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.spi.client.execution.ExecutionSynchronizer#advertise()
+     */
     @Override
     public void advertise() {
         synchronization().advertise();
         warpContext().tryFinalizeResponse();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.spi.client.execution.ExecutionSynchronizer#finish()
+     */
     @Override
     public void finish() {
         synchronization().close();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.spi.client.execution.ExecutionSynchronizer#waitForResponse()
+     */
     @Override
     public void waitForResponse() {
         synchronization().awaitResponses();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.spi.client.execution.ExecutionSynchronizer#clean()
+     */
     @Override
     public void clean() {
         // nothing to do - context will be freed automatically
     }
-    
+
     private SynchronizationPoint synchronization() {
         return synchronization.get();
     }
-    
+
     private WarpContext warpContext() {
         return warpContext.get();
     }

@@ -37,7 +37,7 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
 
     @Inject
     private Instance<RequestPayload> requestPayload;
-    
+
     @Inject
     private Instance<ResponsePayload> responsePayload;
 
