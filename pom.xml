@@ -85,8 +85,8 @@
         <module>ftest</module>
 
         <!-- extensions -->
-        <module>extension/phaser</module>
-        <module>extension/phaser-ftest</module>
+        <module>extension/jsf</module>
+        <module>extension/jsf-ftest</module>
     </modules>
 
     <build>

@@ -60,12 +60,12 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-phaser</artifactId>
+                <artifactId>arquillian-warp-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-impl</artifactId>
+                <artifactId>arquillian-warp-jsf</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
