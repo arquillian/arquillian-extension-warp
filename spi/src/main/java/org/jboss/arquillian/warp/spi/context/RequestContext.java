@@ -14,24 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.spi;
+package org.jboss.arquillian.warp.spi.context;
 
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.arquillian.core.spi.context.NonIdBoundContext;
 
-public interface WarpLifecycleExtension {
-
-    /**
-     * Adds the library to enrich final {@link WebArchive} deployment.
-     *
-     * Can return null when no enrichment library is provided by extension.
-     */
-    JavaArchive getEnrichmentLibrary();
-
-    /**
-     * Provides final {@link WebArchive} to be enriched (any resource can be manipulated).
-     *
-     * Doesn't have to process any manipulation.
-     */
-    void enrichWebArchive(WebArchive webArchive);
+/**
+ * The context bound with current request.
+ *
+ * @author Lukas Fryc
+ */
+public interface RequestContext extends NonIdBoundContext {
 }

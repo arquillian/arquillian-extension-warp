@@ -26,10 +26,10 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.warp.impl.server.execution.NonWritingResponse;
-import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
 import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
+import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

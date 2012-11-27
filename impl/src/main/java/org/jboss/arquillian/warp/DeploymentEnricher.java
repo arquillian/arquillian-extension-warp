@@ -31,7 +31,7 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
-import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
+import org.jboss.arquillian.warp.spi.WarpDeploymentEnrichmentExtension;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -62,8 +62,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
                 WebArchive webArchive = (WebArchive) applicationArchive;
 
                 // add warp extensions
-                Collection<WarpLifecycleExtension> lifecycleExtensions = serviceLoader.get().all(WarpLifecycleExtension.class);
-                for (WarpLifecycleExtension extension : lifecycleExtensions) {
+                Collection<WarpDeploymentEnrichmentExtension> lifecycleExtensions = serviceLoader.get().all(WarpDeploymentEnrichmentExtension.class);
+                for (WarpDeploymentEnrichmentExtension extension : lifecycleExtensions) {
                     JavaArchive library = extension.getEnrichmentLibrary();
                     if (library != null) {
                         webArchive.addAsLibrary(library);
@@ -90,7 +90,9 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             // SPI
             archive.addPackage("org.jboss.arquillian.warp.spi");
+            archive.addPackage("org.jboss.arquillian.warp.spi.context");
             archive.addPackage("org.jboss.arquillian.warp.spi.event");
+            archive.addPackage("org.jboss.arquillian.warp.spi.exception");
             archive.addPackage("org.jboss.arquillian.warp.spi.servlet.event");
 
             // Implementation

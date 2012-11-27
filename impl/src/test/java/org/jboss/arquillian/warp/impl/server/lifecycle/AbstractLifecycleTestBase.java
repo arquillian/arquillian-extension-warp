@@ -21,8 +21,8 @@ import java.util.List;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.context.Context;
-import org.jboss.arquillian.warp.impl.server.request.RequestContext;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
+import org.jboss.arquillian.warp.spi.context.RequestContext;
 
 /**
  * @author Lukas Fryc

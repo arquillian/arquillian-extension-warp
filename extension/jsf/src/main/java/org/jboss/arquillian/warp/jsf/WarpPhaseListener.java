@@ -23,7 +23,7 @@ import javax.faces.event.PhaseListener;
 
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
-import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
+import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
 @SuppressWarnings("serial")
 public class WarpPhaseListener implements PhaseListener {

@@ -21,6 +21,8 @@ import java.lang.annotation.Annotation;
 import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
 import org.jboss.arquillian.core.spi.context.ObjectStore;
+import org.jboss.arquillian.warp.spi.context.RequestContext;
+import org.jboss.arquillian.warp.spi.context.RequestScoped;
 
 /**
  * The implementation of {@link RequestContext}.

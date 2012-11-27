@@ -18,16 +18,16 @@ package org.jboss.arquillian.warp.jsf;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
+import org.jboss.arquillian.warp.spi.WarpDeploymentEnrichmentExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-public class WarpJSFExtension implements LoadableExtension, WarpLifecycleExtension {
+public class WarpJSFExtension implements LoadableExtension, WarpDeploymentEnrichmentExtension {
 
     @Override
     public void register(ExtensionBuilder builder) {
-        builder.service(WarpLifecycleExtension.class, this.getClass());
+        builder.service(WarpDeploymentEnrichmentExtension.class, this.getClass());
     }
 
     @Override

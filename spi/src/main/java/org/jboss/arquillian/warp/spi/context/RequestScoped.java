@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.request;
+package org.jboss.arquillian.warp.spi.context;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

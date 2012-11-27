@@ -24,8 +24,8 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
-import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
-import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
+import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
+import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
 /**
  * Stores the bindings from auxiliary class instance to {@link LifecycleManagerImpl}.

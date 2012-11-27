@@ -19,6 +19,9 @@ package org.jboss.arquillian.warp.spi;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
+import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
+
 /**
  * Stores the bindings from auxiliary class instance to {@link LifecycleManager}.
  *

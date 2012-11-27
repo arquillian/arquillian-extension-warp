@@ -33,8 +33,8 @@ import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingFinished;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingStarted;
-import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import org.jboss.arquillian.warp.spi.context.RequestScoped;
 
 public class WarpRequestProcessor {
 

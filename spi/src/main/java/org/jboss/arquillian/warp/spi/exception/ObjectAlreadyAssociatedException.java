@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.spi;
+package org.jboss.arquillian.warp.spi.exception;
 
 @SuppressWarnings("serial")
-public class ObjectNotAssociatedException extends Exception {
+public class ObjectAlreadyAssociatedException extends Exception {
 
 }

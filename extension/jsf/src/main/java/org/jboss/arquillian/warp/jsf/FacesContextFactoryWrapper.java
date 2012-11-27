@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
-import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
-import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
 import org.jboss.arquillian.warp.spi.WarpCommons;
+import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
+import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
 public class FacesContextFactoryWrapper extends FacesContextFactory {
 
