@@ -139,7 +139,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             for (ArchivePath archivePath : applicationArchive.getContent().keySet()) {
                 String path = archivePath.get();
                 String classPath = testClass.getName().replace(".", "/");
-                if (path.matches("/WEB-INF/classes/" + classPath + "(\\$.*)?\\.class")) {
+                // remove TestClass and its anonymous classes - do not remove static inner classes
+                if (path.matches("/WEB-INF/classes/" + classPath + "(\\$[0-9]*)?\\.class")) {
                     classPathsToRemove.add(archivePath);
                 }
             }
