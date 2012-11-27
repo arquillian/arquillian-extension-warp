@@ -24,9 +24,9 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
-import org.jboss.arquillian.warp.impl.server.request.AfterRequest;
-import org.jboss.arquillian.warp.impl.server.request.BeforeRequest;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
+import org.jboss.arquillian.warp.spi.event.AfterRequest;
+import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 
 /**
  * Drives {@link LifecycleManagerImpl} and {@link AssertionRegistry} lifecycle.

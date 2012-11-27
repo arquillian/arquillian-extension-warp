@@ -34,9 +34,9 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
-import org.jboss.arquillian.warp.impl.server.request.AfterRequest;
-import org.jboss.arquillian.warp.impl.server.request.BeforeRequest;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
+import org.jboss.arquillian.warp.spi.event.AfterRequest;
+import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 
 /**
  * <p>

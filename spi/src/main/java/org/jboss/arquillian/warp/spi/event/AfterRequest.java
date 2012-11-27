@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.request;
+package org.jboss.arquillian.warp.spi.event;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
+
 
 /**
  * The event fired after the request is processed by {@link Servlet}.
@@ -29,5 +30,4 @@ public class AfterRequest extends RequestEvent {
     public AfterRequest(ServletRequest request) {
         super(request);
     }
-
 }

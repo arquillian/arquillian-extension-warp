@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.request;
+package org.jboss.arquillian.warp.spi.event;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
+import org.jboss.arquillian.core.spi.event.Event;
+
 /**
- * The event fired before the request is processed by {@link Servlet}.
+ * The event fired during Servlet lifecycle associated with {@link ServletRequest}.
  *
  * @author Lukas Fryc
- *
  */
-public class BeforeRequest extends RequestEvent {
+public class RequestEvent implements Event {
 
-    public BeforeRequest(ServletRequest request) {
-        super(request);
+    private ServletRequest request;
+
+    public RequestEvent(ServletRequest request) {
+        this.request = request;
     }
 
+    public ServletRequest getRequest() {
+        return request;
+    }
 }

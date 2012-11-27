@@ -30,8 +30,8 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.server.request.AfterRequest;
-import org.jboss.arquillian.warp.impl.server.request.BeforeRequest;
+import org.jboss.arquillian.warp.spi.event.AfterRequest;
+import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 
 /**
  * The observer which watches all {@link Before} and {@link AfterRequest} events and executes the {@link BeforeClass} and
