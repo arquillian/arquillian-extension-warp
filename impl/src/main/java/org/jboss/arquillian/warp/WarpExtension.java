@@ -22,6 +22,8 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.impl.client.deployment.DeploymentEnricher;
+import org.jboss.arquillian.warp.impl.client.deployment.DeploymentValidator;
 import org.jboss.arquillian.warp.impl.client.enrichment.EnrichmentObserver;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
@@ -68,6 +70,7 @@ public class WarpExtension implements LoadableExtension {
         builder.service(ApplicationArchiveProcessor.class, DeploymentEnricher.class);
         builder.service(AuxiliaryArchiveAppender.class, DeploymentEnricher.class);
         builder.service(ProtocolArchiveProcessor.class, DeploymentEnricher.class);
+        builder.observer(DeploymentValidator.class);
 
         // action executor
         builder.service(WarpRequestSpecifier.class, DefaultWarpRequestSpecifier.class);
