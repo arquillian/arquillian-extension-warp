@@ -35,9 +35,9 @@ import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.arquillian.warp.servlet.event.AfterServletEvent;
-import org.jboss.arquillian.warp.servlet.event.BeforeServletEvent;
 import org.jboss.arquillian.warp.spi.WarpCommons;
+import org.jboss.arquillian.warp.spi.servlet.event.AfterServlet;
+import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
 
 /**
  * The lifecycle of Warp request verification
@@ -61,6 +61,12 @@ public class WarpLifecycle {
     @Inject
     private Event<WarpLifecycleFinished> warpLifecycleFinished;
 
+    @Inject
+    private Event<BeforeServlet> beforeServletEvent;
+
+    @Inject
+    private Event<AfterServlet> afterServletEvent;
+
     /**
      * Executes the lifecycle
      *
@@ -78,11 +84,14 @@ public class WarpLifecycle {
             assertionRegistry.get().registerAssertions(assertions);
 
             warpLifecycleStarted.fire(new WarpLifecycleStarted());
-            lifecycleManager.get().fireLifecycleEvent(new BeforeServletEvent());
+            lifecycleManager.get().fireLifecycleEvent(new BeforeServlet());
+//            beforeServletEvent.fire(new BeforeServletEvent());
+
 
             filterChain.doFilter(request, nonWritingResponse);
 
-            lifecycleManager.get().fireLifecycleEvent(new AfterServletEvent());
+            lifecycleManager.get().fireLifecycleEvent(new AfterServlet());
+//            afterServletEvent.fire(new AfterServletEvent());
 
             responsePayload.setAssertions(assertions);
         } finally {

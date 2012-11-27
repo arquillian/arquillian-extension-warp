@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -45,6 +46,9 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
 
     @Mock
     ServletRequest request;
+
+    @Mock
+    ServletResponse response;
 
     @Inject
     Instance<LifecycleManagerImpl> lifecycleManager;
@@ -70,7 +74,7 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
         assertNull(lifecycleManager.get());
 
         // when
-        fire(new BeforeRequest(request));
+        fire(new BeforeRequest(request, response));
 
         // then
         assertNotNull("lifecycle manager should be initialized on BeforeRequest", lifecycleManager.get());
@@ -80,10 +84,10 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
     public void lifecycle_manager_should_be_finalized_after_request() {
         // having
         // - lifecycle manager instantiated on before request
-        fire(new BeforeRequest(request));
+        fire(new BeforeRequest(request, response));
 
         // when
-        fire(new AfterRequest(request));
+        fire(new AfterRequest(request, response));
 
         // then
         injector.get().inject(this);

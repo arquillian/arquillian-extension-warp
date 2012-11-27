@@ -18,17 +18,30 @@ package org.jboss.arquillian.warp.spi.event;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
 
 /**
+ * <p>
  * The event fired before the request is processed by {@link Servlet}.
+ * </p>
+ *
+ * <p>
+ * Warp service is not initialized at the time of firing this event.
+ * </p>
+ *
+ * <p>
+ * If you want to have access to all Warp services, observe {@link BeforeServlet} event instead.
+ * </p>
  *
  * @author Lukas Fryc
  *
  */
 public class BeforeRequest extends RequestEvent {
 
-    public BeforeRequest(ServletRequest request) {
-        super(request);
+    public BeforeRequest(ServletRequest request, ServletResponse response) {
+        super(request, response);
     }
 
 }

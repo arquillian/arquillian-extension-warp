@@ -91,6 +91,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             // SPI
             archive.addPackage("org.jboss.arquillian.warp.spi");
             archive.addPackage("org.jboss.arquillian.warp.spi.event");
+            archive.addPackage("org.jboss.arquillian.warp.spi.servlet.event");
 
             // Implementation
             archive.addPackage("org.jboss.arquillian.warp.impl.server.assertion");

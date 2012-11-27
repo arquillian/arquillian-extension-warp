@@ -41,8 +41,7 @@ import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.impl.server.request.RequestScoped;
 import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.arquillian.warp.servlet.BeforeServlet;
-import org.jboss.arquillian.warp.servlet.event.BeforeServletEvent;
+import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,7 +93,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
 
         // when
-        fire(new BeforeServletEvent());
+        fire(new BeforeServlet());
 
         // then
         verify(assertion).test();
@@ -112,7 +111,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion1, assertion2));
 
         // when
-        fire(new BeforeServletEvent());
+        fire(new BeforeServlet());
 
         // then
         verify(assertion1).test();
@@ -130,7 +129,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
 
         // when
-        fire(new BeforeServletEvent());
+        fire(new BeforeServlet());
 
         // then
         verify(assertion).test1();
@@ -149,7 +148,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         doThrow(exception).when(assertion).test();
 
         // when
-        fire(new BeforeServletEvent());
+        fire(new BeforeServlet());
 
         // then
         TestResult testResult = responsePayload.getTestResult();
@@ -168,7 +167,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // when
         try {
-            fire(new BeforeServletEvent());
+            fire(new BeforeServlet());
             fail();
         } catch (RuntimeException e) {
         }
@@ -190,7 +189,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // when
         try {
-            fire(new BeforeServletEvent());
+            fire(new BeforeServlet());
         } catch (RuntimeException e) {
         }
 
@@ -210,7 +209,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     static class TestingAssertion extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
-        @BeforeServlet
+        @org.jboss.arquillian.warp.servlet.BeforeServlet
         public void test() {
         }
     }
@@ -218,7 +217,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     static class TestingAssertionForMultipleAssertions extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
-        @BeforeServlet
+        @org.jboss.arquillian.warp.servlet.BeforeServlet
         public void test() {
         }
     }
@@ -226,11 +225,11 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     static class TestingAssertionForMultipleMethods extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
-        @BeforeServlet
+        @org.jboss.arquillian.warp.servlet.BeforeServlet
         public void test1() {
         }
 
-        @BeforeServlet
+        @org.jboss.arquillian.warp.servlet.BeforeServlet
         public void test2() {
         }
     }
@@ -238,7 +237,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     static class TestingAssertionForFailingBeforeTest extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
-        @BeforeServlet
+        @org.jboss.arquillian.warp.servlet.BeforeServlet
         public void test() {
         }
     }
@@ -246,7 +245,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     static class TestingAssertionForFailingAfterTest extends ServerAssertion {
         private static final long serialVersionUID = -1L;
 
-        @BeforeServlet
+        @org.jboss.arquillian.warp.servlet.BeforeServlet
         public void test() {
         }
     }

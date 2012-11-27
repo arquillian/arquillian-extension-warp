@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -44,6 +45,9 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
     @Mock
     ServletRequest request;
 
+    @Mock
+    ServletResponse response;
+
     @Inject
     Instance<LifecycleManagerStoreImpl> store;
 
@@ -60,7 +64,7 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
     @Before
     public void initialize() {
-        fire(new BeforeRequest(request));
+        fire(new BeforeRequest(request, response));
     }
 
     @Test

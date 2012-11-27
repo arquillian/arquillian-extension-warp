@@ -20,8 +20,7 @@ import java.lang.annotation.Annotation;
 
 import javax.faces.event.PhaseId;
 
-import org.jboss.arquillian.core.spi.Validate;
-import org.jboss.arquillian.warp.spi.LifecycleEvent;
+import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 
 /**
  * The lifecycle event which binds with {@link BeforePhase} verification execution.
@@ -29,14 +28,13 @@ import org.jboss.arquillian.warp.spi.LifecycleEvent;
  * @author Lukas Fryc
  *
  */
-public class PhaseLifecycleEvent extends LifecycleEvent {
+public abstract class PhaseLifecycleEvent extends WarpLifecycleEvent {
 
     private Phase phase;
     private When when;
 
-    public PhaseLifecycleEvent(PhaseId phaseId, When when) {
-        Validate.notNull(phaseId, "phaseId must not be null");
-        this.phase = getPhase(phaseId);
+    private PhaseLifecycleEvent(Phase phase, When when) {
+        this.phase = phase;
         this.when = when;
     }
 
@@ -74,25 +72,118 @@ public class PhaseLifecycleEvent extends LifecycleEvent {
         throw new IllegalStateException();
     }
 
-    private Phase getPhase(PhaseId phaseId) {
-        if (phaseId == PhaseId.APPLY_REQUEST_VALUES) {
-            return Phase.APPLY_REQUEST_VALUES;
+    public static PhaseLifecycleEvent getInstance(PhaseId phaseId, When when) {
+        if (when == When.BEFORE) {
+            if (phaseId == PhaseId.APPLY_REQUEST_VALUES) {
+                return new BeforeApplyRequestValues();
+            }
+            if (phaseId == PhaseId.INVOKE_APPLICATION) {
+                return new BeforeInvokeApplication();
+            }
+            if (phaseId == PhaseId.PROCESS_VALIDATIONS) {
+                return new BeforeProcessValidations();
+            }
+            if (phaseId == PhaseId.RENDER_RESPONSE) {
+                return new BeforeRenderResponse();
+            }
+            if (phaseId == PhaseId.RESTORE_VIEW) {
+                return new BeforeRestoreView();
+            }
+            if (phaseId == PhaseId.UPDATE_MODEL_VALUES) {
+                return new BeforeUpdateModelValues();
+            }
+        } else {
+            if (phaseId == PhaseId.APPLY_REQUEST_VALUES) {
+                return new AfterApplyRequestValues();
+            }
+            if (phaseId == PhaseId.INVOKE_APPLICATION) {
+                return new AfterInvokeApplication();
+            }
+            if (phaseId == PhaseId.PROCESS_VALIDATIONS) {
+                return new AfterProcessValidations();
+            }
+            if (phaseId == PhaseId.RENDER_RESPONSE) {
+                return new AfterRenderResponse();
+            }
+            if (phaseId == PhaseId.RESTORE_VIEW) {
+                return new AfterRestoreView();
+            }
+            if (phaseId == PhaseId.UPDATE_MODEL_VALUES) {
+                return new AfterUpdateModelValues();
+            }
         }
-        if (phaseId == PhaseId.INVOKE_APPLICATION) {
-            return Phase.INVOKE_APPLICATION;
+        throw new IllegalStateException("Unsupported phaseId: " + phaseId + " when: " + when);
+    }
+
+    public static class BeforeApplyRequestValues extends PhaseLifecycleEvent {
+        public BeforeApplyRequestValues() {
+            super(Phase.APPLY_REQUEST_VALUES, When.BEFORE);
         }
-        if (phaseId == PhaseId.PROCESS_VALIDATIONS) {
-            return Phase.PROCESS_VALIDATIONS;
+    }
+
+    public static class AfterApplyRequestValues extends PhaseLifecycleEvent {
+        public AfterApplyRequestValues() {
+            super(Phase.APPLY_REQUEST_VALUES, When.AFTER);
         }
-        if (phaseId == PhaseId.RENDER_RESPONSE) {
-            return Phase.RENDER_RESPONSE;
+    }
+
+    public static class BeforeInvokeApplication extends PhaseLifecycleEvent {
+        public BeforeInvokeApplication() {
+            super(Phase.INVOKE_APPLICATION, When.BEFORE);
         }
-        if (phaseId == PhaseId.RESTORE_VIEW) {
-            return Phase.RESTORE_VIEW;
+    }
+
+    public static class AfterInvokeApplication extends PhaseLifecycleEvent {
+        public AfterInvokeApplication() {
+            super(Phase.INVOKE_APPLICATION, When.AFTER);
         }
-        if (phaseId == PhaseId.UPDATE_MODEL_VALUES) {
-            return Phase.UPDATE_MODEL_VALUES;
+    }
+
+    public static class BeforeProcessValidations extends PhaseLifecycleEvent {
+        public BeforeProcessValidations() {
+            super(Phase.PROCESS_VALIDATIONS, When.BEFORE);
         }
-        throw new UnsupportedOperationException("the phaseId '" + phaseId + "' is not supported");
+    }
+
+    public static class AfterProcessValidations extends PhaseLifecycleEvent {
+        public AfterProcessValidations() {
+            super(Phase.PROCESS_VALIDATIONS, When.AFTER);
+        }
+    }
+
+    public static class BeforeRenderResponse extends PhaseLifecycleEvent {
+        public BeforeRenderResponse() {
+            super(Phase.RENDER_RESPONSE, When.BEFORE);
+        }
+    }
+
+    public static class AfterRenderResponse extends PhaseLifecycleEvent {
+        public AfterRenderResponse() {
+            super(Phase.RENDER_RESPONSE, When.AFTER);
+        }
+    }
+
+    public static class BeforeRestoreView extends PhaseLifecycleEvent {
+        public BeforeRestoreView() {
+            super(Phase.RESTORE_VIEW, When.BEFORE);
+        }
+    }
+
+    public static class AfterRestoreView extends PhaseLifecycleEvent {
+        public AfterRestoreView() {
+            super(Phase.RESTORE_VIEW, When.AFTER);
+        }
+    }
+
+    public static class BeforeUpdateModelValues extends PhaseLifecycleEvent {
+        public BeforeUpdateModelValues() {
+            super(Phase.UPDATE_MODEL_VALUES, When.BEFORE);
+        }
+    }
+
+    public static class AfterUpdateModelValues extends PhaseLifecycleEvent {
+        public AfterUpdateModelValues() {
+            super(Phase.UPDATE_MODEL_VALUES, When.AFTER);
+        }
     }
 }

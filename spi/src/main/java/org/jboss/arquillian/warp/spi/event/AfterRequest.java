@@ -18,16 +18,28 @@ package org.jboss.arquillian.warp.spi.event;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
+import org.jboss.arquillian.warp.spi.servlet.event.AfterServlet;
 
 /**
+ * <p>
  * The event fired after the request is processed by {@link Servlet}.
+ * </p>
+ *
+ * <p>
+ * Warp service is not initialized at the time of firing this event.
+ * </p>
+ *
+ * <p>
+ * If you want to have access to all Warp services, observe {@link AfterServlet} event instead.
+ * </p>
  *
  * @author Lukas Fryc
  */
 public class AfterRequest extends RequestEvent {
 
-    public AfterRequest(ServletRequest request) {
-        super(request);
+    public AfterRequest(ServletRequest request, ServletResponse response) {
+        super(request, response);
     }
 }

@@ -85,7 +85,7 @@ public class WarpFilter implements Filter {
             manager.bind(ApplicationScoped.class, Manager.class, manager);
 
             manager.fire(new BeforeSuite());
-            manager.fire(new BeforeRequest(request));
+            manager.fire(new BeforeRequest(request, response));
 
             manager.bind(RequestScoped.class, ServletRequest.class, request);
             manager.bind(RequestScoped.class, ServletResponse.class, response);
@@ -96,7 +96,7 @@ public class WarpFilter implements Filter {
             try {
                 manager.fire(new ProcessHttpRequest());
             } finally {
-                manager.fire(new AfterRequest(request));
+                manager.fire(new AfterRequest(request, response));
                 manager.fire(new AfterSuite());
 
                 manager.shutdown();

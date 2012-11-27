@@ -65,11 +65,10 @@ public class WarpPhaseListener implements PhaseListener {
         if (initialized) {
             try {
                 LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, event.getFacesContext());
-                manager.fireLifecycleEvent(new PhaseLifecycleEvent(event.getPhaseId(), when));
+                manager.fireLifecycleEvent(PhaseLifecycleEvent.getInstance(event.getPhaseId(), when));
             } catch (ObjectNotAssociatedException e) {
                 throw new IllegalStateException(e);
             }
         }
-
     }
 }

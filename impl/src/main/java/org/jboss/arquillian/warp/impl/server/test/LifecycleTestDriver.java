@@ -32,11 +32,11 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
-import org.jboss.arquillian.warp.spi.LifecycleEvent;
+import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 
 /**
- * Observes {@link LifecycleEvent} events and executed verification methods annotated with
- * {@link LifecycleEvent#getAnnotation()} annotation.
+ * Observes {@link WarpLifecycleEvent} events and executed verification methods annotated with
+ * {@link WarpLifecycleEvent#getAnnotation()} annotation.
  *
  * See {@link LifecycleTestClassExecutor} which executes {@link BeforeClass} and {@link AfterClass} events.
  *
@@ -57,7 +57,7 @@ public class LifecycleTestDriver {
     @Inject
     private Event<Test> test;
 
-    public void fireTest(@Observes LifecycleEvent event) {
+    public void fireTest(@Observes WarpLifecycleEvent event) {
 
         for (final Object assertionObject : registry().getAssertions()) {
             final Annotation annotation = event.getAnnotation();

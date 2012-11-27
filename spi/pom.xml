@@ -27,6 +27,12 @@
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-warp-api</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>

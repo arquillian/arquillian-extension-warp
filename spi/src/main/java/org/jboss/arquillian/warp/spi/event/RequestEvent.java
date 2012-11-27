@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.spi.event;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.jboss.arquillian.core.spi.event.Event;
 
@@ -28,12 +29,18 @@ import org.jboss.arquillian.core.spi.event.Event;
 public class RequestEvent implements Event {
 
     private ServletRequest request;
+    private ServletResponse response;
 
-    public RequestEvent(ServletRequest request) {
+    public RequestEvent(ServletRequest request, ServletResponse response) {
         this.request = request;
+        this.response = response;
     }
 
     public ServletRequest getRequest() {
         return request;
+    }
+
+    public ServletResponse getResponse() {
+        return response;
     }
 }

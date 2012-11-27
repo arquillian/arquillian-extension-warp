@@ -25,14 +25,14 @@ import java.lang.annotation.Annotation;
  * @author Lukas Fryc
  *
  */
-public abstract class LifecycleEvent {
+public abstract class WarpLifecycleEvent {
 
     /**
      * Returns the annotation which annotates methods on {@link ServerAssertion} which will be executed during this
-     * {@link LifecycleEvent}.
+     * {@link WarpLifecycleEvent}.
      *
      * @return the annotation which annotates methods on {@link ServerAssertion} which will be executed during this
-     *         {@link LifecycleEvent}.
+     *         {@link WarpLifecycleEvent}.
      */
     public abstract Annotation getAnnotation();
 }

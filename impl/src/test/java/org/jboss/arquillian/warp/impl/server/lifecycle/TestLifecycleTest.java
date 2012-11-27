@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.impl.server.lifecycle;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -27,11 +28,10 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
-import org.jboss.arquillian.warp.servlet.BeforeServlet;
-import org.jboss.arquillian.warp.servlet.event.BeforeServletEvent;
 import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
+import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,6 +45,9 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
 
     @Mock
     ServletRequest request;
+
+    @Mock
+    ServletResponse response;
 
     @Inject
     Instance<AssertionRegistry> registry;
@@ -64,16 +67,16 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
 
     @Test
     public void test() throws ObjectNotAssociatedException, ObjectAlreadyAssociatedException {
-        fire(new BeforeRequest(request));
+        fire(new BeforeRequest(request, response));
         lifecycleManagerStore.get().bind(ServletRequest.class, request);
 
         TestingAssertion assertion = new TestingAssertion();
         registry.get().registerAssertions(assertion);
 
         LifecycleManagerImpl lifecycleManager = LifecycleManagerStoreImpl.get(ServletRequest.class, request);
-        lifecycleManager.fireLifecycleEvent(new BeforeServletEvent());
+        lifecycleManager.fireLifecycleEvent(new BeforeServlet());
 
-        assertEventFired(BeforeServletEvent.class, 1);
+        assertEventFired(BeforeServlet.class, 1);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 1);
         assertEventFired(Before.class, 1);
         assertEventFired(After.class, 1);
@@ -82,7 +85,7 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
     public static class TestingAssertion extends ServerAssertion {
         private static final long serialVersionUID = 1L;
 
-        @BeforeServlet
+        @org.jboss.arquillian.warp.servlet.BeforeServlet
         public void assertion() {
         }
     }

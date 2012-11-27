@@ -14,28 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.servlet.event;
+package org.jboss.arquillian.warp.spi.servlet.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.warp.servlet.AfterServlet;
-import org.jboss.arquillian.warp.spi.LifecycleEvent;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
+import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 
 /**
- * The lifecycle event which binds with {@link AfterServlet} verification execution.
+ * <p>
+ * The lifecycle event which binds with {@link org.jboss.arquillian.warp.servlet.BeforeServlet} verification execution.
+ * </p>
+ *
+ * <p>
+ * If you observe this event, Warp services are fully initialized and you should have access to them using {@link Inject}.
+ * </p>
+ *
+ * <p>
+ * If you want to observe event right after request enters Warp servlet filter, observe {@link BeforeRequest} event instead.
+ * </p>
  *
  * @author Lukas Fryc
  */
-public class AfterServletEvent extends LifecycleEvent {
+public class BeforeServlet extends WarpLifecycleEvent {
 
     @Override
     public Annotation getAnnotation() {
-        return new AfterServlet() {
+        return new org.jboss.arquillian.warp.servlet.BeforeServlet() {
 
             @Override
             public Class<? extends Annotation> annotationType() {
-                return AfterServlet.class;
+                return org.jboss.arquillian.warp.servlet.BeforeServlet.class;
             }
         };
     }
+
 }
