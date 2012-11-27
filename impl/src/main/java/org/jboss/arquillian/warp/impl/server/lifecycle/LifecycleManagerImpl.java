@@ -34,6 +34,9 @@ public class LifecycleManagerImpl implements LifecycleManager {
     @Inject
     private Event<WarpLifecycleEvent> lifecycleEvent;
 
+    @Inject
+    private Event<Object> event;
+
     /**
      * Fires lifecycle event, which can start verification on given assertion.
      *
@@ -41,5 +44,10 @@ public class LifecycleManagerImpl implements LifecycleManager {
      */
     public void fireLifecycleEvent(WarpLifecycleEvent event) {
         lifecycleEvent.fire(event);
+    }
+
+    @Override
+    public void fireEvent(Object event) {
+        this.event.fire(event);
     }
 }

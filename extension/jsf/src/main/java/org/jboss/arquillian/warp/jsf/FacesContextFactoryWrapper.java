@@ -24,6 +24,7 @@ import javax.faces.lifecycle.Lifecycle;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.ObjectNotAssociatedException;
@@ -57,7 +58,12 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
                 try {
                     store.get().bind(FacesContext.class, facesContext);
                     facesContext.getAttributes().put(INITIALIZED, Boolean.TRUE);
+
+                    LifecycleManager lifecycleManager = LifecycleManagerStore.get(FacesContext.class, facesContext);
+                    lifecycleManager.fireEvent(new FacesContextInitialized(facesContext));
                 } catch (ObjectAlreadyAssociatedException e) {
+                    throw new IllegalStateException(e);
+                } catch (ObjectNotAssociatedException e) {
                     throw new IllegalStateException(e);
                 }
             }

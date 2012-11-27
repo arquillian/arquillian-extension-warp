@@ -14,12 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.spi;
+package org.jboss.arquillian.warp.jsf;
 
+import javax.faces.context.FacesContext;
 
-public interface LifecycleManager {
+public class FacesContextInitialized {
 
-    void fireLifecycleEvent(WarpLifecycleEvent event);
+    private FacesContext facesContext;
 
-    void fireEvent(Object event);
+    public FacesContextInitialized(FacesContext facesContext) {
+        this.facesContext = facesContext;
+    }
+
+    public FacesContext getFacesContext() {
+        return facesContext;
+    }
+
 }

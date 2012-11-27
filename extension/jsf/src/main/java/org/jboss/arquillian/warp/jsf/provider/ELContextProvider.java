@@ -14,12 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.spi;
+package org.jboss.arquillian.warp.jsf.provider;
 
+import java.lang.annotation.Annotation;
 
-public interface LifecycleManager {
+import javax.el.ELContext;
+import javax.faces.context.FacesContext;
 
-    void fireLifecycleEvent(WarpLifecycleEvent event);
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
-    void fireEvent(Object event);
+public class ELContextProvider implements ResourceProvider {
+
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type == ELContext.class;
+    }
+
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return FacesContext.getCurrentInstance().getELContext();
+    }
+
 }

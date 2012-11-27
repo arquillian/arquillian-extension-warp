@@ -16,13 +16,14 @@
  */
 package org.jboss.arquillian.warp.jsf;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-public class WarpJsfExtension implements LoadableExtension, WarpLifecycleExtension {
+public class WarpJSFExtension implements LoadableExtension, WarpLifecycleExtension {
 
     @Override
     public void register(ExtensionBuilder builder) {
@@ -32,8 +33,10 @@ public class WarpJsfExtension implements LoadableExtension, WarpLifecycleExtensi
     @Override
     public JavaArchive getEnrichmentLibrary() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-warp-jsf.jar")
-                .addPackage(Phase.class.getPackage())
-                .addAsManifestResource("META-INF/warp-extensions/faces-config.xml", "faces-config.xml");
+                .addPackage("org.jboss.arquillian.warp.jsf")
+                .addPackage("org.jboss.arquillian.warp.jsf.provider")
+                .addAsManifestResource("META-INF/warp-extensions/faces-config.xml", "faces-config.xml")
+                .addAsServiceProvider(RemoteLoadableExtension.class, WarpJSFRemoteExtension.class);
     }
 
     @Override
