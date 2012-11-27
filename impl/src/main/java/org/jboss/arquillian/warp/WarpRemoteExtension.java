@@ -26,14 +26,16 @@ import org.jboss.arquillian.warp.impl.server.execution.HttpRequestProcessor;
 import org.jboss.arquillian.warp.impl.server.execution.WarpLifecycle;
 import org.jboss.arquillian.warp.impl.server.execution.WarpRequestProcessor;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerService;
-import org.jboss.arquillian.warp.impl.server.provider.HttpServletRequestEnricher;
-import org.jboss.arquillian.warp.impl.server.provider.HttpServletResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestClassExecutor;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher;
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
+import org.jboss.arquillian.warp.servlet.provider.HttpServletRequestEnricher;
+import org.jboss.arquillian.warp.servlet.provider.HttpServletResponseEnricher;
+import org.jboss.arquillian.warp.servlet.provider.ServletRequestEnricher;
+import org.jboss.arquillian.warp.servlet.provider.ServletResponseEnricher;
 
 /**
  * <p>The Arquillian Warp extension - server-side.</p>
@@ -48,6 +50,8 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.context(RequestContextImpl.class);
 
+        builder.service(ResourceProvider.class, ServletRequestEnricher.class);
+        builder.service(ResourceProvider.class, ServletResponseEnricher.class);
         builder.service(ResourceProvider.class, HttpServletRequestEnricher.class);
         builder.service(ResourceProvider.class, HttpServletResponseEnricher.class);
 

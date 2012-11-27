@@ -24,7 +24,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.extension.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.client.separation.SeparatedClassLoader;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
@@ -33,6 +32,7 @@ import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
 import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
+import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;

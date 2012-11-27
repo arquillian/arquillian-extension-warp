@@ -14,28 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.servlet;
+package org.jboss.arquillian.warp.servlet.event;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
 /**
- * The lifecycle event which binds with {@link BeforeServlet} verification execution.
+ * The lifecycle event which binds with {@link AfterServlet} verification execution.
  *
  * @author Lukas Fryc
  */
-public class BeforeServletEvent extends LifecycleEvent {
+public class AfterServletEvent extends LifecycleEvent {
 
     @Override
     public Annotation getAnnotation() {
-        return new BeforeServlet() {
+        return new AfterServlet() {
 
             @Override
             public Class<? extends Annotation> annotationType() {
-                return BeforeServlet.class;
+                return AfterServlet.class;
             }
         };
     }
-
 }

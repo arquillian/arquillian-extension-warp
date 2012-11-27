@@ -14,24 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.servlet;
+package org.jboss.arquillian.warp.servlet.provider;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javax.servlet.http.HttpServletRequest;
 
-/**
- * Executed after the request is processed by {@link javax.servlet.Servlet}.
- *
- * @author Lukas Fryc
- *
- */
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.METHOD)
-public @interface AfterServlet {
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
+public class HttpServletRequestEnricher implements ResourceProvider {
+
+    @Inject
+    private Instance<HttpServletRequest> request;
+
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type == HttpServletRequest.class;
+    }
+
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return request.get();
+    }
 }

@@ -27,8 +27,6 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.extension.servlet.AfterServletEvent;
-import org.jboss.arquillian.warp.extension.servlet.BeforeServletEvent;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleFinished;
@@ -37,6 +35,8 @@ import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerImpl;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import org.jboss.arquillian.warp.servlet.event.AfterServletEvent;
+import org.jboss.arquillian.warp.servlet.event.BeforeServletEvent;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**

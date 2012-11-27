@@ -14,33 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.ftest.assertion.inheritance;
+package org.jboss.arquillian.warp.servlet.provider;
 
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.servlet.AfterServlet;
-import org.jboss.arquillian.warp.servlet.BeforeServlet;
+import java.lang.annotation.Annotation;
 
-public abstract class AbstractAssertion extends ServerAssertion {
-    private static final long serialVersionUID = 1L;
+import javax.servlet.ServletRequest;
 
-    private boolean beforeServletRun = false;
-    private boolean afterServletRun = false;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
-    @BeforeServlet
-    public void beforeServlet() {
-        beforeServletRun = true;
+public class ServletRequestEnricher implements ResourceProvider {
+
+    @Inject
+    private Instance<ServletRequest> request;
+
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type == ServletRequest.class;
     }
 
-    @AfterServlet
-    public void afterServlet() {
-        afterServletRun = true;
-    }
-
-    public boolean isBeforeServletRun() {
-        return beforeServletRun;
-    }
-
-    public boolean isAfterServletRun() {
-        return afterServletRun;
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return request.get();
     }
 }

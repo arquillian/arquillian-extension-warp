@@ -14,33 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.ftest.assertion.inheritance;
+package org.jboss.arquillian.warp.servlet.event;
 
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.servlet.AfterServlet;
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.spi.LifecycleEvent;
 
-public abstract class AbstractAssertion extends ServerAssertion {
-    private static final long serialVersionUID = 1L;
+/**
+ * The lifecycle event which binds with {@link BeforeServlet} verification execution.
+ *
+ * @author Lukas Fryc
+ */
+public class BeforeServletEvent extends LifecycleEvent {
 
-    private boolean beforeServletRun = false;
-    private boolean afterServletRun = false;
+    @Override
+    public Annotation getAnnotation() {
+        return new BeforeServlet() {
 
-    @BeforeServlet
-    public void beforeServlet() {
-        beforeServletRun = true;
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return BeforeServlet.class;
+            }
+        };
     }
 
-    @AfterServlet
-    public void afterServlet() {
-        afterServletRun = true;
-    }
-
-    public boolean isBeforeServletRun() {
-        return beforeServletRun;
-    }
-
-    public boolean isAfterServletRun() {
-        return afterServletRun;
-    }
 }

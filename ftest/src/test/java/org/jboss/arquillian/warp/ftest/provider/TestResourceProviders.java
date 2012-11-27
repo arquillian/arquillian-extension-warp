@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.ftest;
+package org.jboss.arquillian.warp.ftest.provider;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.net.URL;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,15 +36,15 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.ftest.FaviconIgnore;
+import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
-import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -52,7 +53,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(Arquillian.class)
 @WarpTest
 @RunAsClient
-public class BasicWarpTest {
+public class TestResourceProviders {
 
     @Drone
     WebDriver browser;
@@ -83,50 +84,35 @@ public class BasicWarpTest {
                 private static final long serialVersionUID = 1L;
 
                 @ArquillianResource
-                HttpServletRequest request;
+                ServletRequest servletRequest;
 
                 @ArquillianResource
-                HttpServletResponse response;
+                ServletResponse servletResponse;
+
+                @ArquillianResource
+                HttpServletRequest httpServletRequest;
+
+                @ArquillianResource
+                HttpServletResponse httpServletResponse;
 
                 @BeforeServlet
                 public void beforeServlet() {
 
-                    System.out.println("Hi server, here is my initial request!");
+                    assertNotNull(servletRequest);
+                    assertEquals(servletRequest, httpServletRequest);
 
-                    assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
-
-                    assertNotNull("request context must be available", request);
-
-                    assertNull("response is not enriched before servlet processing",
-                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                    assertNotNull(servletResponse);
+                    assertEquals(servletResponse, httpServletResponse);
                 }
 
                 @AfterServlet
                 public void afterServlet() {
 
-                    System.out.println("Servlet just processed my initial request!");
+                    assertNotNull(servletRequest);
+                    assertEquals(servletRequest, httpServletRequest);
 
-                    assertNull("response still isn't senriched, that happens little bit later",
-                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
-
-                    assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
-                }
-            }
-        );
-
-        Warp
-            .execute(new ClientAction() {
-                public void action() {
-                    browser.findElement(By.id("sendAjax")).click();
-                }})
-            .filter(FaviconIgnore.class)
-            .verify(new ServerAssertion() {
-
-                private static final long serialVersionUID = 1L;
-
-                @BeforeServlet
-                public void beforeServlet() {
-                    System.out.println("Hi server, here is AJAX request!");
+                    assertNotNull(servletResponse);
+                    assertEquals(servletResponse, httpServletResponse);
                 }
             }
         );

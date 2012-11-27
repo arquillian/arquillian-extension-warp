@@ -29,6 +29,8 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.warp.servlet.AfterServlet;
+import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -84,6 +86,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             // API
             archive.addClass(ServerAssertion.class);
+            archive.addClasses(BeforeServlet.class, AfterServlet.class);
 
             // SPI
             archive.addPackage("org.jboss.arquillian.warp.spi");
@@ -102,7 +105,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             archive.addPackage("org.jboss.arquillian.warp.impl.utils");
 
             // Servlet Extension
-            archive.addPackage("org.jboss.arquillian.warp.extension.servlet");
+            archive.addPackage("org.jboss.arquillian.warp.servlet.event");
+            archive.addPackage("org.jboss.arquillian.warp.servlet.provider");
 
             // register remote extension
             archive.addClass(WarpRemoteExtension.class);

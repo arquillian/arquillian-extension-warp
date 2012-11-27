@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.servlet;
+package org.jboss.arquillian.warp.servlet.provider;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.warp.spi.LifecycleEvent;
+import javax.servlet.ServletResponse;
 
-/**
- * The lifecycle event which binds with {@link AfterServlet} verification execution.
- *
- * @author Lukas Fryc
- */
-public class AfterServletEvent extends LifecycleEvent {
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+
+public class ServletResponseEnricher implements ResourceProvider {
+
+    @Inject
+    private Instance<ServletResponse> response;
 
     @Override
-    public Annotation getAnnotation() {
-        return new AfterServlet() {
+    public boolean canProvide(Class<?> type) {
+        return type == ServletResponse.class;
+    }
 
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return AfterServlet.class;
-            }
-        };
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return response.get();
     }
 }
