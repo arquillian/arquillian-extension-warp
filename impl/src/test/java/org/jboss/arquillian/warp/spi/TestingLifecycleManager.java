@@ -14,8 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.lifecycle;
+package org.jboss.arquillian.warp.spi;
 
-@SuppressWarnings("serial")
-public class StoreHasAssociatedObjectsException extends Exception {
+public class TestingLifecycleManager extends LifecycleManager {
+
+    @Override
+    public void fireEvent(Object event) {
+    }
+
 }

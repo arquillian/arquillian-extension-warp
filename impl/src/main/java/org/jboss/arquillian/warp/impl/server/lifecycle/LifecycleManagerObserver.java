@@ -19,14 +19,14 @@ package org.jboss.arquillian.warp.impl.server.lifecycle;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
+import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsException;
 
 /**
  * Drives {@link LifecycleManagerImpl} and {@link AssertionRegistry} lifecycle.
@@ -34,15 +34,11 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
  * @author Lukas Fryc
  *
  */
-public class LifecycleManagerService {
-
-    @Inject
-    @ApplicationScoped
-    private InstanceProducer<LifecycleManagerStoreImpl> store;
+public class LifecycleManagerObserver {
 
     @Inject
     @RequestScoped
-    private InstanceProducer<LifecycleManagerImpl> manager;
+    private InstanceProducer<LifecycleManager> manager;
 
     @Inject
     @RequestScoped
@@ -50,10 +46,6 @@ public class LifecycleManagerService {
 
     @Inject
     private Instance<Injector> injector;
-
-    public void initializeStore(@Observes ManagerStarted event) {
-        store.set(inject(new LifecycleManagerStoreImpl()));
-    }
 
     private <T> T inject(T object) {
         return injector.get().inject(object);
@@ -66,13 +58,9 @@ public class LifecycleManagerService {
 
     public void finalizeManager(@Observes AfterRequest event) {
         try {
-            getStore().verifyManagerUnbound();
+            manager.get().checkUnbound();
         } catch (StoreHasAssociatedObjectsException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private LifecycleManagerStoreImpl getStore() {
-        return store.get();
     }
 }

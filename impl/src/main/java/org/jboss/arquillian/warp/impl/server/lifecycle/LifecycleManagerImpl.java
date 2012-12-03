@@ -18,34 +18,24 @@ package org.jboss.arquillian.warp.impl.server.lifecycle;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
-import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 
 /**
- * The manager which can fire lifecycle event, which can in turn start verification on assertion registered using
- * {@link AssertionRegistry}.
+ * The manager which can fire event in a context of current {@link Manager}.
  *
  * @author Lukas Fryc
- *
  */
-public class LifecycleManagerImpl implements LifecycleManager {
-
-    @Inject
-    private Event<WarpLifecycleEvent> lifecycleEvent;
+public class LifecycleManagerImpl extends LifecycleManager {
 
     @Inject
     private Event<Object> event;
 
-    /**
-     * Fires lifecycle event, which can start verification on given assertion.
+    /*
+     * (non-Javadoc)
      *
-     * @param event the lifecycle event to fire
+     * @see org.jboss.arquillian.warp.spi.LifecycleManager#fireEvent(java.lang.Object)
      */
-    public void fireLifecycleEvent(WarpLifecycleEvent event) {
-        lifecycleEvent.fire(event);
-    }
-
     @Override
     public void fireEvent(Object event) {
         this.event.fire(event);

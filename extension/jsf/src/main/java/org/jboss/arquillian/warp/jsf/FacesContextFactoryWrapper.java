@@ -16,23 +16,26 @@
  */
 package org.jboss.arquillian.warp.jsf;
 
+import java.util.logging.Logger;
+
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.context.FacesContextWrapper;
 import javax.faces.lifecycle.Lifecycle;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
-import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
 public class FacesContextFactoryWrapper extends FacesContextFactory {
 
-    public static final String INITIALIZED = FacesContextFactoryWrapper.class.getName() + ".INITIALIZED";
+    public static final String WARP_ENABLED = FacesContextFactoryWrapper.class.getName() + ".ENABLED";
+
+    private Logger log = WarpJSFCommons.LOG;
 
     private FacesContextFactory delegate;
 
@@ -48,24 +51,19 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpReq = (HttpServletRequest) request;
 
-            @SuppressWarnings("unchecked")
-            Instance<LifecycleManagerStore> store = (Instance<LifecycleManagerStore>) httpReq
-                    .getAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE);
+            facesContext.getAttributes().put(WARP_ENABLED, Boolean.FALSE);
 
-            facesContext.getAttributes().put(INITIALIZED, Boolean.FALSE);
+            try {
+                LifecycleManager manager = LifecycleManagerStore.get(ServletRequest.class, httpReq);
 
-            if (store != null && store.get() != null) {
-                try {
-                    store.get().bind(FacesContext.class, facesContext);
-                    facesContext.getAttributes().put(INITIALIZED, Boolean.TRUE);
+                manager.bindTo(FacesContext.class, facesContext);
+                facesContext.getAttributes().put(WARP_ENABLED, Boolean.TRUE);
 
-                    LifecycleManager lifecycleManager = LifecycleManagerStore.get(FacesContext.class, facesContext);
-                    lifecycleManager.fireEvent(new FacesContextInitialized(facesContext));
-                } catch (ObjectAlreadyAssociatedException e) {
-                    throw new IllegalStateException(e);
-                } catch (ObjectNotAssociatedException e) {
-                    throw new IllegalStateException(e);
-                }
+                manager.fireEvent(new FacesContextInitialized(facesContext));
+            } catch (ObjectNotAssociatedException e) {
+                log.fine("no association of manager found for this ServletRequest");
+            } catch (ObjectAlreadyAssociatedException e) {
+                throw new IllegalStateException(e);
             }
         }
 
@@ -88,23 +86,13 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
         @Override
         public void release() {
             try {
-                Object request = this.getExternalContext().getRequest();
+                if ((Boolean) this.getAttributes().get(WARP_ENABLED)) {
+                    LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, this);
 
-                if (request instanceof HttpServletRequest) {
-                    HttpServletRequest httpReq = (HttpServletRequest) request;
-
-                    @SuppressWarnings("unchecked")
-                    Instance<LifecycleManagerStore> store = (Instance<LifecycleManagerStore>) httpReq
-                            .getAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE);
-
-                    if (store != null && store.get() != null) {
-                        try {
-                            store.get().unbind(FacesContext.class, this);
-                        } catch (ObjectNotAssociatedException e) {
-                            throw new IllegalStateException(e);
-                        }
-                    }
+                    manager.unbindFrom(FacesContext.class, this);
                 }
+            } catch (ObjectNotAssociatedException e) {
+                throw new IllegalStateException(e);
             } finally {
                 super.release();
             }

@@ -27,6 +27,8 @@ import javax.servlet.ServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
+import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
@@ -43,23 +45,20 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
     @Mock
-    ServletRequest request;
+    private ServletRequest request;
 
     @Mock
-    ServletResponse response;
+    private ServletResponse response;
 
     @Inject
-    Instance<LifecycleManagerStoreImpl> store;
+    private Instance<LifecycleManager> lifecycleManager;
 
-    @Inject
-    Instance<LifecycleManagerImpl> lifecycleManager;
-
-    AnotherClass anotherInstance = new AnotherClass();
+    private  AnotherClass anotherInstance = new AnotherClass();
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         super.addExtensions(extensions);
-        extensions.add(LifecycleManagerService.class);
+        extensions.add(LifecycleManagerObserver.class);
     }
 
     @Before
@@ -69,17 +68,17 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
     @Test
     public void test_bind_manager_to_request() throws ObjectAlreadyAssociatedException {
-        store.get().bind(ServletRequest.class, request);
+        lifecycleManager.get().bindTo(ServletRequest.class, request);
 
         try {
-            LifecycleManagerImpl resolvedLifecycleManager = LifecycleManagerStoreImpl.get(ServletRequest.class, request);
+            LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
             assertNotNull("lifecycle manager should be bound to request", resolvedLifecycleManager);
             assertSame("resolved lifecycle manager should be the one which which is in the context", lifecycleManager.get(),
                     resolvedLifecycleManager);
         } catch (ObjectNotAssociatedException e) {
         } finally {
             try {
-                store.get().unbind(ServletRequest.class, request);
+                lifecycleManager.get().unbindFrom(ServletRequest.class, request);
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
@@ -89,12 +88,12 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
     @Test
     public void test_unbind_manager_from_request() {
         try {
-            store.get().bind(ServletRequest.class, request);
+            lifecycleManager.get().bindTo(ServletRequest.class, request);
         } catch (ObjectAlreadyAssociatedException e) {
             throw new IllegalStateException(e);
         }
         try {
-            store.get().unbind(ServletRequest.class, request);
+            lifecycleManager.get().unbindFrom(ServletRequest.class, request);
 
             LifecycleManagerStoreImpl.get(ServletRequest.class, request);
             fail("lifecycle manager should be unbound from request");
@@ -102,7 +101,7 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
             // expected exception
         } finally {
             try {
-                store.get().unbind(ServletRequest.class, request);
+                lifecycleManager.get().unbindFrom(ServletRequest.class, request);
             } catch (ObjectNotAssociatedException e) {
                 // that is okay, we are cleaning store
             }
@@ -111,18 +110,18 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
     @Test
     public void test_bind_manager_to_request_and_another_class() throws ObjectAlreadyAssociatedException {
-        store.get().bind(ServletRequest.class, request);
-        store.get().bind(AnotherClass.class, anotherInstance);
+        lifecycleManager.get().bindTo(ServletRequest.class, request);
+        lifecycleManager.get().bindTo(AnotherClass.class, anotherInstance);
 
         try {
             // verify lifecycle manager for request
-            LifecycleManagerImpl resolvedLifecycleManager = LifecycleManagerStoreImpl.get(ServletRequest.class, request);
+            LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
             assertNotNull("lifecycle manager should be bound to request", resolvedLifecycleManager);
             assertSame("resolved lifecycle manager should be the one which which is in the context", lifecycleManager.get(),
                     resolvedLifecycleManager);
 
             // verify lifecycle manager for another class
-            resolvedLifecycleManager = LifecycleManagerStoreImpl.get(AnotherClass.class, anotherInstance);
+            resolvedLifecycleManager = LifecycleManagerStore.get(AnotherClass.class, anotherInstance);
             assertNotNull("lifecycle manager should be bound to another instance", resolvedLifecycleManager);
             assertSame("resolved lifecycle manager should be the one which which is in the context", lifecycleManager.get(),
                     resolvedLifecycleManager);
@@ -130,8 +129,8 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
         } catch (ObjectNotAssociatedException e) {
         } finally {
             try {
-                store.get().unbind(ServletRequest.class, request);
-                store.get().unbind(AnotherClass.class, anotherInstance);
+                lifecycleManager.get().unbindFrom(ServletRequest.class, request);
+                lifecycleManager.get().unbindFrom(AnotherClass.class, anotherInstance);
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
@@ -141,14 +140,14 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
     @Test
     public void test_unbind_manager_from_request_and_another_class() throws ObjectNotAssociatedException {
         try {
-            store.get().bind(ServletRequest.class, request);
-            store.get().bind(AnotherClass.class, anotherInstance);
+            lifecycleManager.get().bindTo(ServletRequest.class, request);
+            lifecycleManager.get().bindTo(AnotherClass.class, anotherInstance);
         } catch (ObjectAlreadyAssociatedException e) {
             throw new IllegalStateException(e);
         }
         try {
-            store.get().unbind(ServletRequest.class, request);
-            store.get().unbind(AnotherClass.class, anotherInstance);
+            lifecycleManager.get().unbindFrom(ServletRequest.class, request);
+            lifecycleManager.get().unbindFrom(AnotherClass.class, anotherInstance);
 
             try {
                 LifecycleManagerStoreImpl.get(ServletRequest.class, request);
@@ -165,8 +164,8 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
             }
         } finally {
             try {
-                store.get().unbind(ServletRequest.class, request);
-                store.get().unbind(AnotherClass.class, anotherInstance);
+                lifecycleManager.get().unbindFrom(ServletRequest.class, request);
+                lifecycleManager.get().unbindFrom(AnotherClass.class, anotherInstance);
             } catch (ObjectNotAssociatedException e) {
                 // that is okay, we are cleaning store
             }

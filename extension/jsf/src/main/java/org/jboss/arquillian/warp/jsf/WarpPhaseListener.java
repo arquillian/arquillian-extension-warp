@@ -60,12 +60,12 @@ public class WarpPhaseListener implements PhaseListener {
 
     private void executeEvents(When when, PhaseEvent event) {
         FacesContext facesContext = event.getFacesContext();
-        Boolean initialized = (Boolean) facesContext.getAttributes().get(FacesContextFactoryWrapper.INITIALIZED);
+        Boolean initialized = (Boolean) facesContext.getAttributes().get(FacesContextFactoryWrapper.WARP_ENABLED);
 
         if (initialized) {
             try {
                 LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, event.getFacesContext());
-                manager.fireLifecycleEvent(PhaseLifecycleEvent.getInstance(event.getPhaseId(), when));
+                manager.fireEvent(PhaseLifecycleEvent.getInstance(event.getPhaseId(), when));
             } catch (ObjectNotAssociatedException e) {
                 throw new IllegalStateException(e);
             }

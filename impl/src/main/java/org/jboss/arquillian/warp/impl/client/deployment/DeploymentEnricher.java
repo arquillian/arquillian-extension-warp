@@ -32,8 +32,10 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.WarpDeploymentEnrichmentExtension;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -117,6 +119,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             // register remote extension
             archive.addClass(WarpRemoteExtension.class);
             archive.addAsServiceProvider(RemoteLoadableExtension.class, WarpRemoteExtension.class);
+            archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
 
             return archive;
         } else {

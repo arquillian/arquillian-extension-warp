@@ -31,6 +31,7 @@ import org.jboss.arquillian.core.spi.context.Context;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 import org.junit.Test;
@@ -51,14 +52,14 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
     ServletResponse response;
 
     @Inject
-    Instance<LifecycleManagerImpl> lifecycleManager;
+    Instance<LifecycleManager> lifecycleManager;
 
     @Inject
     Instance<Injector> injector;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(LifecycleManagerService.class);
+        extensions.add(LifecycleManagerObserver.class);
         extensions.add(RequestContextHandler.class);
     }
 

@@ -20,15 +20,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Validate;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
+import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsException;
 
 /**
- * Stores the bindings from auxiliary class instance to {@link LifecycleManagerImpl}.
+ * Stores the bindings from auxiliary class instance to {@link LifecycleManager}.
  *
  * @author Lukas Fryc
  *
@@ -36,52 +36,43 @@ import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
 
     private static ConcurrentHashMap<Class<?>, Binding> STORE = new ConcurrentHashMap<Class<?>, Binding>();
-    private static ConcurrentHashMap<LifecycleManagerImpl, Tracking> TRACK = new ConcurrentHashMap<LifecycleManagerImpl, Tracking>();
+    private static ConcurrentHashMap<LifecycleManager, Tracking> TRACK = new ConcurrentHashMap<LifecycleManager, Tracking>();
 
     @SuppressWarnings("serial")
-    private static class Binding extends HashMap<Object, LifecycleManagerImpl> {
+    private static class Binding extends HashMap<Object, LifecycleManager> {
     }
 
     @SuppressWarnings("serial")
     private static class Tracking extends HashSet<Class<?>> {
     }
 
-    @Inject
-    Instance<LifecycleManagerImpl> manager;
-
-    /**
-     * Retrieves instance of {@link LifecycleManagerImpl} for given instance of given class.
+    /*
+     * (non-Javadoc)
      *
-     * @param clazz the class used as denominator during retrieval
-     * @param boundObject the object used as key for retriving {@link LifecycleManagerImpl}
-     * @return the bound instance of {@link LifecycleManagerImpl}
-     * @throws ObjectNotAssociatedException when instance of no such class and class' instance was associated with any
-     *         {@link LifecycleManagerImpl}
+     * @see org.jboss.arquillian.warp.spi.LifecycleManagerStore#obtain(java.lang.Class, java.lang.Object)
      */
-    public static <T> LifecycleManagerImpl get(Class<T> clazz, T boundObject) throws ObjectNotAssociatedException {
+    @Override
+    protected <T> LifecycleManager obtain(Class<T> clazz, T boundObject) throws ObjectNotAssociatedException {
         Validate.notNull(boundObject, "boundObject must not be null");
         Binding binding = STORE.get(clazz);
         if (binding == null) {
             throw new ObjectNotAssociatedException();
         }
-        LifecycleManagerImpl manager = binding.get(boundObject);
+        LifecycleManager manager = binding.get(boundObject);
         if (manager == null) {
             throw new ObjectNotAssociatedException();
         }
         return manager;
     }
 
-    /**
-     * Binds the current {@link LifecycleManagerImpl} with given object of given class.
+    /*
+     * (non-Javadoc)
      *
-     * @param clazz the class to be bound
-     * @param object the object to be bound
-     * @throws ObjectAlreadyAssociatedException when there is already object bound with {@link LifecycleManagerImpl} for given
-     *         class.
+     * @see org.jboss.arquillian.warp.spi.LifecycleManagerStore#bind(org.jboss.arquillian.warp.spi.LifecycleManager,
+     * java.lang.Class, java.lang.Object)
      */
-    public <T> void bind(Class<T> clazz, T object) throws ObjectAlreadyAssociatedException {
-        final LifecycleManagerImpl manager = getManager();
-
+    @Override
+    protected <T> void bind(LifecycleManager manager, Class<T> clazz, T object) throws ObjectAlreadyAssociatedException {
         // update binding
         STORE.putIfAbsent(clazz, new Binding());
         Binding binding = STORE.get(clazz);
@@ -97,16 +88,14 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
         tracking.add(clazz);
     }
 
-    /**
-     * Unbinds the {@link LifecycleManagerImpl} for given class and given object.
+    /*
+     * (non-Javadoc)
      *
-     * @param clazz the bound class
-     * @param object the bound class
-     * @throws ObjectNotAssociatedException when no object bound with {@link LifecycleManagerImpl}.
+     * @see org.jboss.arquillian.warp.spi.LifecycleManagerStore#unbind(org.jboss.arquillian.warp.spi.LifecycleManager,
+     * java.lang.Class, java.lang.Object)
      */
-    public <T> void unbind(Class<T> clazz, T object) throws ObjectNotAssociatedException {
-        final LifecycleManagerImpl manager = getManager();
-
+    @Override
+    protected <T> void unbind(LifecycleManager manager, Class<T> clazz, T object) throws ObjectNotAssociatedException {
         // cancel binding
 
         Binding binding = STORE.get(clazz);
@@ -124,14 +113,13 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
         tracking.remove(clazz);
     }
 
-    /**
-     * Verifies that there is no object bound with current {@link LifecycleManagerImpl}.
+    /*
+     * (non-Javadoc)
      *
-     * @throws StoreHasAssociatedObjectsException when there is object bound with current {@link LifecycleManagerImpl}.
+     * @see org.jboss.arquillian.warp.spi.LifecycleManagerStore#checkUnbound(org.jboss.arquillian.warp.spi.LifecycleManager)
      */
-    public <T> void verifyManagerUnbound() throws StoreHasAssociatedObjectsException {
-        final LifecycleManagerImpl manager = getManager();
-
+    @Override
+    protected <T> void checkUnbound(LifecycleManager manager) throws StoreHasAssociatedObjectsException {
         Tracking tracking = TRACK.get(manager);
         if (tracking != null) {
             if (!tracking.isEmpty()) {
@@ -139,9 +127,5 @@ public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
             }
             TRACK.remove(manager);
         }
-    }
-
-    private LifecycleManagerImpl getManager() {
-        return manager.get();
     }
 }

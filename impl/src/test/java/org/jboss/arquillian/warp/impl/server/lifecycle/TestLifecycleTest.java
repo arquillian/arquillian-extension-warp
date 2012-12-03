@@ -28,6 +28,8 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
+import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
@@ -44,37 +46,34 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class TestLifecycleTest extends AbstractLifecycleTestBase {
 
     @Mock
-    ServletRequest request;
+    private ServletRequest request;
 
     @Mock
-    ServletResponse response;
+    private ServletResponse response;
 
     @Inject
-    Instance<AssertionRegistry> registry;
+    private Instance<AssertionRegistry> registry;
 
     @Inject
-    Instance<LifecycleManagerImpl> lifecycleManager;
-
-    @Inject
-    Instance<LifecycleManagerStoreImpl> lifecycleManagerStore;
+    private Instance<LifecycleManager> lifecycleManager;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         super.addExtensions(extensions);
-        extensions.add(LifecycleManagerService.class);
+        extensions.add(LifecycleManagerObserver.class);
         extensions.add(LifecycleTestDriver.class);
     }
 
     @Test
     public void test() throws ObjectNotAssociatedException, ObjectAlreadyAssociatedException {
         fire(new BeforeRequest(request, response));
-        lifecycleManagerStore.get().bind(ServletRequest.class, request);
+        lifecycleManager.get().bindTo(ServletRequest.class, request);
 
         TestingAssertion assertion = new TestingAssertion();
         registry.get().registerAssertions(assertion);
 
-        LifecycleManagerImpl lifecycleManager = LifecycleManagerStoreImpl.get(ServletRequest.class, request);
-        lifecycleManager.fireLifecycleEvent(new BeforeServlet());
+        LifecycleManager lifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
+        lifecycleManager.fireEvent(new BeforeServlet());
 
         assertEventFired(BeforeServlet.class, 1);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 1);

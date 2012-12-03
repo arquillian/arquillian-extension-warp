@@ -14,20 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.spi;
+package org.jboss.arquillian.warp.spi.exception;
 
-/**
- * Commons references used for marking events objects Warp execution.
- *
- * @author Lukas Fryc
- */
-public class WarpCommons {
-
-    public static final String NAMESPACE = "org.jboss.arquillian.warp";
-
-    private static final String ENRICHMENT = "X-Arq-Enrichment";
-    public static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
-    public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
-
-    public static final String ENRICHMENT_SEQUENCE_NUMBER = "X-Arq-Enrichment-Id";
+@SuppressWarnings("serial")
+public class StoreHasAssociatedObjectsException extends Exception {
 }

@@ -31,11 +31,9 @@ import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
 import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleFinished;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleStarted;
-import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerImpl;
-import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.arquillian.warp.spi.WarpCommons;
+import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.servlet.event.AfterServlet;
 import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
 
@@ -47,10 +45,7 @@ import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
 public class WarpLifecycle {
 
     @Inject
-    private Instance<LifecycleManagerImpl> lifecycleManager;
-
-    @Inject
-    private Instance<LifecycleManagerStoreImpl> lifecycleManagerStore;
+    private Instance<LifecycleManager> lifecycleManager;
 
     @Inject
     private Instance<AssertionRegistry> assertionRegistry;
@@ -60,12 +55,6 @@ public class WarpLifecycle {
 
     @Inject
     private Event<WarpLifecycleFinished> warpLifecycleFinished;
-
-    @Inject
-    private Event<BeforeServlet> beforeServletEvent;
-
-    @Inject
-    private Event<AfterServlet> afterServletEvent;
 
     /**
      * Executes the lifecycle
@@ -78,20 +67,15 @@ public class WarpLifecycle {
         List<ServerAssertion> assertions = requestPayload.getAssertions();
 
         try {
-            request.setAttribute(WarpCommons.LIFECYCLE_MANAGER_STORE_REQUEST_ATTRIBUTE, lifecycleManagerStore);
-
-            lifecycleManagerStore.get().bind(ServletRequest.class, request);
+            lifecycleManager.get().bindTo(ServletRequest.class, request);
             assertionRegistry.get().registerAssertions(assertions);
 
             warpLifecycleStarted.fire(new WarpLifecycleStarted());
-            lifecycleManager.get().fireLifecycleEvent(new BeforeServlet());
-//            beforeServletEvent.fire(new BeforeServletEvent());
-
+            lifecycleManager.get().fireEvent(new BeforeServlet());
 
             filterChain.doFilter(request, nonWritingResponse);
 
-            lifecycleManager.get().fireLifecycleEvent(new AfterServlet());
-//            afterServletEvent.fire(new AfterServletEvent());
+            lifecycleManager.get().fireEvent(new AfterServlet());
 
             responsePayload.setAssertions(assertions);
         } finally {
@@ -99,7 +83,7 @@ public class WarpLifecycle {
 
             assertionRegistry.get().unregisterAssertions(assertions);
 
-            lifecycleManagerStore.get().unbind(ServletRequest.class, request);
+            lifecycleManager.get().unbindFrom(ServletRequest.class, request);
         }
     }
 }

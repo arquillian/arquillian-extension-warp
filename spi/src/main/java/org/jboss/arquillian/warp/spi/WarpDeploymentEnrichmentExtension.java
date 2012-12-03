@@ -19,6 +19,12 @@ package org.jboss.arquillian.warp.spi;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
+/**
+ * Service for adding {@link JavaArchive}s to final {@link WebArchive} and modifying final {@link WebArchive} in order to
+ * provide extended Warp functionality.
+ *
+ * @author Lukas Fryc
+ */
 public interface WarpDeploymentEnrichmentExtension {
 
     /**
