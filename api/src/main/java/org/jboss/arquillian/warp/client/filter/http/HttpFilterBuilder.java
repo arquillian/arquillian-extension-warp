@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.client.filter.http;
 
 import org.jboss.arquillian.warp.client.filter.FilterBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.matcher.HttpHeaderMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.MethodMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
 
@@ -39,4 +40,11 @@ public interface HttpFilterBuilder extends FilterBuilder<HttpFilterBuilder, Http
      * @return the method matcher builder
      */
     MethodMatcherBuilder<HttpFilterBuilder> method();
+
+    /**
+     * Creates new http header matcher builder.
+     *
+     * @return the method matcher builder
+     */
+    HttpHeaderMatcherBuilder<HttpFilterBuilder> header();
 }
