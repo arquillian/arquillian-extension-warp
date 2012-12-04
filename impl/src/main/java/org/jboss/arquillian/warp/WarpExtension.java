@@ -22,6 +22,8 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.client.execution.WarpRuntime;
+import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentEnricher;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentValidator;
 import org.jboss.arquillian.warp.impl.client.enrichment.EnrichmentObserver;
@@ -36,6 +38,7 @@ import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichme
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRuntime;
 import org.jboss.arquillian.warp.impl.client.execution.ExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.WarpContext;
 import org.jboss.arquillian.warp.impl.client.execution.WarpContextImpl;
@@ -43,6 +46,7 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpExecutionInitializer;
 import org.jboss.arquillian.warp.impl.client.execution.WarpExecutionObserver;
 import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
+import org.jboss.arquillian.warp.impl.client.filter.http.DefaultHttpFilterBuilder;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultURLMapping;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyObserver;
@@ -90,5 +94,7 @@ public class WarpExtension implements LoadableExtension {
         builder.service(HttpRequestEnrichmentService.class, DefaultHttpRequestEnrichmentService.class);
         builder.service(HttpResponseDeenrichmentService.class, DefaultResponseDeenrichmentService.class);
         builder.service(WarpContext.class, WarpContextImpl.class);
+        builder.service(HttpFilterBuilder.class, DefaultHttpFilterBuilder.class);
+        builder.service(WarpRuntime.class, DefaultWarpRuntime.class);
     }
 }

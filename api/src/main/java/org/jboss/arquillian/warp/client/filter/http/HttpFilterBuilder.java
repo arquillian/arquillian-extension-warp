@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
+package org.jboss.arquillian.warp.client.filter.http;
 
-import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.filter.FilterBuilder;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.matcher.MethodMatcherBuilder;
+import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
 
 /**
- * Utility class for invoking client action followed by server request, enriched with assertion.
- *
- * @author Lukas Fryc
+ * Builder responsible for creating {@link RequestFilter} class.
  */
-public final class Warp {
+public interface HttpFilterBuilder extends FilterBuilder<HttpFilterBuilder, HttpRequestFilter> {
 
     /**
-     * Takes client action which should be executed in order to cause server request.
+     * Creates new uri matcher builder.
      *
-     * @param action the client action to execute
-     * @return {@link WarpClientActionBuilder} instance
+     * @return uri matcher builder
      */
-    public static WarpVerificationBuilder execute(ClientAction action) {
+    UriMatcherBuilder<HttpFilterBuilder> uri();
 
-        return WarpRuntime.getInstance().getWarpClientActionBuilder().execute(action);
-    }
+    /**
+     * Creates new method matcher builder.
+     *
+     * @return the method matcher builder
+     */
+    MethodMatcherBuilder<HttpFilterBuilder> method();
 }
