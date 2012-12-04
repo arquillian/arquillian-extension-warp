@@ -184,6 +184,17 @@ public class TestExecutionAPI {
     }
 
     /**
+     * Single client action and server assertion applied for request not matching
+     * given URI
+     */
+    public void testFilterBuilderUriNot() {
+        Warp
+                .execute(clientAction)
+                .filter(request().uri().not().endsWith(".jsf").build())
+                .verify(serverAssertion);
+    }
+
+    /**
      * Single client action and server assertion applied for request matching
      * given HTTP method
      */
@@ -195,6 +206,17 @@ public class TestExecutionAPI {
     }
 
     /**
+     * Single client action and server assertion applied for request not matching
+     * given HTTP method
+     */
+    public void testFilterBuilderMethodNot() {
+        Warp
+                .execute(clientAction)
+                .filter(request().method().not().equal(HttpMethod.POST).build())
+                .verify(serverAssertion);
+    }
+
+    /**
      * Single client action and server assertion applied for request matching
      * given HTTP header
      */
@@ -202,6 +224,17 @@ public class TestExecutionAPI {
         Warp
                 .execute(clientAction)
                 .filter(request().header().containsValue("Accept", "application/json").build())
+                .verify(serverAssertion);
+    }
+
+    /**
+     * Single client action and server assertion applied for request not matching
+     * given HTTP header
+     */
+    public void testFilterBuilderHeaderNot() {
+        Warp
+                .execute(clientAction)
+                .filter(request().header().not().containsValue("Accept", "application/json").build())
                 .verify(serverAssertion);
     }
 

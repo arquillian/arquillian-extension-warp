@@ -16,8 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.matcher;
 
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
-import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.impl.client.filter.http.HttpFilterChainBuilder;
 
 /**
@@ -28,14 +29,14 @@ public abstract class AbstractMatcherFilterBuilder {
     /**
      * Instance of {@link HttpFilterChainBuilder}.
      */
-    private HttpFilterChainBuilder filterChainBuilder;
+    private HttpFilterChainBuilder<HttpFilterBuilder> filterChainBuilder;
 
     /**
      * Creates new instance of {@link AbstractMatcherFilterBuilder} with given filter chain.
      *
      * @param filterChainBuilder the instance of {@link HttpFilterChainBuilder}
      */
-    protected AbstractMatcherFilterBuilder(HttpFilterChainBuilder filterChainBuilder) {
+    protected AbstractMatcherFilterBuilder(HttpFilterChainBuilder<HttpFilterBuilder> filterChainBuilder) {
 
         this.filterChainBuilder = filterChainBuilder;
     }
@@ -45,8 +46,18 @@ public abstract class AbstractMatcherFilterBuilder {
      *
      * @param filter the filter instance
      */
-    protected HttpFilterBuilder addFilter(HttpRequestFilter filter) {
+    protected HttpFilterBuilder addFilter(RequestFilter<HttpRequest> filter) {
 
         return filterChainBuilder.addFilter(filter);
+    }
+
+    /**
+     * Retrieves the filter chain builder.
+     *
+     * @return the filter chain builder
+     */
+    protected HttpFilterChainBuilder<HttpFilterBuilder> getFilterChainBuilder() {
+
+        return filterChainBuilder;
     }
 }

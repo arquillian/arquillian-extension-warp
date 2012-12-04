@@ -21,7 +21,7 @@ package org.jboss.arquillian.warp.client.filter.matcher;
  *
  * @param <T> the parent builder type for which the matcher is being build
  */
-public interface UriMatcherBuilder <T> {
+public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T>> {
 
     /**
      * Matches request that URI is equal to the given value.

@@ -16,11 +16,12 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.matcher;
 
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
-import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.client.filter.matcher.HttpHeaderMatcherBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.http.HttpFilterChainBuilder;
+import org.jboss.arquillian.warp.impl.client.filter.http.NotHttpFilterChainBuilder;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
      *
      * @param filterChainBuilder the instance of {@link HttpFilterChainBuilder}
      */
-    public DefaultHttpHeaderMatcherBuilder(HttpFilterChainBuilder filterChainBuilder) {
+    public DefaultHttpHeaderMatcherBuilder(HttpFilterChainBuilder<HttpFilterBuilder> filterChainBuilder) {
         super(filterChainBuilder);
     }
 
@@ -44,7 +45,7 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
     @Override
     public HttpFilterBuilder equal(final String name, final String value) {
 
-        return addFilter(new HttpRequestFilter() {
+        return addFilter(new RequestFilter<HttpRequest>() {
 
             @Override
             public boolean matches(HttpRequest request) {
@@ -62,7 +63,7 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
     @Override
     public HttpFilterBuilder containsHeader(final String name) {
 
-        return addFilter(new HttpRequestFilter() {
+        return addFilter(new RequestFilter<HttpRequest>() {
 
             @Override
             public boolean matches(HttpRequest request) {
@@ -78,7 +79,7 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
     @Override
     public HttpFilterBuilder containsValue(final String name, final String value) {
 
-        return addFilter(new HttpRequestFilter() {
+        return addFilter(new RequestFilter<HttpRequest>() {
 
             @Override
             public boolean matches(HttpRequest request) {
@@ -96,5 +97,14 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
                 return false;
             }
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpHeaderMatcherBuilder not() {
+
+        return new DefaultHttpHeaderMatcherBuilder(new NotHttpFilterChainBuilder(getFilterChainBuilder()));
     }
 }

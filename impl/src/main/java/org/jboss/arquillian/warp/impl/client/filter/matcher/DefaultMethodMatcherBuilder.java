@@ -16,12 +16,14 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.matcher;
 
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.client.filter.matcher.MethodMatcherBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.http.HttpFilterChainBuilder;
+import org.jboss.arquillian.warp.impl.client.filter.http.NotHttpFilterChainBuilder;
 
 /**
  * A default implementation of {@link MethodMatcherBuilder}.
@@ -33,7 +35,7 @@ public class DefaultMethodMatcherBuilder extends AbstractMatcherFilterBuilder im
      *
      * @param filterChainBuilder the filer builder
      */
-    public DefaultMethodMatcherBuilder(HttpFilterChainBuilder filterChainBuilder) {
+    public DefaultMethodMatcherBuilder(HttpFilterChainBuilder<HttpFilterBuilder> filterChainBuilder) {
 
         super(filterChainBuilder);
     }
@@ -54,6 +56,15 @@ public class DefaultMethodMatcherBuilder extends AbstractMatcherFilterBuilder im
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MethodMatcherBuilder not() {
+
+        return new DefaultMethodMatcherBuilder(new NotHttpFilterChainBuilder(getFilterChainBuilder()));
+    }
+
+    /**
      * Adds the filter to the builder.
      *
      * @param matcher the http method matcher
@@ -66,7 +77,7 @@ public class DefaultMethodMatcherBuilder extends AbstractMatcherFilterBuilder im
     /**
      * An implementation of {@link HttpRequestFilter} that filters the http method.
      */
-    private static final class MethodMatcherRequestFilter implements HttpRequestFilter {
+    private static final class MethodMatcherRequestFilter implements RequestFilter<HttpRequest> {
 
         /**
          * The {@link Matcher} instance.
