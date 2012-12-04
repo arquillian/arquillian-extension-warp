@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.ftest;
 
+import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -35,6 +36,7 @@ import org.jboss.arquillian.warp.ClientAction;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -76,8 +78,9 @@ public class BasicWarpTest {
             .execute(new ClientAction() {
                 public void action() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
-            .filter(FaviconIgnore.class)
+                }
+            })
+            .filter(request().uri().not().contains("favicon.ico").build())
             .verify(new ServerAssertion() {
 
                 private static final long serialVersionUID = 1L;
@@ -112,13 +115,14 @@ public class BasicWarpTest {
                     assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
                 }
             }
-        );
+            );
 
         Warp
             .execute(new ClientAction() {
                 public void action() {
                     browser.findElement(By.id("sendAjax")).click();
-                }})
+                }
+            })
             .filter(FaviconIgnore.class)
             .verify(new ServerAssertion() {
 
@@ -129,6 +133,6 @@ public class BasicWarpTest {
                     System.out.println("Hi server, here is AJAX request!");
                 }
             }
-        );
+            );
     }
 }

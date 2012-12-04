@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.http;
 
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
@@ -29,12 +30,12 @@ import org.jboss.arquillian.warp.impl.client.filter.matcher.DefaultUriMatcherBui
 /**
  * The default implementation of the {@link HttpFilterBuilder} class.
  */
-public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
+public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilterBuilder>, HttpFilterBuilder {
 
     /**
      * The instance to the {@link HttpRequestFilter}.
      */
-    private HttpRequestFilter requestFilter;
+    private RequestFilter<HttpRequest> requestFilter;
 
     /**
      * Creates new instance of {@link DefaultHttpFilterBuilder} class.
@@ -49,7 +50,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
      *
      * @param requestFilter the {@link HttpRequestFilter} instance
      */
-    private DefaultHttpFilterBuilder(HttpRequestFilter requestFilter) {
+    private DefaultHttpFilterBuilder(RequestFilter<HttpRequest> requestFilter) {
 
         this.requestFilter = requestFilter;
     }
@@ -94,7 +95,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
      * {@inheritDoc}
      */
     @Override
-    public HttpRequestFilter build() {
+    public RequestFilter<HttpRequest> build() {
 
         return requestFilter;
     }
@@ -103,7 +104,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
      * {@inheritDoc}
      */
     @Override
-    public HttpFilterBuilder addFilter(HttpRequestFilter filter) {
+    public HttpFilterBuilder addFilter(RequestFilter<HttpRequest> filter) {
 
         requestFilter = new ChainHttpRequestFilter(filter, requestFilter);
 
@@ -115,17 +116,17 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
      * {@link #matches(org.jboss.arquillian.warp.client.filter.http.HttpRequest)} is being computed as logical AND of
      * all filter results.
      */
-    private static final class ChainHttpRequestFilter implements HttpRequestFilter {
+    private static final class ChainHttpRequestFilter implements RequestFilter<HttpRequest> {
 
         /**
          * Instance of {@link HttpRequestFilter}.
          */
-        private HttpRequestFilter filter;
+        private RequestFilter<HttpRequest> filter;
 
         /**
          * Reference to the previous filter.
          */
-        private HttpRequestFilter previous;
+        private RequestFilter<HttpRequest> previous;
 
         /**
          * Creates new instance of {@link ChainHttpRequestFilter} class with given filter and link to the previous
@@ -134,7 +135,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
          * @param filter   the filter
          * @param previous the reference to the previous filter in the chain
          */
-        private ChainHttpRequestFilter(HttpRequestFilter filter, HttpRequestFilter previous) {
+        private ChainHttpRequestFilter(RequestFilter<HttpRequest> filter, RequestFilter<HttpRequest> previous) {
 
             this.filter = filter;
             this.previous = previous;
@@ -153,7 +154,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
     /**
      * A plan instance of {@link HttpRequestFilter} that always returns true.
      */
-    private static final class TrueRequestFilter implements HttpRequestFilter {
+    private static final class TrueRequestFilter implements RequestFilter<HttpRequest> {
 
         /**
          * {@inheritDoc}

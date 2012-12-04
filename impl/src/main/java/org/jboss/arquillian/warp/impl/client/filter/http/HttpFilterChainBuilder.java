@@ -16,18 +16,19 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.http;
 
-import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 
 /**
  * Extends the {@link HttpRequestFilter} by allowing to add filter chains.
  */
-public interface HttpFilterChainBuilder extends HttpFilterBuilder {
+public interface HttpFilterChainBuilder<T> {
 
     /**
      * Adds the new filter.
      *
      * @param filter the filter
      */
-    HttpFilterBuilder addFilter(HttpRequestFilter filter);
+    T addFilter(RequestFilter<HttpRequest> filter);
 }

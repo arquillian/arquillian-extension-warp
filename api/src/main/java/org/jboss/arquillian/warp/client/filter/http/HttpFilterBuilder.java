@@ -25,7 +25,7 @@ import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
 /**
  * Builder responsible for creating {@link RequestFilter} class.
  */
-public interface HttpFilterBuilder extends FilterBuilder<HttpFilterBuilder, HttpRequestFilter> {
+public interface HttpFilterBuilder extends FilterBuilder<HttpFilterBuilder, RequestFilter> {
 
     /**
      * Creates new uri matcher builder.

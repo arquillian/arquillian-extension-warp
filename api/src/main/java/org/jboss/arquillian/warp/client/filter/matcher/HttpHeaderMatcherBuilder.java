@@ -21,12 +21,12 @@ package org.jboss.arquillian.warp.client.filter.matcher;
  *
  * @param <T> the parent builder type for which the matcher is being build
  */
-public interface HttpHeaderMatcherBuilder <T> {
+public interface HttpHeaderMatcherBuilder<T> extends MatcherBuilder<HttpHeaderMatcherBuilder<T>> {
 
     /**
      * Matches request that HTTP header is equal to the given value.
      *
-     * @param name the header name
+     * @param name  the header name
      * @param value the header value
      *
      * @return builder type for which the matcher is being build
@@ -45,7 +45,7 @@ public interface HttpHeaderMatcherBuilder <T> {
     /**
      * Matches request that HTTP header contains the given value.
      *
-     * @param name the header name
+     * @param name  the header name
      * @param value the header value
      *
      * @return builder type for which the matcher is being build

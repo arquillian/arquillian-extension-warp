@@ -16,11 +16,13 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.matcher;
 
+import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.http.HttpFilterChainBuilder;
+import org.jboss.arquillian.warp.impl.client.filter.http.NotHttpFilterChainBuilder;
 
 /**
  * A default implementation of {@link UriMatcherBuilder}.
@@ -32,7 +34,7 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
      *
      * @param filterChainBuilder the filter builder
      */
-    public DefaultUriMatcherBuilder(HttpFilterChainBuilder filterChainBuilder) {
+    public DefaultUriMatcherBuilder(HttpFilterChainBuilder<HttpFilterBuilder> filterChainBuilder) {
 
         super(filterChainBuilder);
     }
@@ -138,9 +140,18 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UriMatcherBuilder not() {
+
+        return new DefaultUriMatcherBuilder(new NotHttpFilterChainBuilder(getFilterChainBuilder()));
+    }
+
+    /**
      * An implementation of {@link HttpRequestFilter} that filters the request uri.
      */
-    private static final class UriMatcherRequestFilter implements HttpRequestFilter {
+    private static final class UriMatcherRequestFilter implements RequestFilter<HttpRequest> {
 
         /**
          * The {@link Matcher} instance.

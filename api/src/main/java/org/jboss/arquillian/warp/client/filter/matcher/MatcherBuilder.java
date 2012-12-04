@@ -16,21 +16,15 @@
  */
 package org.jboss.arquillian.warp.client.filter.matcher;
 
-import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
-
 /**
- * A matcher builder responsible for handling {@link HttpMethod} filtering.
- *
- * @param <T> the parent builder type for which the matcher is being build
+ * A base interface for all matcher builders.
  */
-public interface MethodMatcherBuilder<T> extends MatcherBuilder<MethodMatcherBuilder<T>> {
+public interface MatcherBuilder<T extends MatcherBuilder> {
 
     /**
-     * Matches request that http method is equal to the given value.
+     * Creates negated matcher.
      *
-     * @param value the method
-     *
-     * @return builder type for which the matcher is being build
+     * @return the negated matcher
      */
-    T equal(HttpMethod value);
+    T not();
 }
