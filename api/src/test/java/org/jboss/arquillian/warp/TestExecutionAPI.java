@@ -17,8 +17,11 @@
 package org.jboss.arquillian.warp;
 
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.result.WarpResult;
+
+import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
 
 @SuppressWarnings({"unused", "serial"})
 public class TestExecutionAPI {
@@ -167,5 +170,51 @@ public class TestExecutionAPI {
     }
 
     private abstract static class TestingAssertion2 extends ServerAssertion {
+    }
+
+    /**
+     * Single client action and server assertion applied for request matching
+     * given URI
+     */
+    public void testFilterBuilderUri() {
+        Warp
+                .execute(clientAction)
+                .filter(request().uri().endsWith(".jsf").build())
+                .verify(serverAssertion);
+    }
+
+    /**
+     * Single client action and server assertion applied for request matching
+     * given HTTP method
+     */
+    public void testFilterBuilderMethod() {
+        Warp
+                .execute(clientAction)
+                .filter(request().method().equal(HttpMethod.POST).build())
+                .verify(serverAssertion);
+    }
+
+    /**
+     * Single client action and server assertion applied for request matching
+     * given HTTP header
+     */
+    public void testFilterBuilderHeader() {
+        Warp
+                .execute(clientAction)
+                .filter(request().header().containsValue("Accept", "application/json").build())
+                .verify(serverAssertion);
+    }
+
+    /**
+     * Single client action and server assertion applied for request matching
+     * given condition
+     */
+    public void testFilterBuilderComplex() {
+        Warp
+                .execute(clientAction)
+                .filter(request().uri().endsWith("resource/Client/1")
+                                 .method().equal(HttpMethod.POST)
+                                 .header().containsValue("Cookie", "name=Client").build())
+                .verify(serverAssertion);
     }
 }
