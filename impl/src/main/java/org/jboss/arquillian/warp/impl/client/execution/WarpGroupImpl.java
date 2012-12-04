@@ -24,6 +24,7 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
 import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
+import org.jboss.arquillian.warp.client.filter.FilterBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
@@ -67,6 +68,12 @@ public class WarpGroupImpl implements WarpGroup {
     public GroupVerificationSpecifier filter(Class<? extends RequestFilter<?>> filterClass) {
         this.filter = SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {},
                 RequestFilter.class);
+        return this;
+    }
+
+    @Override
+    public GroupVerificationSpecifier filter(FilterBuilder<?, ?> filterBuilder) {
+        this.filter = filterBuilder.build();
         return this;
     }
 

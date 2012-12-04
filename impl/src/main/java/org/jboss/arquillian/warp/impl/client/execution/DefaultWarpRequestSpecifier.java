@@ -25,6 +25,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
 import org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier;
 import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
+import org.jboss.arquillian.warp.client.filter.FilterBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
@@ -128,6 +129,13 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
     public SingleVerificationSpecifier filter(Class<? extends RequestFilter<?>> filterClass) {
         initializeSingleGroup();
         singleGroup.filter(createFilterInstance(filterClass));
+        return this;
+    }
+
+    @Override
+    public SingleVerificationSpecifier filter(FilterBuilder<?, ?> filterBuilder) {
+        initializeSingleGroup();
+        singleGroup.filter(filterBuilder.build());
         return this;
     }
 

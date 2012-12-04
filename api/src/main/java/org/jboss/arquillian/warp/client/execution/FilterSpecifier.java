@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
+import org.jboss.arquillian.warp.client.filter.FilterBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 
 public interface FilterSpecifier<R> {
@@ -35,4 +36,13 @@ public interface FilterSpecifier<R> {
      * @return the interface for executing single server verification
      */
     R filter(Class<? extends RequestFilter<?>> filterClass);
+
+
+    /**
+     * Specifies filter biulder which will be used to construct concrete filter
+     *
+     * @param filterBuilder the filterBuilder which will be used for constructing the filter instance
+     * @return the interface for executing single server verification
+     */
+    R filter(FilterBuilder<?, ?> filterBuilder);
 }
