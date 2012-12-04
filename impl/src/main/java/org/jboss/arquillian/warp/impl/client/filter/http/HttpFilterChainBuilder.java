@@ -14,27 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
+package org.jboss.arquillian.warp.impl.client.filter.http;
 
-import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 
 /**
- * Utility class for invoking client action followed by server request, enriched with assertion.
- *
- * @author Lukas Fryc
+ * Extends the {@link HttpRequestFilter} by allowing to add filter chains.
  */
-public final class Warp {
+public interface HttpFilterChainBuilder extends HttpFilterBuilder {
 
     /**
-     * Takes client action which should be executed in order to cause server request.
+     * Adds the new filter.
      *
-     * @param action the client action to execute
-     * @return {@link WarpClientActionBuilder} instance
+     * @param filter the filter
      */
-    public static WarpVerificationBuilder execute(ClientAction action) {
-
-        return WarpRuntime.getInstance().getWarpClientActionBuilder().execute(action);
-    }
+    HttpFilterBuilder addFilter(HttpRequestFilter filter);
 }

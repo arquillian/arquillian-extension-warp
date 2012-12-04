@@ -14,27 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
-
-import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+package org.jboss.arquillian.warp.impl.client.filter.matcher;
 
 /**
- * Utility class for invoking client action followed by server request, enriched with assertion.
- *
- * @author Lukas Fryc
+ * Represents an abstract predicate that allows for checking the given value against specified condition.
  */
-public final class Warp {
+public interface Matcher<T> {
 
     /**
-     * Takes client action which should be executed in order to cause server request.
+     * Checks if the passed value matches the expected condition.
      *
-     * @param action the client action to execute
-     * @return {@link WarpClientActionBuilder} instance
+     * @param value the value
+     *
+     * @return true if the value matches the condition, false otherwise
      */
-    public static WarpVerificationBuilder execute(ClientAction action) {
-
-        return WarpRuntime.getInstance().getWarpClientActionBuilder().execute(action);
-    }
+    boolean matches(T value);
 }

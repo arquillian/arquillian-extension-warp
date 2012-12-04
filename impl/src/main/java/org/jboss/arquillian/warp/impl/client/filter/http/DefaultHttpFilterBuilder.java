@@ -1,0 +1,156 @@
+/**
+ * JBoss, Home of Professional Open Source
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.arquillian.warp.impl.client.filter.http;
+
+import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
+import org.jboss.arquillian.warp.client.filter.matcher.MethodMatcherBuilder;
+import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
+import org.jboss.arquillian.warp.impl.client.filter.matcher.DefaultMethodMatcherBuilder;
+import org.jboss.arquillian.warp.impl.client.filter.matcher.DefaultUriMatcherBuilder;
+
+/**
+ * The default implementation of the {@link HttpFilterBuilder} class.
+ */
+public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder {
+
+    /**
+     * The instance to the {@link HttpRequestFilter}.
+     */
+    private HttpRequestFilter requestFilter;
+
+    /**
+     * Creates new instance of {@link DefaultHttpFilterBuilder} class.
+     */
+    public DefaultHttpFilterBuilder() {
+
+        this(new TrueRequestFilter());
+    }
+
+    /**
+     * Creates new instance of {@link DefaultHttpFilterBuilder} class with given {@link HttpRequestFilter} instance.
+     *
+     * @param requestFilter the {@link HttpRequestFilter} instance
+     */
+    private DefaultHttpFilterBuilder(HttpRequestFilter requestFilter) {
+
+        this.requestFilter = requestFilter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UriMatcherBuilder<HttpFilterBuilder> uri() {
+
+        return new DefaultUriMatcherBuilder(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MethodMatcherBuilder<HttpFilterBuilder> method() {
+
+        return new DefaultMethodMatcherBuilder(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpFilterBuilder copy() {
+
+        return new DefaultHttpFilterBuilder(requestFilter);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpRequestFilter build() {
+
+        return requestFilter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpFilterBuilder addFilter(HttpRequestFilter filter) {
+
+        requestFilter = new ChainHttpRequestFilter(filter, requestFilter);
+
+        return this;
+    }
+
+    /**
+     * A custom {@link HttpRequestFilter} implementation that allows of chaining the filters. By default the result of
+     * {@link #matches(org.jboss.arquillian.warp.client.filter.http.HttpRequest)} is being computed as logical AND of
+     * all filter results.
+     */
+    private static final class ChainHttpRequestFilter implements HttpRequestFilter {
+
+        /**
+         * Instance of {@link HttpRequestFilter}.
+         */
+        private HttpRequestFilter filter;
+
+        /**
+         * Reference to the previous filter.
+         */
+        private HttpRequestFilter previous;
+
+        /**
+         * Creates new instance of {@link ChainHttpRequestFilter} class with given filter and link to the previous
+         * filter.
+         *
+         * @param filter   the filter
+         * @param previous the reference to the previous filter in the chain
+         */
+        private ChainHttpRequestFilter(HttpRequestFilter filter, HttpRequestFilter previous) {
+
+            this.filter = filter;
+            this.previous = previous;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean matches(HttpRequest request) {
+
+            return filter.matches(request) && previous.matches(request);
+        }
+    }
+
+    /**
+     * A plan instance of {@link HttpRequestFilter} that always returns true.
+     */
+    private static final class TrueRequestFilter implements HttpRequestFilter {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean matches(HttpRequest request) {
+
+            return true;
+        }
+    }
+}

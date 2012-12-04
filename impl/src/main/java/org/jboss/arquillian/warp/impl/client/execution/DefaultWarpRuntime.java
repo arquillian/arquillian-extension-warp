@@ -14,37 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
+package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.test.spi.event.suite.AfterClass;
-import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
+import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 
 /**
- * Injects instance of {@link WarpRequestSpecifier} to {@link Warp} API.
- *
- * @author Lukas Fryc
+ * The default implementation of the {@link WarpRuntime}.
  */
-public class RequestExecutorInjector {
+public class DefaultWarpRuntime extends WarpRuntime {
 
+    /**
+     * Instance of {@link ServiceLoader}.
+     */
     @Inject
-    private Instance<ServiceLoader> serviceLoader;
+    private Instance<ServiceLoader> serviceLoaderInstance;
 
-    public void injectRequestExecutor(@Observes BeforeClass event) {
-        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            WarpRuntime runtime = serviceLoader.get().onlyOne(WarpRuntime.class);
-            WarpRuntime.setInstance(runtime);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public WarpClientActionBuilder getWarpClientActionBuilder() {
+
+        return serviceLoaderInstance.get().onlyOne(WarpRequestSpecifier.class);
     }
 
-    public void cleanRequestExecutor(@Observes AfterClass event) {
-        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            WarpRuntime.setInstance(null);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpFilterBuilder getHttpFilterBuilder() {
+
+        // copies the filter builder
+        return serviceLoaderInstance.get().onlyOne(HttpFilterBuilder.class).copy();
     }
 }

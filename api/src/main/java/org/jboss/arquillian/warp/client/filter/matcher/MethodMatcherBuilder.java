@@ -14,27 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
+package org.jboss.arquillian.warp.client.filter.matcher;
 
-import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
 
 /**
- * Utility class for invoking client action followed by server request, enriched with assertion.
+ * A matcher builder responsible for handling {@link HttpMethod} filtering.
  *
- * @author Lukas Fryc
+ * @param <T> the parent builder type for which the matcher is being build
  */
-public final class Warp {
+public interface MethodMatcherBuilder<T> {
 
     /**
-     * Takes client action which should be executed in order to cause server request.
+     * Matches request that http method is equal to the given value.
      *
-     * @param action the client action to execute
-     * @return {@link WarpClientActionBuilder} instance
+     * @param value the method
+     *
+     * @return builder type for which the matcher is being build
      */
-    public static WarpVerificationBuilder execute(ClientAction action) {
-
-        return WarpRuntime.getInstance().getWarpClientActionBuilder().execute(action);
-    }
+    T equal(HttpMethod value);
 }

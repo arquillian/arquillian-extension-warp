@@ -38,6 +38,7 @@ import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
@@ -92,11 +93,15 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         WarpExecutor warpExecutor = new DefaultWarpExecutor();
         getManager().inject(warpExecutor);
 
+        WarpRuntime warpRuntime = new DefaultWarpRuntime();
+        getManager().inject(warpRuntime);
+
         WarpContext warpContext = new WarpContextImpl();
 
         when(serviceLoader.onlyOne(WarpRequestSpecifier.class)).thenReturn(requestExecutor);
         when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(assertionSynchronizer);
         when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
+        when(serviceLoader.onlyOne(WarpRuntime.class)).thenReturn(warpRuntime);
         when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);

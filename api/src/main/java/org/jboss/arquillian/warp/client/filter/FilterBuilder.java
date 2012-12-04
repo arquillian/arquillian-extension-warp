@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp;
-
-import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+package org.jboss.arquillian.warp.client.filter;
 
 /**
- * Utility class for invoking client action followed by server request, enriched with assertion.
+ * Provides means for creating an instance of given {@link RequestFilter} through a builder like pattern.
+ * <p />
+ * The builder can be copied through the {@link #copy()} method.
  *
- * @author Lukas Fryc
+ * @param <T> the builder type
+ * @param <K> the filter type
  */
-public final class Warp {
+public interface FilterBuilder<T extends FilterBuilder<T, K>, K extends RequestFilter> {
 
     /**
-     * Takes client action which should be executed in order to cause server request.
+     * Copies this builder.
      *
-     * @param action the client action to execute
-     * @return {@link WarpClientActionBuilder} instance
+     * @return the copy of the builder
      */
-    public static WarpVerificationBuilder execute(ClientAction action) {
+    T copy();
 
-        return WarpRuntime.getInstance().getWarpClientActionBuilder().execute(action);
-    }
+    /**
+     * Builds the filter.
+     *
+     * @return the instance of the filter
+     */
+    K build();
 }
