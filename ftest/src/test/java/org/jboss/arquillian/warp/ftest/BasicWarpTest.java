@@ -80,7 +80,7 @@ public class BasicWarpTest {
                     browser.navigate().to(contextPath + "index.html");
                 }
             })
-            .filter(request().uri().not().contains("favicon.ico").build())
+            .filter(request().uri().not().contains("favicon.ico"))
             .verify(new ServerAssertion() {
 
                 private static final long serialVersionUID = 1L;
