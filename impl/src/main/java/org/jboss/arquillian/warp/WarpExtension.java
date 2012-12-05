@@ -78,7 +78,7 @@ public class WarpExtension implements LoadableExtension {
 
         // action executor
         builder.service(WarpRequestSpecifier.class, DefaultWarpRequestSpecifier.class);
-        builder.observer(RequestExecutorInjector.class);
+        builder.observer(WarpRuntimeInitializer.class);
         builder.observer(WarpExecutionObserver.class);
         builder.service(ExecutionSynchronizer.class, DefaultExecutionSynchronizer.class);
         builder.context(WarpExecutionContextImpl.class);
@@ -95,6 +95,5 @@ public class WarpExtension implements LoadableExtension {
         builder.service(HttpResponseDeenrichmentService.class, DefaultResponseDeenrichmentService.class);
         builder.service(WarpContext.class, WarpContextImpl.class);
         builder.service(HttpFilterBuilder.class, DefaultHttpFilterBuilder.class);
-        builder.service(WarpRuntime.class, DefaultWarpRuntime.class);
     }
 }

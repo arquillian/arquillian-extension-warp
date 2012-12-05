@@ -16,9 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
@@ -29,10 +26,14 @@ import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 public class DefaultWarpRuntime extends WarpRuntime {
 
     /**
-     * Instance of {@link ServiceLoader}.
+     * Instance of {@link WarpClientActionBuilder}.
      */
-    @Inject
-    private Instance<ServiceLoader> serviceLoaderInstance;
+    private WarpClientActionBuilder warpClientActionBuilder;
+
+    /**
+     * Instance of {@link HttpFilterBuilder}.
+     */
+    private HttpFilterBuilder httpFilterBuilder;
 
     /**
      * {@inheritDoc}
@@ -40,7 +41,16 @@ public class DefaultWarpRuntime extends WarpRuntime {
     @Override
     public WarpClientActionBuilder getWarpClientActionBuilder() {
 
-        return serviceLoaderInstance.get().onlyOne(WarpRequestSpecifier.class);
+        return warpClientActionBuilder;
+    }
+
+    /**
+     * Sets the instance of {@link WarpClientActionBuilder}.
+     *
+     * @param warpClientActionBuilder the instance of {@link WarpClientActionBuilder}
+     */
+    public void setWarpClientActionBuilder(WarpClientActionBuilder warpClientActionBuilder) {
+        this.warpClientActionBuilder = warpClientActionBuilder;
     }
 
     /**
@@ -50,6 +60,16 @@ public class DefaultWarpRuntime extends WarpRuntime {
     public HttpFilterBuilder getHttpFilterBuilder() {
 
         // copies the filter builder
-        return serviceLoaderInstance.get().onlyOne(HttpFilterBuilder.class).copy();
+        return httpFilterBuilder.copy();
+    }
+
+    /**
+     * Sets the instance of {@link HttpFilterBuilder}.
+     *
+     * @param httpFilterBuilder the instance of {@link HttpFilterBuilder}
+     */
+    public void setHttpFilterBuilder(HttpFilterBuilder httpFilterBuilder) {
+
+        this.httpFilterBuilder = httpFilterBuilder;
     }
 }

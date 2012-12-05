@@ -23,6 +23,8 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
+import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRuntime;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 
 /**
@@ -30,19 +32,21 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
  *
  * @author Lukas Fryc
  */
-public class RequestExecutorInjector {
+public class WarpRuntimeInitializer {
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
-    public void injectRequestExecutor(@Observes BeforeClass event) {
+    public void injectWarpRuntime(@Observes BeforeClass event) {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            WarpRuntime runtime = serviceLoader.get().onlyOne(WarpRuntime.class);
+            DefaultWarpRuntime runtime = new DefaultWarpRuntime();
+            runtime.setWarpClientActionBuilder(serviceLoader.get().onlyOne(WarpRequestSpecifier.class));
+            runtime.setHttpFilterBuilder(serviceLoader.get().onlyOne(HttpFilterBuilder.class));
             WarpRuntime.setInstance(runtime);
         }
     }
 
-    public void cleanRequestExecutor(@Observes AfterClass event) {
+    public void cleanWarpRuntime(@Observes AfterClass event) {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
             WarpRuntime.setInstance(null);
         }
