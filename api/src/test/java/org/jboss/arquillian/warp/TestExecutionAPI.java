@@ -179,7 +179,7 @@ public class TestExecutionAPI {
     public void testFilterBuilderUri() {
         Warp
                 .execute(clientAction)
-                .filter(request().uri().endsWith(".jsf").build())
+                .filter(request().uri().endsWith(".jsf"))
                 .verify(serverAssertion);
     }
 
@@ -190,7 +190,7 @@ public class TestExecutionAPI {
     public void testFilterBuilderUriNot() {
         Warp
                 .execute(clientAction)
-                .filter(request().uri().not().endsWith(".jsf").build())
+                .filter(request().uri().not().endsWith(".jsf"))
                 .verify(serverAssertion);
     }
 
@@ -201,7 +201,7 @@ public class TestExecutionAPI {
     public void testFilterBuilderMethod() {
         Warp
                 .execute(clientAction)
-                .filter(request().method().equal(HttpMethod.POST).build())
+                .filter(request().method().equal(HttpMethod.POST))
                 .verify(serverAssertion);
     }
 
@@ -212,7 +212,7 @@ public class TestExecutionAPI {
     public void testFilterBuilderMethodNot() {
         Warp
                 .execute(clientAction)
-                .filter(request().method().not().equal(HttpMethod.POST).build())
+                .filter(request().method().not().equal(HttpMethod.POST))
                 .verify(serverAssertion);
     }
 
@@ -223,7 +223,7 @@ public class TestExecutionAPI {
     public void testFilterBuilderHeader() {
         Warp
                 .execute(clientAction)
-                .filter(request().header().containsValue("Accept", "application/json").build())
+                .filter(request().header().containsValue("Accept", "application/json"))
                 .verify(serverAssertion);
     }
 
@@ -234,7 +234,7 @@ public class TestExecutionAPI {
     public void testFilterBuilderHeaderNot() {
         Warp
                 .execute(clientAction)
-                .filter(request().header().not().containsValue("Accept", "application/json").build())
+                .filter(request().header().not().containsValue("Accept", "application/json"))
                 .verify(serverAssertion);
     }
 
@@ -247,7 +247,7 @@ public class TestExecutionAPI {
                 .execute(clientAction)
                 .filter(request().uri().endsWith("resource/Client/1")
                                  .method().equal(HttpMethod.POST)
-                                 .header().containsValue("Cookie", "name=Client").build())
+                                 .header().containsValue("Cookie", "name=Client"))
                 .verify(serverAssertion);
     }
 }

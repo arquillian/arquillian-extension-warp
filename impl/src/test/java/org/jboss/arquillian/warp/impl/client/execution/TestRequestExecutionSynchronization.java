@@ -33,7 +33,7 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.RequestExecutorInjector;
+import org.jboss.arquillian.warp.WarpRuntimeInitializer;
 import org.jboss.arquillian.warp.ServerAssertion;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
@@ -116,7 +116,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(RequestExecutorInjector.class);
+        extensions.add(WarpRuntimeInitializer.class);
         extensions.add(DefaultWarpRequestSpecifier.class);
         extensions.add(WarpExecutionObserver.class);
         extensions.add(WarpExecutionInitializer.class);
