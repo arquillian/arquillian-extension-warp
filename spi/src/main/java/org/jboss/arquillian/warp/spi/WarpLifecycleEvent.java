@@ -18,9 +18,11 @@ package org.jboss.arquillian.warp.spi;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.warp.ServerAssertion;
+
 /**
- * The lifecycle event which will be caught by {@link LifecycleTestDriver} and all methods annotated with annotation
- * {@link #getAnnotation()} will be executed.
+ * The lifecycle event which will is observed by {@link LifecycleTestDriver} and all methods annotated with annotation specified
+ * by {@link #getAnnotation()} will be executed.
  *
  * @author Lukas Fryc
  *

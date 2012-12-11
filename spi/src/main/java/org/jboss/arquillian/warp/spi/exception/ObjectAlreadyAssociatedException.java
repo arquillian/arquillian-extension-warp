@@ -16,7 +16,13 @@
  */
 package org.jboss.arquillian.warp.spi.exception;
 
+import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
+
+/**
+ * Thrown when {@link LifecycleManagerStore} already contains object under given key and bound object.
+ *
+ * @author Lukas Fryc
+ */
 @SuppressWarnings("serial")
 public class ObjectAlreadyAssociatedException extends Exception {
-
 }

@@ -16,7 +16,13 @@
  */
 package org.jboss.arquillian.warp.spi.exception;
 
+import org.jboss.arquillian.warp.spi.LifecycleManager;
+
+/**
+ * When you are trying to access binding of {@link LifecycleManager} with object which hasn't been bound yet.
+ *
+ * @author Lukas Fryc
+ */
 @SuppressWarnings("serial")
 public class ObjectNotAssociatedException extends Exception {
-
 }

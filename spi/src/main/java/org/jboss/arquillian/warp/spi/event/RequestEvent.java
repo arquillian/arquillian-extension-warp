@@ -22,7 +22,7 @@ import javax.servlet.ServletResponse;
 import org.jboss.arquillian.core.spi.event.Event;
 
 /**
- * The event fired during Servlet lifecycle associated with {@link ServletRequest}.
+ * The event fired during Servlet lifecycle which is associated with {@link ServletRequest} and {@link ServletResponse}.
  *
  * @author Lukas Fryc
  */

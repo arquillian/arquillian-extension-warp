@@ -24,9 +24,8 @@ import org.jboss.arquillian.warp.spi.event.AfterRequest;
 
 /**
  * <p>
- * The lifecycle event which binds with {@link org.jboss.arquillian.warp.servlet.AfterServlet} verification execution.
+ * The lifecycle event which comes with {@link org.jboss.arquillian.warp.servlet.AfterServlet} verification execution.
  * </p>
- *
  *
  * <p>
  * If you observe this event, Warp services are fully initialized and you should have access to them using {@link Inject}.

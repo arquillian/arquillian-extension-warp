@@ -24,7 +24,7 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 
 /**
  * <p>
- * The lifecycle event which binds with {@link org.jboss.arquillian.warp.servlet.BeforeServlet} verification execution.
+ * The lifecycle event which comes with {@link org.jboss.arquillian.warp.servlet.BeforeServlet} verification execution.
  * </p>
  *
  * <p>

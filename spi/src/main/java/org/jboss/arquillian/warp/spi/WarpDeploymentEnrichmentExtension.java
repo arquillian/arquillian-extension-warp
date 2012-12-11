@@ -16,28 +16,35 @@
  */
 package org.jboss.arquillian.warp.spi;
 
+import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
+ * <p>
  * Service for adding {@link JavaArchive}s to final {@link WebArchive} and modifying final {@link WebArchive} in order to
  * provide extended Warp functionality.
+ * </p>
+ *
+ * <p>
+ * This service will be applied only if test case is annotated with {@link WarpTest}.
+ * </p>
  *
  * @author Lukas Fryc
  */
 public interface WarpDeploymentEnrichmentExtension {
 
     /**
-     * Adds the library to enrich final {@link WebArchive} deployment.
+     * <p>Adds the library to enrich final {@link WebArchive} deployment.</p>
      *
-     * Can return null when no enrichment library is provided by extension.
+     * <p>Can return null when no enrichment library is provided by extension.</p>
      */
     JavaArchive getEnrichmentLibrary();
 
     /**
-     * Provides final {@link WebArchive} to be enriched (any resource can be manipulated).
+     * <p>llows enriching of final {@link WebArchive} (any resource in an archive can be manipulated).</p>
      *
-     * Doesn't have to process any manipulation.
+     * <p>Doesn't need to do any operation on archive.</p>
      */
     void enrichWebArchive(WebArchive webArchive);
 }

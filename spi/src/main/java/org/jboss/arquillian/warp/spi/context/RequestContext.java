@@ -16,10 +16,12 @@
  */
 package org.jboss.arquillian.warp.spi.context;
 
+import javax.servlet.ServletRequest;
+
 import org.jboss.arquillian.core.spi.context.NonIdBoundContext;
 
 /**
- * The context bound with current request.
+ * The context bound with current {@link ServletRequest}.
  *
  * @author Lukas Fryc
  */

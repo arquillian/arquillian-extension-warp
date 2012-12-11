@@ -23,10 +23,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.servlet.ServletRequest;
+
 import org.jboss.arquillian.core.api.annotation.Scope;
 
 /**
- * The scope of current request.
+ * The scope of current {@link ServletRequest}.
  *
  * @author Lukas Fryc
  *

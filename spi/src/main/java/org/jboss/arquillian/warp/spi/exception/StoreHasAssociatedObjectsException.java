@@ -16,6 +16,13 @@
  */
 package org.jboss.arquillian.warp.spi.exception;
 
+import org.jboss.arquillian.warp.spi.LifecycleManager;
+
+/**
+ * Thrown when checking that given {@link LifecycleManager} is not bound to any object but there is unbound association found.
+ *
+ * @author Lukas Fryc
+ */
 @SuppressWarnings("serial")
 public class StoreHasAssociatedObjectsException extends Exception {
 }

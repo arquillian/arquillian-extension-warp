@@ -139,7 +139,7 @@ public abstract class LifecycleManager {
     }
 
     /**
-     * Unbinds the {@link LifecycleManager} for given class and given object.
+     * Unbinds the {@link LifecycleManager} from given class and given object.
      *
      * @param clazz the bound class
      * @param object the bound class
