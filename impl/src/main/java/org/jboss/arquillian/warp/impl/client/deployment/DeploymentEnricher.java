@@ -51,11 +51,37 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  */
 public class DeploymentEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender, ProtocolArchiveProcessor {
 
-    @Inject
-    private Instance<ServiceLoader> serviceLoader;
+
+    static String[] REQUIRED_WARP_PACKAGES = new String[] {
+         // SPI
+            "org.jboss.arquillian.warp.spi",
+            "org.jboss.arquillian.warp.spi.context",
+            "org.jboss.arquillian.warp.spi.event",
+            "org.jboss.arquillian.warp.spi.exception",
+            "org.jboss.arquillian.warp.spi.servlet.event",
+
+            // Implementation
+            "org.jboss.arquillian.warp.impl.server.assertion",
+            "org.jboss.arquillian.warp.impl.server.enrichment",
+            "org.jboss.arquillian.warp.impl.server.event",
+            "org.jboss.arquillian.warp.impl.server.execution",
+            "org.jboss.arquillian.warp.impl.server.lifecycle",
+            "org.jboss.arquillian.warp.impl.server.provider",
+            "org.jboss.arquillian.warp.impl.server.request",
+            "org.jboss.arquillian.warp.impl.server.test",
+            "org.jboss.arquillian.warp.impl.shared",
+            "org.jboss.arquillian.warp.impl.utils",
+
+            // Servlet Extension
+            "org.jboss.arquillian.warp.servlet.event",
+            "org.jboss.arquillian.warp.servlet.provider"
+    };
 
     @Inject
-    private Instance<TestClass> testClass;
+    Instance<ServiceLoader> serviceLoader;
+
+    @Inject
+    Instance<TestClass> testClass;
 
     /**
      * Adds Warp lifecycle extensions to the application archive
@@ -93,28 +119,9 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             archive.addClass(ServerAssertion.class);
             archive.addClasses(BeforeServlet.class, AfterServlet.class);
 
-            // SPI
-            archive.addPackage("org.jboss.arquillian.warp.spi");
-            archive.addPackage("org.jboss.arquillian.warp.spi.context");
-            archive.addPackage("org.jboss.arquillian.warp.spi.event");
-            archive.addPackage("org.jboss.arquillian.warp.spi.exception");
-            archive.addPackage("org.jboss.arquillian.warp.spi.servlet.event");
-
-            // Implementation
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.assertion");
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.enrichment");
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.event");
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.execution");
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.lifecycle");
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.provider");
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.request");
-            archive.addPackage("org.jboss.arquillian.warp.impl.server.test");
-            archive.addPackage("org.jboss.arquillian.warp.impl.shared");
-            archive.addPackage("org.jboss.arquillian.warp.impl.utils");
-
-            // Servlet Extension
-            archive.addPackage("org.jboss.arquillian.warp.servlet.event");
-            archive.addPackage("org.jboss.arquillian.warp.servlet.provider");
+            for (String packageName : REQUIRED_WARP_PACKAGES) {
+                archive.addPackage(packageName);
+            }
 
             // register remote extension
             archive.addClass(WarpRemoteExtension.class);
