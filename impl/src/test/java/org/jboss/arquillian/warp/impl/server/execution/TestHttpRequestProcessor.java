@@ -183,7 +183,6 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
             fire(new ProcessHttpRequest());
             fail();
         } catch (Exception e) {
-            e.printStackTrace();
             assertEquals(exception, e);
         }
 

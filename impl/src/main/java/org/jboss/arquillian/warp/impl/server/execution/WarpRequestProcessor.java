@@ -34,6 +34,7 @@ import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingFinished;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingStarted;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 
 public class WarpRequestProcessor {
@@ -74,13 +75,15 @@ public class WarpRequestProcessor {
         }
 
         if (responsePayload.getTestResult() != null && responsePayload.getTestResult().getThrowable() != null) {
-            log.log(Level.SEVERE, "exception was thrown during Warp execution", responsePayload.getTestResult().getThrowable());
+            if (WarpCommons.debugMode()) {
+                log.log(Level.SEVERE, "exception was thrown during Warp execution", responsePayload.getTestResult().getThrowable());
+            }
         }
 
         try {
             enrichHttpResponse.fire(new EnrichHttpResponse());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Warp failed to enrich HTTP response", e);
         }
 
         requestProcessingFinished.fire(new RequestProcessingFinished());

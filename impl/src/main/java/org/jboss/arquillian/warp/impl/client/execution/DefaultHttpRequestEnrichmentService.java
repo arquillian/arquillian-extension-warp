@@ -88,7 +88,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
     @Override
     public void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads) {
 
-        if (System.getProperty("arquillian.debug") != null) {
+        if (WarpCommons.debugMode()) {
             System.out.println("                (W) " + request.getUri());
         }
 

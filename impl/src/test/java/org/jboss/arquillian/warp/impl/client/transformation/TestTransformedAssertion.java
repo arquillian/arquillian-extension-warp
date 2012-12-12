@@ -33,6 +33,7 @@ import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
@@ -48,7 +49,7 @@ public class TestTransformedAssertion {
     public static JavaArchive[] archive() {
         JavaArchive archive = ShrinkWrap
                 .create(JavaArchive.class)
-                .addClasses(ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
+                .addClasses(WarpCommons.class, ServerAssertion.class, RequestPayload.class, BeforeServlet.class)
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
                 .addClasses(TestTransformedAssertion.class, TransformedAssertion.class, MigratedAssertion.class,
                         AssertionTransformationException.class)
@@ -123,7 +124,7 @@ public class TestTransformedAssertion {
 
     private static void print(Class<?> clazz) {
 
-        if (System.getProperty("arquillian.debug") != null) {
+        if (WarpCommons.debugMode()) {
 
             System.out.println();
             System.out.println("Class: " + clazz.getName());

@@ -21,7 +21,7 @@ package org.jboss.arquillian.warp.spi;
  *
  * @author Lukas Fryc
  */
-public class WarpCommons {
+public final class WarpCommons {
 
     public static final String NAMESPACE = "org.jboss.arquillian.warp";
 
@@ -30,4 +30,11 @@ public class WarpCommons {
     public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
 
     public static final String ENRICHMENT_SEQUENCE_NUMBER = "X-Arq-Enrichment-Id";
+
+    /**
+     * Determines whether Warp is in debug mode
+     */
+    public static boolean debugMode() {
+        return System.getProperty("arquillian.debug") != null;
+    }
 }

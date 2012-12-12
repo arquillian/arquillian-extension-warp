@@ -203,7 +203,6 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
                 try {
                     handshake();
                 } catch (Exception e) {
-                    e.printStackTrace();
                     failure.set(e);
                 } finally {
                     responseFinished.countDown();
