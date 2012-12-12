@@ -16,25 +16,25 @@
  */
 package org.jboss.arquillian.warp;
 
+import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.execution.WarpExecutionBuilder;
 
 /**
- * Utility class for invoking client action followed by server request, enriched with assertion.
+ * Utility class for performing client activity followed by inspected server request.
  *
  * @author Lukas Fryc
  */
 public final class Warp {
 
     /**
-     * Takes client action which should be executed in order to cause server request.
+     * Takes client activity which should be performed in order to cause server request.
      *
-     * @param action the client action to execute
-     * @return {@link WarpClientActionBuilder} instance
+     * @param activity the client activity to execute
+     * @return {@link WarpActivityBuilder} instance
      */
-    public static WarpVerificationBuilder execute(ClientAction action) {
+    public static WarpExecutionBuilder initiate(Activity activity) {
 
-        return WarpRuntime.getInstance().getWarpClientActionBuilder().execute(action);
+        return WarpRuntime.getInstance().getWarpActivityBuilder().initiate(activity);
     }
 }

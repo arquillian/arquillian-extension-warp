@@ -28,9 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.client.transformation.MigratedAssertion;
-import org.jboss.arquillian.warp.impl.client.transformation.TransformedAssertion;
+import org.jboss.arquillian.warp.Inspection;
+import org.jboss.arquillian.warp.impl.client.transformation.MigratedInspection;
+import org.jboss.arquillian.warp.impl.client.transformation.TransformedInspection;
 
 public class RequestPayload implements Externalizable {
 
@@ -38,23 +38,23 @@ public class RequestPayload implements Externalizable {
 
     public static final long FAILURE_SERIAL_ID = -1L;
 
-    private List<ServerAssertion> assertions;
+    private List<Inspection> inspections;
     private long serialId;
 
     public RequestPayload() {
     }
 
-    public RequestPayload(ServerAssertion... assertions) {
-        this(Arrays.asList(assertions));
+    public RequestPayload(Inspection... inspections) {
+        this(Arrays.asList(inspections));
     }
 
-    public RequestPayload(List<ServerAssertion> assertions) {
-        this.assertions = assertions;
+    public RequestPayload(List<Inspection> inspections) {
+        this.inspections = inspections;
         this.serialId = UUID.randomUUID().getMostSignificantBits();
     }
 
-    public List<ServerAssertion> getAssertions() {
-        return assertions;
+    public List<Inspection> getInspections() {
+        return inspections;
     }
 
     public long getSerialId() {
@@ -73,7 +73,7 @@ public class RequestPayload implements Externalizable {
                 byte[] classFile = (byte[]) in.readObject();
                 byte[] obj = (byte[]) in.readObject();
 
-                assertions = new ArrayList<ServerAssertion>(size);
+                inspections = new ArrayList<Inspection>(size);
 
                 final DynamicClassLoader cl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
 
@@ -87,36 +87,36 @@ public class RequestPayload implements Externalizable {
                     }
                 };
 
-                ServerAssertion assertion = (ServerAssertion) input.readObject();
-                assertions.add(assertion);
+                Inspection inspection = (Inspection) input.readObject();
+                inspections.add(inspection);
             }
         } else {
-            assertions = (List<ServerAssertion>) in.readObject();
+            inspections = (List<Inspection>) in.readObject();
         }
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        if (assertions.getClass().isAnonymousClass() || assertions.getClass().isMemberClass()) {
+        if (inspections.getClass().isAnonymousClass() || inspections.getClass().isMemberClass()) {
 
             try {
                 out.writeLong(serialId);
                 out.writeBoolean(true);
-                out.write(assertions.size());
+                out.write(inspections.size());
 
-                for (ServerAssertion assertion : assertions) {
-                    TransformedAssertion transformed = new TransformedAssertion(assertion);
-                    MigratedAssertion migrated = new MigratedAssertion(transformed);
+                for (Inspection inspection : inspections) {
+                    TransformedInspection transformed = new TransformedInspection(inspection);
+                    MigratedInspection migrated = new MigratedInspection(transformed);
 
                     out.writeObject(migrated.toBytecode());
                     out.writeObject(migrated.toSerializedForm());
                 }
             } catch (Exception e) {
-                throw new RuntimeException("Could not transform and replicate class " + assertions.getClass(), e);
+                throw new RuntimeException("Could not transform and replicate class " + inspections.getClass(), e);
             }
         } else {
             out.writeBoolean(false);
-            out.writeObject(assertions);
+            out.writeObject(inspections);
         }
     }
 

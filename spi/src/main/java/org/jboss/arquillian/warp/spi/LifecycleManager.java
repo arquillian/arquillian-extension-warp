@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.spi;
 
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsException;
@@ -32,7 +32,7 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  *
  * <ul>
  * <li>{@link WarpLifecycleEvent} events - these will cause executing lifecycle verification methods in all associated
- * {@link ServerAssertion}s</li>
+ * {@link Inspection}s</li>
  * <li>any other Arquillian event</li>
  * </ul>
  *
@@ -88,7 +88,7 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * </code>
  * </pre>
  *
- * This will cause executing following method in associated user-defined {@link ServerAssertion}:
+ * This will cause executing following method in associated user-defined {@link Inspection}:
  *
  * <pre>
  * <code>
@@ -118,7 +118,7 @@ public abstract class LifecycleManager {
      *
      * <ul>
      * <li>{@link WarpLifecycleEvent} events - these will cause executing lifecycle verification methods in all associated
-     * {@link ServerAssertion}s</li>
+     * {@link Inspection}s</li>
      * <li>any other Arquillian event</li>
      * </ul>
      *

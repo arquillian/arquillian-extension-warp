@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp.spi;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 
 /**
  * The lifecycle event which will is observed by {@link LifecycleTestDriver} and all methods annotated with annotation specified
@@ -30,10 +30,10 @@ import org.jboss.arquillian.warp.ServerAssertion;
 public abstract class WarpLifecycleEvent {
 
     /**
-     * Returns the annotation which annotates methods on {@link ServerAssertion} which will be executed during this
+     * Returns the annotation which annotates methods on {@link Inspection} which will be executed during this
      * {@link WarpLifecycleEvent}.
      *
-     * @return the annotation which annotates methods on {@link ServerAssertion} which will be executed during this
+     * @return the annotation which annotates methods on {@link Inspection} which will be executed during this
      *         {@link WarpLifecycleEvent}.
      */
     public abstract Annotation getAnnotation();

@@ -39,11 +39,11 @@ public abstract class WarpRuntime {
     }
 
     /**
-     * Retrieves an instance of {@link WarpClientActionBuilder} from the warp runtime.
+     * Retrieves an instance of {@link WarpActivityBuilder} from the warp runtime.
      *
-     * @return instance of {@link WarpClientActionBuilder}
+     * @return instance of {@link WarpActivityBuilder}
      */
-    public abstract WarpClientActionBuilder getWarpClientActionBuilder();
+    public abstract WarpActivityBuilder getWarpActivityBuilder();
 
     /**
      * Retrieves an instance of {@link HttpFilterBuilder} from the warp runtime.

@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * SecurityActions
  *
- * A set of privileged actions that are not to leak out of this package
+ * A set of privileged activities that are not to leak out of this package
  *
  *
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>

@@ -29,7 +29,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
@@ -61,7 +61,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             "org.jboss.arquillian.warp.spi.servlet.event",
 
             // Implementation
-            "org.jboss.arquillian.warp.impl.server.assertion",
+            "org.jboss.arquillian.warp.impl.server.inspection",
             "org.jboss.arquillian.warp.impl.server.enrichment",
             "org.jboss.arquillian.warp.impl.server.event",
             "org.jboss.arquillian.warp.impl.server.execution",
@@ -116,7 +116,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-warp.jar");
 
             // API
-            archive.addClass(ServerAssertion.class);
+            archive.addClass(Inspection.class);
             archive.addClasses(BeforeServlet.class, AfterServlet.class);
 
             for (String packageName : REQUIRED_WARP_PACKAGES) {

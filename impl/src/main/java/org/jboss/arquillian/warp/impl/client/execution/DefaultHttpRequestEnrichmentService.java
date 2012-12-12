@@ -60,7 +60,11 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
         for (WarpGroup group : groups) {
-            final RequestFilter<?> filter = group.getFilter();
+            RequestFilter<?> filter = null;
+
+            if (group.getObserver() instanceof RequestFilter) {
+                filter = (RequestFilter<?>) group.getObserver();
+            }
 
             if (filter == null) {
                 payloads.add(group.generateRequestPayload());
@@ -97,8 +101,8 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         }
 
         try {
-            RequestPayload assertion = payloads.iterator().next();
-            String requestEnrichment = SerializationUtils.serializeToBase64(assertion);
+            RequestPayload inspection = payloads.iterator().next();
+            String requestEnrichment = SerializationUtils.serializeToBase64(inspection);
             request.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
         } catch (Throwable originalException) {
             ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed: "

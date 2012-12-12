@@ -18,10 +18,10 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.GroupAssertionSpecifier;
-import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.Inspection;
+import org.jboss.arquillian.warp.RequestObserver;
+import org.jboss.arquillian.warp.client.execution.GroupInspectionSpecifier;
+import org.jboss.arquillian.warp.client.execution.GroupExecutionSpecifier;
 import org.jboss.arquillian.warp.client.result.WarpGroupResult;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
@@ -41,7 +41,7 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
  *
  * <ul>
  * <li>group is created with given id (if not id is provided, it is generated from zero-based sequence of integers)</li>
- * <li>group can be setup with filter and assertions</li>
+ * <li>group can be setup with filter and inspections</li>
  * <li>group can generated {@link RequestPayload}</li>
  * <li>group receives {@link ResponsePayload} to be paired with adequeate {@link RequestPayload}</li>
  * <li>group can determine if all requests has been paired</li>
@@ -51,7 +51,7 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
  *
  * @author Lukas Fryc
  */
-public interface WarpGroup extends WarpGroupResult, GroupVerificationSpecifier, GroupAssertionSpecifier {
+public interface WarpGroup extends WarpGroupResult, GroupExecutionSpecifier, GroupInspectionSpecifier {
 
     /**
      * The id of this group
@@ -61,12 +61,12 @@ public interface WarpGroup extends WarpGroupResult, GroupVerificationSpecifier, 
     /**
      * Returns a filter associated with this group or null if no filter was associated with this group
      */
-    RequestFilter<?> getFilter();
+    RequestObserver getObserver();
 
     /**
-     * Adds assertions to this group
+     * Adds inspections to this group
      */
-    void addAssertions(ServerAssertion... assertions);
+    void addInspections(Inspection... inspections);
 
     /**
      * Generates {@link RequestPayload} which can be verified on server.

@@ -21,13 +21,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 
 public class ResponsePayload implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private List<ServerAssertion> assertions;
+    private List<Inspection> inspections;
     private TestResult testResult;
     private int status;
     private long serialId;
@@ -36,16 +36,16 @@ public class ResponsePayload implements Serializable {
         this.serialId = serialId;
     }
 
-    public List<ServerAssertion> getAssertions() {
-        return assertions;
+    public List<Inspection> getInspections() {
+        return inspections;
     }
 
-    public void setAssertions(ServerAssertion... assertions) {
-        this.assertions = Arrays.asList(assertions);
+    public void setInspections(Inspection... inspections) {
+        this.inspections = Arrays.asList(inspections);
     }
 
-    public void setAssertions(List<ServerAssertion> assertions) {
-        this.assertions = assertions;
+    public void setInspections(List<Inspection> inspections) {
+        this.inspections = inspections;
     }
 
     public TestResult getTestResult() {

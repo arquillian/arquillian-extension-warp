@@ -19,7 +19,7 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
@@ -27,7 +27,7 @@ import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
-import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ClientActionException;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ActivityException;
 
 /**
  * Default {@link WarpExecutor}
@@ -49,21 +49,21 @@ public class DefaultWarpExecutor implements WarpExecutor {
     private Event<AwaitResponse> awaitResponse;
 
     @Inject
-    private Event<ClientAction> executeClientAction;
+    private Event<Activity> executeActivity;
 
-    private RuntimeException actionException;
+    private RuntimeException activityException;
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.execution.WarpExecutor#execute(org.jboss.arquillian.warp.ClientAction, org.jboss.arquillian.warp.impl.client.execution.WarpContext)
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpExecutor#execute(org.jboss.arquillian.warp.Activity, org.jboss.arquillian.warp.impl.client.execution.WarpContext)
      */
     @Override
-    public WarpResult execute(ClientAction action, WarpContext warpContext) {
+    public WarpResult execute(Activity activity, WarpContext warpContext) {
         try {
-            setupServerAssertion();
-            executeClientAction(action);
+            setupServerInspection();
+            executeActivity(activity);
             awaitServerExecution(warpContext);
-            checkClientActionFailure();
+            checkActivityFailure();
 
             return warpContext.getResult();
         } finally {
@@ -71,23 +71,23 @@ public class DefaultWarpExecutor implements WarpExecutor {
         }
     }
 
-    private void setupServerAssertion() {
+    private void setupServerInspection() {
         advertiseEnrichment.fire(new AdvertiseEnrichment());
         finishEnrichment.fire(new FinishEnrichment());
     }
 
-    private void executeClientAction(ClientAction action) {
-        actionException = null;
+    private void executeActivity(Activity activity) {
+        activityException = null;
         try {
-            executeClientAction.fire(action);
+            executeActivity.fire(activity);
         } catch (Exception e) {
-            actionException = new ClientActionException(e);
+            activityException = new ActivityException(e);
         }
     }
 
-    private void checkClientActionFailure() {
-        if (actionException != null) {
-            throw actionException;
+    private void checkActivityFailure() {
+        if (activityException != null) {
+            throw activityException;
         }
     }
 

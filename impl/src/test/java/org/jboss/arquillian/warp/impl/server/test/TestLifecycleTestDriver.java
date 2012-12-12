@@ -36,8 +36,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.Inspection;
+import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
 import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
@@ -53,7 +53,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
     @Mock
-    private AssertionRegistry assertionRegistry;
+    private InspectionRegistry inspectionRegistry;
 
     @Spy
     private ResponsePayload responsePayload = new ResponsePayload(-1L);
@@ -80,60 +80,60 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void setup() {
         // having
         bind(ApplicationScoped.class, ServiceLoader.class, services);
-        bind(RequestScoped.class, AssertionRegistry.class, assertionRegistry);
+        bind(RequestScoped.class, InspectionRegistry.class, inspectionRegistry);
         bind(RequestScoped.class, ResponsePayload.class, responsePayload);
         when(services.all(TestEnricher.class)).thenReturn(Arrays.<TestEnricher>asList());
     }
 
     @Test
-    public void when_registry_contains_assertion_with_annotated_method__matching_current_lifecycle_event_then_method_is_fired() {
+    public void when_registry_contains_inspection_with_annotated_method__matching_current_lifecycle_event_then_method_is_fired() {
 
         // having
-        TestingAssertion assertion = mock(TestingAssertion.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
+        TestingInspection inspection = mock(TestingInspection.class);
+        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(inspection));
 
         // when
         fire(new BeforeServlet());
 
         // then
-        verify(assertion).test();
+        verify(inspection).test();
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Before.class, 1);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 1);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.After.class, 1);
     }
 
     @Test
-    public void when_registry_contains_two_assertion_then_all_methods_are_executed() {
+    public void when_registry_contains_two_inspection_then_all_methods_are_executed() {
 
         // having
-        TestingAssertion assertion1 = mock(TestingAssertion.class);
-        TestingAssertionForMultipleAssertions assertion2 = mock(TestingAssertionForMultipleAssertions.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion1, assertion2));
+        TestingInspection inspection1 = mock(TestingInspection.class);
+        TestingInspectionForMultipleInspections inspection2 = mock(TestingInspectionForMultipleInspections.class);
+        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(inspection1, inspection2));
 
         // when
         fire(new BeforeServlet());
 
         // then
-        verify(assertion1).test();
-        verify(assertion2).test();
+        verify(inspection1).test();
+        verify(inspection2).test();
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Before.class, 2);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 2);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.After.class, 2);
     }
 
     @Test
-    public void when_registry_contains_assertion_with_multiple_methods_annotated_with_given_lifecycle_event_annotation_then_all_methods_are_executed() {
+    public void when_registry_contains_inspection_with_multiple_methods_annotated_with_given_lifecycle_event_annotation_then_all_methods_are_executed() {
 
         // having
-        TestingAssertionForMultipleMethods assertion = mock(TestingAssertionForMultipleMethods.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
+        TestingInspectionForMultipleMethods inspection = mock(TestingInspectionForMultipleMethods.class);
+        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(inspection));
 
         // when
         fire(new BeforeServlet());
 
         // then
-        verify(assertion).test1();
-        verify(assertion).test2();
+        verify(inspection).test1();
+        verify(inspection).test2();
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Before.class, 2);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 2);
         assertEventFired(org.jboss.arquillian.test.spi.event.suite.After.class, 2);
@@ -143,9 +143,9 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_lifecycle_test_execution_fails_then_test_result_is_filled() {
 
         // having
-        TestingAssertion assertion = mock(TestingAssertion.class);
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(assertion));
-        doThrow(exception).when(assertion).test();
+        TestingInspection inspection = mock(TestingInspection.class);
+        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(inspection));
+        doThrow(exception).when(inspection).test();
 
         // when
         fire(new BeforeServlet());
@@ -163,7 +163,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_before_event_fails_then_request_payload_is_filled_with_exception() {
 
         // having
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(new TestingAssertionForFailingBeforeTest()));
+        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(new TestingInspectionForFailingBeforeTest()));
 
         // when
         try {
@@ -185,7 +185,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_after_event_fails_then_request_payload_is_filled_with_exception() {
 
         // having
-        when(assertionRegistry.getAssertions()).thenReturn(Arrays.<ServerAssertion>asList(new TestingAssertionForFailingAfterTest()));
+        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(new TestingInspectionForFailingAfterTest()));
 
         // when
         try {
@@ -206,7 +206,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         return testResult.get();
     }
 
-    static class TestingAssertion extends ServerAssertion {
+    static class TestingInspection extends Inspection {
         private static final long serialVersionUID = -1L;
 
         @org.jboss.arquillian.warp.servlet.BeforeServlet
@@ -214,7 +214,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         }
     }
 
-    static class TestingAssertionForMultipleAssertions extends ServerAssertion {
+    static class TestingInspectionForMultipleInspections extends Inspection {
         private static final long serialVersionUID = -1L;
 
         @org.jboss.arquillian.warp.servlet.BeforeServlet
@@ -222,7 +222,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         }
     }
 
-    static class TestingAssertionForMultipleMethods extends ServerAssertion {
+    static class TestingInspectionForMultipleMethods extends Inspection {
         private static final long serialVersionUID = -1L;
 
         @org.jboss.arquillian.warp.servlet.BeforeServlet
@@ -234,7 +234,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         }
     }
 
-    static class TestingAssertionForFailingBeforeTest extends ServerAssertion {
+    static class TestingInspectionForFailingBeforeTest extends Inspection {
         private static final long serialVersionUID = -1L;
 
         @org.jboss.arquillian.warp.servlet.BeforeServlet
@@ -242,7 +242,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         }
     }
 
-    static class TestingAssertionForFailingAfterTest extends ServerAssertion {
+    static class TestingInspectionForFailingAfterTest extends Inspection {
         private static final long serialVersionUID = -1L;
 
         @org.jboss.arquillian.warp.servlet.BeforeServlet
@@ -253,13 +253,13 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     static class ExceptionThrowingSuiteEventObserver {
 
         public void beforeTest(@Observes org.jboss.arquillian.test.spi.event.suite.Before event) {
-            if (event.getTestClass().getJavaClass() == TestingAssertionForFailingBeforeTest.class) {
+            if (event.getTestClass().getJavaClass() == TestingInspectionForFailingBeforeTest.class) {
                 throw new RuntimeException("before failed");
             }
         }
 
         public void afterTest(@Observes org.jboss.arquillian.test.spi.event.suite.After event) {
-            if (event.getTestClass().getJavaClass() == TestingAssertionForFailingAfterTest.class) {
+            if (event.getTestClass().getJavaClass() == TestingInspectionForFailingAfterTest.class) {
                 throw new RuntimeException("after failed");
             }
         }

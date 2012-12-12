@@ -32,11 +32,10 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -75,13 +74,13 @@ public class BasicWarpTest {
     public void test() {
 
         Warp
-            .execute(new ClientAction() {
-                public void action() {
+            .initiate(new Activity() {
+                public void perform() {
                     browser.navigate().to(contextPath + "index.html");
                 }
             })
-            .filter(request().uri().not().contains("favicon.ico"))
-            .verify(new ServerAssertion() {
+            .observe(request().uri().not().contains("favicon.ico"))
+            .inspect(new Inspection() {
 
                 private static final long serialVersionUID = 1L;
 
@@ -118,13 +117,13 @@ public class BasicWarpTest {
             );
 
         Warp
-            .execute(new ClientAction() {
-                public void action() {
+            .initiate(new Activity() {
+                public void perform() {
                     browser.findElement(By.id("sendAjax")).click();
                 }
             })
-            .filter(FaviconIgnore.class)
-            .verify(new ServerAssertion() {
+            .observe(FaviconIgnore.class)
+            .inspect(new Inspection() {
 
                 private static final long serialVersionUID = 1L;
 
@@ -132,7 +131,6 @@ public class BasicWarpTest {
                 public void beforeServlet() {
                     System.out.println("Hi server, here is AJAX request!");
                 }
-            }
-            );
+            });
     }
 }

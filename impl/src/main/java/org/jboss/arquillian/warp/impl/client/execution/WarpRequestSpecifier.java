@@ -17,10 +17,10 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.warp.Warp;
-import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
+import org.jboss.arquillian.warp.client.execution.GroupInspectionBuilder;
+import org.jboss.arquillian.warp.client.execution.SingleInspectionSpecifier;
+import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
+import org.jboss.arquillian.warp.client.execution.WarpExecutionBuilder;
 
 /**
  * Provides interface for taking user input from {@link Warp} API and ability to execute Warp request.
@@ -28,9 +28,9 @@ import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
  * @author Lukas Fryc
  */
 public interface WarpRequestSpecifier extends
-    WarpClientActionBuilder,
-    WarpVerificationBuilder,
-    GroupVerificationBuilder,
-    SingleVerificationSpecifier {
+    WarpActivityBuilder,
+    WarpExecutionBuilder,
+    GroupInspectionBuilder,
+    SingleInspectionSpecifier {
 
 }

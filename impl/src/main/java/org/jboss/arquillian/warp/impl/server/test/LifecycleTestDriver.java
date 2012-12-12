@@ -31,7 +31,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.Test;
-import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
 import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 
 /**
@@ -46,7 +46,7 @@ import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 public class LifecycleTestDriver {
 
     @Inject
-    private Instance<AssertionRegistry> registry;
+    private Instance<InspectionRegistry> registry;
 
     @Inject
     private Event<Before> before;
@@ -59,26 +59,26 @@ public class LifecycleTestDriver {
 
     public void fireTest(@Observes WarpLifecycleEvent event) {
 
-        for (final Object assertionObject : registry().getAssertions()) {
+        for (final Object inspectionObject : registry().getInspections()) {
             final Annotation annotation = event.getAnnotation();
 
-            List<Method> methods = SecurityActions.getMethodsWithAnnotation(assertionObject.getClass(), annotation);
+            List<Method> methods = SecurityActions.getMethodsWithAnnotation(inspectionObject.getClass(), annotation);
 
             for (final Method testMethod : methods) {
-                executeTest(assertionObject, testMethod);
+                executeTest(inspectionObject, testMethod);
             }
         }
     }
 
-    private void executeTest(Object assertionObject, Method testMethod) {
-        before.fire(new Before(assertionObject, testMethod));
+    private void executeTest(Object inspectionObject, Method testMethod) {
+        before.fire(new Before(inspectionObject, testMethod));
 
-        test.fire(new Test(new LifecycleMethodExecutor(assertionObject, testMethod)));
+        test.fire(new Test(new LifecycleMethodExecutor(inspectionObject, testMethod)));
 
-        after.fire(new After(assertionObject, testMethod));
+        after.fire(new After(inspectionObject, testMethod));
     }
 
-    private AssertionRegistry registry() {
+    private InspectionRegistry registry() {
         return registry.get();
     }
 

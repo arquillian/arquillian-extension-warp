@@ -26,8 +26,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ClientActionException;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ActivityException;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.junit.Before;
@@ -43,7 +43,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
 
     @Mock
-    private ClientAction action;
+    private Activity activity;
 
     @Mock
     private WarpContext warpContext;
@@ -55,7 +55,7 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
         super.addExtensions(extensions);
 
         extensions.add(WarpExecutionInitializer.class);
-        extensions.add(ClientActionObserver.class);
+        extensions.add(ActivityObserver.class);
     }
 
     @Override
@@ -72,17 +72,17 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
     }
 
     @Test
-    public void when_client_action_fails_and_request_result_is_failure_then_server_failure_should_be_reported() {
+    public void when_client_activity_fails_and_request_result_is_failure_then_server_failure_should_be_reported() {
         // given
         TestResult result = new TestResult(Status.FAILED, new RuntimeException("server"));
         when(warpContext.getFirstNonSuccessfulResult()).thenReturn(result);
 
-        doThrow(new RuntimeException("client")).when(action).action();
+        doThrow(new RuntimeException("client")).when(activity).perform();
 
         // when
         try {
-            executor.execute(action, warpContext);
-            fail("client action should fail the request");
+            executor.execute(activity, warpContext);
+            fail("client activity should fail the request");
         } catch (RuntimeException e) {
             String message = e.getMessage();
             if (!"server".equals(message)) {
@@ -92,14 +92,14 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
     }
 
     @Test
-    public void when_server_action_fails_without_client_failure_then_server_failure_should_be_reported() {
+    public void when_server_activity_fails_without_client_failure_then_server_failure_should_be_reported() {
         // given
         TestResult result = new TestResult(Status.FAILED, new RuntimeException("server"));
         when(warpContext.getFirstNonSuccessfulResult()).thenReturn(result);
 
         // when
         try {
-            executor.execute(action, warpContext);
+            executor.execute(activity, warpContext);
             fail("server execution should fail the request");
         } catch (RuntimeException e) {
             String message = e.getMessage();
@@ -110,17 +110,17 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
     }
 
     @Test
-    public void when_client_action_fails_without_server_failure_then_client_failure_should_be_reported() {
+    public void when_client_activity_fails_without_server_failure_then_client_failure_should_be_reported() {
 
         // given
-        doThrow(new RuntimeException("client")).when(action).action();
+        doThrow(new RuntimeException("client")).when(activity).perform();
         when(warpContext.getFirstNonSuccessfulResult()).thenReturn(null);
 
         // when
         try {
-            executor.execute(action, warpContext);
+            executor.execute(activity, warpContext);
             fail("server execution should fail the request");
-        } catch (ClientActionException e) {
+        } catch (ActivityException e) {
             String message = e.getCause().getMessage();
             if (!"client".equals(message)) {
                 throw e;
@@ -128,10 +128,10 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
         }
     }
 
-    static class ClientActionObserver {
+    static class ActivityObserver {
 
-        public void executeClientAction(@Observes ClientAction action) {
-            action.action();
+        public void executeActivity(@Observes Activity activity) {
+            activity.perform();
         }
     }
 }

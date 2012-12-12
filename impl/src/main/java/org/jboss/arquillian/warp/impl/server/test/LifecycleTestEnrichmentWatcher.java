@@ -27,13 +27,13 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 
 /**
- * Watches the {@link ServerAssertion} objects and on {@link Before} event, it stores all fields which have been changed during
+ * Watches the {@link Inspection} objects and on {@link Before} event, it stores all fields which have been changed during
  * that event.
  *
- * These changes are the {@link ServerAssertion} enrichment actions.
+ * These changes are the {@link Inspection} enrichment actions.
  *
  * Then on {@link After} method, it restores all the changed fields, which deenrich the instance.
  *

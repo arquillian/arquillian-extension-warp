@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder;
-import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
-import org.jboss.arquillian.warp.client.filter.FilterBuilder;
+import org.jboss.arquillian.warp.Inspection;
+import org.jboss.arquillian.warp.RequestObserver;
+import org.jboss.arquillian.warp.client.execution.GroupInspectionBuilder;
+import org.jboss.arquillian.warp.client.execution.GroupExecutionSpecifier;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.observer.ObserverBuilder;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
@@ -37,15 +38,15 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 public class WarpGroupImpl implements WarpGroup {
 
     private Object id;
-    private RequestFilter<?> filter;
-    private GroupVerificationBuilder groupsExecutor;
+    private RequestObserver observer;
+    private GroupInspectionBuilder groupsExecutor;
     private int expectCount = 1;
 
-    private ServerAssertion[] assertions;
+    private Inspection[] inspections;
 
     private LinkedHashMap<RequestPayload, ResponsePayload> payloads = new LinkedHashMap<RequestPayload, ResponsePayload>();
 
-    public WarpGroupImpl(GroupVerificationBuilder groupsExecutor, Object identifier) {
+    public WarpGroupImpl(GroupInspectionBuilder groupsExecutor, Object identifier) {
         this.groupsExecutor = groupsExecutor;
         this.id = identifier;
     }
@@ -55,8 +56,8 @@ public class WarpGroupImpl implements WarpGroup {
      * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(org.jboss.arquillian.warp.client.filter.RequestFilter)
      */
     @Override
-    public GroupVerificationSpecifier filter(RequestFilter<?> filter) {
-        this.filter = filter;
+    public GroupExecutionSpecifier observe(RequestObserver what) {
+        this.observer = what;
         return this;
     }
 
@@ -65,15 +66,15 @@ public class WarpGroupImpl implements WarpGroup {
      * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(java.lang.Class)
      */
     @Override
-    public GroupVerificationSpecifier filter(Class<? extends RequestFilter<?>> filterClass) {
-        this.filter = SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {},
+    public GroupExecutionSpecifier observe(Class<? extends RequestObserver> observer) {
+        this.observer = SecurityActions.newInstance(observer.getName(), new Class<?>[] {}, new Object[] {},
                 RequestFilter.class);
         return this;
     }
 
     @Override
-    public GroupVerificationSpecifier filter(FilterBuilder<?, ?> filterBuilder) {
-        this.filter = filterBuilder.build();
+    public GroupExecutionSpecifier observe(ObserverBuilder<?, ?> observerBuilder) {
+        this.observer = observerBuilder.build();
         return this;
     }
 
@@ -82,28 +83,28 @@ public class WarpGroupImpl implements WarpGroup {
      * @see org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier#expectCount(int)
      */
     @Override
-    public GroupVerificationSpecifier expectCount(int numberOfRequests) {
+    public GroupExecutionSpecifier expectCount(int numberOfRequests) {
         this.expectCount = numberOfRequests;
         return this;
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.execution.GroupAssertionSpecifier#verify(org.jboss.arquillian.warp.ServerAssertion[])
+     * @see org.jboss.arquillian.warp.client.execution.GroupInspectionSpecifier#verify(org.jboss.arquillian.warp.ServerInspection[])
      */
     @Override
-    public GroupVerificationBuilder verify(ServerAssertion... assertions) {
-        addAssertions(assertions);
+    public GroupInspectionBuilder inspect(Inspection... inspections) {
+        addInspections(inspections);
         return groupsExecutor;
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#addAssertions(org.jboss.arquillian.warp.ServerAssertion[])
+     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#addInspections(org.jboss.arquillian.warp.ServerInspection[])
      */
     @Override
-    public void addAssertions(ServerAssertion... assertions) {
-        this.assertions = assertions;
+    public void addInspections(Inspection... inspections) {
+        this.inspections = inspections;
     }
 
     /*
@@ -111,45 +112,45 @@ public class WarpGroupImpl implements WarpGroup {
      * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#getFilter()
      */
     @Override
-    public RequestFilter<?> getFilter() {
-        return filter;
+    public RequestObserver getObserver() {
+        return observer;
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertion()
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getInspection()
      */
     @Override
-    public <T extends ServerAssertion> T getAssertion() {
-        return (T) payloads.values().iterator().next().getAssertions().get(0);
+    public <T extends Inspection> T getInspection() {
+        return (T) payloads.values().iterator().next().getInspections().get(0);
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertionForHitNumber(int)
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getInspectionForHitNumber(int)
      */
     @Override
-    public <T extends ServerAssertion> T getAssertionForHitNumber(int hitNumber) {
-        return (T) getAssertionsForHitNumber(hitNumber).get(0);
+    public <T extends Inspection> T getInspectionForHitNumber(int hitNumber) {
+        return (T) getInspectionsForHitNumber(hitNumber).get(0);
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertions()
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getInspections()
      */
     @Override
-    public List<ServerAssertion> getAssertions() {
-        return payloads.values().iterator().next().getAssertions();
+    public List<Inspection> getInspections() {
+        return payloads.values().iterator().next().getInspections();
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getAssertionsForHitNumber(int)
+     * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getInspectionsForHitNumber(int)
      */
     @Override
-    public List<ServerAssertion> getAssertionsForHitNumber(int hitNumber) {
+    public List<Inspection> getInspectionsForHitNumber(int hitNumber) {
         ResponsePayload payload = (ResponsePayload) payloads.values().toArray()[hitNumber];
-        return payload.getAssertions();
+        return payload.getInspections();
     }
 
     /*
@@ -178,7 +179,7 @@ public class WarpGroupImpl implements WarpGroup {
             throw new IllegalStateException(String.format("There were more requests executed (%s) then expected (%s)",
                     payloads.size() + 1, expectCount));
         }
-        RequestPayload requestPayload = new RequestPayload(assertions);
+        RequestPayload requestPayload = new RequestPayload(inspections);
         payloads.put(requestPayload, null);
         return requestPayload;
     }

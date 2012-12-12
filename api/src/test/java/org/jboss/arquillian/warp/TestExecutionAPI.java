@@ -16,238 +16,153 @@
  */
 package org.jboss.arquillian.warp;
 
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
-import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.result.WarpResult;
-
-import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
 
 @SuppressWarnings({"unused", "serial"})
 public class TestExecutionAPI {
 
-    private ClientAction clientAction;
-
-    private ServerAssertion serverAssertion;
-
-    private RequestFilter<?> requestFilter;
-
+    private Activity activity;
+    private Inspection inspection;
+    private RequestObserver what;
 
     /**
-     * Single client action paired with single server assertion for most simplest
-     * cases
+     * Single client activity paired with single server inspection for most
+     * simplest cases.
      */
     public void testSimpleExecution() {
         Warp
-            .execute(clientAction)
-            .verify(serverAssertion);
+            .initiate(activity)
+            .inspect(inspection);
     }
 
     /**
-     * Single client action and server assertion applied for request matching
-     * given filter
+     * Single client activity and server inspection applied for only for given
+     * requests.
      */
-    public void testSimpleFiltering() {
+    public void testSimpleObserving() {
         Warp
-            .execute(clientAction)
-            .filter(requestFilter)
-            .verify(serverAssertion);
+            .initiate(activity)
+            .observe(what)
+            .inspect(inspection);
     }
 
     /**
-     * The result of simplest possible execution is ServerAssertion (modified
-     * on the server)
+     * The result of simplest possible execution is {@link Inspection} (modified
+     * on a server).
      */
     public void testSimpleResult() {
-        ServerAssertion assertion = Warp
-            .execute(clientAction)
-            .verify(serverAssertion);
+        Inspection returnedInspection = Warp
+            .initiate(activity)
+            .inspect(inspection);
     }
 
     /**
-     * Two requests caused by single client action are verified concurrently.
+     * Two requests caused by single client activity are verified in parallel.
      */
     public void testGroupOfTwoRequests() {
         Warp
-            .execute(clientAction)
+            .initiate(activity)
             .group()
-                .filter(requestFilter)
-                .verify(serverAssertion)
+                .observe(what)
+                .inspect(inspection)
             .group()
-                .filter(requestFilter)
-                .verify(serverAssertion)
-            .verifyAll();
+                .observe(what)
+                .inspect(inspection)
+            .execute();
     }
 
     /**
      * Complex Warp executions stores their results inside {@link WarpResult}
-     * object where result of assertion and other details (e.g. filter hit
-     * count) is stored.
+     * object where result of inspection and other details (e.g. observer hit
+     * count) are stored.
      */
     public void testResultOfComplexGroupExecution() {
         WarpResult result = Warp
-            .execute(clientAction)
+            .initiate(activity)
             .group("first")
-                .filter(requestFilter)
-                .verify(serverAssertion)
+                .observe(what)
+                .inspect(inspection)
             .group("second")
-                .filter(requestFilter)
-                .verify(serverAssertion)
-            .verifyAll();
+                .observe(what)
+                .inspect(inspection)
+            .execute();
 
 
-        ServerAssertion firstAssertion = result.getGroup("first").getAssertion();
+        Inspection firstInspection = result.getGroup("first").getInspection();
 
         int hitCount = result.getGroup("second").getHitCount();
     }
 
     /**
-     * Test may specify multiple assertions verified in one request.
+     * Test may specify multiple inspections verified in one request.
      *
-     * These assertions will preserve order of definition and execution.
+     * These inspections will preserve order of definition and execution.
      */
-    public void testMultipleAssertions() {
+    public void testMultipleInspections() {
         WarpResult result = Warp
-            .execute(clientAction)
-            .verifyAll(serverAssertion, serverAssertion, serverAssertion);
+            .initiate(activity)
+            .inspectAll(inspection, inspection, inspection);
 
         result = Warp
-            .execute(clientAction)
+            .initiate(activity)
             .group()
-                .filter(requestFilter)
-                .verify(serverAssertion, serverAssertion)
+                .observe(what)
+                .inspect(inspection, inspection)
             .group()
-                .filter(requestFilter)
-                .verify(serverAssertion, serverAssertion, serverAssertion)
-            .verifyAll();
+                .observe(what)
+                .inspect(inspection, inspection, inspection)
+            .execute();
     }
 
     /**
-     * Once group is defined then it can be configured either with filter or expected count
+     * Once group is defined then it can be configured either with observer or expected count
      */
-    public void testExceptCount() {
+    public void testExpectedCount() {
         Warp
-            .execute(clientAction)
+            .initiate(activity)
             .group()
-                .filter(requestFilter)
+                .observe(what)
                 .expectCount(2)
-                .verify(serverAssertion, serverAssertion, serverAssertion)
-            .verifyAll();
+                .inspect(inspection, inspection, inspection)
+            .execute();
 
         Warp
-            .execute(clientAction)
+            .initiate(activity)
             .group()
                 .expectCount(2)
-                .filter(requestFilter)
-                .verify(serverAssertion, serverAssertion, serverAssertion)
-            .verifyAll();
+                .observe(what)
+                .inspect(inspection, inspection, inspection)
+            .execute();
     }
 
     /**
-     * Filters can be specified by annotation - then they will be applied in any
-     * Warp execution where no other filter was specified.
+     * Observers can be specified by annotation - they will be applied in any
+     * Warp execution where no other observer was specified.
      */
-    @Filter(TestingFilter.class)
+    // TODO not implemented yet
+    @Observe(WhatToObserve.class)
     public void testFilterSpecifiedByAnnotation() {
         Warp
-            .execute(clientAction)
-            .verify(serverAssertion);
+            .initiate(activity)
+            .inspect(inspection);
+    }
+
+    private abstract static class WhatToObserve implements RequestObserver {
     }
 
     /**
-     * Assertions can be specified by annotation - all specified assertions
-     * will be used for all requests.
+     * Inspections can be specified by annotation - all specified inspections
+     * will be used during all Warp executions.
      */
-    @Verify({TestingAssertion1.class, TestingAssertion2.class})
-    public void testSpecifyAssertionByAnnotation() {
-        clientAction.action();
+    // TODO not implemented yet
+    @Inspect({Inspection1.class, Inspection2.class})
+    public void testSpecifyInspectionByAnnotation() {
+        activity.perform();
     }
 
-    private abstract static class TestingFilter implements RequestFilter<HttpRequest> {
+    private abstract static class Inspection1 extends Inspection {
     }
 
-    private abstract static class TestingAssertion1 extends ServerAssertion {
-    }
-
-    private abstract static class TestingAssertion2 extends ServerAssertion {
-    }
-
-    /**
-     * Single client action and server assertion applied for request matching
-     * given URI
-     */
-    public void testFilterBuilderUri() {
-        Warp
-                .execute(clientAction)
-                .filter(request().uri().endsWith(".jsf"))
-                .verify(serverAssertion);
-    }
-
-    /**
-     * Single client action and server assertion applied for request not matching
-     * given URI
-     */
-    public void testFilterBuilderUriNot() {
-        Warp
-                .execute(clientAction)
-                .filter(request().uri().not().endsWith(".jsf"))
-                .verify(serverAssertion);
-    }
-
-    /**
-     * Single client action and server assertion applied for request matching
-     * given HTTP method
-     */
-    public void testFilterBuilderMethod() {
-        Warp
-                .execute(clientAction)
-                .filter(request().method().equal(HttpMethod.POST))
-                .verify(serverAssertion);
-    }
-
-    /**
-     * Single client action and server assertion applied for request not matching
-     * given HTTP method
-     */
-    public void testFilterBuilderMethodNot() {
-        Warp
-                .execute(clientAction)
-                .filter(request().method().not().equal(HttpMethod.POST))
-                .verify(serverAssertion);
-    }
-
-    /**
-     * Single client action and server assertion applied for request matching
-     * given HTTP header
-     */
-    public void testFilterBuilderHeader() {
-        Warp
-                .execute(clientAction)
-                .filter(request().header().containsValue("Accept", "application/json"))
-                .verify(serverAssertion);
-    }
-
-    /**
-     * Single client action and server assertion applied for request not matching
-     * given HTTP header
-     */
-    public void testFilterBuilderHeaderNot() {
-        Warp
-                .execute(clientAction)
-                .filter(request().header().not().containsValue("Accept", "application/json"))
-                .verify(serverAssertion);
-    }
-
-    /**
-     * Single client action and server assertion applied for request matching
-     * given condition
-     */
-    public void testFilterBuilderComplex() {
-        Warp
-                .execute(clientAction)
-                .filter(request().uri().endsWith("resource/Client/1")
-                                 .method().equal(HttpMethod.POST)
-                                 .header().containsValue("Cookie", "name=Client"))
-                .verify(serverAssertion);
+    private abstract static class Inspection2 extends Inspection {
     }
 }

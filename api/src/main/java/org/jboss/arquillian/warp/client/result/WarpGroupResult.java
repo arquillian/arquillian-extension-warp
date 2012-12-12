@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp.client.result;
 
 import java.util.List;
 
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 
 /**
  * The request group verification result.
@@ -28,24 +28,24 @@ import org.jboss.arquillian.warp.ServerAssertion;
 public interface WarpGroupResult {
 
     /**
-     * Returns assertion verified during first request in this group
+     * Returns inspection verified during first request in this group
      */
-    <T extends ServerAssertion> T getAssertion();
+    <T extends Inspection> T getInspection();
 
     /**
-     * Returns assertion verified during N-th request verified in this group
+     * Returns inspection verified during N-th request verified in this group
      */
-    <T extends ServerAssertion> T getAssertionForHitNumber(int hitNumber);
+    <T extends Inspection> T getInspectionForHitNumber(int hitNumber);
 
     /**
-     * Returns list of all assertions verified during first request in this group
+     * Returns list of all inspections verified during first request in this group
      */
-    List<ServerAssertion> getAssertions();
+    List<Inspection> getInspections();
 
     /**
-     * Returns list of all assertions verified during N-th request in this group
+     * Returns list of all inspections verified during N-th request in this group
      */
-    List<ServerAssertion> getAssertionsForHitNumber(int hitNumber);
+    List<Inspection> getInspectionsForHitNumber(int hitNumber);
 
     /**
      * Returns how many requests were verified in this group

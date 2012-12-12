@@ -31,8 +31,8 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.jsf.AfterPhase;
@@ -79,19 +79,19 @@ public class TestJsfLifecycle {
     public void test() {
 
         ExecuteAllPhases executed = Warp
-                .execute(new ClientAction() {
-                    public void action() {
+                .initiate(new Activity() {
+                    public void perform() {
                         browser.navigate().to(contextPath + "index.jsf");
                     }})
-                .filter(JsfPageRequestFilter.class)
-                .verify(new ExecuteAllPhases());
+                .observe(JsfPageRequestFilter.class)
+                .inspect(new ExecuteAllPhases());
 
         assertFalse(executed.isPostback());
         ExecuteAllPhases.verifyExecutedPhases(executed);
 
         executed = Warp
-                .execute(new ClientAction() {
-                    public void action() {
+                .initiate(new Activity() {
+                    public void perform() {
                         WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
                         nameInput.sendKeys("X");
                         browser.findElement(By.tagName("body")).click();
@@ -99,8 +99,8 @@ public class TestJsfLifecycle {
 
                     }
                 })
-                .filter(JsfPageRequestFilter.class)
-                .verify(new ExecuteAllPhases());
+                .observe(JsfPageRequestFilter.class)
+                .inspect(new ExecuteAllPhases());
 
         assertTrue(executed.isPostback());
         ExecuteAllPhases.verifyExecutedPhases(executed);
@@ -118,7 +118,7 @@ public class TestJsfLifecycle {
         });
     }
 
-    public static class ExecuteAllPhases extends ServerAssertion {
+    public static class ExecuteAllPhases extends Inspection {
 
         private static final long serialVersionUID = 1L;
 

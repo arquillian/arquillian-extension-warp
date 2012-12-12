@@ -27,8 +27,8 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.ftest.FaviconIgnore;
@@ -66,22 +66,22 @@ public class TestBigResponsePayload {
     @Test
     public void test() {
 
-        Assertion requestAssertion = new Assertion();
+        TestingInspection requestInspection = new TestingInspection();
 
-        Assertion responseAssertion = Warp
-                .execute(new ClientAction() {
-                    public void action() {
+        TestingInspection responseInspection = Warp
+                .initiate(new Activity() {
+                    public void perform() {
                         browser.navigate().to(contextPath + "index.html");
                     }})
-                .filter(FaviconIgnore.class)
-                .verify(requestAssertion);
+                .observe(FaviconIgnore.class)
+                .inspect(requestInspection);
 
-        assertNotNull("responseAssertion must not be null", responseAssertion);
-        assertNotNull("payload must not be null", responseAssertion.payload);
-        assertEquals(responseAssertion.payload.length, Assertion.LENGTH);
+        assertNotNull("responseInspection must not be null", responseInspection);
+        assertNotNull("payload must not be null", responseInspection.payload);
+        assertEquals(responseInspection.payload.length, TestingInspection.LENGTH);
     }
 
-    public static class Assertion extends ServerAssertion {
+    public static class TestingInspection extends Inspection {
 
         public static final int LENGTH = 1048576; // 1MB
 

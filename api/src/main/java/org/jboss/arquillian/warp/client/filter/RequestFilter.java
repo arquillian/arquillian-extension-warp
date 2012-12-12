@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.client.filter;
 
+import org.jboss.arquillian.warp.RequestObserver;
+
 /**
  * Specifies conditions which must be met in order to verify request
  *
@@ -23,7 +25,7 @@ package org.jboss.arquillian.warp.client.filter;
  *
  * @param <T> the type of requests which can be filtered by this filter
  */
-public interface RequestFilter<T> {
+public interface RequestFilter<T> extends RequestObserver {
 
     /**
      * Returns true if given request should be verified

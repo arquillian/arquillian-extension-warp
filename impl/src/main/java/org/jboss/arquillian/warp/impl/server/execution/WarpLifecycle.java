@@ -26,11 +26,11 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleFinished;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleStarted;
+import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
@@ -48,7 +48,7 @@ public class WarpLifecycle {
     private Instance<LifecycleManager> lifecycleManager;
 
     @Inject
-    private Instance<AssertionRegistry> assertionRegistry;
+    private Instance<InspectionRegistry> inspectionRegistry;
 
     @Inject
     private Event<WarpLifecycleStarted> warpLifecycleStarted;
@@ -64,11 +64,11 @@ public class WarpLifecycle {
     public void execute(@Observes ExecuteWarp event, HttpServletRequest request, NonWritingResponse nonWritingResponse,
             FilterChain filterChain, RequestPayload requestPayload, ResponsePayload responsePayload) throws Throwable {
 
-        List<ServerAssertion> assertions = requestPayload.getAssertions();
+        List<Inspection> inspections = requestPayload.getInspections();
 
         try {
             lifecycleManager.get().bindTo(ServletRequest.class, request);
-            assertionRegistry.get().registerAssertions(assertions);
+            inspectionRegistry.get().registerInspections(inspections);
 
             warpLifecycleStarted.fire(new WarpLifecycleStarted());
             lifecycleManager.get().fireEvent(new BeforeServlet());
@@ -77,11 +77,11 @@ public class WarpLifecycle {
 
             lifecycleManager.get().fireEvent(new AfterServlet());
 
-            responsePayload.setAssertions(assertions);
+            responsePayload.setInspections(inspections);
         } finally {
             warpLifecycleFinished.fire(new WarpLifecycleFinished());
 
-            assertionRegistry.get().unregisterAssertions(assertions);
+            inspectionRegistry.get().unregisterInspections(inspections);
 
             lifecycleManager.get().unbindFrom(ServletRequest.class, request);
         }

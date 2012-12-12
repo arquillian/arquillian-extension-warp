@@ -25,8 +25,8 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.Inspection;
+import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
@@ -52,7 +52,7 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
     private ServletResponse response;
 
     @Inject
-    private Instance<AssertionRegistry> registry;
+    private Instance<InspectionRegistry> registry;
 
     @Inject
     private Instance<LifecycleManager> lifecycleManager;
@@ -69,8 +69,8 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
         fire(new BeforeRequest(request, response));
         lifecycleManager.get().bindTo(ServletRequest.class, request);
 
-        TestingAssertion assertion = new TestingAssertion();
-        registry.get().registerAssertions(assertion);
+        TestingInspection inspection = new TestingInspection();
+        registry.get().registerInspections(inspection);
 
         LifecycleManager lifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
         lifecycleManager.fireEvent(new BeforeServlet());
@@ -81,11 +81,11 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
         assertEventFired(After.class, 1);
     }
 
-    public static class TestingAssertion extends ServerAssertion {
+    public static class TestingInspection extends Inspection {
         private static final long serialVersionUID = 1L;
 
         @org.jboss.arquillian.warp.servlet.BeforeServlet
-        public void assertion() {
+        public void inspection() {
         }
     }
 

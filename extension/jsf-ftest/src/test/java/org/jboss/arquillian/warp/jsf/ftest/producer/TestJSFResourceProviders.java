@@ -42,8 +42,8 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.jsf.AfterPhase;
@@ -83,12 +83,12 @@ public class TestJSFResourceProviders {
     @Test
     public void test() {
         Warp
-            .execute(new ClientAction() {
-                public void action() {
+            .initiate(new Activity() {
+                public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
                 }})
-            .filter(JsfPageRequestFilter.class)
-            .verify(new ServerAssertion() {
+            .observe(JsfPageRequestFilter.class)
+            .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 
                 @ArquillianResource

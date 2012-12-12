@@ -20,12 +20,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 
 /**
- * The holder for {@link ServerAssertion} object.
+ * The holder for {@link Inspection} object.
  *
- * Provides methods for settings up the server assertion and its retrieval.
+ * Provides methods for settings up the server inspection and its retrieval.
  *
  * @author Lukas Fryc
  */
@@ -40,7 +40,7 @@ public class SynchronizationPoint {
     private final CountDownLatch responseFinished = new CountDownLatch(1);
 
     /**
-     * Advertizes that there will be taken client action which will lead into request.
+     * Advertizes that there will be taken client activity which will lead into request.
      */
     void advertise() {
         enrichmentAdvertised.set(true);
@@ -55,28 +55,28 @@ public class SynchronizationPoint {
     }
 
     /**
-     * Returns true if there is client action advertised, see {@link #advertise()}.
+     * Returns true if there is client activity advertised, see {@link #advertise()}.
      *
-     * @return true if there is client action advertised, see {@link #advertise()}.
+     * @return true if there is client activity advertised, see {@link #advertise()}.
      */
     private boolean isEnrichmentAdvertised() {
         return enrichmentAdvertised.get();
     }
 
     /**
-     * Returns true if there is {@link ServerAssertion} pushed for current request.
+     * Returns true if there is {@link Inspection} pushed for current request.
      *
-     * @return true if there is {@link ServerAssertion} pushed for current request.
+     * @return true if there is {@link Inspection} pushed for current request.
      */
     private boolean isEnrichmentClosed() {
         return enrichmentClosed.get();
     }
 
     /**
-     * Returns true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
+     * Returns true if the {@link Inspection} is waiting for verification or the client activity which should cause request
      * is advertised.
      *
-     * @return true if the {@link ServerAssertion} is waiting for verification or the client action which should cause request
+     * @return true if the {@link Inspection} is waiting for verification or the client activity which should cause request
      *         is advertised.
      */
     boolean isWaitingForRequests() {

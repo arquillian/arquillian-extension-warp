@@ -20,7 +20,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
@@ -42,37 +42,37 @@ public class WarpExecutionObserver {
 
     public void executeWarp(@Observes ExecuteWarp event) throws Exception {
         try {
-            warpExecutor().execute(event.getClientAction(), event.getWarpContext());
+            warpExecutor().execute(event.getActivity(), event.getWarpContext());
         } catch (Exception e) {
             warpContext.get().pushException(e);
         }
     }
 
     public void advertiseEnrichment(@Observes AdvertiseEnrichment event) {
-        assertionSynchronizer().advertise();
+        inspectionSynchronizer().advertise();
     }
 
     public void finishEnrichment(@Observes FinishEnrichment event) {
-        assertionSynchronizer().finish();
+        inspectionSynchronizer().finish();
     }
 
-    public void executeClientAction(@Observes ClientAction action) {
-        action.action();
+    public void executeActivity(@Observes Activity activity) {
+        activity.perform();
     }
 
     public void awaitResponse(@Observes AwaitResponse event) {
-        assertionSynchronizer().waitForResponse();
+        inspectionSynchronizer().waitForResponse();
     }
 
     public void cleanEnrichment(@Observes CleanEnrichment event) {
-        assertionSynchronizer().clean();
+        inspectionSynchronizer().clean();
     }
 
     private WarpExecutor warpExecutor() {
         return services.get().onlyOne(WarpExecutor.class);
     }
 
-    private ExecutionSynchronizer assertionSynchronizer() {
+    private ExecutionSynchronizer inspectionSynchronizer() {
         return services.get().onlyOne(ExecutionSynchronizer.class);
     }
 }

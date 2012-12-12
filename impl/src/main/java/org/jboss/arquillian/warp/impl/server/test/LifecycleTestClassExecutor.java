@@ -29,20 +29,20 @@ import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 
 /**
  * The observer which watches all {@link Before} and {@link AfterRequest} events and executes the {@link BeforeClass} and
- * {@link AfterClass} events once per {@link ServerAssertion} class on the end of a request.
+ * {@link AfterClass} events once per {@link Inspection} class on the end of a request.
  *
  * @author Lukas Fryc
  *
  */
 public class LifecycleTestClassExecutor {
 
-    private LinkedHashSet<Object> executedAssertions;
+    private LinkedHashSet<Object> executedInspections;
 
     @Inject
     private Event<BeforeClass> beforeClass;
@@ -51,20 +51,20 @@ public class LifecycleTestClassExecutor {
     private Event<AfterClass> afterClass;
 
     public void beforeRequest(@Observes BeforeRequest event) {
-        executedAssertions = new LinkedHashSet<Object>();
+        executedInspections = new LinkedHashSet<Object>();
     }
 
     public void beforeTest(@Observes(precedence = 100) EventContext<Before> context) {
-        Object assertionObject = context.getEvent().getTestInstance();
-        if (!executedAssertions.contains(assertionObject)) {
-            executedAssertions.add(assertionObject);
-            beforeClass.fire(new BeforeClass(assertionObject.getClass()));
+        Object inspectionObject = context.getEvent().getTestInstance();
+        if (!executedInspections.contains(inspectionObject)) {
+            executedInspections.add(inspectionObject);
+            beforeClass.fire(new BeforeClass(inspectionObject.getClass()));
         }
         context.proceed();
     }
 
     public void afterRequest(@Observes(precedence = 100) EventContext<AfterRequest> context) {
-        List<Object> list = new LinkedList<Object>(executedAssertions);
+        List<Object> list = new LinkedList<Object>(executedInspections);
         Collections.reverse(list);
 
         Iterator<Object> iterator = list.iterator();

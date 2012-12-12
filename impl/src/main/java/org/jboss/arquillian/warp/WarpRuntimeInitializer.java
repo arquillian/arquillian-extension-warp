@@ -40,7 +40,7 @@ public class WarpRuntimeInitializer {
     public void injectWarpRuntime(@Observes BeforeClass event) {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
             DefaultWarpRuntime runtime = new DefaultWarpRuntime();
-            runtime.setWarpClientActionBuilder(serviceLoader.get().onlyOne(WarpRequestSpecifier.class));
+            runtime.setWarpActivityBuilder(serviceLoader.get().onlyOne(WarpRequestSpecifier.class));
             runtime.setHttpFilterBuilder(serviceLoader.get().onlyOne(HttpFilterBuilder.class));
             WarpRuntime.setInstance(runtime);
         }

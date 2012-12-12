@@ -20,20 +20,21 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.ServerAssertion;
-import org.jboss.arquillian.warp.client.execution.GroupVerificationSpecifier;
-import org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier;
-import org.jboss.arquillian.warp.client.execution.WarpVerificationBuilder;
-import org.jboss.arquillian.warp.client.filter.FilterBuilder;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.Inspection;
+import org.jboss.arquillian.warp.RequestObserver;
+import org.jboss.arquillian.warp.client.execution.GroupExecutionSpecifier;
+import org.jboss.arquillian.warp.client.execution.SingleInspectionSpecifier;
+import org.jboss.arquillian.warp.client.execution.WarpExecutionBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
+import org.jboss.arquillian.warp.client.observer.ObserverBuilder;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.event.ExecuteWarp;
 
 /**
- * The implementation of execution of client action and server assertion.
+ * The implementation of execution of client activity and server inspection.
  *
  * @author Lukas Fryc
  */
@@ -43,7 +44,7 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
 
     private WarpContext warpContext;
 
-    private ClientAction action;
+    private Activity activity;
 
     private WarpGroup singleGroup;
 
@@ -55,35 +56,35 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder#execute(org.jboss.arquillian.warp.ClientAction)
+     * @see org.jboss.arquillian.warp.client.execution.WarpActivityBuilder#execute(org.jboss.arquillian.warp.Activity)
      */
     @Override
-    public WarpVerificationBuilder execute(ClientAction action) {
+    public WarpExecutionBuilder initiate(Activity activity) {
         ensureContextInitialized();
-        this.action = action;
+        this.activity = activity;
         return this;
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier#verify(org.jboss.arquillian.warp.ServerAssertion)
+     * @see org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier#verify(org.jboss.arquillian.warp.ServerInspection)
      */
     @SuppressWarnings("unchecked")
-    public <T extends ServerAssertion> T verify(T assertion) {
+    public <T extends Inspection> T inspect(T inspection) {
         initializeSingleGroup();
-        singleGroup.addAssertions(assertion);
+        singleGroup.addInspections(inspection);
         WarpResult result = execute();
-        return (T) result.getGroup(SingleVerificationSpecifier.KEY).getAssertion();
+        return (T) result.getGroup(SingleInspectionSpecifier.KEY).getInspection();
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier#verifyAll(org.jboss.arquillian.warp.ServerAssertion[])
+     * @see org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier#verifyAll(org.jboss.arquillian.warp.ServerInspection[])
      */
     @Override
-    public WarpResult verifyAll(ServerAssertion... assertions) {
+    public WarpResult inspectAll(Inspection... inspections) {
         initializeSingleGroup();
-        singleGroup.addAssertions(assertions);
+        singleGroup.addInspections(inspections);
         return execute();
     }
 
@@ -92,62 +93,9 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
      * @see org.jboss.arquillian.warp.client.execution.GroupVerificationBuilder#verifyAll()
      */
     @Override
-    public WarpResult verifyAll() {
-        return execute();
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.execution.GroupSpecifier#group()
-     */
-    @Override
-    public GroupVerificationSpecifier group() {
-        return group(groupSequenceNumber++);
-    }
-
-    @Override
-    public GroupVerificationSpecifier group(Object identifier) {
-        return new WarpGroupImpl(this, identifier);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(org.jboss.arquillian.warp.client.filter.RequestFilter)
-     */
-    @Override
-    public SingleVerificationSpecifier filter(RequestFilter<?> filter) {
-        initializeSingleGroup();
-        singleGroup.filter(filter);
-        return this;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(java.lang.Class)
-     */
-    @Override
-    public SingleVerificationSpecifier filter(Class<? extends RequestFilter<?>> filterClass) {
-        initializeSingleGroup();
-        singleGroup.filter(createFilterInstance(filterClass));
-        return this;
-    }
-
-    @Override
-    public SingleVerificationSpecifier filter(FilterBuilder<?, ?> filterBuilder) {
-        initializeSingleGroup();
-        singleGroup.filter(filterBuilder.build());
-        return this;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends RequestFilter<?>> T createFilterInstance(Class<T> filterClass) {
-        return (T) SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {}, RequestFilter.class);
-    }
-
-    private WarpResult execute() {
-
+    public WarpResult execute() {
         try {
-            executeWarp.fire(new ExecuteWarp(action, warpContext));
+            executeWarp.fire(new ExecuteWarp(activity, warpContext));
 
             Exception executionException = warpContext.getFirstException();
 
@@ -159,6 +107,54 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
         } finally {
             finalizeContext();
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.execution.GroupSpecifier#group()
+     */
+    @Override
+    public GroupExecutionSpecifier group() {
+        return group(groupSequenceNumber++);
+    }
+
+    @Override
+    public GroupExecutionSpecifier group(Object identifier) {
+        return new WarpGroupImpl(this, identifier);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(org.jboss.arquillian.warp.client.filter.RequestFilter)
+     */
+    @Override
+    public SingleInspectionSpecifier observe(RequestObserver what) {
+        initializeSingleGroup();
+        singleGroup.observe(what);
+        return this;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.arquillian.warp.client.execution.FilterSpecifier#filter(java.lang.Class)
+     */
+    @Override
+    public SingleInspectionSpecifier observe(Class<? extends RequestObserver> what) {
+        initializeSingleGroup();
+        singleGroup.observe(createFilterInstance(what));
+        return this;
+    }
+
+    @Override
+    public SingleInspectionSpecifier observe(ObserverBuilder<?, ?> filterBuilder) {
+        initializeSingleGroup();
+        singleGroup.observe(filterBuilder.build());
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends RequestObserver> T createFilterInstance(Class<T> filterClass) {
+        return (T) SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {}, RequestFilter.class);
     }
 
     private void propagateException(Throwable e) {
@@ -186,16 +182,16 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
 
     private void initializeSingleGroup() {
         if (singleGroup == null) {
-            singleGroup = new WarpGroupImpl(this, SingleVerificationSpecifier.KEY);
+            singleGroup = new WarpGroupImpl(this, SingleInspectionSpecifier.KEY);
             warpContext.addGroup(singleGroup);
         }
     }
 
     // TODO remove exception
-    public static class ClientActionException extends RuntimeException {
+    public static class ActivityException extends RuntimeException {
         private static final long serialVersionUID = 7267806785171391801L;
 
-        public ClientActionException(Throwable cause) {
+        public ActivityException(Throwable cause) {
             super(cause);
         }
     }

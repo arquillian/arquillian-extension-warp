@@ -16,21 +16,21 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.impl.client.execution.WarpContext;
 
 public class ExecuteWarp {
 
-    private ClientAction clientAction;
+    private Activity activity;
     private WarpContext warpContext;
 
-    public ExecuteWarp(ClientAction clientAction, WarpContext warpContext) {
-        this.clientAction = clientAction;
+    public ExecuteWarp(Activity activity, WarpContext warpContext) {
+        this.activity = activity;
         this.warpContext = warpContext;
     }
 
-    public ClientAction getClientAction() {
-        return clientAction;
+    public Activity getActivity() {
+        return activity;
     }
 
     public WarpContext getWarpContext() {

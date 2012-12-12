@@ -21,7 +21,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.warp.impl.server.assertion.AssertionRegistry;
+import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
@@ -29,7 +29,7 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsException;
 
 /**
- * Drives {@link LifecycleManagerImpl} and {@link AssertionRegistry} lifecycle.
+ * Drives {@link LifecycleManagerImpl} and {@link InspectionRegistry} lifecycle.
  *
  * @author Lukas Fryc
  *
@@ -42,7 +42,7 @@ public class LifecycleManagerObserver {
 
     @Inject
     @RequestScoped
-    private InstanceProducer<AssertionRegistry> registry;
+    private InstanceProducer<InspectionRegistry> registry;
 
     @Inject
     private Instance<Injector> injector;
@@ -53,7 +53,7 @@ public class LifecycleManagerObserver {
 
     public void initializeManagerAndDriver(@Observes BeforeRequest event) {
         manager.set(inject(new LifecycleManagerImpl()));
-        registry.set(inject(new AssertionRegistry()));
+        registry.set(inject(new InspectionRegistry()));
     }
 
     public void finalizeManager(@Observes AfterRequest event) {

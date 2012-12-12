@@ -32,12 +32,12 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.warp.ClientAction;
-import org.jboss.arquillian.warp.WarpRuntimeInitializer;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
+import org.jboss.arquillian.warp.WarpRuntimeInitializer;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
@@ -59,16 +59,16 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
 
     private CountDownLatch requestStarted;
     private CountDownLatch responseFinished;
-    private CountDownLatch actionFinished;
+    private CountDownLatch activityFinished;
 
     @Mock
     private ServiceLoader serviceLoader;
 
     @Mock
-    private ServerAssertion serverAssertion;
+    private Inspection serverInspection;
 
     private static AtomicReference<Exception> failure = new AtomicReference<Exception>(null);
-    private static AtomicReference<WarpClientActionBuilder> requestExecutor = new AtomicReference<WarpClientActionBuilder>();
+    private static AtomicReference<WarpActivityBuilder> requestExecutor = new AtomicReference<WarpActivityBuilder>();
     private static AtomicReference<WarpContext> warpContextReference = new AtomicReference<WarpContext>();
 
     @Inject
@@ -81,14 +81,14 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
     public void initialize() throws Exception {
         requestStarted = new CountDownLatch(1);
         responseFinished = new CountDownLatch(1);
-        actionFinished = new CountDownLatch(1);
+        activityFinished = new CountDownLatch(1);
 
         WarpRequestSpecifier requestExecutor = new DefaultWarpRequestSpecifier();
         getManager().inject(requestExecutor);
         TestRequestExecutionSynchronization.requestExecutor.set(requestExecutor);
 
-        ExecutionSynchronizer assertionSynchronizer = new DefaultExecutionSynchronizer();
-        getManager().inject(assertionSynchronizer);
+        ExecutionSynchronizer inspectionSynchronizer = new DefaultExecutionSynchronizer();
+        getManager().inject(inspectionSynchronizer);
 
         WarpExecutor warpExecutor = new DefaultWarpExecutor();
         getManager().inject(warpExecutor);
@@ -99,7 +99,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         WarpContext warpContext = new WarpContextImpl();
 
         when(serviceLoader.onlyOne(WarpRequestSpecifier.class)).thenReturn(requestExecutor);
-        when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(assertionSynchronizer);
+        when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(inspectionSynchronizer);
         when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
         when(serviceLoader.onlyOne(WarpRuntime.class)).thenReturn(warpRuntime);
         when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
@@ -127,17 +127,17 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
 
         assertBefore();
 
-        Warp.execute(new ClientAction() {
-            public void action() {
-                assertDuringClientAction();
+        Warp.initiate(new Activity() {
+            public void perform() {
+                assertDuringActivity();
             }
-        }).group().expectCount(0).verify(serverAssertion).verifyAll();
+        }).group().expectCount(0).inspect(serverInspection).execute();
 
         assertAfter();
     }
 
     @Test
-    public void test_single_request_with_blocking_client_action() throws Exception {
+    public void test_single_request_with_blocking_client_activity() throws Exception {
 
         assertBefore();
 
@@ -149,22 +149,22 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
             }
         }).start();
 
-        Warp.execute(new ClientAction() {
-            public void action() {
-                assertDuringClientAction();
+        Warp.initiate(new Activity() {
+            public void perform() {
+                assertDuringActivity();
                 prepareForRequest();
                 requestStarted.countDown();
-                actionFinished.countDown();
+                activityFinished.countDown();
             }
-        }).verify(serverAssertion);
+        }).inspect(serverInspection);
 
         assertAfter();
 
-        awaitSafely(actionFinished);
+        awaitSafely(activityFinished);
     }
 
     @Test
-    public void test_single_request_with_blocking_client_action_with_waiting_for_requests() {
+    public void test_single_request_with_blocking_client_activity_with_waiting_for_requests() {
 
         assertBefore();
 
@@ -178,22 +178,22 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
             }
         }).start();
 
-        Warp.execute(new ClientAction() {
-            public void action() {
-                assertDuringClientAction();
+        Warp.initiate(new Activity() {
+            public void perform() {
+                assertDuringActivity();
                 prepareForRequest();
                 requestStarted.countDown();
-                actionFinished.countDown();
+                activityFinished.countDown();
             }
-        }).verify(serverAssertion);
+        }).inspect(serverInspection);
 
         assertAfter();
 
-        awaitSafely(actionFinished);
+        awaitSafely(activityFinished);
     }
 
     @Test
-    public void test_single_request_with_nonblocking_client_action() throws Exception {
+    public void test_single_request_with_nonblocking_client_activity() throws Exception {
 
         assertBefore();
 
@@ -210,13 +210,13 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
             }
         }).start();
 
-        Warp.execute(new ClientAction() {
-            public void action() {
-                assertDuringClientAction();
+        Warp.initiate(new Activity() {
+            public void perform() {
+                assertDuringActivity();
                 prepareForRequest();
                 requestStarted.countDown();
             }
-        }).verify(serverAssertion);
+        }).inspect(serverInspection);
         awaitSafely(responseFinished);
 
         assertAfter();
@@ -238,11 +238,11 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         WarpGroup group = warpContext.getAllGroups().iterator().next();
         RequestPayload requestPayload = group.generateRequestPayload();
         ResponsePayload responsePayload = new ResponsePayload(requestPayload.getSerialId());
-        responsePayload.setAssertions(requestPayload.getAssertions());
+        responsePayload.setInspections(requestPayload.getInspections());
         warpContext.pushResponsePayload(responsePayload);
     }
 
-    private void assertDuringClientAction() {
+    private void assertDuringActivity() {
         assertTrue("warp execution context should be active", warpExecutionContext.get().isActive());
         WarpContext warpContext = TestRequestExecutionSynchronization.this.warpContext.get();
         assertNotNull("WarpContext should be available", warpContext);

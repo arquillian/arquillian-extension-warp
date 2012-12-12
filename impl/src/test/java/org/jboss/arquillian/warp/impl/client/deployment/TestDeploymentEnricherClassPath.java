@@ -20,7 +20,7 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArch
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
@@ -54,7 +54,7 @@ public class TestDeploymentEnricherClassPath {
         JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
 
         JavaArchive base = ShrinkWrap.create(JavaArchive.class).addClasses(DeploymentEnricher.class, WarpTest.class,
-                ServerAssertion.class, BeforeServlet.class, AfterServlet.class, WarpRemoteExtension.class);
+                Inspection.class, BeforeServlet.class, AfterServlet.class, WarpRemoteExtension.class);
 
         JavaArchive warp = ShrinkWrap.create(JavaArchive.class);
         for (String packageName : DeploymentEnricher.REQUIRED_WARP_PACKAGES) {

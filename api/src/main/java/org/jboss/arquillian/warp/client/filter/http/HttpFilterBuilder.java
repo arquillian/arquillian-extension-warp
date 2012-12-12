@@ -16,16 +16,16 @@
  */
 package org.jboss.arquillian.warp.client.filter.http;
 
-import org.jboss.arquillian.warp.client.filter.FilterBuilder;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.matcher.HttpHeaderMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.MethodMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
+import org.jboss.arquillian.warp.client.observer.ObserverBuilder;
 
 /**
  * Builder responsible for creating {@link RequestFilter} class.
  */
-public interface HttpFilterBuilder extends FilterBuilder<HttpFilterBuilder, RequestFilter> {
+public interface HttpFilterBuilder extends ObserverBuilder<HttpFilterBuilder, RequestFilter<HttpRequest>> {
 
     /**
      * Creates new uri matcher builder.

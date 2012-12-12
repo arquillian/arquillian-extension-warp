@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import org.jboss.arquillian.warp.client.execution.WarpClientActionBuilder;
+import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 
@@ -26,9 +26,9 @@ import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 public class DefaultWarpRuntime extends WarpRuntime {
 
     /**
-     * Instance of {@link WarpClientActionBuilder}.
+     * Instance of {@link WarpActivityBuilder}.
      */
-    private WarpClientActionBuilder warpClientActionBuilder;
+    private WarpActivityBuilder warpActivityBuilder;
 
     /**
      * Instance of {@link HttpFilterBuilder}.
@@ -39,18 +39,18 @@ public class DefaultWarpRuntime extends WarpRuntime {
      * {@inheritDoc}
      */
     @Override
-    public WarpClientActionBuilder getWarpClientActionBuilder() {
+    public WarpActivityBuilder getWarpActivityBuilder() {
 
-        return warpClientActionBuilder;
+        return warpActivityBuilder;
     }
 
     /**
-     * Sets the instance of {@link WarpClientActionBuilder}.
+     * Sets the instance of {@link WarpActivityBuilder}.
      *
-     * @param warpClientActionBuilder the instance of {@link WarpClientActionBuilder}
+     * @param warpActivityBuilder the instance of {@link WarpActivityBuilder}
      */
-    public void setWarpClientActionBuilder(WarpClientActionBuilder warpClientActionBuilder) {
-        this.warpClientActionBuilder = warpClientActionBuilder;
+    public void setWarpActivityBuilder(WarpActivityBuilder warpActivityBuilder) {
+        this.warpActivityBuilder = warpActivityBuilder;
     }
 
     /**
