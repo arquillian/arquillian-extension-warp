@@ -14,16 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.jsf.ftest;
+package org.jboss.arquillian.warp.impl.client.observer;
 
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 
-public class JsfPageRequestFilter implements RequestFilter<HttpRequest> {
-    @Override
-    public boolean matches(HttpRequest httpRequest) {
-        final String uri = httpRequest.getUri();
+public class OnlyFirstRequest implements RequestFilter<HttpRequest> {
 
-        return uri.contains(".jsf") && !uri.contains("javax.faces.resource");
+    private int counter = 0;
+
+    @Override
+    public boolean matches(HttpRequest request) {
+        counter += 1;
+
+        return counter <= 1;
+    }
+
+    @Override
+    public String toString() {
+        return "Only first request";
     }
 }

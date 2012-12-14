@@ -78,7 +78,6 @@ public class BasicJsfTest {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
                 }})
-            .observe(JsfPageRequestFilter.class)
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 
@@ -99,7 +98,6 @@ public class BasicJsfTest {
                     nameInput.sendKeys("X");
                     browser.findElement(By.tagName("body")).click();
                 }})
-            .observe(JsfPageRequestFilter.class)
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 

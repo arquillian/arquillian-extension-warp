@@ -49,7 +49,6 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.jsf.AfterPhase;
 import org.jboss.arquillian.warp.jsf.BeforePhase;
 import org.jboss.arquillian.warp.jsf.Phase;
-import org.jboss.arquillian.warp.jsf.ftest.JsfPageRequestFilter;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -87,7 +86,6 @@ public class TestJSFResourceProviders {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
                 }})
-            .observe(JsfPageRequestFilter.class)
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 
@@ -121,17 +119,11 @@ public class TestJSFResourceProviders {
                 @ArquillianResource
                 PartialViewContext partialViewContext;
 
-//                @ArquillianResource
-//                RenderKit renderKit;
-
                 @ArquillianResource
                 ResourceHandler resourceHandler;
 
                 @ArquillianResource
                 StateManager stateManager;
-
-//                @ArquillianResource
-//                UIViewRoot viewRoot;
 
                 @ArquillianResource
                 ViewHandler viewHandler;
@@ -164,10 +156,8 @@ public class TestJSFResourceProviders {
                     assertNotNull(flash);
                     assertNotNull(navigationHandler);
                     assertNotNull(partialViewContext);
-//                    assertNotNull(renderKit);
                     assertNotNull(resourceHandler);
                     assertNotNull(stateManager);
-//                    assertNotNull(viewRoot);
                     assertNotNull(viewHandler);
                 }
             }

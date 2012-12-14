@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.warp.ftest;
 
-import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -79,7 +78,6 @@ public class BasicWarpTest {
                     browser.navigate().to(contextPath + "index.html");
                 }
             })
-            .observe(request().uri().not().contains("favicon.ico"))
             .inspect(new Inspection() {
 
                 private static final long serialVersionUID = 1L;
@@ -122,7 +120,6 @@ public class BasicWarpTest {
                     browser.findElement(By.id("sendAjax")).click();
                 }
             })
-            .observe(FaviconIgnore.class)
             .inspect(new Inspection() {
 
                 private static final long serialVersionUID = 1L;

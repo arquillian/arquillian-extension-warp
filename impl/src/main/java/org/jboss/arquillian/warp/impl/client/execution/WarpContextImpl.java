@@ -17,15 +17,19 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.client.result.WarpGroupResult;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 
 public class WarpContextImpl implements WarpContext {
 
@@ -33,6 +37,7 @@ public class WarpContextImpl implements WarpContext {
         private List<Exception> exceptions = new LinkedList<Exception>();
 
         private SynchronizationPoint synchronization = new SynchronizationPoint();
+        private List<RequestObserverChainManager> observerChainManagers;
 
         @Override
         public void addGroup(WarpGroup group) {
@@ -42,6 +47,10 @@ public class WarpContextImpl implements WarpContext {
         @Override
         public Collection<WarpGroup> getAllGroups() {
             return groups.values();
+        }
+
+        public Collection<RequestObserverChainManager> getObserverChainManagers() {
+            return observerChainManagers;
         }
 
         @Override
@@ -108,5 +117,16 @@ public class WarpContextImpl implements WarpContext {
                     return groups.get(identifier);
                 }
             };
+        }
+
+        @Override
+        public void initialize(ServiceLoader serviceLoader) {
+            // load observer chain managers and sort them by priority
+            observerChainManagers = new LinkedList<RequestObserverChainManager>(serviceLoader.all(RequestObserverChainManager.class));
+            Collections.sort(observerChainManagers, new Comparator<RequestObserverChainManager>() {
+                public int compare(RequestObserverChainManager o1, RequestObserverChainManager o2) {
+                    return o1.priotity() - o2.priotity();
+                }
+            });
         }
     }

@@ -74,7 +74,7 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
         initializeSingleGroup();
         singleGroup.addInspections(inspection);
         WarpResult result = execute();
-        return (T) result.getGroup(SingleInspectionSpecifier.KEY).getInspection();
+        return (T) result.getGroup(SingleInspectionSpecifier.GROUP_ID).getInspection();
     }
 
     /*
@@ -172,6 +172,8 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
     private void ensureContextInitialized() {
         if (warpContext == null) {
             warpContext = serviceLoader.get().onlyOne(WarpContext.class);
+
+            warpContext.initialize(serviceLoader.get());
         }
     }
 
@@ -182,7 +184,7 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
 
     private void initializeSingleGroup() {
         if (singleGroup == null) {
-            singleGroup = new WarpGroupImpl(this, SingleInspectionSpecifier.KEY);
+            singleGroup = new WarpGroupImpl(this, SingleInspectionSpecifier.GROUP_ID);
             warpContext.addGroup(singleGroup);
         }
     }

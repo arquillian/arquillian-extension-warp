@@ -29,7 +29,6 @@ import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.jsf.ftest.JsfPageRequestFilter;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -68,7 +67,6 @@ public class TestJSFInstanceProducers {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
                 }})
-            .observe(JsfPageRequestFilter.class)
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
             }

@@ -32,7 +32,6 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
-import org.jboss.arquillian.warp.jsf.ftest.JsfPageRequestFilter;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -70,7 +69,6 @@ public class TestInspectionFailurePropagation {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
                 }})
-            .observe(JsfPageRequestFilter.class)
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 

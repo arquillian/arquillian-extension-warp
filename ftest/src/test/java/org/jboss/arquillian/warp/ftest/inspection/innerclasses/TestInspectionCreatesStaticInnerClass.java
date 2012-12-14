@@ -28,7 +28,6 @@ import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.ftest.FaviconIgnore;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -69,7 +68,6 @@ public class TestInspectionCreatesStaticInnerClass {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
                 }})
-            .observe(FaviconIgnore.class)
             .inspect(new Inspection() {
 
                 private static final long serialVersionUID = 1L;

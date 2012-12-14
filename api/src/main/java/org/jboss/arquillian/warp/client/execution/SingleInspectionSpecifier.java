@@ -24,7 +24,7 @@ public interface SingleInspectionSpecifier {
     /**
      * The key for single request executions
      */
-    Object KEY = SingleInspectionSpecifier.class;
+    Object GROUP_ID = SingleInspectionSpecifier.class;
 
     /**
      * Asserts given server state

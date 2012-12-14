@@ -14,14 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.ftest;
+package org.jboss.arquillian.warp.impl.client.observer;
 
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 
+/**
+ * Refuses observing favicon.ico requests
+ *
+ * @author Lukas Fryc
+ */
 public class FaviconIgnore implements RequestFilter<HttpRequest> {
+
     @Override
-    public boolean matches(HttpRequest httpRequest) {
-        return !httpRequest.getUri().contains("favicon.ico");
+    public boolean matches(HttpRequest request) {
+        return !request.getUri().contains("favicon.ico");
+    }
+
+    @Override
+    public String toString() {
+        return "Not favicon.ico";
     }
 }

@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentEnricher;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentValidator;
@@ -34,11 +33,11 @@ import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichment
 import org.jboss.arquillian.warp.impl.client.execution.DefaultExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestObserverChainManager;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier;
-import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRuntime;
 import org.jboss.arquillian.warp.impl.client.execution.ExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.WarpContext;
 import org.jboss.arquillian.warp.impl.client.execution.WarpContextImpl;
@@ -54,6 +53,7 @@ import org.jboss.arquillian.warp.impl.client.proxy.ProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
 import org.jboss.arquillian.warp.impl.client.proxy.URLMapping;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
+import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 
 /**
  * <p>The Arquillian Warp extension - client-side.</p>
@@ -84,7 +84,6 @@ public class WarpExtension implements LoadableExtension {
         builder.context(WarpExecutionContextImpl.class);
         builder.service(WarpExecutor.class, DefaultWarpExecutor.class);
         builder.observer(WarpExecutionInitializer.class);
-//        builder.observer(WarpExecutionContextHandler.class);
         builder.service(URLMapping.class, DefaultURLMapping.class);
         builder.service(ProxyService.class, DefaultProxyService.class);
         builder.service(HttpRequestEnrichmentFilter.class, DefaultHttpRequestEnrichmentFilter.class);
@@ -95,5 +94,6 @@ public class WarpExtension implements LoadableExtension {
         builder.service(HttpResponseDeenrichmentService.class, DefaultResponseDeenrichmentService.class);
         builder.service(WarpContext.class, WarpContextImpl.class);
         builder.service(HttpFilterBuilder.class, DefaultHttpFilterBuilder.class);
+        builder.service(RequestObserverChainManager.class, DefaultRequestObserverChainManager.class);
     }
 }

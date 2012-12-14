@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -28,14 +29,17 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.warp.RequestObserver;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
+import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
 /**
@@ -49,7 +53,10 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService#getMatchingPayloads(org.jboss.netty.handler.codec.http.HttpRequest)
+     *
+     * @see
+     * org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService#getMatchingPayloads(org.jboss.netty.handler
+     * .codec.http.HttpRequest)
      */
     @Override
     public Collection<RequestPayload> getMatchingPayloads(HttpRequest request) {
@@ -59,27 +66,35 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         final org.jboss.arquillian.warp.client.filter.http.HttpRequest httpRequest = new HttpRequestWrapper(request);
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
-        for (WarpGroup group : groups) {
-            RequestFilter<?> filter = null;
+        groupIteration : for (WarpGroup group : groups) {
 
-            if (group.getObserver() instanceof RequestFilter) {
-                filter = (RequestFilter<?>) group.getObserver();
+            List<RequestObserver> observers = new ArrayList<RequestObserver>(4);
+            if (group.getObserver() != null) {
+                observers.add(group.getObserver());
+            }
+            Collection<RequestObserverChainManager> observerChainManagers = warpContext().getObserverChainManagers();
+
+            for (RequestObserverChainManager chainManager : observerChainManagers) {
+                chainManager.manageObserverChain(observers, HttpRequestFilter.class);
             }
 
-            if (filter == null) {
-                payloads.add(group.generateRequestPayload());
-                continue;
-            }
-
-            if (isType(filter, org.jboss.arquillian.warp.client.filter.http.HttpRequest.class)) {
+            for (RequestObserver observer : observers) {
+                if (!isHttpFilter(observer)) {
+                    log.warning("One of the defined observers (" + observer.toString() + ") of class " + observer.getClass()
+                            + " doesn't match expected type (" + HttpRequestFilter.class
+                            + ") - continuing without processing this request group");
+                    continue groupIteration;
+                }
 
                 @SuppressWarnings("unchecked")
-                RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest> httpRequestFilter = (RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest>) filter;
+                RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest> filter = (RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest>) observer;
 
-                if (httpRequestFilter.matches(httpRequest)) {
-                    payloads.add(group.generateRequestPayload());
+                if (!filter.matches(httpRequest)) {
+                    continue groupIteration;
                 }
             }
+
+            payloads.add(group.generateRequestPayload());
         }
 
         return payloads;
@@ -87,7 +102,10 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService#enrichRequest(org.jboss.netty.handler.codec.http.HttpRequest, java.util.Collection)
+     *
+     * @see
+     * org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService#enrichRequest(org.jboss.netty.handler.codec
+     * .http.HttpRequest, java.util.Collection)
      */
     @Override
     public void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads) {
@@ -109,6 +127,11 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
                     + originalException.getMessage(), originalException);
             warpContext().pushException(explainingException);
         }
+    }
+
+    private boolean isHttpFilter(RequestObserver observer) {
+        return observer instanceof RequestFilter
+                && isType((RequestFilter<?>) observer, org.jboss.arquillian.warp.client.filter.http.HttpRequest.class);
     }
 
     private boolean isType(RequestFilter<?> filter, Type expectedType) {

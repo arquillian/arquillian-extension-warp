@@ -38,7 +38,6 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.jsf.AfterPhase;
 import org.jboss.arquillian.warp.jsf.BeforePhase;
 import org.jboss.arquillian.warp.jsf.Phase;
-import org.jboss.arquillian.warp.jsf.ftest.JsfPageRequestFilter;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
@@ -83,7 +82,6 @@ public class TestJsfLifecycle {
                     public void perform() {
                         browser.navigate().to(contextPath + "index.jsf");
                     }})
-                .observe(JsfPageRequestFilter.class)
                 .inspect(new ExecuteAllPhases());
 
         assertFalse(executed.isPostback());
@@ -99,7 +97,6 @@ public class TestJsfLifecycle {
 
                     }
                 })
-                .observe(JsfPageRequestFilter.class)
                 .inspect(new ExecuteAllPhases());
 
         assertTrue(executed.isPostback());

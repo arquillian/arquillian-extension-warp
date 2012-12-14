@@ -49,7 +49,6 @@ public class DefaultHttpRequestEnrichmentFilter implements HttpRequestEnrichment
 
                 if (synchronization.isWaitingForRequests()) {
                     try {
-
                         tryEnrichRequest.fire(new FilterHttpRequest(request, enrichmentService));
 
                     } catch (Exception originalException) {
