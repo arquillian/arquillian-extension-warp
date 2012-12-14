@@ -79,7 +79,6 @@ public class BasicWarpTest {
                 }
             })
             .inspect(new Inspection() {
-
                 private static final long serialVersionUID = 1L;
 
                 @ArquillianResource
@@ -111,8 +110,7 @@ public class BasicWarpTest {
 
                     assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
                 }
-            }
-            );
+            });
 
         Warp
             .initiate(new Activity() {
@@ -121,7 +119,6 @@ public class BasicWarpTest {
                 }
             })
             .inspect(new Inspection() {
-
                 private static final long serialVersionUID = 1L;
 
                 @BeforeServlet

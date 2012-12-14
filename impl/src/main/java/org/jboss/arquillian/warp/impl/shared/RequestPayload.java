@@ -112,7 +112,7 @@ public class RequestPayload implements Externalizable {
                     out.writeObject(migrated.toSerializedForm());
                 }
             } catch (Exception e) {
-                throw new RuntimeException("Could not transform and replicate class " + inspections.getClass(), e);
+                throw new RuntimeException("Could not transform and replicate class " + inspections.getClass() + ":\n" + e.getMessage(), e);
             }
         } else {
             out.writeBoolean(false);

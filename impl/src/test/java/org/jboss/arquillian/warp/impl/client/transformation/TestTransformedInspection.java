@@ -52,7 +52,7 @@ public class TestTransformedInspection {
                 .addClasses(WarpCommons.class, Inspection.class, RequestPayload.class, BeforeServlet.class)
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
                 .addClasses(TestTransformedInspection.class, TransformedInspection.class, MigratedInspection.class,
-                        InspectionTransformationException.class)
+                        InspectionTransformationException.class, NoSerialVersionUIDException.class)
                 .addClasses(SeparateInvocator.class, CtClassAsset.class,
                         SeparatedClassLoader.class);
 

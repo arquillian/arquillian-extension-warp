@@ -25,9 +25,10 @@ import java.util.List;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.client.separation.SeparatedClassLoader;
-import org.jboss.arquillian.warp.impl.client.transformation.InspectionTransformationException;
 import org.jboss.arquillian.warp.impl.client.transformation.CtClassAsset;
+import org.jboss.arquillian.warp.impl.client.transformation.InspectionTransformationException;
 import org.jboss.arquillian.warp.impl.client.transformation.MigratedInspection;
+import org.jboss.arquillian.warp.impl.client.transformation.NoSerialVersionUIDException;
 import org.jboss.arquillian.warp.impl.client.transformation.TransformedInspection;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
@@ -101,7 +102,7 @@ public class TestInspectionLoading {
             replaceClassLoader(serverClassLoader);
             Object deserializedPayload = deserialize(serialized);
             Method getInspectionsMethod = deserializedPayload.getClass().getMethod("getInspections");
-            List deserializedInspectionList =  (List) getInspectionsMethod.invoke(deserializedPayload);
+            List deserializedInspectionList = (List) getInspectionsMethod.invoke(deserializedPayload);
             Object deserializedInspection = deserializedInspectionList.iterator().next();
 
             Class<?> deserializedClass = deserializedInspection.getClass();
@@ -185,10 +186,13 @@ public class TestInspectionLoading {
     }
 
     private static JavaArchive[] clientArchive() {
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-                .addClasses(ClientInterface.class, ClientImplementation.class).addClasses(ServerInterface.class)
+        JavaArchive archive = ShrinkWrap
+                .create(JavaArchive.class)
+                .addClasses(ClientInterface.class, ClientImplementation.class)
+                .addClasses(ServerInterface.class)
                 .addClasses(SharingClass.class, Inspection.class, RequestPayload.class)
-                .addClasses(TransformedInspection.class, MigratedInspection.class, InspectionTransformationException.class)
+                .addClasses(TransformedInspection.class, MigratedInspection.class, InspectionTransformationException.class,
+                        NoSerialVersionUIDException.class)
                 .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
                 .addClasses(SeparateInvocator.class, CtClassAsset.class, SeparatedClassLoader.class);
 

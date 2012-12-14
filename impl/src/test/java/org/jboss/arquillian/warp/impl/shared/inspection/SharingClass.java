@@ -43,6 +43,8 @@ public class SharingClass implements Serializable {
         ClientInterface client = new ClientImplementation();
 
         return new RequestPayload(new Inspection() {
+            private static final long serialVersionUID = 3294416387621240244L;
+
             public void server() {
                 ServerInterface server = new ServerImplemenation();
             }
@@ -51,12 +53,16 @@ public class SharingClass implements Serializable {
 
     public class InnerClass extends Inspection {
 
+        private static final long serialVersionUID = 3567090624047097466L;
+
         public void server() {
             ServerInterface server = new ServerImplemenation();
         }
     }
 
     public static class StaticInnerClass extends Inspection {
+
+        private static final long serialVersionUID = -715340985607368182L;
 
         public void server() {
             ServerInterface server = new ServerImplemenation();

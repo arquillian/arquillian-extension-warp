@@ -123,7 +123,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
             String requestEnrichment = SerializationUtils.serializeToBase64(inspection);
             request.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
         } catch (Throwable originalException) {
-            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed: "
+            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed:\n"
                     + originalException.getMessage(), originalException);
             warpContext().pushException(explainingException);
         }

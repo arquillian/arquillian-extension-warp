@@ -93,6 +93,7 @@ public class WarpContextImpl implements WarpContext {
         @Override
         public void pushException(Exception exception) {
             exceptions.add(exception);
+            synchronization.finishResponse();
         }
 
         @Override

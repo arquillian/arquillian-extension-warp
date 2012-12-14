@@ -66,17 +66,17 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
             content.readerIndex(payloadLength);
             content.discardReadBytes();
 
-            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
-
             HttpHeaders.setContentLength(response, originalLength - payloadLength);
 
-            HttpResponseStatus status = HttpResponseStatus.valueOf(payload.getStatus());
-            response.setStatus(status);
+            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
+            response.setStatus(HttpResponseStatus.valueOf(payload.getStatus()));
 
             if (context != null) {
                 context.pushResponsePayload(payload);
             }
         } catch (Exception originalException) {
+            response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
+
             if (context != null) {
                 ClientWarpExecutionException explainingException = new ClientWarpExecutionException("deenriching response failed: "
                     + originalException.getMessage(), originalException);

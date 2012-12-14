@@ -46,8 +46,7 @@ public class TransformedInspection {
     private Inspection transformedInspection;
 
     public TransformedInspection(Inspection inspection) throws InspectionTransformationException {
-        this(inspection.getClass(), "org.jboss.arquillian.warp.generated.A" + UUID.randomUUID().toString(),
-                inspection);
+        this(inspection.getClass(), "org.jboss.arquillian.warp.generated.A" + UUID.randomUUID().toString(), inspection);
     }
 
     private TransformedInspection(Class<?> originalClass, String newClassName, Inspection serverInspection)
@@ -78,7 +77,8 @@ public class TransformedInspection {
 
             CtField field = output.getField("serialVersionUID");
             if (field.getDeclaringClass() != output) {
-                output.addField(CtField.make("private static final long serialVersionUID = 1L;", output));
+                throw new NoSerialVersionUIDException("serialVersionUID for class " + originalClass.getName()
+                        + " is not set; please set serialVersionUID to allow Warp work correctly");
             }
             for (CtConstructor constructor : output.getConstructors()) {
                 output.removeConstructor(constructor);
@@ -87,7 +87,7 @@ public class TransformedInspection {
 
             return output;
         } catch (Exception e) {
-            throw new InspectionTransformationException("Unable to transform inspection " + originalClass.getName(), e);
+            throw new InspectionTransformationException("Unable to transform inspection " + originalClass.getName() + ":\n" + e.getMessage(), e);
         }
     }
 
