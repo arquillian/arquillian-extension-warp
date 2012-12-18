@@ -53,6 +53,7 @@ import org.jboss.arquillian.warp.impl.client.proxy.ProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
 import org.jboss.arquillian.warp.impl.client.proxy.URLMapping;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
+import org.jboss.arquillian.warp.impl.client.verification.ResponsePayloadVerifier;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 
 /**
@@ -95,5 +96,6 @@ public class WarpExtension implements LoadableExtension {
         builder.service(WarpContext.class, WarpContextImpl.class);
         builder.service(HttpFilterBuilder.class, DefaultHttpFilterBuilder.class);
         builder.service(RequestObserverChainManager.class, DefaultRequestObserverChainManager.class);
+        builder.observer(ResponsePayloadVerifier.class);
     }
 }

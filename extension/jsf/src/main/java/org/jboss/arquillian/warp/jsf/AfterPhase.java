@@ -23,6 +23,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
+
 /**
  *
  * @author Lukas Fryc
@@ -31,6 +33,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
+@WarpLifecycleTest
 public @interface AfterPhase {
     Phase value();
 }

@@ -17,7 +17,6 @@
 package org.jboss.arquillian.warp.impl.server.test;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -25,14 +24,15 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
+import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
 
 /**
  * Observes {@link WarpLifecycleEvent} events and executed verification methods annotated with
@@ -59,58 +59,32 @@ public class LifecycleTestDriver {
 
     public void fireTest(@Observes WarpLifecycleEvent event) {
 
-        for (final Object inspectionObject : registry().getInspections()) {
+        for (final Object inspection : registry().getInspections()) {
             final Annotation annotation = event.getAnnotation();
 
-            List<Method> methods = SecurityActions.getMethodsWithAnnotation(inspectionObject.getClass(), annotation);
+            if (annotation == null || !WarpCommons.isWarpLifecycleTest(annotation.annotationType())) {
+                throw new IllegalStateException("Warp lifecycle event must contain annotation marked with @"
+                        + WarpLifecycleTest.class.getSimpleName());
+            }
+
+            List<Method> methods = SecurityActions.getMethodsWithAnnotation(inspection.getClass(), annotation);
 
             for (final Method testMethod : methods) {
-                executeTest(inspectionObject, testMethod);
+                executeTest(inspection, testMethod, annotation);
             }
         }
     }
 
-    private void executeTest(Object inspectionObject, Method testMethod) {
-        before.fire(new Before(inspectionObject, testMethod));
+    private void executeTest(Object inspection, Method method, Annotation annotation) {
+        before.fire(new Before(inspection, method));
 
-        test.fire(new Test(new LifecycleMethodExecutor(inspectionObject, testMethod)));
+        test.fire(new Test(new LifecycleMethodExecutor(inspection, method, annotation)));
 
-        after.fire(new After(inspectionObject, testMethod));
+        after.fire(new After(inspection, method));
     }
 
     private InspectionRegistry registry() {
         return registry.get();
     }
 
-    private static class LifecycleMethodExecutor implements TestMethodExecutor {
-
-        private Object instance;
-        private Method method;
-
-        public LifecycleMethodExecutor(Object instance, Method method) {
-            super();
-            this.instance = instance;
-            this.method = method;
-        }
-
-        @Override
-        public Method getMethod() {
-            return method;
-        }
-
-        @Override
-        public Object getInstance() {
-            return instance;
-        }
-
-        @Override
-        public void invoke(Object... parameters) throws Throwable {
-            try {
-                method.invoke(instance, parameters);
-            } catch (InvocationTargetException e) {
-                throw e.getCause();
-            }
-        }
-
-    }
 }

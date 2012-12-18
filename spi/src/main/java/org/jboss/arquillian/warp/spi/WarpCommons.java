@@ -16,6 +16,11 @@
  */
 package org.jboss.arquillian.warp.spi;
 
+import java.lang.annotation.Annotation;
+
+import org.jboss.arquillian.warp.servlet.AfterServlet;
+import org.jboss.arquillian.warp.servlet.BeforeServlet;
+
 /**
  * Commons references used for marking events objects Warp execution.
  *
@@ -36,5 +41,16 @@ public final class WarpCommons {
      */
     public static boolean debugMode() {
         return System.getProperty("arquillian.debug") != null;
+    }
+
+    /**
+     * Decides whether given annotation type is {@link WarpLifecycleTest}
+     * @param annotationType
+     * @return
+     */
+    public static boolean isWarpLifecycleTest(Class<? extends Annotation> annotationType) {
+        return annotationType.getAnnotation(WarpLifecycleTest.class) != null
+                || annotationType == BeforeServlet.class
+                || annotationType == AfterServlet.class;
     }
 }

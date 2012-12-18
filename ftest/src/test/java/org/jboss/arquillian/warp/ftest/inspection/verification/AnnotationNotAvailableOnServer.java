@@ -14,26 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.jsf;
+package org.jboss.arquillian.warp.ftest.inspection.verification;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
 
-/**
- *
- * @author Lukas Fryc
- *
- */
-@Documented
-@Retention(RUNTIME)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @WarpLifecycleTest
-public @interface BeforePhase {
-    Phase value();
+public @interface AnnotationNotAvailableOnServer {
 }

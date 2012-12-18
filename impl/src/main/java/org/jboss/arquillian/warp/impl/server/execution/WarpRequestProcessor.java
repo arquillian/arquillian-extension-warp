@@ -74,10 +74,14 @@ public class WarpRequestProcessor {
             testResult.fire(new TestResult(Status.FAILED, e));
         }
 
-        if (responsePayload.getTestResult() != null && responsePayload.getTestResult().getThrowable() != null) {
-            if (WarpCommons.debugMode()) {
-                log.log(Level.SEVERE, "exception was thrown during Warp execution", responsePayload.getTestResult().getThrowable());
+        if (responsePayload.getTestResult() != null) {
+            if (responsePayload.getTestResult().getThrowable() != null) {
+                if (WarpCommons.debugMode()) {
+                    log.log(Level.SEVERE, "exception was thrown during Warp execution", responsePayload.getTestResult().getThrowable());
+                }
             }
+        } else {
+            responsePayload.setTestResult(new TestResult(Status.PASSED));
         }
 
         try {

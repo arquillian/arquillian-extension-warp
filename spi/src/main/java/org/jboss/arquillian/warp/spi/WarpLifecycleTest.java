@@ -14,26 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.jsf;
+package org.jboss.arquillian.warp.spi;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
+import org.jboss.arquillian.warp.servlet.BeforeServlet;
 
 /**
+ * <p>
+ * This qualifier annotation marks annotations which supports LifecycleEvent propagation.
+ * </p>
+ *
+ * <p>
+ * For a reference, see {@link BeforeServlet} annotation.
+ * </p>
  *
  * @author Lukas Fryc
- *
  */
-@Documented
 @Retention(RUNTIME)
-@Target(ElementType.METHOD)
-@WarpLifecycleTest
-public @interface BeforePhase {
-    Phase value();
+@Target(ElementType.TYPE)
+public @interface WarpLifecycleTest {
 }

@@ -14,26 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.jsf;
+package org.jboss.arquillian.warp.impl.utils;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
+import java.lang.reflect.Method;
 
 /**
+ * Exception thrown when a annotation is created with a null value for one of the members.
  *
- * @author Lukas Fryc
+ * @author Stuart Douglas
  *
  */
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.METHOD)
-@WarpLifecycleTest
-public @interface BeforePhase {
-    Phase value();
+public class NullMemberException extends RuntimeException {
+
+    private static final long serialVersionUID = 8300345829555326883L;
+
+    private final Class<?> annotationType;
+    private final Method method;
+
+    public NullMemberException(Class<?> annotationType, Method method, String message) {
+        super(message);
+        this.annotationType = annotationType;
+        this.method = method;
+    }
+
+    public Class<?> getAnnotationType() {
+        return annotationType;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
 }

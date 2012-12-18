@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.jsf;
+package org.jboss.arquillian.warp.impl.client.event;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class VerifyResponsePayload {
 
-import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
+    private ResponsePayload responsePayload;
 
-/**
- *
- * @author Lukas Fryc
- *
- */
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.METHOD)
-@WarpLifecycleTest
-public @interface BeforePhase {
-    Phase value();
+    public VerifyResponsePayload(ResponsePayload responsePayload) {
+        this.responsePayload = responsePayload;
+    }
+
+    public ResponsePayload getResponsePayload() {
+        return responsePayload;
+    }
 }

@@ -98,7 +98,6 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
             executeWarp.fire(new ExecuteWarp(activity, warpContext));
 
             Exception executionException = warpContext.getFirstException();
-
             if (executionException != null) {
                 propagateException(executionException);
             }

@@ -14,26 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.jsf;
+package org.jboss.arquillian.warp.impl.client.verification;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
+import org.jboss.arquillian.warp.impl.shared.ExecutedMethod;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class InspectionMethodWasNotInvokedException extends ClientWarpExecutionException {
 
-import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
+    private static final long serialVersionUID = -2562948787400815278L;
 
-/**
- *
- * @author Lukas Fryc
- *
- */
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.METHOD)
-@WarpLifecycleTest
-public @interface BeforePhase {
-    Phase value();
+    public InspectionMethodWasNotInvokedException(ExecutedMethod method) {
+        super("Lifecycle test declared on " + method.getMethod() + " with annotation " + method.getAnnotation()
+                + " was not executed");
+    }
 }

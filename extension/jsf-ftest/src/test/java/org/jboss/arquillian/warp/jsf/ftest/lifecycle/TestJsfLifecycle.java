@@ -16,15 +16,8 @@
  */
 package org.jboss.arquillian.warp.jsf.ftest.lifecycle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.net.URL;
-import java.util.EnumSet;
-
-import javax.faces.context.FacesContext;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -39,7 +32,6 @@ import org.jboss.arquillian.warp.jsf.AfterPhase;
 import org.jboss.arquillian.warp.jsf.BeforePhase;
 import org.jboss.arquillian.warp.jsf.Phase;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
-import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -77,30 +69,94 @@ public class TestJsfLifecycle {
     @Test
     public void test() {
 
-        ExecuteAllPhases executed = Warp
-                .initiate(new Activity() {
-                    public void perform() {
-                        browser.navigate().to(contextPath + "index.jsf");
-                    }})
-                .inspect(new ExecuteAllPhases());
+        Warp
+            .initiate(new Activity() {
+                public void perform() {
+                    browser.navigate().to(contextPath + "index.jsf");
+                }})
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
 
-        assertFalse(executed.isPostback());
-        ExecuteAllPhases.verifyExecutedPhases(executed);
+                @BeforeServlet
+                public void beforeServlet() {
+                }
 
-        executed = Warp
-                .initiate(new Activity() {
-                    public void perform() {
-                        WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
-                        nameInput.sendKeys("X");
-                        browser.findElement(By.tagName("body")).click();
+                @BeforePhase(Phase.RESTORE_VIEW)
+                public void beforeRestoreView() {
+                }
 
+                @AfterPhase(Phase.RESTORE_VIEW)
+                public void afterRestoreView() {
+                }
 
-                    }
-                })
-                .inspect(new ExecuteAllPhases());
+                @BeforePhase(Phase.RENDER_RESPONSE)
+                public void beforeRenderResponse() {
+                }
 
-        assertTrue(executed.isPostback());
-        ExecuteAllPhases.verifyExecutedPhases(executed);
+                @AfterPhase(Phase.RENDER_RESPONSE)
+                public void afterRenderResponse() {
+                }
+            });
+
+        Warp
+            .initiate(new Activity() {
+                public void perform() {
+                    WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
+                    nameInput.sendKeys("X");
+                    browser.findElement(By.tagName("body")).click();
+                }
+            })
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
+
+                @BeforePhase(Phase.RESTORE_VIEW)
+                public void beforeRestoreView() {
+                }
+
+                @AfterPhase(Phase.RESTORE_VIEW)
+                public void afterRestoreView() {
+                }
+
+                @BeforePhase(Phase.APPLY_REQUEST_VALUES)
+                public void beforeApplyRequestValues() {
+                }
+
+                @AfterPhase(Phase.APPLY_REQUEST_VALUES)
+                public void afterApplyRequestValues() {
+                }
+
+                @BeforePhase(Phase.PROCESS_VALIDATIONS)
+                public void beforeProcessValidations() {
+                }
+
+                @AfterPhase(Phase.PROCESS_VALIDATIONS)
+                public void afterProcessValidations() {
+                }
+
+                @BeforePhase(Phase.UPDATE_MODEL_VALUES)
+                public void beforeUpdateModelValues() {
+                }
+
+                @AfterPhase(Phase.UPDATE_MODEL_VALUES)
+                public void afterUpdateModelValues() {
+                }
+
+                @BeforePhase(Phase.INVOKE_APPLICATION)
+                public void beforeInvokeApplication() {
+                }
+
+                @AfterPhase(Phase.INVOKE_APPLICATION)
+                public void afterInvokeApplication() {
+                }
+
+                @BeforePhase(Phase.RENDER_RESPONSE)
+                public void beforeRenderResponse() {
+                }
+
+                @AfterPhase(Phase.RENDER_RESPONSE)
+                public void afterRenderResponse() {
+                }
+            });
 
         new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
             @Override
@@ -113,105 +169,5 @@ public class TestJsfLifecycle {
                 }
             }
         });
-    }
-
-    public static class ExecuteAllPhases extends Inspection {
-
-        private static final long serialVersionUID = 1L;
-
-        private EnumSet<Phase> before = EnumSet.noneOf(Phase.class);
-        private EnumSet<Phase> after = EnumSet.noneOf(Phase.class);
-        private boolean postback = false;
-
-        @BeforeServlet
-        public void beforeServlet() {
-            assertEquals("before", EnumSet.noneOf(Phase.class), before);
-            assertEquals("after", EnumSet.noneOf(Phase.class), after);
-        }
-
-        @BeforePhase(Phase.RESTORE_VIEW)
-        public void beforeRestoreView() {
-            postback = FacesContext.getCurrentInstance().isPostback();
-            before.add(Phase.RESTORE_VIEW);
-        }
-
-        @AfterPhase(Phase.RESTORE_VIEW)
-        public void afterRestoreView() {
-            after.add(Phase.RESTORE_VIEW);
-        }
-
-        @BeforePhase(Phase.APPLY_REQUEST_VALUES)
-        public void beforeApplyRequestValues() {
-            before.add(Phase.APPLY_REQUEST_VALUES);
-        }
-
-        @AfterPhase(Phase.APPLY_REQUEST_VALUES)
-        public void afterApplyRequestValues() {
-            after.add(Phase.APPLY_REQUEST_VALUES);
-        }
-
-        @BeforePhase(Phase.PROCESS_VALIDATIONS)
-        public void beforeProcessValidations() {
-            before.add(Phase.PROCESS_VALIDATIONS);
-        }
-
-        @AfterPhase(Phase.PROCESS_VALIDATIONS)
-        public void afterProcessValidations() {
-            after.add(Phase.PROCESS_VALIDATIONS);
-        }
-
-        @BeforePhase(Phase.UPDATE_MODEL_VALUES)
-        public void beforeUpdateModelValues() {
-            before.add(Phase.UPDATE_MODEL_VALUES);
-        }
-
-        @AfterPhase(Phase.UPDATE_MODEL_VALUES)
-        public void afterUpdateModelValues() {
-            after.add(Phase.UPDATE_MODEL_VALUES);
-        }
-
-        @BeforePhase(Phase.INVOKE_APPLICATION)
-        public void beforeInvokeApplication() {
-            before.add(Phase.INVOKE_APPLICATION);
-        }
-
-        @AfterPhase(Phase.INVOKE_APPLICATION)
-        public void afterInvokeApplication() {
-            after.add(Phase.INVOKE_APPLICATION);
-        }
-
-        @BeforePhase(Phase.RENDER_RESPONSE)
-        public void beforeRenderResponse() {
-            before.add(Phase.RENDER_RESPONSE);
-        }
-
-        @AfterPhase(Phase.RENDER_RESPONSE)
-        public void afterRenderResponse() {
-            after.add(Phase.RENDER_RESPONSE);
-        }
-
-        @AfterServlet
-        public void afterServlet() {
-            verifyExecutedPhases(this);
-        }
-
-        public EnumSet<Phase> getBefore() {
-            return before;
-        }
-
-        public EnumSet<Phase> getAfter() {
-            return after;
-        }
-
-        public boolean isPostback() {
-            return postback;
-        }
-
-        private static void verifyExecutedPhases(ExecuteAllPhases executed) {
-            EnumSet<Phase> expectedPhases = executed.isPostback() ? EnumSet.allOf(Phase.class) : EnumSet.of(Phase.RESTORE_VIEW,
-                    Phase.RENDER_RESPONSE);
-            assertEquals("before", expectedPhases, executed.getBefore());
-            assertEquals("after", expectedPhases, executed.getAfter());
-        }
     }
 }

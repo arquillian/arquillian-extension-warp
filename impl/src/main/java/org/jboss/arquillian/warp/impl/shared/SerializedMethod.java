@@ -14,26 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.jsf;
+package org.jboss.arquillian.warp.impl.shared;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class SerializedMethod implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Class<?> declaringClass;
+    private String methodName;
+    private Class<?>[] parameterTypes;
 
-import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
+    public SerializedMethod(Method method) {
+        declaringClass = method.getDeclaringClass();
+        methodName = method.getName();
+        parameterTypes = method.getParameterTypes();
+    }
 
-/**
- *
- * @author Lukas Fryc
- *
- */
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.METHOD)
-@WarpLifecycleTest
-public @interface BeforePhase {
-    Phase value();
+    public Method getMethod() {
+        try {
+            return declaringClass.getMethod(methodName, parameterTypes);
+        } catch (Exception e) {
+            throw new IllegalStateException();
+        }
+    }
 }

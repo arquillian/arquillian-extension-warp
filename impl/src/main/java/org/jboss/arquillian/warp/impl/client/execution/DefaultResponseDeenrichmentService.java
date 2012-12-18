@@ -20,8 +20,11 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.event.VerifyResponsePayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
@@ -38,6 +41,11 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichmentService {
 
     private final Logger log = Logger.getLogger(HttpResponseDeenrichmentService.class.getName());
+
+
+
+    @Inject
+    private Event<VerifyResponsePayload> verifyResponsePayload;
 
     /*
      * (non-Javadoc)
@@ -72,14 +80,22 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
             response.setStatus(HttpResponseStatus.valueOf(payload.getStatus()));
 
             if (context != null) {
+                verifyResponsePayload.fire(new VerifyResponsePayload(payload));
                 context.pushResponsePayload(payload);
             }
         } catch (Exception originalException) {
             response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
 
             if (context != null) {
-                ClientWarpExecutionException explainingException = new ClientWarpExecutionException("deenriching response failed: "
-                    + originalException.getMessage(), originalException);
+
+                ClientWarpExecutionException explainingException;
+
+                if (originalException instanceof ClientWarpExecutionException) {
+                    explainingException = (ClientWarpExecutionException) originalException;
+                } else {
+                    explainingException = new ClientWarpExecutionException("deenriching response failed: "
+                            + originalException.getMessage(), originalException);
+                }
 
                 context.pushException(explainingException);
             } else {

@@ -18,7 +18,9 @@ package org.jboss.arquillian.warp.impl.shared;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.Inspection;
@@ -31,6 +33,7 @@ public class ResponsePayload implements Serializable {
     private TestResult testResult;
     private int status;
     private long serialId;
+    private Set<ExecutedMethod> executedMethods = new HashSet<ExecutedMethod>();
 
     public ResponsePayload(long serialId) {
         this.serialId = serialId;
@@ -69,5 +72,9 @@ public class ResponsePayload implements Serializable {
 
     public long getSerialId() {
         return serialId;
+    }
+
+    public Set<ExecutedMethod> getExecutedMethods() {
+        return executedMethods;
     }
 }
