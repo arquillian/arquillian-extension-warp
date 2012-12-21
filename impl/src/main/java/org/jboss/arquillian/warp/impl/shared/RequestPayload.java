@@ -64,16 +64,15 @@ public class RequestPayload implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         serialId = in.readLong();
-        boolean isAnonymous = in.readBoolean();
-        if (isAnonymous) {
-            int size = in.read();
+        int size = in.read();
+        inspections = new ArrayList<Inspection>(size);
 
-            for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
+            boolean anonymous = in.readBoolean();
 
+            if (anonymous) {
                 byte[] classFile = (byte[]) in.readObject();
                 byte[] obj = (byte[]) in.readObject();
-
-                inspections = new ArrayList<Inspection>(size);
 
                 final DynamicClassLoader cl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
 
@@ -89,34 +88,34 @@ public class RequestPayload implements Externalizable {
 
                 Inspection inspection = (Inspection) input.readObject();
                 inspections.add(inspection);
+            } else {
+                inspections.add((Inspection) in.readObject());
             }
-        } else {
-            inspections = (List<Inspection>) in.readObject();
         }
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        if (inspections.getClass().isAnonymousClass() || inspections.getClass().isMemberClass()) {
+        out.writeLong(serialId);
+        out.write(inspections.size());
 
-            try {
-                out.writeLong(serialId);
-                out.writeBoolean(true);
-                out.write(inspections.size());
+        for (Inspection inspection : inspections) {
+            if (inspection.getClass().isAnonymousClass() || inspection.getClass().isMemberClass()) {
+                try {
+                    out.writeBoolean(true);
 
-                for (Inspection inspection : inspections) {
                     TransformedInspection transformed = new TransformedInspection(inspection);
                     MigratedInspection migrated = new MigratedInspection(transformed);
 
                     out.writeObject(migrated.toBytecode());
                     out.writeObject(migrated.toSerializedForm());
+                } catch (Exception e) {
+                    throw new RuntimeException("Could not transform and replicate class " + inspections.getClass() + ":\n" + e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                throw new RuntimeException("Could not transform and replicate class " + inspections.getClass() + ":\n" + e.getMessage(), e);
+            } else {
+                out.writeBoolean(false);
+                out.writeObject(inspection);
             }
-        } else {
-            out.writeBoolean(false);
-            out.writeObject(inspections);
         }
     }
 
