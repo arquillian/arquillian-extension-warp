@@ -119,7 +119,9 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
 
     @Override
     public GroupExecutionSpecifier group(Object identifier) {
-        return new WarpGroupImpl(this, identifier);
+        WarpGroup group = new WarpGroupImpl(this, identifier);
+        warpContext.addGroup(group);
+        return group;
     }
 
     /*
