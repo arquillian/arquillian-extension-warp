@@ -3,10 +3,15 @@ Arquillian Warp
 
 This extension allows you to write client-side test which asserts server-side logic.
 
-Warp has own extensions which allows you to integrate with various frameworks:
+Warp has built-in support for following frameworks
 
-* Servlet (part of default implementation)
-* Phaser (JSF lifecycle)
+* Servlet API
+* JSF 2
+
+and it has also several framework extensions
+
+* [Spring MVC](http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/) `Alpha`
+* [REST](https://github.com/jmnarloch/arquillian-extension-warp-rest/blob/master/ftest/ftest-resteasy/src/test/java/org/jboss/arquillian/quickstart/resteasy/service/rs/StockServiceAjaxTestCase.java#L78) `Proof of Concept`
 
 
 Links
@@ -19,6 +24,7 @@ Reading
 -------
 
 * [1.0.0.Alpha1 Release Blog](http://arquillian.org/blog/2012/05/27/arquillian-extension-warp-1-0-0-Alpha1/)
+* [Warp Spring Extension](http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/)
 
 Community
 ---------
@@ -34,16 +40,16 @@ Just add impl module to classpath and run test either from IDE or maven.
 
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-impl</artifactId>
-        <version>1.0.0.Alpha2-SNAPSHOT</version>
+        <artifactId>arquillian-warp</artifactId>
+        <version>1.0.0.Alpha2</version>
     </dependency>
 
 or any framework-specific extension:
 
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-phaser</artifactId>
-        <version>1.0.0.Alpha2-SNAPSHOT</version>
+        <artifactId>arquillian-warp-jsf</artifactId>
+        <version>1.0.0.Alpha2</version>
     </dependency>
 
 Use the servlet protocol in `arquillian.xml` configuration:
@@ -54,49 +60,53 @@ Use the servlet protocol in `arquillian.xml` configuration:
 Writing Warp tests
 ------------------
 
-To allow your test to use Warp, place `@WarpTest` annotation to test class:
+To allow your test to use the Warp, place a `@WarpTest` annotation to the test class:
 
     @RunWith(Arquillian.class)
     @WarpTest
-    public class PhaserBasicTest {
+    @RunAsClient
+    public class BasicTest {
     }
 
+Don't forget to force Arquillian to run the test on a client with a `@RunAsClient` annotation.
 
 
 Using `Warp` to trigger the client action
------------------------------------------
+------------------------------------------
 
-You can use any HTTP client, such as @Drone WebDriver, to trigger the server logic:
+You can use any HTTP client, such as WebDriver (driven by [`@Drone`](https://docs.jboss.org/author/display/ARQ/Drone)), to trigger the server logic:
 
     @Drone
     WebDriver browser;
 
-Don't forget to force your test to run as client with `@RunAsClient` annotation.
-
-Then use `Warp` utility class to run `execute` method.
+Then use `Warp` utility class to run `initiate` method.
 
     @Test
-    @RunAsClient
     public void test() {
-        Warp.execute(new ClientAction() {
 
-            @Override
-            public void action() {
-                browser.navigate().to(contextPath + "index.jsf");
-            }
-        }).verify(new InitialRequestVerification());
+        Warp
+           .initiate(new Activity() {
+
+                public void perform() {
+                    browser.navigate().to(contextPath + "index.jsf");
+                }})
+
+           .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
+            });
     }
 
-You need to provide `ClientAction` - the contract of this interface is that its `action` method leads to triggering HTTP request against `contextPath` URL.
+You need to provide `Activity` - the contract of this interface is that its `perform` method leads to triggering one or more HTTP requests against `contextPath` URL (injected by Arquillian).
 
-Finally, in the `verify` method, you need to provide object which implements `ServerAssertion` interface.
+Finally, in the `inspect` method, you need to provide object which implements `Inspection` interface. This interface provides contract for object which can execute server-side logic.
+
+Don't forget to provide `serialVersionUID` for `Inspection` objects.
 
 
+Asserting server state with `Inspection`
+-----------------------------------------
 
-Asserting server state with `ServerAssertion`
----------------------------------------------
-
-In the `InitialRequestVerification` class, you provide test methods annotated with some of the lifecycle test annotations:
+In the `Inspection` implementation, you can provide test methods annotated with lifecycle-test annotations:
 
 * `@BeforeServlet`
 * `@AfterServlet`
@@ -105,7 +115,7 @@ In the `InitialRequestVerification` class, you provide test methods annotated wi
 
 Simple assertion may look like:
 
-    public static class InitialRequestVerification extends ServerAssertion {
+    new Inspection() {
 
         private static final long serialVersionUID = 1L;
 
@@ -119,3 +129,11 @@ Simple assertion may look like:
     }
 
 Note that you can use dependency injection to bring the classes such as CDI beans, EJB beans, or any other resource supported by Arquillian.
+
+Learning
+--------
+
+In order to explore more use cases for Warp, the best way is to explore functional tests:
+
+* [Servlet API](https://github.com/arquillian/arquillian-extension-warp/tree/master/ftest/src/test/java/org/jboss/arquillian/warp/ftest)
+* [JSF 2](https://github.com/arquillian/arquillian-extension-warp/tree/master/extension/jsf-ftest/src/test/java/org/jboss/arquillian/warp/jsf/ftest)
