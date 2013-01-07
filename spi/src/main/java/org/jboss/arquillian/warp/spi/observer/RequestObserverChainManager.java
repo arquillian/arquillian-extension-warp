@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.spi.observer;
 
 import java.util.Collection;
+import java.util.Deque;
 
 import org.jboss.arquillian.warp.RequestObserver;
 
@@ -40,7 +41,7 @@ public interface RequestObserverChainManager {
      * @param expectedObserverType the type of observers which is expected during currently processed request
      * @return modified collection of
      */
-    Collection<RequestObserver> manageObserverChain(Collection<RequestObserver> observers, Class<? extends RequestObserver> expectedObserverType);
+    Deque<RequestObserver> manageObserverChain(Deque<RequestObserver> observers, Class<? extends RequestObserver> expectedObserverType);
 
     /**
      * <p>

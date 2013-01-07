@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,24 +16,15 @@
  */
 package org.jboss.arquillian.warp;
 
-import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpExecutionBuilder;
-import org.jboss.arquillian.warp.client.execution.WarpRuntime;
-
 /**
- * Utility class for performing client activity followed by inspected server request.
+ * Set of properties used for setting up Warp runtime
  *
  * @author Lukas Fryc
  */
-public final class Warp {
+public class WarpProperties {
 
     /**
-     * Takes client activity which should be performed in order to cause server request.
-     *
-     * @param activity the client activity to execute
-     * @return {@link WarpActivityBuilder} instance
+     * Specifies how long will Warp wait for request to finish
      */
-    public static WarpExecutionBuilder initiate(Activity activity) {
-        return WarpRuntime.getInstance().getWarpActivityBuilder().initiate(activity);
-    }
+    public static final String SYNCHRONIZATION_TIMEOUT = "arquillian.warp.synchronization.timeout";
 }

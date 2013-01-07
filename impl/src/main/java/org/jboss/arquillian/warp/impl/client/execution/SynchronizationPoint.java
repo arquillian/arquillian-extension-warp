@@ -21,23 +21,39 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jboss.arquillian.warp.Inspection;
+import org.jboss.arquillian.warp.WarpProperties;
 
 /**
- * The holder for {@link Inspection} object.
+ * <p>
+ * The point of synchronization of response finishing.
+ * </p>
  *
- * Provides methods for settings up the server inspection and its retrieval.
+ * <p>
+ * The expected order of calling methods:
+ * </p>
+ *
+ * <ul>
+ * <li>{@link #advertise()} - advertizes incoming Warp activity</li>
+ * <li>{@link #close(int)} - closes Warp specification and makes it available for execution, setups number of requests to be
+ * inspected</li>
+ * <li>{@link #finishOneResponse()} - advertizes closing of one request with response (called multiple times)</li>
+ * <li>{@link #awaitResponses()} - waits for all request to be finished (run parallely to {@link #finishOneResponse()} calls)</li>
+ * </ul>
+ *
  *
  * @author Lukas Fryc
  */
 public class SynchronizationPoint {
 
-    private static final long WAIT_TIMEOUT_MILISECONDS = 5000;
     private static final long THREAD_SLEEP = 50;
-    private static final long NUMBER_OF_WAIT_LOOPS = WAIT_TIMEOUT_MILISECONDS / THREAD_SLEEP;
+
+    private final long WAIT_TIMEOUT_MILISECONDS = Long.parseLong(System.getProperty(WarpProperties.SYNCHRONIZATION_TIMEOUT,
+            "5000"));
+    private final long NUMBER_OF_WAIT_LOOPS = WAIT_TIMEOUT_MILISECONDS / THREAD_SLEEP;
 
     private final AtomicBoolean enrichmentAdvertised = new AtomicBoolean(false);
     private final AtomicBoolean enrichmentClosed = new AtomicBoolean(false);
-    private final CountDownLatch responseFinished = new CountDownLatch(1);
+    private CountDownLatch responseFinished;
 
     /**
      * Advertizes that there will be taken client activity which will lead into request.
@@ -46,12 +62,28 @@ public class SynchronizationPoint {
         enrichmentAdvertised.set(true);
     }
 
-    void close() {
+    /**
+     * Closes the Warp specification with expected number of requests to be done
+     */
+    void close(int expectedRequestCount) {
+        responseFinished = new CountDownLatch(expectedRequestCount);
         enrichmentClosed.set(true);
     }
 
-    void finishResponse() {
+    /**
+     * Finishes one request with adequate response
+     */
+    void finishOneResponse() {
         responseFinished.countDown();
+    }
+
+    /**
+     * Finishes all requests prematurely (without waiting for responses)
+     */
+    void finishAll() {
+        for (long i = responseFinished.getCount(); i >= 0; i--) {
+            responseFinished.countDown();
+        }
     }
 
     /**
@@ -73,24 +105,29 @@ public class SynchronizationPoint {
     }
 
     /**
-     * Returns true if the {@link Inspection} is waiting for verification or the client activity which should cause request
-     * is advertised.
-     *
-     * @return true if the {@link Inspection} is waiting for verification or the client activity which should cause request
-     *         is advertised.
+     * Returns true if the enrichment was advertised.
      */
     boolean isWaitingForRequests() {
         return isEnrichmentAdvertised();
     }
 
+    /**
+     * Returns true if the enrichment is advertised but it has not been closed yet.
+     */
     boolean isWaitingForEnriching() {
         return isEnrichmentAdvertised() && !isEnrichmentClosed();
     }
 
+    /**
+     * Returns true if the enrichment was advertised, all requests were done and they are waiting for responses
+     */
     boolean isWaitingForResponses() {
         return isEnrichmentAdvertised() && isEnrichmentClosed() && responseFinished.getCount() > 0;
     }
 
+    /**
+     * Await client activity causing requests in order to enrich requests
+     */
     void awaitRequests() {
         if (!isWaitingForEnriching()) {
             return;
@@ -108,6 +145,9 @@ public class SynchronizationPoint {
         throw new SettingRequestTimeoutException();
     }
 
+    /**
+     * Await responses for requests or premature finishing
+     */
     void awaitResponses() {
         try {
             boolean finishedNicely = responseFinished.await(WAIT_TIMEOUT_MILISECONDS, TimeUnit.MILLISECONDS);

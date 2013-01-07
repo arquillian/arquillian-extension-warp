@@ -17,6 +17,8 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -78,6 +80,10 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
 
             ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
             response.setStatus(HttpResponseStatus.valueOf(payload.getStatus()));
+
+            for (Entry<String, List<String>> entry : payload.getHeaders().entrySet()) {
+                response.setHeader(entry.getKey(), entry.getValue());
+            }
 
             if (context != null) {
                 verifyResponsePayload.fire(new VerifyResponsePayload(payload));

@@ -21,6 +21,7 @@ import java.util.Collection;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.client.result.WarpResult;
+import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 
@@ -42,12 +43,21 @@ public interface WarpContext {
     Collection<WarpGroup> getAllGroups();
 
     /**
+     * Returns the request group based on its identifier under which it was registered using {@link #addGroup(WarpGroup)}.
+     *
+     * @param identifier
+     * @return
+     */
+    WarpGroup getGroup(Object identifier);
+
+    /**
      * <p>
      * Pushes {@link ResponsePayload} to context.
      * </p>
      *
      * <p>
-     * Context should ensure propagating {@link ResponsePayload} to associated {@link WarpGroup}.
+     * Context should ensure propagating {@link ResponsePayload} to associated {@link WarpGroup} based on the generated serial
+     * identifier ({@link RequestPayload#getSerialId()}).
      * </p>
      */
     void pushResponsePayload(ResponsePayload payload);
@@ -61,19 +71,6 @@ public interface WarpContext {
      * Returns first exception observed during Warp execution.
      */
     Exception getFirstException();
-
-    /**
-     * <p>
-     * Tries to finish Warp execution by asking all groups for their states - if they got responses for all generated payloads -
-     * they are finalized.
-     * </p>
-     *
-     * <p>
-     * When all groups are finalized, Warp execution should be finished by invoking current
-     * {@link SynchronizationPoint#finishResponse()}.
-     * </p>
-     */
-    void tryFinalizeResponse();
 
     /**
      * Returns the point of synchronization of current Warp execution.
@@ -107,4 +104,11 @@ public interface WarpContext {
      * @return
      */
     Collection<RequestObserverChainManager> getObserverChainManagers();
+
+    /**
+     * Return the number of requests expected in all groups of this context
+     *
+     * @return the number of requests expected in all groups of this context
+     */
+    int getExpectedRequestCount();
 }

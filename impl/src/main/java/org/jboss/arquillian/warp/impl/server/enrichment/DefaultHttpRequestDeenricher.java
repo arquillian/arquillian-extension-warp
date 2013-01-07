@@ -43,5 +43,4 @@ public class DefaultHttpRequestDeenricher implements HttpRequestDeenricher {
         String payload = getStringPayload();
         return SerializationUtils.deserializeFromBase64(payload);
     }
-
 }

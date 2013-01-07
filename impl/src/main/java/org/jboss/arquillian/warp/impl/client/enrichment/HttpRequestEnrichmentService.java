@@ -36,5 +36,5 @@ public interface HttpRequestEnrichmentService {
     /**
      * Enrich request with given payloads.
      */
-    void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads);
+    void enrichRequest(HttpRequest request, RequestPayload payloads);
 }

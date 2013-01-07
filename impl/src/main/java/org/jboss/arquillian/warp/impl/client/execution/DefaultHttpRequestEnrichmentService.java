@@ -19,9 +19,9 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -68,7 +68,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
         groupIteration : for (WarpGroup group : groups) {
 
-            List<RequestObserver> observers = new ArrayList<RequestObserver>(4);
+            Deque<RequestObserver> observers = new LinkedList<RequestObserver>();
             if (group.getObserver() != null) {
                 observers.add(group.getObserver());
             }
@@ -108,7 +108,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
      * .http.HttpRequest, java.util.Collection)
      */
     @Override
-    public void enrichRequest(HttpRequest request, Collection<RequestPayload> payloads) {
+    public void enrichRequest(HttpRequest request, RequestPayload payload) {
 
         if (WarpCommons.debugMode()) {
             System.out.println("                (W) " + request.getUri());
@@ -119,8 +119,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         }
 
         try {
-            RequestPayload inspection = payloads.iterator().next();
-            String requestEnrichment = SerializationUtils.serializeToBase64(inspection);
+            String requestEnrichment = SerializationUtils.serializeToBase64(payload);
             request.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
         } catch (Throwable originalException) {
             ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed:\n"

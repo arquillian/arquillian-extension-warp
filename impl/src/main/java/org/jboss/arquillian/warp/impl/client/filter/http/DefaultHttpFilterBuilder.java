@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.http;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
@@ -151,6 +153,20 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
         }
     }
 
+    private static final class CountRequestFilter implements RequestFilter<HttpRequest> {
+
+        private AtomicInteger count;
+
+        public CountRequestFilter(int count) {
+            this.count = new AtomicInteger(count);
+        }
+
+        @Override
+        public boolean matches(HttpRequest request) {
+            return count.decrementAndGet() == 0;
+        }
+    }
+
     /**
      * A plan instance of {@link HttpRequestFilter} that always returns true.
      */
@@ -164,5 +180,10 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
 
             return true;
         }
+    }
+
+    @Override
+    public HttpFilterBuilder index(int count) {
+        return this.addFilter(new CountRequestFilter(count));
     }
 }

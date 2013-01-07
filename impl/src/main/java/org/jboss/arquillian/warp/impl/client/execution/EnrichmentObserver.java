@@ -14,18 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.client.enrichment;
+package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.warp.client.exception.MultipleGroupsPerRequestException;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.DeenrichHttpResponse;
 import org.jboss.arquillian.warp.impl.client.event.EnrichHttpRequest;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpRequest;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpResponse;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
@@ -35,6 +40,8 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
  * @author Lukas Fryc
  */
 public class EnrichmentObserver {
+
+    private Logger log = Logger.getLogger("Warp");
 
     @Inject
     private Event<EnrichHttpRequest> enrichHttpRequest;
@@ -46,19 +53,27 @@ public class EnrichmentObserver {
         final HttpRequest request = event.getRequest();
         final HttpRequestEnrichmentService enrichmentService = event.getService();
 
+        if (WarpCommons.debugMode()) {
+            System.out.println("        (R) " + request.getUri());
+        }
+
         Collection<RequestPayload> matchingPayloads = enrichmentService.getMatchingPayloads(request);
 
         if (!matchingPayloads.isEmpty()) {
-            enrichHttpRequest.fire(new EnrichHttpRequest(request, matchingPayloads, enrichmentService));
+            if (matchingPayloads.size() > 1) {
+                pushException(new MultipleGroupsPerRequestException(request.getUri()));
+            } else {
+                enrichHttpRequest.fire(new EnrichHttpRequest(request, matchingPayloads.iterator().next(), enrichmentService));
+            }
         }
     }
 
     public void enrichRequest(@Observes EnrichHttpRequest event) {
         final HttpRequest request = event.getRequest();
-        final Collection<RequestPayload> payloads = event.getPayloads();
+        final RequestPayload payload = event.getPayload();
         final HttpRequestEnrichmentService enrichmentService = event.getService();
 
-        enrichmentService.enrichRequest(request, payloads);
+        enrichmentService.enrichRequest(request, payload);
     }
 
     public void tryDeenrichResponse(@Observes FilterHttpResponse event) {
@@ -75,5 +90,10 @@ public class EnrichmentObserver {
         final HttpResponseDeenrichmentService service = event.getService();
 
         service.deenrichResponse(response);
+    }
+
+    private void pushException(Exception exception) {
+        WarpContext warpContext = WarpContextStore.get();
+        warpContext.pushException(exception);
     }
 }

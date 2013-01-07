@@ -37,6 +37,7 @@ import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpRuntimeInitializer;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.client.execution.SingleInspectionSpecifier;
 import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
@@ -67,7 +68,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
     @Mock
     private Inspection serverInspection;
 
-    private static AtomicReference<Exception> failure = new AtomicReference<Exception>(null);
+    private static AtomicReference<Throwable> failure = new AtomicReference<Throwable>(null);
     private static AtomicReference<WarpActivityBuilder> requestExecutor = new AtomicReference<WarpActivityBuilder>();
     private static AtomicReference<WarpContext> warpContextReference = new AtomicReference<WarpContext>();
 
@@ -144,7 +145,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         new Thread(new Runnable() {
             public void run() {
                 awaitSafely(requestStarted);
-                handshake();
+                singleRequestHandshake();
                 responseFinished.countDown();
             }
         }).start();
@@ -172,7 +173,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
             public void run() {
                 awaitSafely(requestStarted);
                 if (warpContextReference.get().getSynchronization().isWaitingForRequests()) {
-                    handshake();
+                    singleRequestHandshake();
                 }
                 responseFinished.countDown();
             }
@@ -193,7 +194,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
     }
 
     @Test
-    public void test_single_request_with_nonblocking_client_activity() throws Exception {
+    public void test_single_request_with_nonblocking_client_activity() throws Throwable {
 
         assertBefore();
 
@@ -201,7 +202,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
             public void run() {
                 awaitSafely(requestStarted);
                 try {
-                    handshake();
+                    singleRequestHandshake();
                 } catch (Exception e) {
                     failure.set(e);
                 } finally {
@@ -226,16 +227,77 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         }
     }
 
+    @Test
+    public void test_multiple_request_with_nonblocking_client_activity() throws Throwable {
+
+        final CountDownLatch secondResponseFinished = new CountDownLatch(1);
+        final CountDownLatch secondRequestStarted = new CountDownLatch(1);
+
+        assertBefore();
+
+        new Thread(new Runnable() {
+            public void run() {
+                awaitSafely(requestStarted);
+                try {
+                    handshakeForGroup(1);
+                } catch (Throwable e) {
+                    failure.set(e);
+                } finally {
+                    responseFinished.countDown();
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            public void run() {
+                awaitSafely(secondRequestStarted);
+                try {
+                    handshakeForGroup(2);
+                } catch (Throwable e) {
+                    failure.set(e);
+                } finally {
+                    secondResponseFinished.countDown();
+                }
+            }
+        }).start();
+
+        Warp
+            .initiate(new Activity() {
+                public void perform() {
+                    assertDuringActivity();
+                    prepareForRequest();
+                    requestStarted.countDown();
+                    secondRequestStarted.countDown();
+                }})
+            .group(1)
+                .inspect(serverInspection)
+            .group(2)
+                .inspect(serverInspection)
+            .execute();
+
+        awaitSafely(responseFinished);
+
+        assertAfter();
+
+        if (failure.get() != null) {
+            throw failure.get();
+        }
+    }
+
     private void prepareForRequest() {
         WarpContext warpContext = this.warpContext.get();
         warpContextReference.set(warpContext);
     }
 
-    private void handshake() {
+    private void singleRequestHandshake() {
+        handshakeForGroup(SingleInspectionSpecifier.GROUP_ID);
+    }
+
+    private void handshakeForGroup(Object groupId) {
         awaitSafely(requestStarted);
         WarpContext warpContext = warpContextReference.get();
         assertNotNull("WarpContext should be available", warpContext);
-        WarpGroup group = warpContext.getAllGroups().iterator().next();
+        WarpGroup group = warpContext.getGroup(groupId);
         RequestPayload requestPayload = group.generateRequestPayload();
         ResponsePayload responsePayload = new ResponsePayload(requestPayload.getSerialId());
         responsePayload.setInspections(requestPayload.getInspections());

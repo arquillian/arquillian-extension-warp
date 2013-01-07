@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collection;
+import java.util.Deque;
 import java.util.concurrent.atomic.AtomicStampedReference;
 
 import org.jboss.arquillian.warp.RequestObserver;
@@ -34,18 +35,18 @@ public class DefaultRequestObserverChainManager implements RequestObserverChainM
             0);
 
     @Override
-    public Collection<RequestObserver> manageObserverChain(Collection<RequestObserver> observers,
+    public Deque<RequestObserver> manageObserverChain(Deque<RequestObserver> observers,
             Class<? extends RequestObserver> expectedObserverType) {
 
         if (expectedObserverType == HttpRequestFilter.class) {
 
-            // ignore favicon.ico requests
-            observers.add(FAVICON_IGNORE);
-
             // when the group is single execution group, then we will observe only first request which matches defined criteria
             if (allGroups().size() == 1 && allGroups().iterator().next().getId() == SingleInspectionSpecifier.GROUP_ID) {
-                observers.add(retrieveFirstRequestObserver());
+                observers.addFirst(retrieveFirstRequestObserver());
             }
+
+            // ignore favicon.ico requests
+            observers.addFirst(FAVICON_IGNORE);
         }
 
         return observers;

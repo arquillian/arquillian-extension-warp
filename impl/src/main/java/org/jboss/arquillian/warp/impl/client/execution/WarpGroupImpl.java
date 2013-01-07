@@ -16,9 +16,10 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.Inspection;
@@ -44,7 +45,7 @@ public class WarpGroupImpl implements WarpGroup {
 
     private Inspection[] inspections;
 
-    private LinkedHashMap<RequestPayload, ResponsePayload> payloads = new LinkedHashMap<RequestPayload, ResponsePayload>();
+    private Map<Long, ResponsePayload> payloads = Collections.synchronizedMap(new LinkedHashMap<Long, ResponsePayload>());
 
     public WarpGroupImpl(GroupInspectionBuilder groupsExecutor, Object identifier) {
         this.groupsExecutor = groupsExecutor;
@@ -180,7 +181,7 @@ public class WarpGroupImpl implements WarpGroup {
                     payloads.size() + 1, expectCount));
         }
         RequestPayload requestPayload = new RequestPayload(inspections);
-        payloads.put(requestPayload, null);
+        payloads.put(requestPayload.getSerialId(), null);
         return requestPayload;
     }
 
@@ -188,33 +189,12 @@ public class WarpGroupImpl implements WarpGroup {
      * (non-Javadoc)
      * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#pushResponsePayload(org.jboss.arquillian.warp.impl.shared.ResponsePayload)
      */
-    public boolean pushResponsePayload(ResponsePayload payload) {
-        for (Entry<RequestPayload, ResponsePayload> entry : payloads.entrySet()) {
-            if (payload.getSerialId() == entry.getKey().getSerialId()) {
-                if (entry.getValue() != null) {
-                    throw new IllegalStateException("");
-                }
-            }
-            entry.setValue(payload);
+    public boolean pushResponsePayload(ResponsePayload responsePayload) {
+        if (payloads.containsKey(responsePayload.getSerialId())) {
+            payloads.put(responsePayload.getSerialId(), responsePayload);
             return true;
         }
         return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#allRequestsPaired()
-     */
-    public boolean allRequestsPaired() {
-        if (payloads.size() < expectCount) {
-            return false;
-        }
-        for (ResponsePayload responsePayload : payloads.values()) {
-            if (responsePayload == null) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /*
@@ -223,19 +203,33 @@ public class WarpGroupImpl implements WarpGroup {
      */
     public TestResult getFirstNonSuccessfulResult() {
         for (ResponsePayload payload : payloads.values()) {
-            TestResult testResult = payload.getTestResult();
 
-            if (testResult != null) {
-                switch (testResult.getStatus()) {
-                    case FAILED:
-                        return testResult;
-                    case SKIPPED:
-                        return testResult;
-                    case PASSED:
+            if (payload != null) {
+
+                TestResult testResult = payload.getTestResult();
+
+                if (testResult != null) {
+                    switch (testResult.getStatus()) {
+                        case FAILED:
+                            return testResult;
+                        case SKIPPED:
+                            return testResult;
+                        case PASSED:
+                    }
                 }
             }
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "WarpGroupImpl [id=" + id + "]";
+    }
+
+    @Override
+    public int getExpectedRequestCount() {
+        return expectCount;
     }
 }

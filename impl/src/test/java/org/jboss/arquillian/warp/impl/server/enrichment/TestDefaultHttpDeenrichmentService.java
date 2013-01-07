@@ -22,6 +22,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,6 +52,8 @@ public class TestDefaultHttpDeenrichmentService extends AbstractWarpServerTestTe
         // given
         enricher = new DefaultHttpResponseEnricher();
         payload = new ResponsePayload(-1L);
+        payload.setStatus(200);
+        payload.setHeaders(new HashMap<String, List<String>>());
 
         output = new ByteArrayServletOutputStream();
         response = mock(HttpServletResponse.class);

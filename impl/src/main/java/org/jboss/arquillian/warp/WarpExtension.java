@@ -25,7 +25,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentEnricher;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentValidator;
-import org.jboss.arquillian.warp.impl.client.enrichment.EnrichmentObserver;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
@@ -38,6 +37,7 @@ import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichme
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier;
+import org.jboss.arquillian.warp.impl.client.execution.EnrichmentObserver;
 import org.jboss.arquillian.warp.impl.client.execution.ExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.WarpContext;
 import org.jboss.arquillian.warp.impl.client.execution.WarpContextImpl;

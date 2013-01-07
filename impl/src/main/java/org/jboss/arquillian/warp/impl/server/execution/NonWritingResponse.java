@@ -18,6 +18,11 @@ package org.jboss.arquillian.warp.impl.server.execution;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +31,8 @@ import javax.servlet.http.HttpServletResponseWrapper;
 public class NonWritingResponse extends HttpServletResponseWrapper {
 
     private Integer contentLength = null;
+    private Integer status;
+    private Map<String, List<String>> headers = new HashMap<String, List<String>>();
 
     private NonWritingServletOutputStream stream;
     private NonWritingPrintWriter writer;
@@ -57,6 +64,60 @@ public class NonWritingResponse extends HttpServletResponseWrapper {
 
     public Integer getContentLength() {
         return contentLength;
+    }
+
+    @Override
+    public void sendRedirect(String location) throws IOException {
+        setStatus(SC_MOVED_TEMPORARILY);
+        setHeader("Location", location);
+    }
+
+    public int getStatus() {
+        return status == null ? SC_OK : status;
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
+        List<String> list = new LinkedList<String>();
+        headers.put(name, list);
+        list.add(value);
+    }
+
+    @Override
+    public void addHeader(String name, String value) {
+        if (headers.get(name) == null) {
+            setHeader(name, value);
+        } else {
+            headers.get(name).add(value);
+        }
+    }
+
+    @Override
+    public String getHeader(String name) {
+        List<String> list = headers.get(name);
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    @Override
+    public void setStatus(int sc) {
+        this.status = sc;
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return headers.keySet();
+    }
+
+    @Override
+    public Collection<String> getHeaders(String name) {
+        return super.getHeaders(name);
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers;
     }
 
     public NonWritingServletOutputStream getNonWritingServletOutputStream() {

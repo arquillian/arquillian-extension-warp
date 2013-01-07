@@ -25,7 +25,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
-public class ServletRequestEnricher implements ResourceProvider {
+public class ServletRequestProvider implements ResourceProvider {
 
     @Inject
     private Instance<ServletRequest> request;

@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -34,7 +36,7 @@ import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 public class WarpContextImpl implements WarpContext {
 
         private Map<Object, WarpGroup> groups = new HashMap<Object, WarpGroup>();
-        private List<Exception> exceptions = new LinkedList<Exception>();
+        private Queue<Exception> exceptions = new ConcurrentLinkedQueue<Exception>();
 
         private SynchronizationPoint synchronization = new SynchronizationPoint();
         private List<RequestObserverChainManager> observerChainManagers;
@@ -47,6 +49,11 @@ public class WarpContextImpl implements WarpContext {
         @Override
         public Collection<WarpGroup> getAllGroups() {
             return groups.values();
+        }
+
+        @Override
+        public WarpGroup getGroup(Object identifier) {
+            return groups.get(identifier);
         }
 
         public Collection<RequestObserverChainManager> getObserverChainManagers() {
@@ -69,7 +76,7 @@ public class WarpContextImpl implements WarpContext {
         public void pushResponsePayload(ResponsePayload payload) {
             for (WarpGroup group : groups.values()) {
                 if (group.pushResponsePayload(payload)) {
-                    tryFinalizeResponse();
+                    synchronization.finishOneResponse();
                     return;
                 }
             }
@@ -77,32 +84,14 @@ public class WarpContextImpl implements WarpContext {
         }
 
         @Override
-        public void tryFinalizeResponse() {
-            boolean allPaired = true;
-            for (WarpGroup group : groups.values()) {
-                if (!group.allRequestsPaired()) {
-                    allPaired = false;
-                    return;
-                }
-            }
-            if (allPaired) {
-                synchronization.finishResponse();
-            }
-        }
-
-        @Override
         public void pushException(Exception exception) {
             exceptions.add(exception);
-            synchronization.finishResponse();
+            synchronization.finishAll();
         }
 
         @Override
         public Exception getFirstException() {
-            if (exceptions.isEmpty()) {
-                return null;
-            }
-
-            return exceptions.get(0);
+            return exceptions.peek();
         }
 
         @Override
@@ -129,5 +118,14 @@ public class WarpContextImpl implements WarpContext {
                     return o1.priotity() - o2.priotity();
                 }
             });
+        }
+
+        @Override
+        public int getExpectedRequestCount() {
+            int count = 0;
+            for (WarpGroup group : getAllGroups()) {
+                count += group.getExpectedRequestCount();
+            }
+            return count;
         }
     }

@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.arquillian.test.spi.TestResult;
@@ -32,6 +33,7 @@ public class ResponsePayload implements Serializable {
     private List<Inspection> inspections;
     private TestResult testResult;
     private int status;
+    private Map<String, List<String>> headers;
     private long serialId;
     private Set<ExecutedMethod> executedMethods = new HashSet<ExecutedMethod>();
 
@@ -68,6 +70,14 @@ public class ResponsePayload implements Serializable {
 
     public int getStatus() {
         return status;
+    }
+
+    public void setHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers;
     }
 
     public long getSerialId() {

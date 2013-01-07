@@ -39,7 +39,6 @@ public class DefaultExecutionSynchronizer implements ExecutionSynchronizer {
     @Override
     public void advertise() {
         synchronization().advertise();
-        warpContext().tryFinalizeResponse();
     }
 
     /*
@@ -48,7 +47,8 @@ public class DefaultExecutionSynchronizer implements ExecutionSynchronizer {
      */
     @Override
     public void finish() {
-        synchronization().close();
+        int expectedRequestCount = warpContext().getExpectedRequestCount();
+        synchronization().close(expectedRequestCount);
     }
 
     /*

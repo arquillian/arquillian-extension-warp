@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import java.util.Collection;
-
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.netty.handler.codec.http.HttpRequest;
@@ -25,13 +23,13 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 public class EnrichHttpRequest implements EnrichRequest<HttpRequest, RequestPayload> {
 
     private HttpRequest request;
-    private Collection<RequestPayload> payloads;
+    private RequestPayload payload;
     private HttpRequestEnrichmentService service;
 
-    public EnrichHttpRequest(HttpRequest request, Collection<RequestPayload> payload, HttpRequestEnrichmentService service) {
+    public EnrichHttpRequest(HttpRequest request, RequestPayload payload, HttpRequestEnrichmentService service) {
         super();
         this.request = request;
-        this.payloads = payload;
+        this.payload = payload;
         this.service = service;
     }
 
@@ -41,8 +39,8 @@ public class EnrichHttpRequest implements EnrichRequest<HttpRequest, RequestPayl
     }
 
     @Override
-    public Collection<RequestPayload> getPayloads() {
-        return payloads;
+    public RequestPayload getPayload() {
+        return payload;
     }
 
     @Override

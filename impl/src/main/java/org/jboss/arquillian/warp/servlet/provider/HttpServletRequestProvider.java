@@ -18,25 +18,25 @@ package org.jboss.arquillian.warp.servlet.provider;
 
 import java.lang.annotation.Annotation;
 
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
-public class ServletResponseEnricher implements ResourceProvider {
+public class HttpServletRequestProvider implements ResourceProvider {
 
     @Inject
-    private Instance<ServletResponse> response;
+    private Instance<HttpServletRequest> request;
 
     @Override
     public boolean canProvide(Class<?> type) {
-        return type == ServletResponse.class;
+        return type == HttpServletRequest.class;
     }
 
     @Override
     public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
-        return response.get();
+        return request.get();
     }
 }

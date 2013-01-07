@@ -68,7 +68,8 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
 
         Integer originalLength = nonWritingResponse.getContentLength();
 
-        payload.setStatus(response.getStatus());
+        payload.setStatus(nonWritingResponse.getStatus());
+        payload.setHeaders(nonWritingResponse.getHeaders());
 
         String enrichment = SerializationUtils.serializeToBase64(payload);
 

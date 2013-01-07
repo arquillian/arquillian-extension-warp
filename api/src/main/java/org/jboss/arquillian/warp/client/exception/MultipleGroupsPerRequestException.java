@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,12 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.enrichment;
+package org.jboss.arquillian.warp.client.exception;
 
+import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 
-public interface RequestDeenricher<P> {
+/**
+ * Indicates that there are more than one groups matching given request.
+ *
+ * @author Lukas Fryc
+ */
+public class MultipleGroupsPerRequestException extends ClientWarpExecutionException {
 
-    boolean isEnriched();
+    private static final long serialVersionUID = 5088300503507197560L;
 
-    P resolvePayload();
+    public MultipleGroupsPerRequestException(String requestUri) {
+        super("There can be at most 1 matching group per request: " + requestUri);
+    }
+
 }
