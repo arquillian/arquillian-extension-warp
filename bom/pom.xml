@@ -5,7 +5,7 @@
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-warp-bom</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0.Alpha2-SNAPSHOT</version>
+    <version>1.0.0.Alpha2</version>
 
     <name>Arquillian Warp: BOM</name>
     <description>Taking tests from Client to the Server and back</description>
