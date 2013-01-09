@@ -31,7 +31,7 @@ public class NotHttpFilterChainBuilder implements HttpFilterChainBuilder<HttpFil
     /**
      * Instance of {@link HttpFilterChainBuilder}.
      */
-    private HttpFilterChainBuilder<HttpFilterBuilder> httpFilterChainBuilder;
+    private final HttpFilterChainBuilder<HttpFilterBuilder> httpFilterChainBuilder;
 
     /**
      * Creates new instance of {@link NotHttpFilterChainBuilder} with given {@link HttpFilterChainBuilder} instance

@@ -29,7 +29,7 @@ public abstract class AbstractMatcherFilterBuilder {
     /**
      * Instance of {@link HttpFilterChainBuilder}.
      */
-    private HttpFilterChainBuilder<HttpFilterBuilder> filterChainBuilder;
+    private final HttpFilterChainBuilder<HttpFilterBuilder> filterChainBuilder;
 
     /**
      * Creates new instance of {@link AbstractMatcherFilterBuilder} with given filter chain.
