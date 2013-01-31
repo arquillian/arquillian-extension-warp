@@ -17,7 +17,9 @@
 package org.jboss.arquillian.warp;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.impl.server.command.WarpCommandService;
 import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpRequestDeenricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
@@ -71,6 +73,7 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
 
         builder.service(HttpRequestDeenricher.class, DefaultHttpRequestDeenricher.class);
         builder.service(HttpResponseEnricher.class, DefaultHttpResponseEnricher.class);
+        builder.service(CommandService.class, WarpCommandService.class);
     }
 
 }
