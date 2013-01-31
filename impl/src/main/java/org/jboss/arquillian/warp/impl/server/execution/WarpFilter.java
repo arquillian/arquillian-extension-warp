@@ -33,6 +33,7 @@ import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.warp.impl.server.command.WarpEventBusServlet;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
@@ -76,6 +77,11 @@ public class WarpFilter implements Filter {
     private void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
+        String requestURL = request.getRequestURL().toString();
+        if (requestURL.contains(WarpEventBusServlet.WARP_EVENT_BUS_SERVLET_MAPPING))  {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
             Manager manager = builder.create();
