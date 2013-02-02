@@ -27,6 +27,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 
@@ -62,7 +63,7 @@ public class ProxyURLProvider implements ResourceProvider {
 
         URL realURL = (URL) urlResourceProvider.lookup(resource, qualifiers);
 
-        if ("http".equals(realURL.getProtocol())) {
+        if ("http".equals(realURL.getProtocol()) && WarpRuntime.getInstance()!=null) {
             return getProxyUrl(realURL);
         } else {
             return realURL;
