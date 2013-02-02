@@ -45,6 +45,7 @@ import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.server.command.WarpEventBusServlet;
 
 /**
@@ -92,11 +93,15 @@ public class WarpEventBus {
      */
     void startEventBus(@Observes(precedence = 100) LocalExecutionEvent event)
             throws Exception {
+
         // Calculate eventUrl
         Collection<HTTPContext> contexts = protocolMetadata.get().getContexts(
                 HTTPContext.class);
         TestMethodExecutor testMethodExecutor = event.getExecutor();
         Class<?> testClass = testMethodExecutor.getInstance().getClass();
+        if (!testClass.isAnnotationPresent(WarpTest.class)) {
+            return;
+        }
         HTTPContext context = locateHTTPContext(testMethodExecutor.getMethod(),
                 contexts);
         URI servletURI = context.getServletByName(
