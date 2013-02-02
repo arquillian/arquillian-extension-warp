@@ -16,7 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,8 +61,9 @@ public class DefaultURLMapping implements URLMapping {
 
     private URL newProxyUrlWithPort(URL url, int port) {
         try {
-            return new URL(url.getProtocol(), "localhost", port, url.getFile());
-        } catch (MalformedURLException e) {
+            String localHost = InetAddress.getLocalHost().getHostAddress();
+            return new URL(url.getProtocol(), localHost, port, url.getFile());
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
