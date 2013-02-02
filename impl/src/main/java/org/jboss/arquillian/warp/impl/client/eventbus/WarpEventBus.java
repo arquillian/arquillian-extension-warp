@@ -32,7 +32,6 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
-import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 import org.jboss.arquillian.core.api.Event;
@@ -40,12 +39,12 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
-import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
-import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.impl.server.command.WarpEventBusServlet;
 
 /**
@@ -81,35 +80,35 @@ public class WarpEventBus {
     private static Timer eventBusTimer;
 
     /**
-     * Starts the Event Bus as soon as a {@link LocalExecutionEvent} is fired.
+     * Starts the Event Bus {@link Before} the Test starts.
      *
      * @param event
-     *            the {@link LocalExecutionEvent} that triggered this method
+     *            the {@link Before} that triggered this method
      *            execution
      * @throws Exception
      *
      * @see RemoteTestExecuter
      * @see ServletMethodExecutor
      */
-    void startEventBus(@Observes(precedence = 100) LocalExecutionEvent event)
+    void startEventBus(@Observes Before event)
             throws Exception {
-
+        if (WarpRuntime.getInstance()==null) {
+            return;
+        }
         // Calculate eventUrl
         Collection<HTTPContext> contexts = protocolMetadata.get().getContexts(
                 HTTPContext.class);
-        TestMethodExecutor testMethodExecutor = event.getExecutor();
-        Class<?> testClass = testMethodExecutor.getInstance().getClass();
-        if (!testClass.isAnnotationPresent(WarpTest.class)) {
-            return;
-        }
-        HTTPContext context = locateHTTPContext(testMethodExecutor.getMethod(),
+        //TestMethodExecutor testMethodExecutor = event.getExecutor();
+        Class<?> testClass = event.getTestClass().getJavaClass();
+
+        HTTPContext context = locateHTTPContext(event.getTestMethod(),
                 contexts);
         URI servletURI = context.getServletByName(
                 WarpEventBusServlet.WARP_EVENT_BUS_SERVLET_NAME).getFullURI();
 
         final String eventUrl = servletURI.toASCIIString() + "?className="
                 + testClass.getName() + "&methodName="
-                + testMethodExecutor.getMethod().getName();
+                + event.getTestMethod().getName();
 
         // Prepare CommandCallback
         final ApplicationContext applicationContext = applicationContextInst
@@ -170,7 +169,7 @@ public class WarpEventBus {
         } catch (Exception e) {
             throw new IllegalStateException("Error launching test "
                     + testClass.getName() + " "
-                    + testMethodExecutor.getMethod(), e);
+                    + event.getTestMethod(), e);
         }
         try {
             Thread.sleep(100);
