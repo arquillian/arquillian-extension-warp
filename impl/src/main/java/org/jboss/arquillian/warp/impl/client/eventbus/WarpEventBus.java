@@ -45,6 +45,8 @@ import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
+import org.jboss.arquillian.warp.impl.client.event.StartEventBus;
+import org.jboss.arquillian.warp.impl.client.event.StopEventBus;
 import org.jboss.arquillian.warp.impl.server.command.WarpEventBusServlet;
 
 /**
@@ -63,6 +65,12 @@ public class WarpEventBus {
     private Instance<ProtocolMetaData> protocolMetadata;
 
     @Inject
+    private Event<StartEventBus> startEventBus;
+
+    @Inject
+    private Event<StopEventBus> stopEventBus;
+
+    @Inject
     private Event<Object> remoteEvent;
 
     @Inject
@@ -79,27 +87,34 @@ public class WarpEventBus {
 
     private static Timer eventBusTimer;
 
+    void beforeTest(@Observes Before event) {
+        if (WarpRuntime.getInstance()!=null) {
+            startEventBus.fire(new StartEventBus(event.getTestInstance().getClass(), event.getTestMethod()));
+        }
+    }
+
+    void afterTest(@Observes After event) {
+        if (WarpRuntime.getInstance()!=null) {
+            stopEventBus.fire(new StopEventBus(event.getTestInstance().getClass(), event.getTestMethod()));
+        }
+    }
+
     /**
-     * Starts the Event Bus {@link Before} the Test starts.
+     * Starts the Event Bus.
      *
-     * @param event
-     *            the {@link Before} that triggered this method
-     *            execution
+     * @param event that triggered this method execution
      * @throws Exception
      *
      * @see RemoteTestExecuter
      * @see ServletMethodExecutor
      */
-    void startEventBus(@Observes Before event)
+    void startEventBus(@Observes StartEventBus event)
             throws Exception {
-        if (WarpRuntime.getInstance()==null) {
-            return;
-        }
         // Calculate eventUrl
         Collection<HTTPContext> contexts = protocolMetadata.get().getContexts(
                 HTTPContext.class);
         //TestMethodExecutor testMethodExecutor = event.getExecutor();
-        Class<?> testClass = event.getTestClass().getJavaClass();
+        Class<?> testClass = event.getTestClass();
 
         HTTPContext context = locateHTTPContext(event.getTestMethod(),
                 contexts);
@@ -179,12 +194,11 @@ public class WarpEventBus {
     }
 
     /**
-     * Stops the Event Bus after the Test has finished execution
+     * Stops the Event Bus
      *
-     * @param event
-     *            the {@link After} event that triggered this method execution
+     * @param event that triggered this method execution
      */
-    void stopEventBus(@Observes After event) {
+    void stopEventBus(@Observes StopEventBus event) {
         if (eventBusTimer != null) {
             eventBusTimer.cancel();
             eventBusTimer = null;
