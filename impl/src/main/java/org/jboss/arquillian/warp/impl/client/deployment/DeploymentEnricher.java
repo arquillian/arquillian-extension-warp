@@ -74,7 +74,10 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             // Servlet Extension
             "org.jboss.arquillian.warp.servlet.event",
-            "org.jboss.arquillian.warp.servlet.provider"
+            "org.jboss.arquillian.warp.servlet.provider",
+
+            // Command Service
+            "org.jboss.arquillian.warp.impl.server.command"
     };
 
     @Inject
@@ -125,8 +128,11 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             // register remote extension
             archive.addClass(WarpRemoteExtension.class);
-            archive.addAsServiceProvider(RemoteLoadableExtension.class, WarpRemoteExtension.class);
+            archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),"!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
             archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
+            archive.addAsManifestResource(
+                    "org/jboss/arquillian/warp/impl/server/command/web-fragment.xml",
+                    "web-fragment.xml");
 
             return archive;
         } else {
