@@ -42,6 +42,7 @@ Just add impl module to classpath and run test either from IDE or maven.
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp</artifactId>
         <version>1.0.0.Alpha2</version>
+        <type>pom</type>
     </dependency>
 
 or any framework-specific extension:
