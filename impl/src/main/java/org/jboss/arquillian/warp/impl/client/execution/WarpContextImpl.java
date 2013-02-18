@@ -33,6 +33,11 @@ import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 
+/**
+ * Context of Warp execution which makes available executed groups, holds exceptions and execution results
+ *
+ * @author Lukas Fryc
+ */
 public class WarpContextImpl implements WarpContext {
 
         private Map<Object, WarpGroup> groups = new HashMap<Object, WarpGroup>();
