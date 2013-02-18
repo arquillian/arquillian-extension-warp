@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.client.deployment;
 
-import java.io.File;
-
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -53,7 +51,7 @@ public class TestDeploymentEnricherClassPath {
 
         JavaArchive shrinkWrapSpi = ShrinkWrapUtils.getJavaArchiveFromClass(MemoryMapArchive.class);
         JavaArchive shrinkWrapApi = ShrinkWrapUtils.getJavaArchiveFromClass(JavaArchive.class);
-        JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class).addAsResource(new File("src/main/resources/org/jboss/arquillian/warp/impl/server/command/web-fragment.xml"),"org/jboss/arquillian/warp/impl/server/command/web-fragment.xml");
+        JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
 
         JavaArchive base = ShrinkWrap.create(JavaArchive.class).addClasses(DeploymentEnricher.class, WarpTest.class,
                 Inspection.class, BeforeServlet.class, AfterServlet.class, WarpRemoteExtension.class);

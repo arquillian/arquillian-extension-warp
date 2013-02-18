@@ -29,7 +29,7 @@ import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFil
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
-import org.jboss.arquillian.warp.impl.client.eventbus.WarpEventBus;
+import org.jboss.arquillian.warp.impl.client.eventbus.CommandEventBus;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService;
@@ -98,6 +98,6 @@ public class WarpExtension implements LoadableExtension {
         builder.service(HttpFilterBuilder.class, DefaultHttpFilterBuilder.class);
         builder.service(RequestObserverChainManager.class, DefaultRequestObserverChainManager.class);
         builder.observer(ResponsePayloadVerifier.class);
-        builder.observer(WarpEventBus.class);
+        builder.observer(CommandEventBus.class);
     }
 }

@@ -49,7 +49,7 @@ import org.openqa.selenium.WebDriver;
 @RunWith(Arquillian.class)
 @WarpTest
 @RunAsClient
-public class TestWarpEventBus {
+public class TestCommandEventBus {
 
     @Drone
     WebDriver browser;
@@ -66,7 +66,7 @@ public class TestWarpEventBus {
     }
 
     @Test
-    public void test() {
+    public void testSuccessfulCommand() {
 
         TestingInspection requestInspection = new TestingInspection();
 
@@ -78,9 +78,14 @@ public class TestWarpEventBus {
                     }})
                 .inspect(requestInspection);
 
-        assertNotNull("successInspection must not be null", successInspection);
         assertNotNull("response must not be null", successInspection.response);
         assertNull("thowable should be null", successInspection.failure);
+    }
+
+    @Test
+    public void testFailedCommand() {
+
+        TestingInspection requestInspection = new TestingInspection();
 
         DummyCommandReceiver.fail = true;
         TestingInspection errorInspection = Warp
@@ -90,11 +95,32 @@ public class TestWarpEventBus {
                     }})
                 .inspect(requestInspection);
 
-        assertNotNull("errorInspection must not be null", errorInspection);
         assertNull("errorInspection must be null", errorInspection.response);
         assertNotNull("thowable must not be null", errorInspection.failure);
+    }
 
+    @Test
+    public void testMultipleCommands() {
 
+        DummyCommandReceiver.fail = false;
+        TestingInspection inspection = Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }})
+                .inspect(new TestingInspection());
+        assertNotNull("response can't be null", inspection.response);
+        assertNull("thowable must be null", inspection.failure);
+
+        DummyCommandReceiver.fail = true;
+        inspection = Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }})
+                .inspect(new TestingInspection());
+        assertNull("response must be null", inspection.response);
+        assertNotNull("thowable can't be null", inspection.failure);
     }
 
 

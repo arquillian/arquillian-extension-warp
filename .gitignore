@@ -9,3 +9,4 @@ log.txt
 *.dia~
 *.faces-config.xml.jsfdia
 *.*~
+.checkstyle

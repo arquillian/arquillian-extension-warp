@@ -34,14 +34,12 @@ import org.jboss.arquillian.container.test.spi.command.Command;
  * @author atzoum
  *
  */
-@WebServlet(name = "WarpEventBus", urlPatterns = { "/WarpEventBus" })
-public class WarpEventBusServlet extends HttpServlet {
-    /**
-     *
-     */
+@WebServlet(name = CommandEventBusServlet.WARP_EVENT_BUS_SERVLET_NAME, urlPatterns = { CommandEventBusServlet.WARP_EVENT_BUS_SERVLET_MAPPING })
+public class CommandEventBusServlet extends HttpServlet {
+
     private static final long serialVersionUID = -6992268537681002870L;
 
-    public static final String WARP_EVENT_BUS_SERVLET_NAME = "WarpEventBus";
+    public static final String WARP_EVENT_BUS_SERVLET_NAME = "CommandEventBus";
     public static final String WARP_EVENT_BUS_SERVLET_MAPPING = "/" + WARP_EVENT_BUS_SERVLET_NAME;
 
     public static final String PARA_METHOD_NAME = "methodName";
