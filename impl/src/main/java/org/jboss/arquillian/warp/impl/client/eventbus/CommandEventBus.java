@@ -22,14 +22,19 @@ import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
 import org.jboss.arquillian.container.test.spi.command.Command;
@@ -44,7 +49,7 @@ import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.warp.impl.server.command.CommandEventBusServlet;
+import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
 
 /**
  * <p>
@@ -98,8 +103,7 @@ public class CommandEventBus {
 
         HTTPContext context = locateHTTPContext(event.getTestMethod(),
                 contexts);
-        URI servletURI = context.getServletByName(
-                CommandEventBusServlet.WARP_EVENT_BUS_SERVLET_NAME).getFullURI();
+        URI servletURI = locateCommandEventBusURI(context);
 
         final String eventUrl = servletURI.toASCIIString() + "?className="
                 + testClass.getName() + "&methodName="
@@ -150,7 +154,7 @@ public class CommandEventBus {
                                 callback.fired(command);
                                 execute(eventUrl, Object.class, command);
                             } else {
-                                throw new RuntimeException("Recived a non "
+                                throw new RuntimeException("Received a non "
                                         + Command.class.getName()
                                         + " object on event channel");
                             }
@@ -283,5 +287,37 @@ public class CommandEventBus {
                             + " match a name returned by the deployment container");
         }
         return contexts.toArray(new HTTPContext[] {})[0];
+    }
+
+    private URI locateCommandEventBusURI(HTTPContext context) {
+        List<Servlet> contextServlets = context.getServlets();
+        if (contextServlets == null) {
+            throw new IllegalArgumentException("Could not determine URI for WarpFilter in context "
+                                                    + context
+                                                    +". There are no Servlets in context.");
+        }
+        Set<String> contextRoots = new HashSet<String>();
+        for (Servlet servlet : contextServlets) {
+            contextRoots.add(servlet.getContextRoot());
+        }
+        if (contextRoots.size()==1) {
+            try {
+                URI baseURI = context.getServlets().get(0).getBaseURI();
+                String path = baseURI.getPath();
+                if (path.endsWith("/")) {
+                    path = path.substring(0,path.length()-1);
+                }
+                path = path + WarpFilter.COMMAND_EVENT_BUS_MAPPING;
+                return new URI("http", null, baseURI.getHost(), baseURI.getPort(), path, null, null);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Could not convert Servlet to URL, " + context.getServlets().get(0), e);
+            }
+        } else {
+            try {
+                return new URI("http", null, context.getHost(), context.getPort(), WarpFilter.COMMAND_EVENT_BUS_MAPPING, null, null);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
+            }
+        }
     }
 }

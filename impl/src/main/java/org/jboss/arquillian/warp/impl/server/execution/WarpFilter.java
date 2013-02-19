@@ -16,7 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.server.execution;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,12 +32,12 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.warp.impl.server.command.CommandEventBusServlet;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
@@ -48,8 +52,13 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
  */
 @WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class WarpFilter implements Filter {
-
+    public static final String COMMAND_EVENT_BUS_PATH = "CommandEventBus";
+    public static final String COMMAND_EVENT_BUS_MAPPING = "/" + COMMAND_EVENT_BUS_PATH;
+    private static final String COMMAND_EVENT_BUS_PARA_METHOD_NAME = "methodName";
+    private static final String COMMAND_EVENT_BUS_PARA_CLASS_NAME = "className";
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
+    static ConcurrentHashMap<String, Command<?>> events = new ConcurrentHashMap<String, Command<?>>();
+    static String currentCall = "";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -77,9 +86,9 @@ public class WarpFilter implements Filter {
     private void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
-        String requestURL = request.getRequestURL().toString();
-        if (requestURL.contains(CommandEventBusServlet.WARP_EVENT_BUS_SERVLET_MAPPING))  {
-            filterChain.doFilter(request, response);
+        String servletPath = request.getServletPath();
+        if (servletPath!=null && servletPath.equals(COMMAND_EVENT_BUS_MAPPING))  {
+            executeEvent(request, response);
             return;
         }
         try {
@@ -113,8 +122,51 @@ public class WarpFilter implements Filter {
         }
     }
 
+    private void executeEvent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String className = null;
+        String methodName = null;
+        try {
+            className = request.getParameter(COMMAND_EVENT_BUS_PARA_CLASS_NAME);
+            if (className == null) {
+                throw new IllegalArgumentException(COMMAND_EVENT_BUS_PARA_CLASS_NAME + " must be specified");
+            }
+            methodName = request.getParameter(COMMAND_EVENT_BUS_PARA_METHOD_NAME);
+            if (methodName == null) {
+                throw new IllegalArgumentException(COMMAND_EVENT_BUS_PARA_METHOD_NAME + " must be specified");
+            }
+            String eventKey = className + methodName;
+            currentCall = eventKey;
+            if (request.getContentLength() > 0) {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
+                Command<?> result = (Command<?>) input.readObject();
+                events.put(eventKey, result);
+            } else {
+                if (events.containsKey(eventKey) && events.get(eventKey).getResult() == null) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
+                    output.writeObject(events.remove(eventKey));
+                    output.flush();
+                    output.close();
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                }
+            }
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
     @Override
     public void destroy() {
+    }
+
+    public static ConcurrentHashMap<String, Command<?>> getEvents() {
+        return events;
+    }
+
+    public static String getCurrentCall() {
+        return currentCall;
     }
 
 }
