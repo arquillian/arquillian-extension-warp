@@ -130,6 +130,9 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             archive.addClass(WarpRemoteExtension.class);
             archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),"!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
             archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
+            archive.addAsManifestResource(
+                    "org/jboss/arquillian/warp/impl/server/command/web-fragment.xml",
+                    "web-fragment.xml");
 
             return archive;
         } else {

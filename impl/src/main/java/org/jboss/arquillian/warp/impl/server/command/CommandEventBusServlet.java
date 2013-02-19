@@ -34,7 +34,6 @@ import org.jboss.arquillian.container.test.spi.command.Command;
  * @author atzoum
  *
  */
-@WebServlet(name = CommandEventBusServlet.WARP_EVENT_BUS_SERVLET_NAME, urlPatterns = { CommandEventBusServlet.WARP_EVENT_BUS_SERVLET_MAPPING })
 public class CommandEventBusServlet extends HttpServlet {
 
     private static final long serialVersionUID = -6992268537681002870L;
