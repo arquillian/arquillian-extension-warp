@@ -49,6 +49,7 @@ import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
 
 /**
@@ -307,14 +308,14 @@ public class CommandEventBus {
                 if (path.endsWith("/")) {
                     path = path.substring(0,path.length()-1);
                 }
-                path = path + WarpFilter.COMMAND_EVENT_BUS_MAPPING;
+                path = path + CommandEventBusService.COMMAND_EVENT_BUS_MAPPING;
                 return new URI("http", null, baseURI.getHost(), baseURI.getPort(), path, null, null);
             } catch (URISyntaxException e) {
                 throw new RuntimeException("Could not convert Servlet to URL, " + context.getServlets().get(0), e);
             }
         } else {
             try {
-                return new URI("http", null, context.getHost(), context.getPort(), WarpFilter.COMMAND_EVENT_BUS_MAPPING, null, null);
+                return new URI("http", null, context.getHost(), context.getPort(), CommandEventBusService.COMMAND_EVENT_BUS_MAPPING, null, null);
             } catch (URISyntaxException e) {
                 throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
             }

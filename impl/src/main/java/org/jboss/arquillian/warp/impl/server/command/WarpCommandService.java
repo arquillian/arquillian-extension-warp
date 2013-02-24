@@ -18,7 +18,6 @@ package org.jboss.arquillian.warp.impl.server.command;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
-import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
 /**
  *
  * @author Aris Tzoumas
@@ -30,12 +29,12 @@ public class WarpCommandService implements CommandService {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T execute(Command<T> command) {
-        String currentId = WarpFilter.getCurrentCall();
-        WarpFilter.getEvents().put(currentId, command);
+        String currentId = CommandEventBusService.getCurrentCall();
+        CommandEventBusService.getEvents().put(currentId, command);
 
         long timeoutTime = System.currentTimeMillis() + TIMEOUT;
         while (timeoutTime > System.currentTimeMillis()) {
-           Command<?> newCommand = WarpFilter.getEvents().get(currentId);
+           Command<?> newCommand = CommandEventBusService.getEvents().get(currentId);
            if (newCommand != null) {
                if (newCommand.getThrowable() != null) {
                    throw new RuntimeException(newCommand.getThrowable());
