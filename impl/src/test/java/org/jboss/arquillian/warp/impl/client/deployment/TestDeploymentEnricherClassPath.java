@@ -51,9 +51,7 @@ public class TestDeploymentEnricherClassPath {
 
         JavaArchive shrinkWrapSpi = ShrinkWrapUtils.getJavaArchiveFromClass(MemoryMapArchive.class);
         JavaArchive shrinkWrapApi = ShrinkWrapUtils.getJavaArchiveFromClass(JavaArchive.class);
-        JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class)
-                // TODO resolution doesn't work when resource placed to archive created using ShrinkWrap.create(JavaArchive.class)
-                .addAsResource("org/jboss/arquillian/warp/impl/server/command/web-fragment.xml");
+        JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
 
         JavaArchive base = ShrinkWrap
                 .create(JavaArchive.class)

@@ -29,12 +29,12 @@ public class WarpCommandService implements CommandService {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T execute(Command<T> command) {
-        String currentId = CommandEventBusServlet.currentCall;
-        CommandEventBusServlet.events.put(currentId, command);
+        String currentId = CommandEventBusService.getCurrentCall();
+        CommandEventBusService.getEvents().put(currentId, command);
 
         long timeoutTime = System.currentTimeMillis() + TIMEOUT;
         while (timeoutTime > System.currentTimeMillis()) {
-           Command<?> newCommand = CommandEventBusServlet.events.get(currentId);
+           Command<?> newCommand = CommandEventBusService.getEvents().get(currentId);
            if (newCommand != null) {
                if (newCommand.getThrowable() != null) {
                    throw new RuntimeException(newCommand.getThrowable());

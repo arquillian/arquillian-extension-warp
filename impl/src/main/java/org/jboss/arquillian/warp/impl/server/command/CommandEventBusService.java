@@ -23,62 +23,51 @@ import java.io.ObjectOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
-/**
- *
- * @author atzoum
- *
- */
-public class CommandEventBusServlet extends HttpServlet {
+import org.jboss.arquillian.warp.impl.server.delegation.RequestProcessingDelegationService;
 
-    private static final long serialVersionUID = -6992268537681002870L;
-
-    public static final String WARP_EVENT_BUS_SERVLET_NAME = "CommandEventBus";
-    public static final String WARP_EVENT_BUS_SERVLET_MAPPING = "/" + WARP_EVENT_BUS_SERVLET_NAME;
-
-    public static final String PARA_METHOD_NAME = "methodName";
-    public static final String PARA_CLASS_NAME = "className";
-
-    static ConcurrentHashMap<String, Command<?>> events;
-    static String currentCall;
+public class CommandEventBusService implements
+        RequestProcessingDelegationService {
+    public static final String COMMAND_EVENT_BUS_PATH = "CommandEventBus";
+    public static final String COMMAND_EVENT_BUS_MAPPING = "/" + COMMAND_EVENT_BUS_PATH;
+    private static final String COMMAND_EVENT_BUS_PARA_METHOD_NAME = "methodName";
+    private static final String COMMAND_EVENT_BUS_PARA_CLASS_NAME = "className";
+    static ConcurrentHashMap<String, Command<?>> events = new ConcurrentHashMap<String, Command<?>>();
+    static String currentCall = "";
 
     @Override
-    public void init() throws ServletException {
-        events = new ConcurrentHashMap<String, Command<?>>();
-        currentCall = "";
+    public boolean canDelegate(HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        return (servletPath != null && servletPath.equals(COMMAND_EVENT_BUS_MAPPING));
     }
 
     @Override
-    public void destroy() {
-        events.clear();
+    public void delegate(HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+            executeEvent(request, response);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        executeEvent(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        executeEvent(request, response);
-    }
-
-    public void executeEvent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void executeEvent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String className = null;
         String methodName = null;
         try {
-            className = request.getParameter(PARA_CLASS_NAME);
+            className = request.getParameter(COMMAND_EVENT_BUS_PARA_CLASS_NAME);
             if (className == null) {
-                throw new IllegalArgumentException(PARA_CLASS_NAME + " must be specified");
+                throw new IllegalArgumentException(COMMAND_EVENT_BUS_PARA_CLASS_NAME + " must be specified");
             }
-            methodName = request.getParameter(PARA_METHOD_NAME);
+            methodName = request.getParameter(COMMAND_EVENT_BUS_PARA_METHOD_NAME);
             if (methodName == null) {
-                throw new IllegalArgumentException(PARA_METHOD_NAME + " must be specified");
+                throw new IllegalArgumentException(COMMAND_EVENT_BUS_PARA_METHOD_NAME + " must be specified");
             }
             String eventKey = className + methodName;
             currentCall = eventKey;
@@ -101,5 +90,13 @@ public class CommandEventBusServlet extends HttpServlet {
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }
+
+    public static ConcurrentHashMap<String, Command<?>> getEvents() {
+        return events;
+    }
+
+    public static String getCurrentCall() {
+        return currentCall;
     }
 }
