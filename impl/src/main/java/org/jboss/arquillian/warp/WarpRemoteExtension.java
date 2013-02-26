@@ -19,7 +19,10 @@ package org.jboss.arquillian.warp;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.command.WarpCommandService;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationObserver;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpRequestDeenricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
@@ -31,9 +34,9 @@ import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerObserver;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestClassExecutor;
-import org.jboss.arquillian.warp.impl.server.test.LifecycleTestExecutionVerifier;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher;
+import org.jboss.arquillian.warp.impl.server.test.LifecycleTestExecutionVerifier;
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
 import org.jboss.arquillian.warp.servlet.provider.HttpServletRequestProvider;
 import org.jboss.arquillian.warp.servlet.provider.HttpServletResponseProvider;
@@ -41,9 +44,13 @@ import org.jboss.arquillian.warp.servlet.provider.ServletRequestProvider;
 import org.jboss.arquillian.warp.servlet.provider.ServletResponseProvider;
 
 /**
- * <p>The Arquillian Warp extension - server-side.</p>
+ * <p>
+ * The Arquillian Warp extension - server-side.
+ * </p>
  *
- * <p>For client-side, see {@link WarpExtension}.</p>
+ * <p>
+ * For client-side, see {@link WarpExtension}.
+ * </p>
  *
  * @author Lukas Fryc
  */
@@ -73,7 +80,10 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
 
         builder.service(HttpRequestDeenricher.class, DefaultHttpRequestDeenricher.class);
         builder.service(HttpResponseEnricher.class, DefaultHttpResponseEnricher.class);
+
+        builder.service(RequestDelegationService.class, CommandEventBusService.class);
         builder.service(CommandService.class, WarpCommandService.class);
+        builder.observer(RequestDelegationObserver.class);
     }
 
 }

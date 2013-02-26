@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
-import org.jboss.arquillian.warp.impl.server.delegation.RequestProcessingDelegationService;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 
 public class CommandEventBusService implements
-        RequestProcessingDelegationService {
+        RequestDelegationService {
     public static final String COMMAND_EVENT_BUS_PATH = "CommandEventBus";
     public static final String COMMAND_EVENT_BUS_MAPPING = "/" + COMMAND_EVENT_BUS_PATH;
     private static final String COMMAND_EVENT_BUS_PARA_METHOD_NAME = "methodName";

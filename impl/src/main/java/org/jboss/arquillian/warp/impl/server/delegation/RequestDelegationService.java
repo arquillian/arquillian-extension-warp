@@ -29,10 +29,10 @@ import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
  * </p>
  * <p>
  * Delegates will be asked to handle request processing (through
- * {@link RequestProcessingDelegationService#canDelegate(HttpServletRequest)}).
+ * {@link RequestDelegationService#canDelegate(HttpServletRequest)}).
  * Delegates who decide to actually process the request, will need to perform
  * all processing inside
- * {@link RequestProcessingDelegationService#delegate(HttpServletRequest, HttpServletResponse)}
+ * {@link RequestDelegationService#delegate(HttpServletRequest, HttpServletResponse)}
  * .
  * </p>
  * <p>
@@ -43,7 +43,7 @@ import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
  * @author Aris Tzoumas
  *
  */
-public interface RequestProcessingDelegationService {
+public interface RequestDelegationService {
 
     /**
      * <p>
@@ -63,7 +63,7 @@ public interface RequestProcessingDelegationService {
      * </p>
      * <p>
      * This method will be called only if
-     * {@link RequestProcessingDelegationService#canDelegate(HttpServletRequest)}
+     * {@link RequestDelegationService#canDelegate(HttpServletRequest)}
      * returned <code>true</code>
      * </p>
      *
