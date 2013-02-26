@@ -18,15 +18,18 @@ package org.jboss.arquillian.warp.ftest.eventbus;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -34,6 +37,7 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.server.command.WarpCommandService;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
+import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -61,11 +65,14 @@ public class TestCommandEventBus {
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClass(DummyCommand.class)
+                .addClasses(DummyCommandRemoteExtension.class, DummyCommandSender.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsServiceProvider(RemoteLoadableExtension.class.getName(), DummyCommandRemoteExtension.class.getName());
     }
 
     @Test
+    @InSequence(1)
     public void testSuccessfulCommand() {
 
         TestingInspection requestInspection = new TestingInspection();
@@ -83,6 +90,7 @@ public class TestCommandEventBus {
     }
 
     @Test
+    @InSequence(2)
     public void testFailedCommand() {
 
         TestingInspection requestInspection = new TestingInspection();
@@ -100,6 +108,7 @@ public class TestCommandEventBus {
     }
 
     @Test
+    @InSequence(3)
     public void testMultipleCommands() {
 
         DummyCommandReceiver.fail = false;
@@ -119,6 +128,82 @@ public class TestCommandEventBus {
                         browser.navigate().to(contextPath + "index.html");
                     }})
                 .inspect(new TestingInspection());
+        assertNull("response must be null", inspection.response);
+        assertNotNull("thowable can't be null", inspection.failure);
+    }
+
+    @Test
+    @InSequence(4)
+    public void testCommandInArquillianAfterSuiteEvent() {
+
+        /*
+         *  test successful command
+         */
+        DummyCommandReceiver.fail = false;
+
+        // enable CommandSender to send a command @AfterSuite Event
+        Warp.initiate(new Activity() {
+            public void perform() {
+                browser.navigate().to(contextPath + "index.html");
+            }
+        }).inspect(new Inspection() {
+            private static final long serialVersionUID = 1L;
+
+            @BeforeServlet
+            public void beforeServlet() {
+                DummyCommandSender.SENDER_ENABLED = true;
+            }
+        });
+
+        try {
+            Thread.sleep(500);  // give time for the command to execute
+        } catch (InterruptedException e) {
+            fail("thread interrupted");
+        }
+
+        // Get the previous command execution result
+        ArquillianLifecycleCommandInspection inspection = Warp.initiate(
+                new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }
+                }).inspect(new ArquillianLifecycleCommandInspection());
+
+        assertNotNull("response can't be null", inspection.response);
+        assertNull("thowable must be null", inspection.failure);
+
+        /*
+         * test unsuccessful command
+         */
+        DummyCommandReceiver.fail = true;
+
+        // enable CommandSender to send a command @AfterSuite Event
+        Warp.initiate(new Activity() {
+            public void perform() {
+                browser.navigate().to(contextPath + "index.html");
+            }
+        }).inspect(new Inspection() {
+            private static final long serialVersionUID = 1L;
+            @BeforeServlet
+            public void beforeServlet() {
+                DummyCommandSender.SENDER_ENABLED = true;
+            }
+        });
+
+        try {
+            Thread.sleep(500);  // give time for the command to execute
+        } catch (InterruptedException e) {
+            fail("thread interrupted");
+        }
+
+        // Get the previous command execution result
+        inspection = Warp.initiate(
+                new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }
+                }).inspect(new ArquillianLifecycleCommandInspection());
+
         assertNull("response must be null", inspection.response);
         assertNotNull("thowable can't be null", inspection.failure);
     }
@@ -145,4 +230,19 @@ public class TestCommandEventBus {
            return service;
         }
     }
+
+    public static class ArquillianLifecycleCommandInspection extends Inspection {
+
+        private static final long serialVersionUID = 1L;
+        private String response = null;
+        private Throwable failure = null;
+
+        @AfterServlet
+        public void afterServlet() {
+            DummyCommandSender.SENDER_ENABLED = false;
+            response = DummyCommandSender.getResponse();
+            failure = DummyCommandSender.getFailure();
+        }
+    }
+
 }
