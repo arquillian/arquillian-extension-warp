@@ -50,6 +50,7 @@ import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
+import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
 
 /**
  * <p>

@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.server.execution;
 
 import java.io.IOException;
+import java.util.ServiceLoader;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -33,6 +34,7 @@ import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestProcessingDelegationService;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
@@ -62,7 +64,9 @@ public class WarpFilter implements Filter {
             ServletException {
 
         if (req instanceof HttpServletRequest && resp instanceof HttpServletResponse) {
-            doFilterHttp((HttpServletRequest) req, (HttpServletResponse) resp, chain);
+            if (!delegateExecution((HttpServletRequest) req, (HttpServletResponse) resp)) {
+                doFilterHttp((HttpServletRequest) req, (HttpServletResponse) resp, chain);
+            }
         } else {
             chain.doFilter(req, resp);
         }
@@ -74,6 +78,7 @@ public class WarpFilter implements Filter {
      */
     private void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
+
 
         try {
             ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
@@ -104,6 +109,17 @@ public class WarpFilter implements Filter {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Default service loader can't be found: " + DEFAULT_EXTENSION_CLASS, e);
         }
+    }
+
+    private boolean delegateExecution(HttpServletRequest request, HttpServletResponse response) {
+        ServiceLoader<RequestProcessingDelegationService> delegates = ServiceLoader.load(RequestProcessingDelegationService.class);
+        for (RequestProcessingDelegationService delegate : delegates) {
+            if (delegate.canDelegate(request)) {
+                delegate.delegate(request, response);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
