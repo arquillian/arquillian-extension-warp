@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.server.delegation;
 
+import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,36 +25,29 @@ import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
 
 /**
  * <p>
- * Service Interface for delegating request processing inside {@link WarpFilter}
- * .
+ * Service Interface for delegating request processing inside {@link WarpFilter} .
  * </p>
  * <p>
  * Delegates will be asked to handle request processing (through
- * {@link RequestProcessingDelegationService#canDelegate(HttpServletRequest)}).
- * Delegates who decide to actually process the request, will need to perform
- * all processing inside
- * {@link RequestProcessingDelegationService#delegate(HttpServletRequest, HttpServletResponse)}
- * .
+ * {@link RequestDelegationService#canDelegate(HttpServletRequest)}). Delegates who decide to actually process the request, will
+ * need to perform all processing inside {@link RequestDelegationService#delegate(HttpServletRequest, HttpServletResponse)} .
  * </p>
  * <p>
- * Request processing is performed outside Arquillian's context. No
- * {@link Manager} instance is created.
+ * Request processing is performed outside Arquillian's context. No {@link Manager} instance is created.
  * </p>
  *
  * @author Aris Tzoumas
  *
  */
-public interface RequestProcessingDelegationService {
+public interface RequestDelegationService {
 
     /**
      * <p>
      * Method to decide if delegate can handle the request
      * </p>
      *
-     * @param request
-     *            the incoming {@link HttpServletRequest}.
-     * @return <code>true</code> if delegate can handle the request.
-     *         <code>false</code> otherwise.
+     * @param request the incoming {@link HttpServletRequest}.
+     * @return <code>true</code> if delegate can handle the request. <code>false</code> otherwise.
      */
     boolean canDelegate(HttpServletRequest request);
 
@@ -62,16 +56,14 @@ public interface RequestProcessingDelegationService {
      * Actual request processing for delegate.
      * </p>
      * <p>
-     * This method will be called only if
-     * {@link RequestProcessingDelegationService#canDelegate(HttpServletRequest)}
-     * returned <code>true</code>
+     * This method will be called only if {@link RequestDelegationService#canDelegate(HttpServletRequest)} returned
+     * <code>true</code>
      * </p>
      *
-     * @param request
-     *            the incoming {@link HttpServletRequest}.
-     * @param response
-     *            the {@link HttpServletResponse} to send.
+     * @param request the incoming {@link HttpServletRequest}.
+     * @param response the {@link HttpServletResponse} to send.
+     * @param filterChain the filter chain
      */
-    void delegate(HttpServletRequest request, HttpServletResponse response);
+    void delegate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain);
 
 }

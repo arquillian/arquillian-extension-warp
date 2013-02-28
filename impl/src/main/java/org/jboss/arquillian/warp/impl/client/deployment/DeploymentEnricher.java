@@ -33,7 +33,7 @@ import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
-import org.jboss.arquillian.warp.impl.server.delegation.RequestProcessingDelegationService;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
@@ -79,10 +79,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             "org.jboss.arquillian.warp.servlet.provider",
 
             // Command Service
-            "org.jboss.arquillian.warp.impl.server.command",
-
-            // RequestProcessingDelegationService
-            "org.jboss.arquillian.warp.impl.server.delegation"
+            "org.jboss.arquillian.warp.impl.server.delegation",
+            "org.jboss.arquillian.warp.impl.server.command"
     };
 
     @Inject
@@ -137,7 +135,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
 
             // register RequestProcessingDelegationService
-            archive.addAsServiceProvider(RequestProcessingDelegationService.class, CommandEventBusService.class);
+            archive.addAsServiceProvider(RequestDelegationService.class, CommandEventBusService.class);
 
             return archive;
         } else {

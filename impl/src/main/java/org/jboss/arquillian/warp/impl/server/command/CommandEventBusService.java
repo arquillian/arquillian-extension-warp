@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,15 +22,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
-import org.jboss.arquillian.warp.impl.server.delegation.RequestProcessingDelegationService;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 
+/**
+ * Processes {@link CommandService} requests.
+ *
+ * @author Aris Tzoumas
+ */
 public class CommandEventBusService implements
-        RequestProcessingDelegationService {
+        RequestDelegationService {
     public static final String COMMAND_EVENT_BUS_PATH = "CommandEventBus";
     public static final String COMMAND_EVENT_BUS_MAPPING = "/" + COMMAND_EVENT_BUS_PATH;
     private static final String COMMAND_EVENT_BUS_PARA_METHOD_NAME = "methodName";
@@ -46,7 +53,7 @@ public class CommandEventBusService implements
 
     @Override
     public void delegate(HttpServletRequest request,
-            HttpServletResponse response) {
+            HttpServletResponse response, FilterChain filterChain) {
         try {
             executeEvent(request, response);
         } catch (ServletException e) {
@@ -54,7 +61,6 @@ public class CommandEventBusService implements
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private void executeEvent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

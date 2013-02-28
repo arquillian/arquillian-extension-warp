@@ -17,7 +17,6 @@
 package org.jboss.arquillian.warp.impl.server.execution;
 
 import java.io.IOException;
-import java.util.ServiceLoader;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -34,7 +33,8 @@ import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.warp.impl.server.delegation.RequestProcessingDelegationService;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
+import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegator;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
@@ -51,8 +51,16 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 public class WarpFilter implements Filter {
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
 
+    private RequestDelegator delegator;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        delegator = new RequestDelegator();
+    }
+
+    @Override
+    public void destroy() {
+        delegator = null;
     }
 
     /**
@@ -64,21 +72,42 @@ public class WarpFilter implements Filter {
             ServletException {
 
         if (req instanceof HttpServletRequest && resp instanceof HttpServletResponse) {
-            if (!delegateExecution((HttpServletRequest) req, (HttpServletResponse) resp)) {
-                doFilterHttp((HttpServletRequest) req, (HttpServletResponse) resp, chain);
-            }
+            doFilterHttp((HttpServletRequest) req, (HttpServletResponse) resp, chain);
         } else {
             chain.doFilter(req, resp);
         }
     }
 
     /**
-     * Detects whenever the request is enriched by Warp and if yes, delegates to {
-     * {@link #doFilterWarp(HttpServletRequest, HttpServletResponse, FilterChain, WarpRequest)}
+     * <p>
+     * Checks whether the request processing can be delegated to one of registered {@link RequestDelegationService}s.
+     * </p>
+     *
+     * <p>
+     * If not, delegates processing to {@link #doFilterWarp(HttpServletRequest, HttpServletResponse, FilterChain)}.
+     * </p>
      */
     private void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
+        boolean isDelegated = delegator.tryDelegateRequest(request, response, filterChain);
+
+        if (!isDelegated) {
+            doFilterWarp(request, response, filterChain);
+        }
+    }
+
+    /**
+     * <p>
+     * Starts the Arquillian Manager, starts contexts and registers contextual instances.
+     * </p>
+     *
+     * <p>
+     * Throws {@link ProcessHttpRequest} event which is used for further request processing.
+     * </p>
+     */
+    private void doFilterWarp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
 
         try {
             ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
@@ -110,20 +139,4 @@ public class WarpFilter implements Filter {
             throw new IllegalStateException("Default service loader can't be found: " + DEFAULT_EXTENSION_CLASS, e);
         }
     }
-
-    private boolean delegateExecution(HttpServletRequest request, HttpServletResponse response) {
-        ServiceLoader<RequestProcessingDelegationService> delegates = ServiceLoader.load(RequestProcessingDelegationService.class);
-        for (RequestProcessingDelegationService delegate : delegates) {
-            if (delegate.canDelegate(request)) {
-                delegate.delegate(request, response);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void destroy() {
-    }
-
 }
