@@ -56,6 +56,7 @@
         <version.servlet_api>3.0.1</version.servlet_api>
         <version.arquillian_core>1.0.3.Final</version.arquillian_core>
         <version.arquillian_drone>1.1.0.Final</version.arquillian_drone>
+        <version.arquillian_jacoco>1.0.0.Alpha5</version.arquillian_jacoco>
 
         <version.littleproxy>0.4</version.littleproxy>
         <version.javassist>3.12.1.GA</version.javassist>
@@ -63,6 +64,7 @@
         <!-- Tests -->
         <version.junit>4.10</version.junit>
         <version.mockito>1.9.0</version.mockito>
+        <version.jacoco>0.6.0.201210061924</version.jacoco>
         <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
