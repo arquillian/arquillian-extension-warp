@@ -43,6 +43,19 @@
                 <version>${version.arquillian_jacoco}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.jboss.arquillian.test</groupId>
+                <artifactId>arquillian-test-impl-base</artifactId>
+                <version>${version.arquillian_core}</version>
+                <classifier>tests</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.core</groupId>
+                <artifactId>arquillian-core-impl-base</artifactId>
+                <version>${version.arquillian_core}</version>
+                <classifier>tests</classifier>
+            </dependency>
 
             <!-- Java EE APIs -->
             <dependency>
@@ -103,6 +116,14 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.core</artifactId>
                 <version>${version.jacoco}</version>
+            </dependency>
+
+            <!-- FEST assert -->
+            <dependency>
+                <groupId>org.easytesting</groupId>
+                <artifactId>fest-assert</artifactId>
+                <version>${version.fest.assert}</version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>
