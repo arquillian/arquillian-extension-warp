@@ -66,21 +66,21 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             "org.jboss.arquillian.warp.impl.server.inspection",
             "org.jboss.arquillian.warp.impl.server.enrichment",
             "org.jboss.arquillian.warp.impl.server.event",
+            "org.jboss.arquillian.warp.impl.server.manager",
             "org.jboss.arquillian.warp.impl.server.execution",
             "org.jboss.arquillian.warp.impl.server.lifecycle",
             "org.jboss.arquillian.warp.impl.server.provider",
             "org.jboss.arquillian.warp.impl.server.request",
             "org.jboss.arquillian.warp.impl.server.test",
+            "org.jboss.arquillian.warp.impl.server.command",
+            "org.jboss.arquillian.warp.impl.server.delegation",
+            "org.jboss.arquillian.warp.impl.server.remote",
             "org.jboss.arquillian.warp.impl.shared",
             "org.jboss.arquillian.warp.impl.utils",
 
             // Servlet Extension
             "org.jboss.arquillian.warp.servlet.event",
-            "org.jboss.arquillian.warp.servlet.provider",
-
-            // Command Service
-            "org.jboss.arquillian.warp.impl.server.delegation",
-            "org.jboss.arquillian.warp.impl.server.command"
+            "org.jboss.arquillian.warp.servlet.provider"
     };
 
     @Inject

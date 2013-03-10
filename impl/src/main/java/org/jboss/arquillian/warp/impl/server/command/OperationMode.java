@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.ftest.eventbus;
-
-import org.jboss.arquillian.core.spi.LoadableExtension;
+package org.jboss.arquillian.warp.impl.server.command;
 
 /**
+ * <p>
+ * CommandEventBus Service Operation Modes.
+ * </p>
  *
- * @author atzoum
+ * <ul>
+ *  <li><code>GET</code> - A Command sent from the remote container.
+ *  <li><code>PUT</code> - A Command sent from client, targeted to the remote container.
+ * </ul>
+ *
+ * @author Aris Tzoumas
  *
  */
-public class DummyCommandExtension implements LoadableExtension {
-
-    @Override
-    public void register(ExtensionBuilder builder) {
-        builder.observer(DummyCommandReceiver.class);
-        builder.observer(DummyRemoteCommandSender.class);
-    }
-
+public enum OperationMode {
+    GET,
+    PUT
 }

@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,19 +16,21 @@
  */
 package org.jboss.arquillian.warp.ftest.eventbus;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.warp.Activity;
 
-/**
- *
- * @author atzoum
- *
- */
-public class DummyCommandExtension implements LoadableExtension {
+public class DummyRemoteCommandSender {
 
-    @Override
-    public void register(ExtensionBuilder builder) {
-        builder.observer(DummyCommandReceiver.class);
-        builder.observer(DummyRemoteCommandSender.class);
+    public static boolean ENABLED = false;
+
+    @Inject
+    Event<DummyCommandRemoteEvent> event;
+
+    public void sendRemoteCommand(@Observes(precedence=100) Activity activity) {
+        if (ENABLED) {
+            event.fire(new DummyCommandRemoteEvent());
+        }
     }
-
 }

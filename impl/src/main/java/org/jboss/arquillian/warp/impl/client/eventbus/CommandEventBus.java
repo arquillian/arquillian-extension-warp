@@ -36,7 +36,6 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
-import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 import org.jboss.arquillian.core.api.Event;
@@ -50,13 +49,15 @@ import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
-import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
+import org.jboss.arquillian.warp.impl.server.command.OperationMode;
+import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
+import org.jboss.arquillian.warp.impl.server.event.WarpRemoteCommand;
 
 /**
  * <p>
- * Provides an event bus during test execution to listen for incoming
- * {@link Command} events.
+ * Provides an event bus during test execution to listen for incoming {@link Command} events.
  * </p>
+ *
  * <p>
  * Event Bus functionality is similar to ServletProtocol
  * </p>
@@ -69,7 +70,7 @@ public class CommandEventBus {
     private Instance<ProtocolMetaData> protocolMetadata;
 
     @Inject
-    private Event<Object> remoteEvent;
+    private Event<Object> eventExecutedRemotely;
 
     @Inject
     private Instance<ApplicationContext> applicationContextInst;
@@ -85,34 +86,29 @@ public class CommandEventBus {
 
     private static Timer eventBusTimer;
 
+    private static ThreadLocal<String> channelUrl = new ThreadLocal<String>();
+
     /**
      * Starts the Event Bus.
-     *
-     * @param event that triggered this method execution
-     * @throws Exception
-     *
-     * @see RemoteTestExecuter
-     * @see ServletMethodExecutor
      */
-    void startEventBus(@Observes Before event)
-            throws Exception {
+    void startEventBus(@Observes(precedence = 500) Before event) throws Exception {
         // Calculate eventUrl
-        Collection<HTTPContext> contexts = protocolMetadata.get().getContexts(
-                HTTPContext.class);
+        Collection<HTTPContext> contexts = protocolMetadata.get().getContexts(HTTPContext.class);
 
         Class<?> testClass = event.getTestInstance().getClass();
 
-        HTTPContext context = locateHTTPContext(event.getTestMethod(),
-                contexts);
+        HTTPContext context = locateHTTPContext(event.getTestMethod(), contexts);
         URI servletURI = locateCommandEventBusURI(context);
 
-        final String eventUrl = servletURI.toASCIIString() + "?className="
-                + testClass.getName() + "&methodName="
+        String url = servletURI.toASCIIString() + "?className=" + testClass.getName() + "&methodName="
                 + event.getTestMethod().getName();
 
+        channelUrl.set(url);
+
+        final String eventUrl = url + "&operationMode=" + OperationMode.GET.name();
+
         // Prepare CommandCallback
-        final ApplicationContext applicationContext = applicationContextInst
-                .get();
+        final ApplicationContext applicationContext = applicationContextInst.get();
         final SuiteContext suiteContext = suiteContextInst.get();
 
         final ClassContext classContext = classContextInst.get();
@@ -128,7 +124,7 @@ public class CommandEventBus {
                 classContext.activate(classContextId);
                 testContext.activate(testContextId);
                 try {
-                    remoteEvent.fire(event);
+                    eventExecutedRemotely.fire(event);
                 } finally {
                     testContext.deactivate();
                     classContext.deactivate();
@@ -155,8 +151,7 @@ public class CommandEventBus {
                                 callback.fired(command);
                                 execute(eventUrl, Object.class, command);
                             } else {
-                                throw new RuntimeException("Received a non "
-                                        + Command.class.getName()
+                                throw new RuntimeException("Received a non " + Command.class.getName()
                                         + " object on event channel");
                             }
                         }
@@ -167,9 +162,7 @@ public class CommandEventBus {
                 }
             }, 0, 100);
         } catch (Exception e) {
-            throw new IllegalStateException("Error launching test "
-                    + testClass.getName() + " "
-                    + event.getTestMethod(), e);
+            throw new IllegalStateException("Error launching test " + testClass.getName() + " " + event.getTestMethod(), e);
         }
         try {
             Thread.sleep(100);
@@ -180,10 +173,8 @@ public class CommandEventBus {
 
     /**
      * Stops the Event Bus
-     *
-     * @param event that triggered this method execution
      */
-    void stopEventBus(@Observes After event) {
+    void stopEventBus(@Observes(precedence = -500) After event) {
         if (eventBusTimer != null) {
             eventBusTimer.cancel();
             eventBusTimer = null;
@@ -191,20 +182,40 @@ public class CommandEventBus {
     }
 
     /**
-     * Executes the request to the remote url
+     * Executes a RemoteEvent Command from the client to the container.
      *
-     * @param url
-     * @param returnType
-     * @param requestObject
-     * @return
-     * @throws Exception
+     * @param event the {@link WarpRemoteEvent} fired.
      */
-    private <T> T execute(String url, Class<T> returnType, Object requestObject)
-            throws Exception {
+    void executeCommandRemotely(@Observes WarpRemoteEvent event) {
+        final String eventUrl = channelUrl.get() + "&operationMode=" + OperationMode.PUT.name();
+        WarpRemoteCommand command = new WarpRemoteCommand(event);
+        try {
+
+            Object o = execute(eventUrl, Object.class, command);
+            if (o != null) {
+                if (o instanceof WarpRemoteCommand) {
+                    command = (WarpRemoteCommand) o;
+                    if (command.getThrowable() != null) {
+                        throw new RuntimeException(command.getThrowable());
+                    }
+                } else {
+                    throw new RuntimeException("Received a non " + WarpRemoteCommand.class.getName()
+                            + " object on event channel");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Error executing remote command", e);
+        }
+    }
+
+    /**
+     * Executes the request to the remote url
+     */
+    private <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception {
         URLConnection connection = new URL(url).openConnection();
         if (!(connection instanceof HttpURLConnection)) {
-            throw new IllegalStateException("Not an http connection! "
-                    + connection);
+            throw new IllegalStateException("Not an http connection! " + connection);
         }
         HttpURLConnection httpConnection = (HttpURLConnection) connection;
         httpConnection.setUseCaches(false);
@@ -215,18 +226,15 @@ public class CommandEventBus {
             if (requestObject != null) {
                 httpConnection.setRequestMethod("POST");
                 httpConnection.setDoOutput(true);
-                httpConnection.setRequestProperty("Content-Type",
-                        "application/octet-stream");
+                httpConnection.setRequestProperty("Content-Type", "application/octet-stream");
             }
 
             if (requestObject != null) {
-                ObjectOutputStream ous = new ObjectOutputStream(
-                        httpConnection.getOutputStream());
+                ObjectOutputStream ous = new ObjectOutputStream(httpConnection.getOutputStream());
                 try {
                     ous.writeObject(requestObject);
                 } catch (Exception e) {
-                    throw new RuntimeException("Error sending request Object, "
-                            + requestObject, e);
+                    throw new RuntimeException("Error sending request Object, " + requestObject, e);
                 } finally {
                     ous.flush();
                     ous.close();
@@ -239,8 +247,7 @@ public class CommandEventBus {
                 return null; // Could not connect
             }
             if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                ObjectInputStream ois = new ObjectInputStream(
-                        httpConnection.getInputStream());
+                ObjectInputStream ois = new ObjectInputStream(httpConnection.getInputStream());
                 Object o;
                 try {
                     o = ois.readObject();
@@ -249,18 +256,15 @@ public class CommandEventBus {
                 }
 
                 if (!returnType.isInstance(o)) {
-                    throw new IllegalStateException(
-                            "Error reading results, expected a "
-                                    + returnType.getName() + " but got " + o);
+                    throw new IllegalStateException("Error reading results, expected a " + returnType.getName() + " but got "
+                            + o);
                 }
                 return returnType.cast(o);
             } else if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
                 return null;
             } else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
-                throw new IllegalStateException("Error launching test at "
-                        + url + ". " + "Got "
-                        + httpConnection.getResponseCode() + " ("
-                        + httpConnection.getResponseMessage() + ")");
+                throw new IllegalStateException("Error launching test at " + url + ". " + "Got "
+                        + httpConnection.getResponseCode() + " (" + httpConnection.getResponseMessage() + ")");
             }
         } finally {
             httpConnection.disconnect();
@@ -268,10 +272,8 @@ public class CommandEventBus {
         return null;
     }
 
-    private HTTPContext locateHTTPContext(Method method,
-            Collection<HTTPContext> contexts) {
-        TargetsContainer targetContainer = method
-                .getAnnotation(TargetsContainer.class);
+    private HTTPContext locateHTTPContext(Method method, Collection<HTTPContext> contexts) {
+        TargetsContainer targetContainer = method.getAnnotation(TargetsContainer.class);
         if (targetContainer != null) {
             String targetName = targetContainer.value();
 
@@ -280,12 +282,9 @@ public class CommandEventBus {
                     return context;
                 }
             }
-            throw new IllegalArgumentException(
-                    "Could not determin HTTPContext from ProtocolMetadata for target: "
-                            + targetName
-                            + ". Verify that the given target name in @"
-                            + TargetsContainer.class.getSimpleName()
-                            + " match a name returned by the deployment container");
+            throw new IllegalArgumentException("Could not determin HTTPContext from ProtocolMetadata for target: " + targetName
+                    + ". Verify that the given target name in @" + TargetsContainer.class.getSimpleName()
+                    + " match a name returned by the deployment container");
         }
         return contexts.toArray(new HTTPContext[] {})[0];
     }
@@ -293,20 +292,19 @@ public class CommandEventBus {
     private URI locateCommandEventBusURI(HTTPContext context) {
         List<Servlet> contextServlets = context.getServlets();
         if (contextServlets == null) {
-            throw new IllegalArgumentException("Could not determine URI for WarpFilter in context "
-                                                    + context
-                                                    +". There are no Servlets in context.");
+            throw new IllegalArgumentException("Could not determine URI for WarpFilter in context " + context
+                    + ". There are no Servlets in context.");
         }
         Set<String> contextRoots = new HashSet<String>();
         for (Servlet servlet : contextServlets) {
             contextRoots.add(servlet.getContextRoot());
         }
-        if (contextRoots.size()==1) {
+        if (contextRoots.size() == 1) {
             try {
                 URI baseURI = context.getServlets().get(0).getBaseURI();
                 String path = baseURI.getPath();
                 if (path.endsWith("/")) {
-                    path = path.substring(0,path.length()-1);
+                    path = path.substring(0, path.length() - 1);
                 }
                 path = path + CommandEventBusService.COMMAND_EVENT_BUS_MAPPING;
                 return new URI("http", null, baseURI.getHost(), baseURI.getPort(), path, null, null);
@@ -315,7 +313,8 @@ public class CommandEventBus {
             }
         } else {
             try {
-                return new URI("http", null, context.getHost(), context.getPort(), CommandEventBusService.COMMAND_EVENT_BUS_MAPPING, null, null);
+                return new URI("http", null, context.getHost(), context.getPort(),
+                        CommandEventBusService.COMMAND_EVENT_BUS_MAPPING, null, null);
             } catch (URISyntaxException e) {
                 throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
             }

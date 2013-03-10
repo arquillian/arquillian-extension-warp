@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.ftest.eventbus;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
 /**
+ * Observes command
  *
  * @author atzoum
  *
