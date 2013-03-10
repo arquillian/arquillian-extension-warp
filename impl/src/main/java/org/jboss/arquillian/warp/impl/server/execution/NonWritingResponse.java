@@ -37,6 +37,8 @@ public class NonWritingResponse extends HttpServletResponseWrapper {
     private NonWritingServletOutputStream stream;
     private NonWritingPrintWriter writer;
 
+    private boolean committed = false;
+
     public NonWritingResponse(HttpServletResponse response) {
         super(response);
     }
@@ -68,6 +70,7 @@ public class NonWritingResponse extends HttpServletResponseWrapper {
 
     @Override
     public void sendRedirect(String location) throws IOException {
+        commitResponse(true);
         setStatus(SC_MOVED_TEMPORARILY);
         setHeader("Location", location);
     }
@@ -116,6 +119,30 @@ public class NonWritingResponse extends HttpServletResponseWrapper {
         return super.getHeaders(name);
     }
 
+    @Override
+    public boolean isCommitted() {
+        return committed;
+    }
+
+    @Override
+    public void flushBuffer() throws IOException {
+        commitResponse(false);
+    }
+
+    @Override
+    public void sendError(int sc, String msg) throws IOException {
+        commitResponse(true);
+
+        setStatus(sc);
+    }
+
+    @Override
+    public void sendError(int sc) throws IOException {
+        commitResponse(true);
+
+        setStatus(sc);
+    }
+
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
@@ -139,5 +166,21 @@ public class NonWritingResponse extends HttpServletResponseWrapper {
         if (stream != null) {
             stream.finallyWriteAndClose(delegateStream);
         }
+    }
+
+    /**
+     * Commits the response.
+     *
+     * @param verifyState whether to verify if the response has been previously commited
+     *
+     * @throws IllegalStateException if the response has been previously committed
+     */
+    private void commitResponse(boolean verifyState) {
+        if(verifyState && committed) {
+
+            throw new IllegalStateException("The response has been already committed.");
+        }
+
+        committed = true;
     }
 }
