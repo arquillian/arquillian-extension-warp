@@ -127,6 +127,53 @@ public class TestNonWritingResponse {
         assertEquals("ba", output.toString());
     }
 
+    /**
+     * Tests the {@link NonWritingResponse#flushBuffer()} method.
+     *
+     * @throws IOException if any error occurs
+     */
+    @Test
+    public void test_flushing_buffer() throws IOException {
+        // when
+        nonWritingResponse.flushBuffer();
+
+        // then
+        assertTrue("The response hasn't been committed.", nonWritingResponse.isCommitted());
+        assertFalse("The wrapped response commit hasn't been correctly handled.", response.isCommitted());
+    }
+
+    /**
+     * Tests the {@link NonWritingResponse#sendError(int)} method.
+     *
+     * @throws IOException if any error occurs
+     */
+    @Test
+    public void test_send_error() throws IOException {
+        // when
+        nonWritingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+
+        // then
+        assertTrue("The response hasn't been committed.", nonWritingResponse.isCommitted());
+        assertFalse("The wrapped response commit hasn't been correctly handled.", response.isCommitted());
+        assertEquals("The response has invalid status.", HttpServletResponse.SC_SERVICE_UNAVAILABLE, nonWritingResponse.getStatus());
+    }
+
+    /**
+     * Tests the {@link NonWritingResponse#sendError(int, String)} method.
+     *
+     * @throws IOException if any error occurs
+     */
+    @Test
+    public void test_send_error_with_message() throws IOException {
+        // when
+        nonWritingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "The error message");
+
+        // then
+        assertTrue("The response hasn't been committed.", nonWritingResponse.isCommitted());
+        assertFalse("The wrapped response commit hasn't been correctly handled.", response.isCommitted());
+        assertEquals("The response has invalid status.", HttpServletResponse.SC_SERVICE_UNAVAILABLE, nonWritingResponse.getStatus());
+    }
+
     private byte[] bytes(String string) {
         return string.getBytes();
     }
