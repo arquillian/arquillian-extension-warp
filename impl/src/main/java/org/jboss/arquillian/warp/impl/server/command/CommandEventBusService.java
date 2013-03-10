@@ -29,7 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
+import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
+import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
+import org.jboss.arquillian.warp.impl.server.event.WarpRemoteCommand;
+import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
+import org.jboss.arquillian.warp.impl.server.event.RemoteEvent;
+import static org.jboss.arquillian.warp.impl.server.execution.WarpFilter.ARQUILLIAN_MANAGER_ATTRIBUTE;
 
 /**
  * Processes {@link CommandService} requests.
@@ -42,6 +48,7 @@ public class CommandEventBusService implements
     public static final String COMMAND_EVENT_BUS_MAPPING = "/" + COMMAND_EVENT_BUS_PATH;
     private static final String COMMAND_EVENT_BUS_PARA_METHOD_NAME = "methodName";
     private static final String COMMAND_EVENT_BUS_PARA_CLASS_NAME = "className";
+    private static final String COMMAND_EVENT_BUS_PARA_OPERATION_MODE = "operationMode";
     static ConcurrentHashMap<String, Command<?>> events = new ConcurrentHashMap<String, Command<?>>();
     static String currentCall = "";
 
@@ -66,6 +73,7 @@ public class CommandEventBusService implements
     private void executeEvent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String className = null;
         String methodName = null;
+        String operationMode = null;
         try {
             className = request.getParameter(COMMAND_EVENT_BUS_PARA_CLASS_NAME);
             if (className == null) {
@@ -75,26 +83,86 @@ public class CommandEventBusService implements
             if (methodName == null) {
                 throw new IllegalArgumentException(COMMAND_EVENT_BUS_PARA_METHOD_NAME + " must be specified");
             }
+
+            operationMode = request.getParameter(COMMAND_EVENT_BUS_PARA_OPERATION_MODE);
+            if (operationMode == null) {
+                throw new IllegalArgumentException(COMMAND_EVENT_BUS_PARA_OPERATION_MODE + " must be specified");
+            }
+
             String eventKey = className + methodName;
             currentCall = eventKey;
-            if (request.getContentLength() > 0) {
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
-                Command<?> result = (Command<?>) input.readObject();
-                events.put(eventKey, result);
+
+            if (OperationMode.GET.name().equals(operationMode)) {
+                executeGetOperation(request, response);
+            } else if (OperationMode.PUT.name().equals(operationMode)) {
+                executePutOperation(request, response);
             } else {
-                if (events.containsKey(eventKey) && events.get(eventKey).getResult() == null) {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
-                    output.writeObject(events.remove(eventKey));
-                    output.flush();
-                    output.close();
-                } else {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                }
+                throw new IllegalArgumentException("Unsupported " + COMMAND_EVENT_BUS_PARA_OPERATION_MODE + " parameter.");
             }
+
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    /**
+     * Container-to-Client bus
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void executeGetOperation(HttpServletRequest request, HttpServletResponse response) throws IOException, ClassNotFoundException {
+        if (request.getContentLength() > 0) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
+            Command<?> result = (Command<?>) input.readObject();
+            events.put(currentCall, result);
+        } else {
+            if (events.containsKey(currentCall) && events.get(currentCall).getResult() == null) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
+                output.writeObject(events.remove(currentCall));
+                output.flush();
+                output.close();
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        }
+    }
+
+    /**
+     * Client-to-Container bus
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void executePutOperation(HttpServletRequest request, HttpServletResponse response) throws IOException, ClassNotFoundException {
+        if (request.getContentLength() > 0) {
+            ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
+            WarpRemoteCommand result = (WarpRemoteCommand) input.readObject();
+            RemoteEvent remoteEvent = result.getPayload();
+            Manager manager = (Manager)request.getAttribute(ARQUILLIAN_MANAGER_ATTRIBUTE);
+            // execute remote Event
+            try{
+                manager.fire(new ActivateManager(manager));
+                manager.fire(remoteEvent);
+                manager.fire(new PassivateManager(manager));
+                result.setResult("SUCCESS");
+            } catch (Throwable e) {
+                result.setThrowable(e);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
+            output.writeObject(result);
+            output.flush();
+            output.close();
+
+        } else {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
 

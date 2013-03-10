@@ -21,10 +21,9 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 
 public class DummyCommandSender {
-    public static boolean SENDER_ENABLED = false;
+    public static boolean SENDER_ENABLED = true;
     private static String RESPONSE = null;
     private static Throwable FAILURE = null;
     private static boolean EXECUTING_COMMAND;
@@ -32,7 +31,7 @@ public class DummyCommandSender {
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
-    public void writeCoverageData(@Observes AfterSuite arqEvent)
+    public void sendCommand(@Observes DummyCommandRemoteEvent arqEvent)
             throws Exception {
         if (SENDER_ENABLED && !EXECUTING_COMMAND) {
             EXECUTING_COMMAND = true;

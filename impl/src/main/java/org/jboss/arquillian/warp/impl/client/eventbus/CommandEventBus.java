@@ -50,7 +50,9 @@ import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
-import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
+import org.jboss.arquillian.warp.impl.server.command.OperationMode;
+import org.jboss.arquillian.warp.impl.server.event.WarpRemoteCommand;
+import org.jboss.arquillian.warp.impl.server.event.RemoteEvent;
 
 /**
  * <p>
@@ -85,6 +87,8 @@ public class CommandEventBus {
 
     private static Timer eventBusTimer;
 
+    private static ThreadLocal<String> channelUrl = new ThreadLocal<String>();
+
     /**
      * Starts the Event Bus.
      *
@@ -94,7 +98,7 @@ public class CommandEventBus {
      * @see RemoteTestExecuter
      * @see ServletMethodExecutor
      */
-    void startEventBus(@Observes Before event)
+    void startEventBus(@Observes(precedence=Integer.MAX_VALUE) Before event)
             throws Exception {
         // Calculate eventUrl
         Collection<HTTPContext> contexts = protocolMetadata.get().getContexts(
@@ -106,9 +110,16 @@ public class CommandEventBus {
                 contexts);
         URI servletURI = locateCommandEventBusURI(context);
 
-        final String eventUrl = servletURI.toASCIIString() + "?className="
-                + testClass.getName() + "&methodName="
+
+        String url = servletURI.toASCIIString()
+                + "?className="
+                + testClass.getName()
+                + "&methodName="
                 + event.getTestMethod().getName();
+
+        channelUrl.set(url);
+
+        final String eventUrl = url + "&operationMode=" + OperationMode.GET.name();
 
         // Prepare CommandCallback
         final ApplicationContext applicationContext = applicationContextInst
@@ -183,10 +194,40 @@ public class CommandEventBus {
      *
      * @param event that triggered this method execution
      */
-    void stopEventBus(@Observes After event) {
+    void stopEventBus(@Observes(precedence=Integer.MIN_VALUE) After event) {
         if (eventBusTimer != null) {
             eventBusTimer.cancel();
             eventBusTimer = null;
+        }
+    }
+
+    /**
+     *
+     * Executes a RemoteEvent Command from the client to the container.
+     *
+     * @param event the {@link RemoteEvent} fired.
+     */
+    void executeRemoteCommand(@Observes RemoteEvent event) {
+        final String eventUrl = channelUrl.get() + "&operationMode=" + OperationMode.PUT.name();
+        WarpRemoteCommand command = new WarpRemoteCommand(event);
+        try {
+
+            Object o = execute(eventUrl, Object.class, command);
+            if (o != null) {
+                if (o instanceof WarpRemoteCommand) {
+                    command = (WarpRemoteCommand) o;
+                    if (command.getThrowable() != null) {
+                        throw new RuntimeException(command.getThrowable());
+                    }
+                } else {
+                    throw new RuntimeException("Received a non "
+                            + WarpRemoteCommand.class.getName()
+                            + " object on event channel");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Error executing remote command", e);
         }
     }
 

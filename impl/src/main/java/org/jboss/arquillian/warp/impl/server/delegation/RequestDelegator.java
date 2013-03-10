@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.server.delegation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,8 +35,17 @@ public class RequestDelegator {
 
     private Logger log = Logger.getLogger(RequestDelegator.class.getName());
 
-    private final ServiceLoader<RequestDelegationService> delegationServices = ServiceLoader
-            .load(RequestDelegationService.class);
+    private final List<RequestDelegationService> delegationServices = new ArrayList<RequestDelegationService>();
+
+
+    public RequestDelegator() {
+        // Keeping a ServiceLoader Instance and iterating over it at runtime is not a good idea.
+        // NoSuchElementExceptions may arise due to ServiceLoader's LazyIterator.
+        // Instead, we iterate over the ServiceLoader once and cache the result on a List.
+        for (RequestDelegationService service : ServiceLoader.load(RequestDelegationService.class)){
+            delegationServices.add(service);
+        }
+    }
 
     /**
      * Checks whether the request should be delegated to some of the registered {@link RequestDelegationService}s.
