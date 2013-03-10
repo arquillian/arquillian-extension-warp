@@ -27,6 +27,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -41,6 +43,7 @@ import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -65,7 +68,7 @@ public class TestCommandEventBus {
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClass(DummyCommand.class)
-                .addClasses(DummyCommandRemoteExtension.class, DummyCommandSender.class)
+                .addClasses(DummyCommandRemoteExtension.class, DummyCommandSender.class, DummyCommandRemoteEvent.class)
                 .addAsWebResource(new File("src/main/webapp/index.html"))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsServiceProvider(RemoteLoadableExtension.class.getName(), DummyCommandRemoteExtension.class.getName());
@@ -132,80 +135,46 @@ public class TestCommandEventBus {
         assertNotNull("thowable can't be null", inspection.failure);
     }
 
+    /**
+     * A remote command will be sent at <code>Activity</code> event.
+     * This remote command will be executed on the container,
+     * causing a DummyCommand to be sent back to the client.
+     */
     @Test
     @InSequence(4)
-    public void testCommandInArquillianAfterSuiteEvent() {
+    public void testRemoteCommand() {
 
         /*
          *  test successful command
          */
         DummyCommandReceiver.fail = false;
 
-        // enable CommandSender to send a command @AfterSuite Event
-        Warp.initiate(new Activity() {
+        // enable Remote Command Sender on client side.
+        DummyRemoteCommandSender.ENABLED = true;
+
+        ArquillianRemoteCommandInspection inspection = Warp.initiate(new Activity() {
             public void perform() {
                 browser.navigate().to(contextPath + "index.html");
             }
-        }).inspect(new Inspection() {
-            private static final long serialVersionUID = 1L;
-
-            @BeforeServlet
-            public void beforeServlet() {
-                DummyCommandSender.SENDER_ENABLED = true;
-            }
-        });
-
-        try {
-            Thread.sleep(500);  // give time for the command to execute
-        } catch (InterruptedException e) {
-            fail("thread interrupted");
-        }
-
-        // Get the previous command execution result
-        ArquillianLifecycleCommandInspection inspection = Warp.initiate(
-                new Activity() {
-                    public void perform() {
-                        browser.navigate().to(contextPath + "index.html");
-                    }
-                }).inspect(new ArquillianLifecycleCommandInspection());
-
+        }).inspect(new ArquillianRemoteCommandInspection());
+        DummyRemoteCommandSender.ENABLED = false;
         assertNotNull("response can't be null", inspection.response);
         assertNull("thowable must be null", inspection.failure);
 
         /*
-         * test unsuccessful command
+         *  test failed command
          */
         DummyCommandReceiver.fail = true;
+        DummyRemoteCommandSender.ENABLED = true;
 
-        // enable CommandSender to send a command @AfterSuite Event
-        Warp.initiate(new Activity() {
+        ArquillianRemoteCommandInspection errorInspection = Warp.initiate(new Activity() {
             public void perform() {
                 browser.navigate().to(contextPath + "index.html");
             }
-        }).inspect(new Inspection() {
-            private static final long serialVersionUID = 1L;
-            @BeforeServlet
-            public void beforeServlet() {
-                DummyCommandSender.SENDER_ENABLED = true;
-            }
-        });
-
-        try {
-            Thread.sleep(500);  // give time for the command to execute
-        } catch (InterruptedException e) {
-            fail("thread interrupted");
-        }
-
-        // Get the previous command execution result
-        inspection = Warp.initiate(
-                new Activity() {
-                    public void perform() {
-                        browser.navigate().to(contextPath + "index.html");
-                    }
-                }).inspect(new ArquillianLifecycleCommandInspection());
-
-        assertNull("response must be null", inspection.response);
-        assertNotNull("thowable can't be null", inspection.failure);
+        }).inspect(new ArquillianRemoteCommandInspection());
+        DummyRemoteCommandSender.ENABLED = false;
+        assertNull("errorInspection must be null", errorInspection.response);
+        assertNotNull("thowable must not be null", errorInspection.failure);
     }
 
 
@@ -231,7 +200,7 @@ public class TestCommandEventBus {
         }
     }
 
-    public static class ArquillianLifecycleCommandInspection extends Inspection {
+    public static class ArquillianRemoteCommandInspection extends Inspection {
 
         private static final long serialVersionUID = 1L;
         private String response = null;
@@ -239,7 +208,6 @@ public class TestCommandEventBus {
 
         @AfterServlet
         public void afterServlet() {
-            DummyCommandSender.SENDER_ENABLED = false;
             response = DummyCommandSender.getResponse();
             failure = DummyCommandSender.getFailure();
         }

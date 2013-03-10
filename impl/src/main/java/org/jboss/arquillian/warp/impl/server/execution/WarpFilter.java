@@ -17,6 +17,8 @@
 package org.jboss.arquillian.warp.impl.server.execution;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,10 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegator;
+import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
+import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
@@ -49,17 +51,29 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
  */
 @WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class WarpFilter implements Filter {
+    public static final String ARQUILLIAN_MANAGER_ATTRIBUTE = "org.jboss.arquillian.warp.TestManager";
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
-
+    private Logger log = Logger.getLogger(WarpFilter.class.getSimpleName());
     private RequestDelegator delegator;
+    private Manager manager;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        delegator = new RequestDelegator();
+        try {
+            log.log(Level.FINE, "initializing {0}",WarpFilter.class.getSimpleName());
+            ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
+            manager = builder.create();
+            manager.start();
+            manager.bind(ApplicationScoped.class, Manager.class, manager);
+            delegator = new RequestDelegator();
+        } catch (Exception e) {
+            throw new ServletException("Could not init " + WarpFilter.class.getSimpleName(), e);
+        }
     }
 
     @Override
     public void destroy() {
+        manager.shutdown();
         delegator = null;
     }
 
@@ -90,6 +104,8 @@ public class WarpFilter implements Filter {
     private void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
+        request.setAttribute(ARQUILLIAN_MANAGER_ATTRIBUTE, manager);
+
         boolean isDelegated = delegator.tryDelegateRequest(request, response, filterChain);
 
         if (!isDelegated) {
@@ -109,15 +125,8 @@ public class WarpFilter implements Filter {
     private void doFilterWarp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
-        try {
-            ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
-            Manager manager = builder.create();
+            manager.fire(new ActivateManager(manager));
 
-            manager.start();
-
-            manager.bind(ApplicationScoped.class, Manager.class, manager);
-
-            manager.fire(new BeforeSuite());
             manager.fire(new BeforeRequest(request, response));
 
             manager.bind(RequestScoped.class, ServletRequest.class, request);
@@ -130,13 +139,8 @@ public class WarpFilter implements Filter {
                 manager.fire(new ProcessHttpRequest());
             } finally {
                 manager.fire(new AfterRequest(request, response));
-                manager.fire(new AfterSuite());
 
-                manager.shutdown();
             }
-
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Default service loader can't be found: " + DEFAULT_EXTENSION_CLASS, e);
-        }
+            manager.fire(new PassivateManager(manager));
     }
 }
