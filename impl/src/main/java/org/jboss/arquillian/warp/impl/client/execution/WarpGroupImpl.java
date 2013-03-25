@@ -18,14 +18,17 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.RequestObserver;
 import org.jboss.arquillian.warp.client.execution.GroupExecutionSpecifier;
 import org.jboss.arquillian.warp.client.execution.GroupInspectionBuilder;
+import org.jboss.arquillian.warp.client.filter.Request;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.observer.ObserverBuilder;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
@@ -45,6 +48,7 @@ public class WarpGroupImpl implements WarpGroup {
 
     private Inspection[] inspections;
 
+    private Map<Long, Request> requests = Collections.synchronizedMap(new LinkedHashMap<Long, Request>());
     private Map<Long, ResponsePayload> payloads = Collections.synchronizedMap(new LinkedHashMap<Long, ResponsePayload>());
 
     public WarpGroupImpl(GroupInspectionBuilder groupsExecutor, Object identifier) {
@@ -175,12 +179,13 @@ public class WarpGroupImpl implements WarpGroup {
      * (non-Javadoc)
      * @see org.jboss.arquillian.warp.impl.client.execution.WarpGroup#generateRequestPayload()
      */
-    public RequestPayload generateRequestPayload() {
+    public RequestPayload generateRequestPayload(Request request) {
         if (payloads.size() + 1 > expectCount) {
             throw new IllegalStateException(String.format("There were more requests executed (%s) then expected (%s)",
                     payloads.size() + 1, expectCount));
         }
         RequestPayload requestPayload = new RequestPayload(inspections);
+        requests.put(requestPayload.getSerialId(), request);
         payloads.put(requestPayload.getSerialId(), null);
         return requestPayload;
     }
@@ -231,5 +236,16 @@ public class WarpGroupImpl implements WarpGroup {
     @Override
     public int getExpectedRequestCount() {
         return expectCount;
+    }
+
+    @Override
+    public List<Request> getRequestsWithoutResponse() {
+        List<Request> requestsWithoutResponse = new LinkedList<Request>();
+        for (Entry<Long, ResponsePayload> payload : payloads.entrySet()) {
+            if (payload.getValue() == null) {
+                requestsWithoutResponse.add(requests.get(payload.getKey()));
+            }
+        }
+        return requestsWithoutResponse;
     }
 }

@@ -152,7 +152,7 @@ public class SynchronizationPoint {
         try {
             boolean finishedNicely = responseFinished.await(WAIT_TIMEOUT_MILISECONDS, TimeUnit.MILLISECONDS);
             if (!finishedNicely) {
-                throw new ServerResponseTimeoutException();
+                throw new WarpSynchronizationException(WarpContextStore.get());
             }
         } catch (InterruptedException e) {
         }
@@ -160,10 +160,6 @@ public class SynchronizationPoint {
 
     public static class SettingRequestTimeoutException extends RuntimeException {
         private static final long serialVersionUID = -6743564150233628034L;
-    }
-
-    public static class ServerResponseTimeoutException extends RuntimeException {
-        private static final long serialVersionUID = 7267806785171391801L;
     }
 
     public static class RequestEnrichmentAlreadySetException extends RuntimeException {

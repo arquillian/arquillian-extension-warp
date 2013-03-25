@@ -151,19 +151,35 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
 
             return filter.matches(request) && previous.matches(request);
         }
+
+        @Override
+        public String toString() {
+            if (previous instanceof TrueRequestFilter) {
+                return filter.toString();
+            } else {
+                return String.format("%s and %s", filter, previous);
+            }
+        }
     }
 
     private static final class CountRequestFilter implements RequestFilter<HttpRequest> {
 
+        private final int originalCount;
         private AtomicInteger count;
 
         public CountRequestFilter(int count) {
+            this.originalCount = count;
             this.count = new AtomicInteger(count);
         }
 
         @Override
         public boolean matches(HttpRequest request) {
             return count.decrementAndGet() == 0;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("count(%s)", originalCount);
         }
     }
 
@@ -177,8 +193,12 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
          */
         @Override
         public boolean matches(HttpRequest request) {
-
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "true";
         }
     }
 

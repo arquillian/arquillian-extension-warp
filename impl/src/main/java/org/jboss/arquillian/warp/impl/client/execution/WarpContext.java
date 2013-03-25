@@ -17,9 +17,11 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.warp.client.filter.Request;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
@@ -111,4 +113,19 @@ public interface WarpContext {
      * @return the number of requests expected in all groups of this context
      */
     int getExpectedRequestCount();
+
+
+    /**
+     * Records that given request was not matched by any observer.
+     *
+     * For debugging purposes.
+     */
+    void addUnmatchedRequest(Request request);
+
+    /**
+     * Return the list of requests which weren't matched by any observer.
+     *
+     * @return
+     */
+    List<Request> getUnmatchedRequests();
 }

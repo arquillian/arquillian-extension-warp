@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
-import org.jboss.netty.handler.codec.http.HttpRequest;
 
 public class FilterHttpRequest implements FilterRequest<HttpRequest> {
 

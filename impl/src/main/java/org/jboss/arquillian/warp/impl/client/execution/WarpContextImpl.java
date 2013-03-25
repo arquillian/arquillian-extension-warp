@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.warp.client.filter.Request;
 import org.jboss.arquillian.warp.client.result.WarpGroupResult;
 import org.jboss.arquillian.warp.client.result.WarpResult;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
@@ -42,6 +43,7 @@ public class WarpContextImpl implements WarpContext {
 
         private Map<Object, WarpGroup> groups = new HashMap<Object, WarpGroup>();
         private Queue<Exception> exceptions = new ConcurrentLinkedQueue<Exception>();
+        private List<Request> unmatchedRequests = Collections.synchronizedList(new LinkedList<Request>());
 
         private SynchronizationPoint synchronization = new SynchronizationPoint();
         private List<RequestObserverChainManager> observerChainManagers;
@@ -132,5 +134,15 @@ public class WarpContextImpl implements WarpContext {
                 count += group.getExpectedRequestCount();
             }
             return count;
+        }
+
+        @Override
+        public void addUnmatchedRequest(Request request) {
+            unmatchedRequests.add(request);
+        }
+
+        @Override
+        public List<Request> getUnmatchedRequests() {
+            return unmatchedRequests;
         }
     }

@@ -16,12 +16,15 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.util.List;
+
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.RequestObserver;
 import org.jboss.arquillian.warp.client.execution.GroupExecutionSpecifier;
 import org.jboss.arquillian.warp.client.execution.GroupInspectionSpecifier;
+import org.jboss.arquillian.warp.client.filter.Request;
 import org.jboss.arquillian.warp.client.result.WarpGroupResult;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
@@ -71,7 +74,7 @@ public interface WarpGroup extends WarpGroupResult, GroupExecutionSpecifier, Gro
     /**
      * Generates {@link RequestPayload} which can be verified on server.
      */
-    RequestPayload generateRequestPayload();
+    RequestPayload generateRequestPayload(Request request);
 
     /**
      * Pushes response payload associated with this group.
@@ -89,4 +92,9 @@ public interface WarpGroup extends WarpGroupResult, GroupExecutionSpecifier, Gro
      * @return number of requests expected by this group
      */
     int getExpectedRequestCount();
+
+    /**
+     * Returns the list of requests which were observed in this group but no response came back from the server.
+     */
+    List<Request> getRequestsWithoutResponse();
 }

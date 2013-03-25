@@ -60,4 +60,9 @@ public abstract class AbstractMatcherFilterBuilder {
 
         return filterChainBuilder;
     }
+
+    @Override
+    public String toString() {
+        return filterChainBuilder.toString();
+    }
 }

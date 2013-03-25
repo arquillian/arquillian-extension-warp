@@ -14,27 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.client.enrichment;
-
-import java.util.Collection;
-
-import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
-import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+package org.jboss.arquillian.warp.client.filter;
 
 /**
- * Service for enriching requests
+ * The request from the client to the server.
  *
  * @author Lukas Fryc
  */
-public interface HttpRequestEnrichmentService {
-
-    /**
-     * Returns payloads associated with given request - if no request matches, then request won't be enriched.
-     */
-    Collection<RequestPayload> getMatchingPayloads(HttpRequest request);
-
-    /**
-     * Enrich request with given payloads.
-     */
-    void enrichRequest(HttpRequest request, RequestPayload payloads);
+public interface Request {
 }

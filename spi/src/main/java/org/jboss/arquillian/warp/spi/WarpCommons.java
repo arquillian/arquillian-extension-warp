@@ -40,7 +40,7 @@ public final class WarpCommons {
      * Determines whether Warp is in debug mode
      */
     public static boolean debugMode() {
-        return System.getProperty("arquillian.debug") != null;
+        return "true".equals(System.getProperty("arquillian.debug"));
     }
 
     /**

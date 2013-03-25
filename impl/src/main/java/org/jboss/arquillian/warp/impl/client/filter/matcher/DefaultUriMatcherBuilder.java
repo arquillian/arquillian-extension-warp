@@ -51,6 +51,11 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
 
                 return val.equals(value);
             }
+
+            @Override
+            public String toString() {
+                return String.format("equals('%s')", value);
+            }
         });
     }
 
@@ -65,6 +70,11 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
             public boolean matches(String val) {
 
                 return val.equalsIgnoreCase(value);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("equalsIgnoreCase('%s')", value);
             }
         });
     }
@@ -81,6 +91,11 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
 
                 return val.startsWith(value);
             }
+
+            @Override
+            public String toString() {
+                return String.format("startsWith('%s')", value);
+            }
         });
     }
 
@@ -95,6 +110,11 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
             public boolean matches(String val) {
 
                 return val.contains(value);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("contains('%s')", value);
             }
         });
     }
@@ -111,6 +131,11 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
 
                 return val.endsWith(value);
             }
+
+            @Override
+            public String toString() {
+                return String.format("endsWith('%s')", value);
+            }
         });
     }
 
@@ -125,6 +150,11 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
             public boolean matches(String val) {
 
                 return val.matches(value);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("matches('%s')", value);
             }
         });
     }
@@ -175,6 +205,11 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
         public boolean matches(HttpRequest request) {
 
             return matcher.matches(request.getUri());
+        }
+
+        @Override
+        public String toString() {
+            return String.format("uri.%s", matcher);
         }
     }
 }

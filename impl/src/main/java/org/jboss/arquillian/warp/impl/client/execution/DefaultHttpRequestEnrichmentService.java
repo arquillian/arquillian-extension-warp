@@ -18,29 +18,23 @@ package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.warp.RequestObserver;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
-import org.jboss.arquillian.warp.impl.utils.URLUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
-import org.jboss.netty.handler.codec.http.HttpRequest;
 
 /**
  * Default implementation of service for enriching HTTP requests
@@ -63,7 +57,6 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
         final Collection<WarpGroup> groups = warpContext().getAllGroups();
 
-        final org.jboss.arquillian.warp.client.filter.http.HttpRequest httpRequest = new HttpRequestWrapper(request);
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
         groupIteration : for (WarpGroup group : groups) {
@@ -87,14 +80,14 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
                 }
 
                 @SuppressWarnings("unchecked")
-                RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest> filter = (RequestFilter<org.jboss.arquillian.warp.client.filter.http.HttpRequest>) observer;
+                RequestFilter<HttpRequest> filter = (RequestFilter<HttpRequest>) observer;
 
-                if (!filter.matches(httpRequest)) {
+                if (!filter.matches(request)) {
                     continue groupIteration;
                 }
             }
 
-            payloads.add(group.generateRequestPayload());
+            payloads.add(group.generateRequestPayload(request));
         }
 
         return payloads;
@@ -120,7 +113,9 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
         try {
             String requestEnrichment = SerializationUtils.serializeToBase64(payload);
-            request.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
+
+            org.jboss.netty.handler.codec.http.HttpRequest nettyHttpRequest = ((HttpRequestWrapper) request).unwrap();
+            nettyHttpRequest.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
         } catch (Throwable originalException) {
             ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed:\n"
                     + originalException.getMessage(), originalException);
@@ -152,52 +147,5 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         return WarpContextStore.get();
     }
 
-    private class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filter.http.HttpRequest {
 
-        private HttpRequest request;
-
-        public HttpRequestWrapper(HttpRequest request) {
-            this.request = request;
-        }
-
-        @Override
-        public HttpMethod getMethod() {
-            return HttpMethod.valueOf(request.getMethod().getName());
-        }
-
-        @Override
-        public String getUri() {
-            return request.getUri();
-        }
-
-        @Override
-        public URL getUrl() {
-            return URLUtils.buildUrl(request.getUri());
-        }
-
-        @Override
-        public String getHeader(String name) {
-            return request.getHeader(name);
-        }
-
-        @Override
-        public List<String> getHeaders(String name) {
-            return request.getHeaders(name);
-        }
-
-        @Override
-        public List<Entry<String, String>> getHeaders() {
-            return request.getHeaders();
-        }
-
-        @Override
-        public boolean containsHeader(String name) {
-            return request.containsHeader(name);
-        }
-
-        @Override
-        public Set<String> getHeaderNames() {
-            return request.getHeaderNames();
-        }
-    }
 }

@@ -18,6 +18,8 @@ package org.jboss.arquillian.warp.client.filter.http;
 
 import java.net.URL;
 
+import org.jboss.arquillian.warp.client.filter.Request;
+
 
 /**
  * An HTTP request.
@@ -33,7 +35,7 @@ import java.net.URL;
  * @author Andy Taylor (andy.taylor@jboss.org)
  * @author Lukas Fryc
  */
-public interface HttpRequest extends HttpMessage {
+public interface HttpRequest extends HttpMessage, Request {
 
     /**
      * Returns the method of this request.

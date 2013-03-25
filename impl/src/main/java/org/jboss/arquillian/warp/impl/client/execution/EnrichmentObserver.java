@@ -17,12 +17,12 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.warp.client.exception.MultipleGroupsPerRequestException;
+import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.DeenrichHttpResponse;
@@ -31,7 +31,6 @@ import org.jboss.arquillian.warp.impl.client.event.FilterHttpRequest;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpResponse;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
@@ -40,8 +39,6 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
  * @author Lukas Fryc
  */
 public class EnrichmentObserver {
-
-    private Logger log = Logger.getLogger("Warp");
 
     @Inject
     private Event<EnrichHttpRequest> enrichHttpRequest;
@@ -59,9 +56,11 @@ public class EnrichmentObserver {
 
         Collection<RequestPayload> matchingPayloads = enrichmentService.getMatchingPayloads(request);
 
-        if (!matchingPayloads.isEmpty()) {
+        if (matchingPayloads.isEmpty()) {
+            warpContext().addUnmatchedRequest(request);
+        } else {
             if (matchingPayloads.size() > 1) {
-                pushException(new MultipleGroupsPerRequestException(request.getUri()));
+                warpContext().pushException(new MultipleGroupsPerRequestException(request.getUri()));
             } else {
                 enrichHttpRequest.fire(new EnrichHttpRequest(request, matchingPayloads.iterator().next(), enrichmentService));
             }
@@ -92,8 +91,7 @@ public class EnrichmentObserver {
         service.deenrichResponse(response);
     }
 
-    private void pushException(Exception exception) {
-        WarpContext warpContext = WarpContextStore.get();
-        warpContext.pushException(exception);
+    private WarpContext warpContext() {
+        return WarpContextStore.get();
     }
 }

@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -40,6 +41,7 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.client.execution.SingleInspectionSpecifier;
 import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
+import org.jboss.arquillian.warp.client.filter.Request;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
@@ -298,7 +300,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         WarpContext warpContext = warpContextReference.get();
         assertNotNull("WarpContext should be available", warpContext);
         WarpGroup group = warpContext.getGroup(groupId);
-        RequestPayload requestPayload = group.generateRequestPayload();
+        RequestPayload requestPayload = group.generateRequestPayload(mock(Request.class));
         ResponsePayload responsePayload = new ResponsePayload(requestPayload.getSerialId());
         responsePayload.setInspections(requestPayload.getInspections());
         warpContext.pushResponsePayload(responsePayload);

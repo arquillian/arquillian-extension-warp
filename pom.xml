@@ -63,6 +63,7 @@
 
         <!-- Tests -->
         <version.junit>4.10</version.junit>
+        <version.hamcrest>1.1</version.hamcrest>
         <version.mockito>1.9.0</version.mockito>
         <version.jacoco>0.6.0.201210061924</version.jacoco>
         <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>

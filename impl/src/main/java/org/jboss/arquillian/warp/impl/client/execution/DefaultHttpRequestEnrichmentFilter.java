@@ -49,7 +49,8 @@ public class DefaultHttpRequestEnrichmentFilter implements HttpRequestEnrichment
 
                 if (synchronization.isWaitingForRequests()) {
                     try {
-                        tryEnrichRequest.fire(new FilterHttpRequest(request, enrichmentService));
+                        final org.jboss.arquillian.warp.client.filter.http.HttpRequest httpRequest = new HttpRequestWrapper(request);
+                        tryEnrichRequest.fire(new FilterHttpRequest(httpRequest, enrichmentService));
 
                     } catch (Exception originalException) {
                         ClientWarpExecutionException explainingException = new ClientWarpExecutionException(
