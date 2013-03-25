@@ -16,6 +16,13 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.http;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
@@ -42,13 +49,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * <p>Tests the {@link HttpFilters} class.</p>
@@ -283,7 +283,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
     public void testShouldMatchReqex() {
 
         // when
-        builder = HttpFilters.request().uri().reqex("/?(\\w+/)*index.html");
+        builder = HttpFilters.request().uri().matches("/?(\\w+/)*index.html");
 
         // then
         assertRequestMatches(builder, request);
@@ -297,7 +297,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
     public void testShouldNotMatchReqex() {
 
         // when
-        builder = HttpFilters.request().uri().not().reqex("/?(\\w+/)*index.html");
+        builder = HttpFilters.request().uri().not().matches("/?(\\w+/)*index.html");
 
         // then
         assertRequestNotMatches(builder, request);

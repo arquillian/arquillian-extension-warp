@@ -54,7 +54,7 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
 
             @Override
             public String toString() {
-                return String.format("equals('%s')", value);
+                return String.format("equal('%s')", value);
             }
         });
     }
@@ -74,7 +74,7 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
 
             @Override
             public String toString() {
-                return String.format("equalsIgnoreCase('%s')", value);
+                return String.format("equalIgnoreCase('%s')", value);
             }
         });
     }
@@ -143,7 +143,7 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder imple
      * {@inheritDoc}
      */
     @Override
-    public HttpFilterBuilder reqex(final String value) {
+    public HttpFilterBuilder matches(final String value) {
 
         return addUriRequestFilter(new Matcher<String>() {
             @Override

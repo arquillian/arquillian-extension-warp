@@ -75,5 +75,5 @@ public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T
      *
      * @return builder type for which the matcher is being build
      */
-    T reqex(String value);
+    T matches(String value);
 }

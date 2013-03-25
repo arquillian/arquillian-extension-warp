@@ -162,12 +162,12 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
         }
     }
 
-    private static final class CountRequestFilter implements RequestFilter<HttpRequest> {
+    private static final class IndexRequestFilter implements RequestFilter<HttpRequest> {
 
         private final int originalCount;
         private AtomicInteger count;
 
-        public CountRequestFilter(int count) {
+        public IndexRequestFilter(int count) {
             this.originalCount = count;
             this.count = new AtomicInteger(count);
         }
@@ -179,7 +179,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
 
         @Override
         public String toString() {
-            return String.format("count(%s)", originalCount);
+            return String.format("index(%s)", originalCount);
         }
     }
 
@@ -204,6 +204,11 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
 
     @Override
     public HttpFilterBuilder index(int count) {
-        return this.addFilter(new CountRequestFilter(count));
+        return this.addFilter(new IndexRequestFilter(count));
+    }
+
+    @Override
+    public String toString() {
+        return requestFilter.toString();
     }
 }

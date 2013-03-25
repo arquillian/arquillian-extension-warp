@@ -79,5 +79,10 @@ public class NotHttpFilterChainBuilder implements HttpFilterChainBuilder<HttpFil
         public boolean matches(HttpRequest request) {
             return !filter.matches(request);
         }
+
+        @Override
+        public String toString() {
+            return String.format("not %s", filter);
+        }
     }
 }

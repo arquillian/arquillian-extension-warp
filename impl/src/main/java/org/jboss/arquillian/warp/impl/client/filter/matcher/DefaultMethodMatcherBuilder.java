@@ -52,6 +52,11 @@ public class DefaultMethodMatcherBuilder extends AbstractMatcherFilterBuilder im
             public boolean matches(HttpMethod val) {
                 return val.equals(value);
             }
+
+            @Override
+            public String toString() {
+                return String.format("method(%s)", value);
+            }
         });
     }
 
@@ -101,6 +106,11 @@ public class DefaultMethodMatcherBuilder extends AbstractMatcherFilterBuilder im
         public boolean matches(HttpRequest request) {
 
             return matcher.matches(request.getMethod());
+        }
+
+        @Override
+        public String toString() {
+            return matcher.toString();
         }
     }
 }

@@ -16,14 +16,14 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.matcher;
 
+import java.util.List;
+
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.matcher.HttpHeaderMatcherBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.http.HttpFilterChainBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.http.NotHttpFilterChainBuilder;
-
-import java.util.List;
 
 /**
  * A default implementation of {@link DefaultHttpHeaderMatcherBuilder}.
@@ -54,6 +54,11 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
 
                 return headerValue != null ? headerValue.equals(value) : value == null;
             }
+
+            @Override
+            public String toString() {
+                return String.format("header.equal('%s', '%s')", name, value);
+            }
         });
     }
 
@@ -69,6 +74,11 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
             public boolean matches(HttpRequest request) {
 
                 return request.containsHeader(name);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("containsHeader('%s')", name);
             }
         });
     }
@@ -95,6 +105,11 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
                 }
 
                 return false;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("containsValue('%s', '%s')", name, value);
             }
         });
     }
