@@ -40,13 +40,13 @@ public class DefaultRequestObserverChainManager implements RequestObserverChainM
 
         if (expectedObserverType == HttpRequestFilter.class) {
 
-            // when the group is single execution group, then we will observe only first request which matches defined criteria
-            if (allGroups().size() == 1 && allGroups().iterator().next().getId() == SingleInspectionSpecifier.GROUP_ID) {
-                observers.addFirst(retrieveFirstRequestObserver());
-            }
-
             // ignore favicon.ico requests
             observers.addFirst(FAVICON_IGNORE);
+
+            // when the group is single execution group, then we will observe only first request which matches defined criteria
+            if (allGroups().size() == 1 && allGroups().iterator().next().getId() == SingleInspectionSpecifier.GROUP_ID) {
+                observers.addLast(retrieveFirstRequestObserver());
+            }
         }
 
         return observers;
@@ -65,6 +65,9 @@ public class DefaultRequestObserverChainManager implements RequestObserverChainM
         return WarpContextStore.get();
     }
 
+    /**
+     * Obtains new firestRequestObserver for each new warpContext (invaliding previous one)
+     */
     private OnlyFirstRequest retrieveFirstRequestObserver() {
 
         int key = warpContext().hashCode();
