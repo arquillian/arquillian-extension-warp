@@ -262,6 +262,9 @@ public class CommandEventBus {
                 return returnType.cast(o);
             } else if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
                 return null;
+            } else if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+            	String redirectUrl = httpConnection.getHeaderField("Location");
+            	return execute(redirectUrl, returnType, requestObject);
             } else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
                 throw new IllegalStateException("Error launching test at " + url + ". " + "Got "
                         + httpConnection.getResponseCode() + " (" + httpConnection.getResponseMessage() + ")");
