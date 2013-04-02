@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -181,8 +182,7 @@ public class WarpGroupImpl implements WarpGroup {
      */
     public RequestPayload generateRequestPayload(Request request) {
         if (payloads.size() + 1 > expectCount) {
-            throw new IllegalStateException(String.format("There were more requests executed (%s) then expected (%s)",
-                    payloads.size() + 1, expectCount));
+            throw new TooManyRequestsException(this, request);
         }
         RequestPayload requestPayload = new RequestPayload(inspections);
         requests.put(requestPayload.getSerialId(), request);
@@ -239,13 +239,18 @@ public class WarpGroupImpl implements WarpGroup {
     }
 
     @Override
-    public List<Request> getRequestsWithoutResponse() {
+    public Collection<Request> getRequestsWithoutResponse() {
         List<Request> requestsWithoutResponse = new LinkedList<Request>();
         for (Entry<Long, ResponsePayload> payload : payloads.entrySet()) {
             if (payload.getValue() == null) {
                 requestsWithoutResponse.add(requests.get(payload.getKey()));
             }
         }
-        return requestsWithoutResponse;
+        return Collections.unmodifiableCollection(requestsWithoutResponse);
+    }
+
+    @Override
+    public Collection<Request> getAllRequests() {
+        return Collections.unmodifiableCollection(requests.values());
     }
 }

@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -94,7 +94,12 @@ public interface WarpGroup extends WarpGroupResult, GroupExecutionSpecifier, Gro
     int getExpectedRequestCount();
 
     /**
+     * Returns the list of all requests which were observed in this group
+     */
+    Collection<Request> getAllRequests();
+
+    /**
      * Returns the list of requests which were observed in this group but no response came back from the server.
      */
-    List<Request> getRequestsWithoutResponse();
+    Collection<Request> getRequestsWithoutResponse();
 }
