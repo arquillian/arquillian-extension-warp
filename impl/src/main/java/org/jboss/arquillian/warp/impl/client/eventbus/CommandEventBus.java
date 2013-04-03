@@ -221,6 +221,19 @@ public class CommandEventBus {
         httpConnection.setUseCaches(false);
         httpConnection.setDefaultUseCaches(false);
         httpConnection.setDoInput(true);
+
+        /*
+         * With followRedirects enabled, simple URL redirects work as expected.
+         * But with port redirects (http->https) followRedirects doesn't work and
+         * a HTTP 302 code is returned instead (ARQ-1365).
+         *
+         * In order to handle all redirects in one place, followRedirects is
+         * set to false and all HTTP 302 response codes are treated accordingly
+         * within the execute method.
+         *
+         */
+        httpConnection.setInstanceFollowRedirects(false);
+
         try {
 
             if (requestObject != null) {
