@@ -69,6 +69,7 @@
         <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
+        <version.org.wildfly>8.0.0.Alpha1</version.org.wildfly>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
