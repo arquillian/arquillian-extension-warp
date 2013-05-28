@@ -55,8 +55,8 @@ public class CommandEventBusService implements
 
     @Override
     public boolean canDelegate(HttpServletRequest request) {
-        String servletPath = request.getServletPath();
-        return (servletPath != null && servletPath.equals(COMMAND_EVENT_BUS_MAPPING));
+        String path = request.getRequestURI();
+        return (path != null && path.endsWith(COMMAND_EVENT_BUS_MAPPING));
     }
 
     @Override
