@@ -54,7 +54,7 @@ public class ProxyURLProvider implements ResourceProvider {
     @Inject
     private Instance<TestClass> testClass;
 
-    URLResourceProvider urlResourceProvider = new URLResourceProvider();
+    private URLResourceProvider urlResourceProvider = new URLResourceProvider();
 
     @Override
     public boolean canProvide(Class<?> type) {

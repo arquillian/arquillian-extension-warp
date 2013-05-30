@@ -39,19 +39,23 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.impl.client.operation.TestContextOperator;
 import org.jboss.arquillian.warp.impl.client.operation.Operation;
+import org.jboss.arquillian.warp.impl.client.operation.OperationalContext;
+import org.jboss.arquillian.warp.impl.client.operation.OperationalContexts;
+import org.jboss.arquillian.warp.impl.client.operation.Wrapper;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.command.OperationMode;
-import org.jboss.arquillian.warp.impl.server.event.WarpRemoteCommand;
 import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
+import org.jboss.arquillian.warp.impl.shared.event.WarpRemoteCommand;
 
 /**
  * <p>
@@ -69,8 +73,6 @@ public class CommandEventBus {
     @Inject
     private Instance<ProtocolMetaData> protocolMetadata;
 
-
-
     @Inject
     private Event<Object> eventExecutedRemotely;
     @Inject
@@ -82,9 +84,14 @@ public class CommandEventBus {
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
+    @Inject
+    private Instance<OperationalContexts> operationalContexts;
+
     private static Timer eventBusTimer;
 
-    private static ThreadLocal<String> channelUrl = new ThreadLocal<String>();
+    @Inject
+    @TestScoped
+    private InstanceProducer<ChannelURL> channelUrl;
 
 
     void beforeTest(@Observes(precedence = 500) Before event) {
@@ -118,7 +125,7 @@ public class CommandEventBus {
 
         String url = servletURI.toASCIIString() + "?className=" + testClass.getName() + "&methodName=" + testMethod.getName();
 
-        channelUrl.set(url);
+        channelUrl.set(new ChannelURL(url));
 
         final String eventUrl = url + "&operationMode=" + OperationMode.GET.name();
 
@@ -174,8 +181,9 @@ public class CommandEventBus {
     }
 
     private Operation<Object, Void> operationForExecutingEventRemotelyOnCurrentContext() {
-        TestContextOperator operator = serviceLoader.get().onlyOne(TestContextOperator.class);
-        return operator.wrap(new Operation<Object, Void>() {
+        OperationalContext context = operationalContexts.get().test();
+
+        return Wrapper.wrap(context, new Operation<Object, Void>() {
             public Void perform(Object event) {
                 eventExecutedRemotely.fire(event);
                 return null;
@@ -364,6 +372,24 @@ public class CommandEventBus {
         }
         public Method getTestMethod() {
             return testMethod;
+        }
+    }
+
+    private static final class ChannelURL {
+        private String url;
+
+        public ChannelURL(String url) {
+            super();
+            this.url = url;
+        }
+
+        public String getURL() {
+            return url;
+        }
+
+        @Override
+        public String toString() {
+            return url;
         }
     }
 }

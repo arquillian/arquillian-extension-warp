@@ -23,9 +23,9 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.warp.impl.server.event.AfterSuiteRemoteEvent;
-import org.jboss.arquillian.warp.impl.server.event.BeforeSuiteRemoteEvent;
 import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
+import org.jboss.arquillian.warp.impl.shared.event.AfterSuiteRemoteEvent;
+import org.jboss.arquillian.warp.impl.shared.event.BeforeSuiteRemoteEvent;
 
 /**
  * <p>

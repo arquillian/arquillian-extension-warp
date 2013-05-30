@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.RequestObserver;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
@@ -32,6 +34,7 @@ import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
+import org.jboss.arquillian.warp.impl.shared.event.RegisterPayloadRemotelyEvent;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
@@ -44,6 +47,9 @@ import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmentService {
 
     private Logger log = Logger.getLogger("Warp");
+
+    @Inject
+    private Event<RegisterPayloadRemotelyEvent> registerEvent;
 
     /*
      * (non-Javadoc)
@@ -113,6 +119,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
         try {
             String requestEnrichment = SerializationUtils.serializeToBase64(payload);
+            registerEvent.fire(new RegisterPayloadRemotelyEvent(requestEnrichment));
 
             org.jboss.netty.handler.codec.http.HttpRequest nettyHttpRequest = ((HttpRequestWrapper) request).unwrap();
             nettyHttpRequest.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));

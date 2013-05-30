@@ -21,8 +21,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.warp.impl.server.event.AfterSuiteRemoteEvent;
-import org.jboss.arquillian.warp.impl.server.event.BeforeSuiteRemoteEvent;
+import org.jboss.arquillian.warp.impl.shared.event.AfterSuiteRemoteEvent;
+import org.jboss.arquillian.warp.impl.shared.event.BeforeSuiteRemoteEvent;
 /**
  * Executes {@link BeforeSuite} and {@link AfterSuite} events on container.
  *

@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.event;
+package org.jboss.arquillian.warp.impl.shared.event;
+
+import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
 
 public class BeforeSuiteRemoteEvent extends WarpRemoteEvent {
 

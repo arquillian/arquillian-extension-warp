@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.event;
+package org.jboss.arquillian.warp.impl.shared.event;
 
 import java.io.Serializable;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
+import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
 
 /**
  *

@@ -36,7 +36,7 @@ import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService
 import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
 import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
 import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
-import org.jboss.arquillian.warp.impl.server.event.WarpRemoteCommand;
+import org.jboss.arquillian.warp.impl.shared.event.WarpRemoteCommand;
 
 /**
  * Processes {@link CommandService} requests.
@@ -102,6 +102,7 @@ public class CommandEventBusService implements
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
