@@ -22,20 +22,12 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 public class DeenrichHttpResponse implements DeenrichResponse<HttpResponse> {
 
     private HttpResponse response;
-    private HttpResponseDeenrichmentService deenrichmentService;
 
     public DeenrichHttpResponse(HttpResponse response, HttpResponseDeenrichmentService deenrichmentService) {
         this.response = response;
-        this.deenrichmentService = deenrichmentService;
     }
 
     public HttpResponse getResponse() {
         return response;
     }
-
-    @Override
-    public HttpResponseDeenrichmentService getService() {
-        return deenrichmentService;
-    }
-
 }

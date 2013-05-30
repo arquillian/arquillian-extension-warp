@@ -16,12 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 
 public interface FilterResponse<T> {
 
     T getResponse();
-
-    HttpResponseDeenrichmentService getService();
 
 }

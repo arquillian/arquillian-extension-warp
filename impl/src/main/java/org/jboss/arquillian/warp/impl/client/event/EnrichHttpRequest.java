@@ -24,13 +24,11 @@ public class EnrichHttpRequest implements EnrichRequest<HttpRequest, RequestPayl
 
     private HttpRequest request;
     private RequestPayload payload;
-    private HttpRequestEnrichmentService service;
 
     public EnrichHttpRequest(HttpRequest request, RequestPayload payload, HttpRequestEnrichmentService service) {
         super();
         this.request = request;
         this.payload = payload;
-        this.service = service;
     }
 
     @Override
@@ -41,10 +39,5 @@ public class EnrichHttpRequest implements EnrichRequest<HttpRequest, RequestPayl
     @Override
     public RequestPayload getPayload() {
         return payload;
-    }
-
-    @Override
-    public HttpRequestEnrichmentService getService() {
-        return service;
     }
 }

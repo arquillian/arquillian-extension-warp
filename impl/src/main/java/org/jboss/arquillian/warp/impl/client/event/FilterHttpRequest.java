@@ -22,21 +22,14 @@ import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentSer
 public class FilterHttpRequest implements FilterRequest<HttpRequest> {
 
     private HttpRequest request;
-    private HttpRequestEnrichmentService service;
 
     public FilterHttpRequest(HttpRequest request, HttpRequestEnrichmentService service) {
         super();
         this.request = request;
-        this.service = service;
     }
 
     @Override
     public HttpRequest getRequest() {
         return request;
-    }
-
-    @Override
-    public HttpRequestEnrichmentService getService() {
-        return service;
     }
 }

@@ -22,11 +22,15 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.operation.Operation;
+import org.jboss.arquillian.warp.impl.client.operation.SuiteContextOperator;
+import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
+import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpProxyServer;
+import org.littleshoot.proxy.HttpRequestFilter;
 
 /**
  * The holder for instantiated proxies.
@@ -41,16 +45,11 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     @Override
     public HttpProxyServer startProxy(URL realUrl, URL proxyUrl) {
 
-        HttpRequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(HttpRequestEnrichmentFilter.class);
-        HttpRequestEnrichmentService enrichmentService = serviceLoader().onlyOne(HttpRequestEnrichmentService.class);
+        HttpRequestFilter requestFilter = getHttpRequestEnrichmentFilter();
 
-        requestFilter.initialize(enrichmentService);
-
-        HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(HttpResponseDeenrichmentFilter.class);
-        responseDeenrichmentFilter.initialize(serviceLoader().onlyOne(HttpResponseDeenrichmentService.class));
-
+        HttpFilter responseFilter = getHttpResponseDeenrichmentFilter();
         String hostPort = realUrl.getHost() + ":" + realUrl.getPort();
-        ResponseFilterMap responseFilterMap = new ResponseFilterMap(hostPort, responseDeenrichmentFilter);
+        ResponseFilterMap responseFilterMap = new ResponseFilterMap(hostPort, responseFilter);
 
         HttpProxyServer server = new DefaultHttpProxyServer(proxyUrl.getPort(), responseFilterMap, hostPort, null,
                 requestFilter);
@@ -67,5 +66,70 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
     private ServiceLoader serviceLoader() {
         return serviceLoader.get();
+    }
+
+    private HttpRequestEnrichmentFilter getHttpRequestEnrichmentFilter() {
+        final SuiteContextOperator operator = serviceLoader().onlyOne(SuiteContextOperator.class);
+
+        final HttpRequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(HttpRequestEnrichmentFilter.class);
+        final Operation<HttpRequest, Void> operation = operator.wrap(new Operation<HttpRequest, Void>() {
+            @Override
+            public Void perform(HttpRequest request) {
+                requestFilter.filter(request);
+                return null;
+            }
+        });
+
+        return new HttpRequestEnrichmentFilter() {
+            @Override
+            public void filter(HttpRequest request) {
+                operation.perform(request);
+            }
+        };
+    }
+
+    private HttpResponseDeenrichmentFilter getHttpResponseDeenrichmentFilter() {
+        final SuiteContextOperator operator = serviceLoader().onlyOne(SuiteContextOperator.class);
+
+        final HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(HttpResponseDeenrichmentFilter.class);
+
+        final Operation<HttpResponse, HttpResponse> filterResponse = operator.wrap(new Operation<HttpResponse, HttpResponse>() {
+            @Override
+            public HttpResponse perform(HttpResponse response) {
+                return responseDeenrichmentFilter.filterResponse(response);
+            }
+        });
+
+        final Operation<HttpRequest, Boolean> shouldFilterResponses = operator.wrap(new Operation<HttpRequest, Boolean>() {
+            @Override
+            public Boolean perform(HttpRequest request) {
+                return responseDeenrichmentFilter.shouldFilterResponses(request);
+            }
+        });
+
+        final Operation<Void, Integer> getMaxResponseSize = operator.wrap(new Operation<Void, Integer>() {
+            @Override
+            public Integer perform(Void argument) {
+                return responseDeenrichmentFilter.getMaxResponseSize();
+            }
+        });
+
+        return new HttpResponseDeenrichmentFilter() {
+
+            @Override
+            public HttpResponse filterResponse(HttpResponse response) {
+                return filterResponse.perform(response);
+            }
+
+            @Override
+            public boolean shouldFilterResponses(HttpRequest httpRequest) {
+                return shouldFilterResponses.perform(httpRequest);
+            }
+
+            @Override
+            public int getMaxResponseSize() {
+                return getMaxResponseSize.perform(null);
+            }
+        };
     }
 }

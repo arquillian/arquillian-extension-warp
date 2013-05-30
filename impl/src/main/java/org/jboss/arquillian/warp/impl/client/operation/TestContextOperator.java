@@ -23,7 +23,7 @@ import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 
-public class CurrentContextOperator {
+public class TestContextOperator {
 
     @Inject
     private Instance<ApplicationContext> applicationContextInst;
@@ -37,7 +37,8 @@ public class CurrentContextOperator {
     @Inject
     private Instance<TestContext> testContextInst;
 
-    public <A, T> Operation<A, T> wrap(final Operation<A, T> operation) {
+    @SuppressWarnings("unchecked")
+    public <A, T, X extends Operation<A, T>> X wrap(final X operation) {
         final ApplicationContext applicationContext = applicationContextInst.get();
         final SuiteContext suiteContext = suiteContextInst.get();
 
@@ -47,7 +48,7 @@ public class CurrentContextOperator {
         final TestContext testContext = testContextInst.get();
         final Object testContextId = testContext.getActiveId();
 
-        return new Operation<A, T>() {
+        return (X) new Operation<A, T>() {
             @Override
             public T perform(A argument) {
                 applicationContext.activate();

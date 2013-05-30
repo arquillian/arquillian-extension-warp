@@ -24,9 +24,4 @@ import org.littleshoot.proxy.HttpFilter;
  * @author Lukas Fryc
  */
 public interface HttpResponseDeenrichmentFilter extends HttpFilter {
-
-    /**
-     * Initializes filter with given service
-     */
-    void initialize(HttpResponseDeenrichmentService deenrichmentService);
 }

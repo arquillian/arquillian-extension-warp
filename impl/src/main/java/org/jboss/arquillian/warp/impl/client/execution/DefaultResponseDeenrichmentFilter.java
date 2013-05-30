@@ -19,7 +19,6 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
@@ -28,8 +27,6 @@ public class DefaultResponseDeenrichmentFilter implements HttpResponseDeenrichme
 
     @Inject
     private Event<FilterHttpResponse> tryDeenrichResponse;
-
-    private HttpResponseDeenrichmentService deenrichmentService;
 
     /*
      * (non-Javadoc)
@@ -55,18 +52,8 @@ public class DefaultResponseDeenrichmentFilter implements HttpResponseDeenrichme
      */
     @Override
     public HttpResponse filterResponse(HttpResponse response) {
-        tryDeenrichResponse.fire(new FilterHttpResponse(response, deenrichmentService));
+        tryDeenrichResponse.fire(new FilterHttpResponse(response));
 
         return response;
     }
-
-    /*
-     * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter#initialize(org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService)
-     */
-    @Override
-    public void initialize(HttpResponseDeenrichmentService deenrichmentService) {
-        this.deenrichmentService = deenrichmentService;
-    }
-
 }

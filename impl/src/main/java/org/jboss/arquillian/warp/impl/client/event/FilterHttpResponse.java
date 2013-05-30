@@ -16,26 +16,18 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 public class FilterHttpResponse implements FilterResponse<HttpResponse> {
 
     private HttpResponse response;
-    private HttpResponseDeenrichmentService deenrichmentService;
 
-    public FilterHttpResponse(HttpResponse response, HttpResponseDeenrichmentService deenrichmentService) {
+    public FilterHttpResponse(HttpResponse response) {
         this.response = response;
-        this.deenrichmentService = deenrichmentService;
     }
 
     public HttpResponse getResponse() {
         return response;
-    }
-
-    @Override
-    public HttpResponseDeenrichmentService getService() {
-        return deenrichmentService;
     }
 
 }

@@ -46,7 +46,7 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.impl.client.operation.CurrentContextOperator;
+import org.jboss.arquillian.warp.impl.client.operation.TestContextOperator;
 import org.jboss.arquillian.warp.impl.client.operation.Operation;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.command.OperationMode;
@@ -174,7 +174,7 @@ public class CommandEventBus {
     }
 
     private Operation<Object, Void> operationForExecutingEventRemotelyOnCurrentContext() {
-        CurrentContextOperator operator = serviceLoader.get().onlyOne(CurrentContextOperator.class);
+        TestContextOperator operator = serviceLoader.get().onlyOne(TestContextOperator.class);
         return operator.wrap(new Operation<Object, Void>() {
             public Void perform(Object event) {
                 eventExecutedRemotely.fire(event);

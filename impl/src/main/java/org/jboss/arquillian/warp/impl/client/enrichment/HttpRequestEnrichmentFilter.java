@@ -24,9 +24,4 @@ import org.littleshoot.proxy.HttpRequestFilter;
  * @author Lukas Fryc
  */
 public interface HttpRequestEnrichmentFilter extends HttpRequestFilter {
-
-    /**
-     * Initializes filter with given service
-     */
-    void initialize(HttpRequestEnrichmentService service);
 }

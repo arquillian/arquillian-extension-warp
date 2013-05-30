@@ -19,8 +19,10 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import java.util.Collection;
 
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.client.exception.MultipleGroupsPerRequestException;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
@@ -41,6 +43,9 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 public class EnrichmentObserver {
 
     @Inject
+    private Instance<ServiceLoader> serviceLoader;
+
+    @Inject
     private Event<EnrichHttpRequest> enrichHttpRequest;
 
     @Inject
@@ -48,7 +53,7 @@ public class EnrichmentObserver {
 
     public void tryEnrichRequest(@Observes FilterHttpRequest event) {
         final HttpRequest request = event.getRequest();
-        final HttpRequestEnrichmentService enrichmentService = event.getService();
+        final HttpRequestEnrichmentService enrichmentService = load(HttpRequestEnrichmentService.class);
 
         if (WarpCommons.debugMode()) {
             System.out.println("        (R) " + request.getUri());
@@ -70,14 +75,14 @@ public class EnrichmentObserver {
     public void enrichRequest(@Observes EnrichHttpRequest event) {
         final HttpRequest request = event.getRequest();
         final RequestPayload payload = event.getPayload();
-        final HttpRequestEnrichmentService enrichmentService = event.getService();
+        final HttpRequestEnrichmentService enrichmentService = load(HttpRequestEnrichmentService.class);
 
         enrichmentService.enrichRequest(request, payload);
     }
 
     public void tryDeenrichResponse(@Observes FilterHttpResponse event) {
         final HttpResponse response = event.getResponse();
-        final HttpResponseDeenrichmentService service = event.getService();
+        final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
         if (service.isEnriched(response)) {
             deenrichHttpResponse.fire(new DeenrichHttpResponse(response, service));
@@ -86,12 +91,16 @@ public class EnrichmentObserver {
 
     public void deenrichResponse(@Observes DeenrichHttpResponse event) {
         final HttpResponse response = event.getResponse();
-        final HttpResponseDeenrichmentService service = event.getService();
+        final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
         service.deenrichResponse(response);
     }
 
     private WarpContext warpContext() {
         return WarpContextStore.get();
+    }
+
+    private <T> T load(Class<T> serviceClass) {
+        return serviceLoader.get().onlyOne(serviceClass);
     }
 }

@@ -16,13 +16,10 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 
 public interface EnrichRequest<T, P> {
 
     T getRequest();
 
     P getPayload();
-
-    HttpRequestEnrichmentService getService();
 }

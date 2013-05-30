@@ -17,7 +17,9 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
@@ -34,7 +36,12 @@ public class DefaultHttpRequestEnrichmentFilter implements HttpRequestEnrichment
     @Inject
     private Event<FilterHttpRequest> tryEnrichRequest;
 
-    private HttpRequestEnrichmentService enrichmentService;
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
+
+    private HttpRequestEnrichmentService enrichmentService() {
+        return serviceLoader.get().onlyOne(HttpRequestEnrichmentService.class);
+    }
 
     /*
      * (non-Javadoc)
@@ -50,7 +57,7 @@ public class DefaultHttpRequestEnrichmentFilter implements HttpRequestEnrichment
                 if (synchronization.isWaitingForRequests()) {
                     try {
                         final org.jboss.arquillian.warp.client.filter.http.HttpRequest httpRequest = new HttpRequestWrapper(request);
-                        tryEnrichRequest.fire(new FilterHttpRequest(httpRequest, enrichmentService));
+                        tryEnrichRequest.fire(new FilterHttpRequest(httpRequest, enrichmentService()));
 
                     } catch (Exception originalException) {
                         ClientWarpExecutionException explainingException = new ClientWarpExecutionException(
@@ -64,14 +71,5 @@ public class DefaultHttpRequestEnrichmentFilter implements HttpRequestEnrichment
                 context.pushException(e);
             }
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.proxy.HttpRequestEnrichmentFilter#initialize(org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService)
-     */
-    @Override
-    public void initialize(HttpRequestEnrichmentService enrichmentService) {
-        this.enrichmentService = enrichmentService;
     }
 }

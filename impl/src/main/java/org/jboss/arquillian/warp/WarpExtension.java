@@ -48,7 +48,8 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpExecutionObserver;
 import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 import org.jboss.arquillian.warp.impl.client.filter.http.DefaultHttpFilterBuilder;
-import org.jboss.arquillian.warp.impl.client.operation.CurrentContextOperator;
+import org.jboss.arquillian.warp.impl.client.operation.SuiteContextOperator;
+import org.jboss.arquillian.warp.impl.client.operation.TestContextOperator;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultURLMapping;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyObserver;
@@ -102,6 +103,8 @@ public class WarpExtension implements LoadableExtension {
         builder.observer(ResponsePayloadVerifier.class);
         builder.observer(CommandEventBus.class);
         builder.observer(RemoteSuiteLifecyclePropagation.class);
-        builder.service(CurrentContextOperator.class, CurrentContextOperator.class);
+
+        builder.service(SuiteContextOperator.class, SuiteContextOperator.class);
+        builder.service(TestContextOperator.class, TestContextOperator.class);
     }
 }
