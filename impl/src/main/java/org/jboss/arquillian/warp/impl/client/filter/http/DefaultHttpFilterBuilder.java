@@ -149,7 +149,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
         @Override
         public boolean matches(HttpRequest request) {
 
-            return filter.matches(request) && previous.matches(request);
+            return previous.matches(request) && filter.matches(request);
         }
 
         @Override
