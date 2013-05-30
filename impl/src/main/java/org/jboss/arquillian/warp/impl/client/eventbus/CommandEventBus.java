@@ -48,10 +48,12 @@ import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
+import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.command.OperationMode;
-import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
 import org.jboss.arquillian.warp.impl.server.event.WarpRemoteCommand;
+import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
 
 /**
  * <p>
@@ -84,24 +86,47 @@ public class CommandEventBus {
     @Inject
     private Instance<TestContext> testContextInst;
 
+    @Inject
+    private Event<StartBus> startBus;
+
+    @Inject
+    private Event<StopBus> stopBus;
+
     private static Timer eventBusTimer;
 
     private static ThreadLocal<String> channelUrl = new ThreadLocal<String>();
 
+
+    void beforeTest(@Observes(precedence = 500) Before event) {
+        Class<?> testClass = event.getTestInstance().getClass();
+
+        if (testClass.isAnnotationPresent(WarpTest.class)) {
+            startBus.fire(new StartBus(event));
+        }
+    }
+
+    void afterTest(@Observes(precedence = -500) After event) {
+        Class<?> testClass = event.getTestInstance().getClass();
+
+        if (testClass.isAnnotationPresent(WarpTest.class)) {
+            stopBus.fire(new StopBus(event));
+        }
+    }
+
     /**
      * Starts the Event Bus.
      */
-    void startEventBus(@Observes(precedence = 500) Before event) throws Exception {
+    void startEventBus(@Observes StartBus event) throws Exception {
+        Class<?> testClass = event.getTestInstance().getClass();
+        Method testMethod = event.getTestMethod();
+
         // Calculate eventUrl
         Collection<HTTPContext> contexts = protocolMetadata.get().getContexts(HTTPContext.class);
 
-        Class<?> testClass = event.getTestInstance().getClass();
-
-        HTTPContext context = locateHTTPContext(event.getTestMethod(), contexts);
+        HTTPContext context = locateHTTPContext(testMethod, contexts);
         URI servletURI = locateCommandEventBusURI(context);
 
-        String url = servletURI.toASCIIString() + "?className=" + testClass.getName() + "&methodName="
-                + event.getTestMethod().getName();
+        String url = servletURI.toASCIIString() + "?className=" + testClass.getName() + "&methodName=" + testMethod.getName();
 
         channelUrl.set(url);
 
@@ -161,8 +186,9 @@ public class CommandEventBus {
                     }
                 }
             }, 0, 100);
+
         } catch (Exception e) {
-            throw new IllegalStateException("Error launching test " + testClass.getName() + " " + event.getTestMethod(), e);
+            throw new IllegalStateException("Error launching test " + testClass.getName() + " " + testMethod, e);
         }
         try {
             Thread.sleep(100);
@@ -174,7 +200,7 @@ public class CommandEventBus {
     /**
      * Stops the Event Bus
      */
-    void stopEventBus(@Observes(precedence = -500) After event) {
+    void stopEventBus(@Observes StopBus event) {
         if (eventBusTimer != null) {
             eventBusTimer.cancel();
             eventBusTimer = null;
@@ -334,6 +360,34 @@ public class CommandEventBus {
             } catch (URISyntaxException e) {
                 throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
             }
+        }
+    }
+
+    public static final class StartBus extends BusEvent {
+        public StartBus(TestEvent event) {
+            super(event);
+        }
+    }
+
+    public static final class StopBus extends BusEvent {
+        public StopBus(TestEvent event) {
+            super(event);
+        }
+    }
+
+    public abstract static class BusEvent {
+        private Object testInstance;
+        private Method testMethod;
+
+        public BusEvent(TestEvent event) {
+            this.testInstance = event.getTestInstance();
+            this.testMethod = event.getTestMethod();
+        }
+        public Object getTestInstance() {
+            return testInstance;
+        }
+        public Method getTestMethod() {
+            return testMethod;
         }
     }
 }
