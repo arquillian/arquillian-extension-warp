@@ -23,6 +23,7 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
 import org.jboss.arquillian.warp.impl.shared.event.AfterSuiteRemoteEvent;
 import org.jboss.arquillian.warp.impl.shared.event.BeforeSuiteRemoteEvent;
@@ -48,10 +49,14 @@ public class RemoteSuiteLifecyclePropagation {
     private Event<WarpRemoteEvent> remoteEvent;
 
     void sendBefore(@Observes Before event) throws Exception {
-        remoteEvent.fire(new BeforeSuiteRemoteEvent());
+        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
+            remoteEvent.fire(new BeforeSuiteRemoteEvent());
+        }
     }
 
     void sendAfter(@Observes After event) throws Exception {
-        remoteEvent.fire(new AfterSuiteRemoteEvent());
+        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
+            remoteEvent.fire(new AfterSuiteRemoteEvent());
+        }
     }
 }

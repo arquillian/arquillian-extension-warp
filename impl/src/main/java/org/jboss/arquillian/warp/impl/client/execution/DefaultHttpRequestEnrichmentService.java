@@ -119,10 +119,11 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
         try {
             String requestEnrichment = SerializationUtils.serializeToBase64(payload);
+            long serialId = payload.getSerialId();
             registerEvent.fire(new RegisterPayloadRemotelyEvent(requestEnrichment));
 
             org.jboss.netty.handler.codec.http.HttpRequest nettyHttpRequest = ((HttpRequestWrapper) request).unwrap();
-            nettyHttpRequest.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(requestEnrichment));
+            nettyHttpRequest.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(Long.toString(serialId)));
         } catch (Throwable originalException) {
             ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed:\n"
                     + originalException.getMessage(), originalException);
