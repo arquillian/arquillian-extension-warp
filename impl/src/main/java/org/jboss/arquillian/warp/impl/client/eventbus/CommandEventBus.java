@@ -37,19 +37,17 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.spi.command.Command;
-import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.context.ApplicationContext;
-import org.jboss.arquillian.test.spi.context.ClassContext;
-import org.jboss.arquillian.test.spi.context.SuiteContext;
-import org.jboss.arquillian.test.spi.context.TestContext;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.impl.client.operation.CurrentContextOperator;
+import org.jboss.arquillian.warp.impl.client.operation.Operation;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.command.OperationMode;
 import org.jboss.arquillian.warp.impl.server.event.WarpRemoteCommand;
@@ -71,26 +69,18 @@ public class CommandEventBus {
     @Inject
     private Instance<ProtocolMetaData> protocolMetadata;
 
+
+
     @Inject
     private Event<Object> eventExecutedRemotely;
-
-    @Inject
-    private Instance<ApplicationContext> applicationContextInst;
-
-    @Inject
-    private Instance<SuiteContext> suiteContextInst;
-
-    @Inject
-    private Instance<ClassContext> classContextInst;
-
-    @Inject
-    private Instance<TestContext> testContextInst;
-
     @Inject
     private Event<StartBus> startBus;
 
     @Inject
     private Event<StopBus> stopBus;
+
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
     private static Timer eventBusTimer;
 
@@ -133,31 +123,7 @@ public class CommandEventBus {
         final String eventUrl = url + "&operationMode=" + OperationMode.GET.name();
 
         // Prepare CommandCallback
-        final ApplicationContext applicationContext = applicationContextInst.get();
-        final SuiteContext suiteContext = suiteContextInst.get();
-
-        final ClassContext classContext = classContextInst.get();
-        final Class<?> classContextId = classContext.getActiveId();
-
-        final TestContext testContext = testContextInst.get();
-        final Object testContextId = testContext.getActiveId();
-        final CommandCallback callback = new CommandCallback() {
-            @Override
-            public void fired(Command<?> event) {
-                applicationContext.activate();
-                suiteContext.activate();
-                classContext.activate(classContextId);
-                testContext.activate(testContextId);
-                try {
-                    eventExecutedRemotely.fire(event);
-                } finally {
-                    testContext.deactivate();
-                    classContext.deactivate();
-                    suiteContext.deactivate();
-                    applicationContext.deactivate();
-                }
-            }
-        };
+        final Operation<Object, Void> operation = operationForExecutingEventRemotelyOnCurrentContext();
 
         // Start Timer
         if (eventBusTimer != null)
@@ -173,7 +139,7 @@ public class CommandEventBus {
                         if (o != null) {
                             if (o instanceof Command) {
                                 Command<?> command = (Command<?>) o;
-                                callback.fired(command);
+                                operation.perform(command);
                                 execute(eventUrl, Object.class, command);
                             } else {
                                 throw new RuntimeException("Received a non " + Command.class.getName()
@@ -205,6 +171,16 @@ public class CommandEventBus {
             eventBusTimer.cancel();
             eventBusTimer = null;
         }
+    }
+
+    private Operation<Object, Void> operationForExecutingEventRemotelyOnCurrentContext() {
+        CurrentContextOperator operator = serviceLoader.get().onlyOne(CurrentContextOperator.class);
+        return operator.wrap(new Operation<Object, Void>() {
+            public Void perform(Object event) {
+                eventExecutedRemotely.fire(event);
+                return null;
+            }
+        });
     }
 
     /**
