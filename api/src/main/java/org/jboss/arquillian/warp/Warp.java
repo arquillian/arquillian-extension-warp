@@ -34,6 +34,14 @@ public final class Warp {
      * @return {@link WarpActivityBuilder} instance
      */
     public static WarpExecutionBuilder initiate(Activity activity) {
-        return WarpRuntime.getInstance().getWarpActivityBuilder().initiate(activity);
+
+        WarpRuntime runtime = WarpRuntime.getInstance();
+
+        if (runtime == null) {
+            throw new IllegalStateException(
+                    "The Warp runtime isn't initialized. You need to annotate a test class with @WarpTest in order to initialize Warp.");
+        }
+
+        return runtime.getWarpActivityBuilder().initiate(activity);
     }
 }

@@ -1,6 +1,9 @@
 package org.jboss.arquillian.warp.ftest.integration;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
@@ -10,6 +13,8 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.warp.Activity;
+import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -47,5 +52,21 @@ public class NonWarpTest {
         // then
         URL url = URLUtils.buildUrl(browser.getCurrentUrl());
         assertEquals(8080, url.getPort());
+    }
+
+    @Test
+    public void when_test_is_not_annotated_as_warp_test_then_warp_api_should_report_meaningful_message() {
+        try {
+            Warp.initiate(new Activity() {
+
+                @Override
+                public void perform() {
+
+                }
+            });
+            fail("the test class isn't annotated and usage of Warp didn't failed");
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage(), containsString("@WarpTest"));
+        }
     }
 }
