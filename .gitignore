@@ -1,12 +1,30 @@
-target
-test-output
-bin
-.classpath
-.settings
+# Eclipse
 .project
+.classpath
+.settings/
+.checkstyle
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea
+
+# Maven
+target/
+
+# TestNG
+test-output/
+
+# JBoss AS
+transaction.log
+
+# Miscellaneous
+bin
+test-output
 chromedriver.log
 log.txt
 *.dia~
 *.faces-config.xml.jsfdia
 *.*~
-.checkstyle
+

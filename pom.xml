@@ -65,10 +65,13 @@
         <version.junit>4.10</version.junit>
         <version.hamcrest>1.1</version.hamcrest>
         <version.mockito>1.9.0</version.mockito>
+        <version.fest.assert>1.4</version.fest.assert>
         <version.jacoco>0.6.0.201210061924</version.jacoco>
         <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
+
+        <version.org.glassfish>3.1.2</version.org.glassfish>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -90,6 +93,7 @@
         <!-- extensions -->
         <module>extension/jsf</module>
         <module>extension/jsf-ftest</module>
+        <module>extension/jaxrs</module>
         <module>arquillian-warp-depchain</module>
     </modules>
 
