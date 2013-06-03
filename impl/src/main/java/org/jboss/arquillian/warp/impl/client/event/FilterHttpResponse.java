@@ -16,14 +16,21 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
+import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 public class FilterHttpResponse implements FilterResponse<HttpResponse> {
 
+    private HttpRequest request;
     private HttpResponse response;
 
-    public FilterHttpResponse(HttpResponse response) {
+    public FilterHttpResponse(HttpRequest request, HttpResponse response) {
+        this.request = request;
         this.response = response;
+    }
+
+    public HttpRequest getRequest() {
+        return request;
     }
 
     public HttpResponse getResponse() {

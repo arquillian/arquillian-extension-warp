@@ -30,7 +30,6 @@ import org.jboss.arquillian.warp.impl.client.operation.OperationalContexts;
 import org.jboss.arquillian.warp.impl.client.operation.Wrapper;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
-import org.littleshoot.proxy.DefaultHttpProxyServer;
 import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.HttpRequestFilter;
@@ -66,10 +65,8 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
         HttpFilter responseFilter = getHttpResponseDeenrichmentFilter(retriever);
         String hostPort = realUrl.getHost() + ":" + realUrl.getPort();
-        ResponseFilterMap responseFilterMap = new ResponseFilterMap(hostPort, responseFilter);
 
-        HttpProxyServer server = new DefaultHttpProxyServer(proxyUrl.getPort(), responseFilterMap, hostPort, null,
-                requestFilter);
+        HttpProxyServer server = new WarpHttpProxyServer(proxyUrl.getPort(), hostPort, requestFilter, responseFilter);
 
         server.start();
 
@@ -107,17 +104,17 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     private HttpResponseDeenrichmentFilter getHttpResponseDeenrichmentFilter(OperationalContextRetriver retriever) {
         final HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(HttpResponseDeenrichmentFilter.class);
 
-        final Operation<HttpResponse, HttpResponse> filterResponse = Wrapper.wrap(retriever, new Operation<HttpResponse, HttpResponse>() {
+        final Operation<FilterResponseContext, HttpResponse> filterResponse = Wrapper.wrap(retriever, new Operation<FilterResponseContext, HttpResponse>() {
             @Override
-            public HttpResponse perform(HttpResponse response) {
-                return responseDeenrichmentFilter.filterResponse(response);
+            public HttpResponse perform(FilterResponseContext ctx) {
+                return responseDeenrichmentFilter.filterResponse(ctx.request, ctx.response);
             }
         });
 
         final Operation<HttpRequest, Boolean> shouldFilterResponses = Wrapper.wrap(retriever, new Operation<HttpRequest, Boolean>() {
             @Override
             public Boolean perform(HttpRequest request) {
-                return responseDeenrichmentFilter.shouldFilterResponses(request);
+                return responseDeenrichmentFilter.filterResponses(request);
             }
         });
 
@@ -131,12 +128,12 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         return new HttpResponseDeenrichmentFilter() {
 
             @Override
-            public HttpResponse filterResponse(HttpResponse response) {
-                return filterResponse.perform(response);
+            public HttpResponse filterResponse(HttpRequest request, HttpResponse response) {
+                return filterResponse.perform(new FilterResponseContext(request, response));
             }
 
             @Override
-            public boolean shouldFilterResponses(HttpRequest httpRequest) {
+            public boolean filterResponses(HttpRequest httpRequest) {
                 return shouldFilterResponses.perform(httpRequest);
             }
 
@@ -145,5 +142,14 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
                 return getMaxResponseSize.perform(null);
             }
         };
+    }
+
+    private static class FilterResponseContext {
+        private HttpRequest request;
+        private HttpResponse response;
+        public FilterResponseContext(HttpRequest request, HttpResponse response) {
+            this.request = request;
+            this.response = response;
+        }
     }
 }

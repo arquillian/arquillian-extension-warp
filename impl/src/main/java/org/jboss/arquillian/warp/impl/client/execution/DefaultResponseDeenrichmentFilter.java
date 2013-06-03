@@ -33,7 +33,7 @@ public class DefaultResponseDeenrichmentFilter implements HttpResponseDeenrichme
      * @see org.littleshoot.proxy.HttpRequestMatcher#shouldFilterResponses(org.jboss.netty.handler.codec.http.HttpRequest)
      */
     @Override
-    public boolean shouldFilterResponses(HttpRequest httpRequest) {
+    public boolean filterResponses(HttpRequest httpRequest) {
         return true;
     }
 
@@ -51,8 +51,8 @@ public class DefaultResponseDeenrichmentFilter implements HttpResponseDeenrichme
      * @see org.littleshoot.proxy.HttpFilter#filterResponse(org.jboss.netty.handler.codec.http.HttpResponse)
      */
     @Override
-    public HttpResponse filterResponse(HttpResponse response) {
-        tryDeenrichResponse.fire(new FilterHttpResponse(response));
+    public HttpResponse filterResponse(HttpRequest request, HttpResponse response) {
+        tryDeenrichResponse.fire(new FilterHttpResponse(request, response));
 
         return response;
     }
