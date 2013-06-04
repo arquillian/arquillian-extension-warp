@@ -29,7 +29,8 @@ import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFil
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
-import org.jboss.arquillian.warp.impl.client.eventbus.CommandEventBus;
+import org.jboss.arquillian.warp.impl.client.eventbus.CommandBusObserver;
+import org.jboss.arquillian.warp.impl.client.eventbus.RemoteOperationServiceOnClient;
 import org.jboss.arquillian.warp.impl.client.eventbus.RemoteSuiteLifecyclePropagation;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentFilter;
@@ -58,6 +59,7 @@ import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
 import org.jboss.arquillian.warp.impl.client.proxy.URLMapping;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
 import org.jboss.arquillian.warp.impl.client.verification.ResponsePayloadVerifier;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperationService;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 
 /**
@@ -101,9 +103,10 @@ public class WarpExtension implements LoadableExtension {
         builder.service(HttpFilterBuilder.class, DefaultHttpFilterBuilder.class);
         builder.service(RequestObserverChainManager.class, DefaultRequestObserverChainManager.class);
         builder.observer(ResponsePayloadVerifier.class);
-        builder.observer(CommandEventBus.class);
+        builder.observer(CommandBusObserver.class);
         builder.observer(RemoteSuiteLifecyclePropagation.class);
         builder.observer(OperationalContextInitializer.class);
         builder.observer(ClassProxyUsageTracker.class);
+        builder.service(RemoteOperationService.class, RemoteOperationServiceOnClient.class);
     }
 }

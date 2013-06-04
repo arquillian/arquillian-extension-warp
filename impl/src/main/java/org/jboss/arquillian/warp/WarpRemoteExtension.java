@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.impl.server.command.RemoteOperationServiceOnServer;
 import org.jboss.arquillian.warp.impl.server.command.WarpCommandService;
 import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpRequestDeenricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.DefaultHttpResponseEnricher;
@@ -30,7 +31,6 @@ import org.jboss.arquillian.warp.impl.server.execution.WarpRequestProcessor;
 import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistrator;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerObserver;
 import org.jboss.arquillian.warp.impl.server.manager.ManagerActivationObserver;
-import org.jboss.arquillian.warp.impl.server.remote.SuiteLifecycleObserver;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestClassExecutor;
@@ -38,6 +38,7 @@ import org.jboss.arquillian.warp.impl.server.test.LifecycleTestDriver;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestEnrichmentWatcher;
 import org.jboss.arquillian.warp.impl.server.test.LifecycleTestExecutionVerifier;
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperationService;
 import org.jboss.arquillian.warp.servlet.provider.HttpServletRequestProvider;
 import org.jboss.arquillian.warp.servlet.provider.HttpServletResponseProvider;
 import org.jboss.arquillian.warp.servlet.provider.ServletRequestProvider;
@@ -79,9 +80,10 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
         builder.service(CommandService.class, WarpCommandService.class);
 
         builder.observer(ManagerActivationObserver.class);
-        builder.observer(SuiteLifecycleObserver.class);
 
         builder.observer(InspectionRegistrator.class);
+
+        builder.service(RemoteOperationService.class, RemoteOperationServiceOnServer.class);
     }
 
 }

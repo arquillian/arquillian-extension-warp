@@ -18,38 +18,49 @@ package org.jboss.arquillian.warp.impl.server.command;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperation;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperationService;
 /**
  *
  * @author Aris Tzoumas
  *
  */
 public class WarpCommandService implements CommandService {
-    private static long TIMEOUT = 30000;
 
-    @SuppressWarnings("unchecked")
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
+
     @Override
     public <T> T execute(Command<T> command) {
-        String currentId = CommandEventBusService.getCurrentCall();
-        CommandEventBusService.getEvents().put(currentId, command);
+        RemoteOperationService remoteOperationService = serviceLoader.get().onlyOne(RemoteOperationService.class);
 
-        long timeoutTime = System.currentTimeMillis() + TIMEOUT;
-        while (timeoutTime > System.currentTimeMillis()) {
-           Command<?> newCommand = CommandEventBusService.getEvents().get(currentId);
-           if (newCommand != null) {
-               if (newCommand.getThrowable() != null) {
-                   throw new RuntimeException(newCommand.getThrowable());
-               }
-               if (newCommand.getResult() != null) {
-                   return (T) newCommand.getResult();
-               }
-           }
-           try {
-              Thread.sleep(100);
-           }
-           catch (Exception e) {
-              throw new RuntimeException(e);
-           }
+        @SuppressWarnings("unchecked")
+        Command<T> newCommand = (Command<T>) remoteOperationService.execute(new ExecuteCommand(command)).command;
+
+        if (newCommand.getThrowable() != null) {
+            throw new RuntimeException(newCommand.getThrowable());
         }
-        throw new RuntimeException("No command response within timeout of " + TIMEOUT + " ms.");
+        return (T) newCommand.getResult();
+    }
+
+    public static class ExecuteCommand implements RemoteOperation {
+
+        @Inject
+        private transient Event<Object> eventExecutedOnClient;
+
+        private Command<?> command;
+
+        public ExecuteCommand(Command<?> command) {
+            this.command = command;
+        }
+
+        @Override
+        public void execute() {
+            eventExecutedOnClient.fire(command);
+        }
     }
 }

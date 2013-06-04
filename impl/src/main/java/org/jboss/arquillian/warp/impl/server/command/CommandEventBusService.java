@@ -29,14 +29,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
 import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
-import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
-import org.jboss.arquillian.warp.impl.shared.event.WarpRemoteCommand;
+import org.jboss.arquillian.warp.impl.shared.OperationPayload;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperation;
 
 /**
  * Processes {@link CommandService} requests.
@@ -45,12 +44,13 @@ import org.jboss.arquillian.warp.impl.shared.event.WarpRemoteCommand;
  */
 public class CommandEventBusService implements
         RequestDelegationService {
+
     public static final String COMMAND_EVENT_BUS_PATH = "CommandEventBus";
     public static final String COMMAND_EVENT_BUS_MAPPING = "/" + COMMAND_EVENT_BUS_PATH;
     private static final String METHOD_NAME = "methodName";
     private static final String CLASS_NAME = "className";
     private static final String OPERATION_MODE = "operationMode";
-    static ConcurrentHashMap<String, Command<?>> events = new ConcurrentHashMap<String, Command<?>>();
+    static ConcurrentHashMap<String, OperationPayload> events = new ConcurrentHashMap<String, OperationPayload>();
     static String currentCall = "";
 
     @Override
@@ -114,10 +114,10 @@ public class CommandEventBusService implements
         if (request.getContentLength() > 0) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
-            Command<?> result = (Command<?>) input.readObject();
-            events.put(currentCall, result);
+            OperationPayload paylod = (OperationPayload) input.readObject();
+            events.put(currentCall, paylod);
         } else {
-            if (events.containsKey(currentCall) && events.get(currentCall).getResult() == null) {
+            if (events.containsKey(currentCall)) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
                 output.writeObject(events.remove(currentCall));
@@ -135,21 +135,21 @@ public class CommandEventBusService implements
     private void executePutOperation(HttpServletRequest request, HttpServletResponse response) throws IOException, ClassNotFoundException {
         if (request.getContentLength() > 0) {
             ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
-            WarpRemoteCommand result = (WarpRemoteCommand) input.readObject();
-            WarpRemoteEvent remoteEvent = result.getPayload();
+            OperationPayload payload = (OperationPayload) input.readObject();
+            RemoteOperation operation = payload.getOperation();
             Manager manager = (Manager)request.getAttribute(ARQUILLIAN_MANAGER_ATTRIBUTE);
             // execute remote Event
             try{
                 manager.fire(new ActivateManager(manager));
-                manager.fire(remoteEvent);
+                manager.inject(operation);
+                operation.execute();
                 manager.fire(new PassivateManager(manager));
-                result.setResult("SUCCESS");
             } catch (Throwable e) {
-                result.setThrowable(e);
+                payload.setThrowable(e);
             }
             response.setStatus(HttpServletResponse.SC_OK);
             ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
-            output.writeObject(result);
+            output.writeObject(payload);
             output.flush();
             output.close();
 
@@ -158,7 +158,7 @@ public class CommandEventBusService implements
         }
     }
 
-    public static ConcurrentHashMap<String, Command<?>> getEvents() {
+    public static ConcurrentHashMap<String, OperationPayload> getEvents() {
         return events;
     }
 

@@ -17,16 +17,17 @@
 package org.jboss.arquillian.warp.impl.client.eventbus;
 
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
-import org.jboss.arquillian.warp.impl.shared.event.AfterSuiteRemoteEvent;
-import org.jboss.arquillian.warp.impl.shared.event.BeforeSuiteRemoteEvent;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperation;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperationService;
 
 /**
  * <p>
@@ -46,17 +47,43 @@ import org.jboss.arquillian.warp.impl.shared.event.BeforeSuiteRemoteEvent;
 public class RemoteSuiteLifecyclePropagation {
 
     @Inject
-    private Event<WarpRemoteEvent> remoteEvent;
+    private Instance<ServiceLoader> serviceLoader;
 
     void sendBefore(@Observes Before event) throws Exception {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            remoteEvent.fire(new BeforeSuiteRemoteEvent());
+            remoteOperationService().execute(new BeforeSuiteRemoteOperation());
         }
     }
 
     void sendAfter(@Observes After event) throws Exception {
         if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            remoteEvent.fire(new AfterSuiteRemoteEvent());
+            remoteOperationService().execute(new AfterSuiteRemoteOperation());
+        }
+    }
+
+    private RemoteOperationService remoteOperationService() {
+        return serviceLoader.get().onlyOne(RemoteOperationService.class);
+    }
+
+    public static class BeforeSuiteRemoteOperation implements RemoteOperation {
+
+        @Inject
+        private transient Event<BeforeSuite> beforeSuite;
+
+        @Override
+        public void execute() {
+            beforeSuite.fire(new BeforeSuite());
+        }
+    }
+
+    public static class AfterSuiteRemoteOperation implements RemoteOperation {
+
+        @Inject
+        private transient Event<AfterSuite> afterSuite;
+
+        @Override
+        public void execute() {
+            afterSuite.fire(new AfterSuite());
         }
     }
 }

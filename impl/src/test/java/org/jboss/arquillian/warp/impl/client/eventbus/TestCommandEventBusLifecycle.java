@@ -28,8 +28,8 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.impl.client.eventbus.CommandEventBus.StartBus;
-import org.jboss.arquillian.warp.impl.client.eventbus.CommandEventBus.StopBus;
+import org.jboss.arquillian.warp.impl.client.eventbus.CommandBusObserver.StartBus;
+import org.jboss.arquillian.warp.impl.client.eventbus.CommandBusObserver.StopBus;
 import org.junit.Test;
 
 public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
@@ -43,7 +43,7 @@ public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(CommandEventBus.class);
+        extensions.add(CommandBusObserver.class);
         extensions.add(StartBlockingObserver.class);
     }
 

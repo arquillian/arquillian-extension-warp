@@ -26,15 +26,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.RequestObserver;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperationService;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
-import org.jboss.arquillian.warp.impl.shared.event.RegisterPayloadRemotelyEvent;
+import org.jboss.arquillian.warp.impl.shared.operation.RegisterPayloadRemotelyEvent;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
@@ -50,6 +53,9 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
     @Inject
     private Event<RegisterPayloadRemotelyEvent> registerEvent;
+
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
     /*
      * (non-Javadoc)
@@ -155,5 +161,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         return WarpContextStore.get();
     }
 
-
+    private RemoteOperationService remoteOperationService() {
+        return serviceLoader.on
+    }
 }

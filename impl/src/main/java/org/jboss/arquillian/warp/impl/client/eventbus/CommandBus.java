@@ -1,19 +1,3 @@
-/**
- * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jboss.arquillian.warp.impl.client.eventbus;
 
 import java.io.ObjectInputStream;
@@ -36,84 +20,39 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
-import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.test.spi.annotation.TestScoped;
-import org.jboss.arquillian.test.spi.event.suite.After;
-import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.test.spi.event.suite.TestEvent;
-import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.impl.client.eventbus.CommandBusObserver.StartBus;
 import org.jboss.arquillian.warp.impl.client.operation.Operation;
 import org.jboss.arquillian.warp.impl.client.operation.OperationalContext;
 import org.jboss.arquillian.warp.impl.client.operation.OperationalContexts;
 import org.jboss.arquillian.warp.impl.client.operation.Wrapper;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.command.OperationMode;
-import org.jboss.arquillian.warp.impl.server.event.WarpRemoteEvent;
-import org.jboss.arquillian.warp.impl.shared.event.WarpRemoteCommand;
+import org.jboss.arquillian.warp.impl.shared.OperationPayload;
+import org.jboss.arquillian.warp.impl.shared.RemoteOperation;
 
-/**
- * <p>
- * Provides an event bus during test execution to listen for incoming {@link Command} events.
- * </p>
- *
- * <p>
- * Event Bus functionality is similar to ServletProtocol
- * </p>
- *
- * @author Aris Tzoumas
- */
-public class CommandEventBus {
+public class CommandBus {
+
+    @Inject
+    private Event<Object> eventExecutedRemotely;
 
     @Inject
     private Instance<ProtocolMetaData> protocolMetadata;
 
     @Inject
-    private Event<Object> eventExecutedRemotely;
-    @Inject
-    private Event<StartBus> startBus;
-
-    @Inject
-    private Event<StopBus> stopBus;
-
-    @Inject
-    private Instance<ServiceLoader> serviceLoader;
-
-    @Inject
     private Instance<OperationalContexts> operationalContexts;
+
+    @Inject
+    private Instance<Injector> injector;
+
+    private String channelUrl;
 
     private static Timer eventBusTimer;
 
-    @Inject
-    @TestScoped
-    private InstanceProducer<ChannelURL> channelUrl;
-
-
-    void beforeTest(@Observes(precedence = 500) Before event) {
-        Class<?> testClass = event.getTestInstance().getClass();
-
-        if (testClass.isAnnotationPresent(WarpTest.class)) {
-            startBus.fire(new StartBus(event));
-        }
-    }
-
-    void afterTest(@Observes(precedence = -500) After event) {
-        Class<?> testClass = event.getTestInstance().getClass();
-
-        if (testClass.isAnnotationPresent(WarpTest.class)) {
-            stopBus.fire(new StopBus(event));
-        }
-    }
-
-    /**
-     * Starts the Event Bus.
-     */
-    void startEventBus(@Observes StartBus event) throws Exception {
+    public void startBus(StartBus event) {
         Class<?> testClass = event.getTestInstance().getClass();
         Method testMethod = event.getTestMethod();
 
@@ -125,12 +64,12 @@ public class CommandEventBus {
 
         String url = servletURI.toASCIIString() + "?className=" + testClass.getName() + "&methodName=" + testMethod.getName();
 
-        channelUrl.set(new ChannelURL(url));
+        channelUrl = url;
 
-        final String eventUrl = url + "&operationMode=" + OperationMode.GET.name();
+        final String eventUrlForGet = url + "&operationMode=" + OperationMode.GET.name();
 
         // Prepare CommandCallback
-        final Operation<Object, Void> operation = operationForExecutingEventRemotelyOnCurrentContext();
+        final Operation<RemoteOperation, Void> operation = operationForExecutingEventRemotelyOnCurrentContext();
 
         // Start Timer
         if (eventBusTimer != null)
@@ -142,18 +81,12 @@ public class CommandEventBus {
                 @Override
                 public void run() {
                     try {
-                        Object o = execute(eventUrl, Object.class, null);
-                        if (o != null) {
-                            if (o instanceof Command) {
-                                Command<?> command = (Command<?>) o;
-                                operation.perform(command);
-                                execute(eventUrl, Object.class, command);
-                            } else {
-                                throw new RuntimeException("Received a non " + Command.class.getName()
-                                        + " object on event channel");
-                            }
+                        OperationPayload payload = execute(eventUrlForGet, OperationPayload.class, null);
+                        if (payload != null) {
+                            RemoteOperation o = payload.getOperation();
+                            operation.perform(o);
+                            execute(eventUrlForGet, Object.class, payload);
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -170,49 +103,39 @@ public class CommandEventBus {
         }
     }
 
-    /**
-     * Stops the Event Bus
-     */
-    void stopEventBus(@Observes StopBus event) {
+    public void stopBus() {
         if (eventBusTimer != null) {
             eventBusTimer.cancel();
             eventBusTimer = null;
         }
     }
 
-    private Operation<Object, Void> operationForExecutingEventRemotelyOnCurrentContext() {
+    private Operation<RemoteOperation, Void> operationForExecutingEventRemotelyOnCurrentContext() {
         OperationalContext context = operationalContexts.get().test();
 
-        return Wrapper.wrap(context, new Operation<Object, Void>() {
-            public Void perform(Object event) {
-                eventExecutedRemotely.fire(event);
+        return Wrapper.wrap(context, new Operation<RemoteOperation, Void>() {
+            public Void perform(RemoteOperation operation) {
+                injector.get().inject(operation);
+                operation.execute();
+                eventExecutedRemotely.fire(operation);
                 return null;
             }
         });
     }
 
-    /**
-     * Executes a RemoteEvent Command from the client to the container.
-     *
-     * @param event the {@link WarpRemoteEvent} fired.
-     */
-    void executeCommandRemotely(@Observes WarpRemoteEvent event) {
-        final String eventUrl = channelUrl.get() + "&operationMode=" + OperationMode.PUT.name();
-        WarpRemoteCommand command = new WarpRemoteCommand(event);
+    public RemoteOperation executeRemotely(RemoteOperation operation) {
+        final String eventUrlForPut = channelUrl + "&operationMode=" + OperationMode.PUT.name();
+        final OperationPayload payload = new OperationPayload(operation);
         try {
-
-            Object o = execute(eventUrl, Object.class, command);
-            if (o != null) {
-                if (o instanceof WarpRemoteCommand) {
-                    command = (WarpRemoteCommand) o;
-                    if (command.getThrowable() != null) {
-                        throw new RuntimeException(command.getThrowable());
-                    }
+            OperationPayload result = execute(eventUrlForPut, OperationPayload.class, payload);
+            if (result.getThrowable() != null) {
+                if (result.getThrowable() instanceof RuntimeException) {
+                    throw (RuntimeException) result.getThrowable();
                 } else {
-                    throw new RuntimeException("Received a non " + WarpRemoteCommand.class.getName()
-                            + " object on event channel");
+                    throw new RuntimeException(result.getThrowable());
                 }
             }
+            return result.getOperation();
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Error executing remote command", e);
@@ -233,14 +156,11 @@ public class CommandEventBus {
         httpConnection.setDoInput(true);
 
         /*
-         * With followRedirects enabled, simple URL redirects work as expected.
-         * But with port redirects (http->https) followRedirects doesn't work and
-         * a HTTP 302 code is returned instead (ARQ-1365).
+         * With followRedirects enabled, simple URL redirects work as expected. But with port redirects (http->https)
+         * followRedirects doesn't work and a HTTP 302 code is returned instead (ARQ-1365).
          *
-         * In order to handle all redirects in one place, followRedirects is
-         * set to false and all HTTP 302 response codes are treated accordingly
-         * within the execute method.
-         *
+         * In order to handle all redirects in one place, followRedirects is set to false and all HTTP 302 response codes are
+         * treated accordingly within the execute method.
          */
         httpConnection.setInstanceFollowRedirects(false);
 
@@ -347,49 +267,4 @@ public class CommandEventBus {
         }
     }
 
-    public static final class StartBus extends BusEvent {
-        public StartBus(TestEvent event) {
-            super(event);
-        }
-    }
-
-    public static final class StopBus extends BusEvent {
-        public StopBus(TestEvent event) {
-            super(event);
-        }
-    }
-
-    public abstract static class BusEvent {
-        private Object testInstance;
-        private Method testMethod;
-
-        public BusEvent(TestEvent event) {
-            this.testInstance = event.getTestInstance();
-            this.testMethod = event.getTestMethod();
-        }
-        public Object getTestInstance() {
-            return testInstance;
-        }
-        public Method getTestMethod() {
-            return testMethod;
-        }
-    }
-
-    private static final class ChannelURL {
-        private String url;
-
-        public ChannelURL(String url) {
-            super();
-            this.url = url;
-        }
-
-        public String getURL() {
-            return url;
-        }
-
-        @Override
-        public String toString() {
-            return url;
-        }
-    }
 }

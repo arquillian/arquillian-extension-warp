@@ -32,6 +32,8 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
 import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.impl.client.eventbus.RemoteSuiteLifecyclePropagation.AfterSuiteRemoteOperation;
+import org.jboss.arquillian.warp.impl.client.eventbus.RemoteSuiteLifecyclePropagation.BeforeSuiteRemoteOperation;
 import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
@@ -84,6 +86,11 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             "org.jboss.arquillian.warp.servlet.provider"
     };
 
+    static Class<?>[] REQUIRED_WARP_INNER_CLASSES = new Class<?>[] {
+        BeforeSuiteRemoteOperation.class,
+        AfterSuiteRemoteOperation.class
+    };
+
     @Inject
     Instance<ServiceLoader> serviceLoader;
 
@@ -129,6 +136,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             for (String packageName : REQUIRED_WARP_PACKAGES) {
                 archive.addPackage(packageName);
             }
+
+            archive.addClasses(REQUIRED_WARP_INNER_CLASSES);
 
             // register remote extension
             archive.addClass(WarpRemoteExtension.class);
