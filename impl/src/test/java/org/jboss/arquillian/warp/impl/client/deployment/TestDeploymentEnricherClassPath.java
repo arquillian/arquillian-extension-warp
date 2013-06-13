@@ -63,6 +63,8 @@ public class TestDeploymentEnricherClassPath {
             warp.addPackage(packageName);
         }
 
+        warp.addClasses(DeploymentEnricher.REQUIRED_WARP_INNER_CLASSES);
+
         return new JavaArchive[] { base, warp, coreApi, coreSpi, containerTestSpi, testSpi, shrinkWrapSpi, shrinkWrapApi,
                 shrinkWrapImpl };
     }

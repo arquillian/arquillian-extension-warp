@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -35,9 +34,10 @@ import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
-import org.jboss.arquillian.warp.impl.shared.RemoteOperationService;
+import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
-import org.jboss.arquillian.warp.impl.shared.operation.RegisterPayloadRemotelyEvent;
+import org.jboss.arquillian.warp.impl.shared.command.Command;
+import org.jboss.arquillian.warp.impl.shared.command.CommandService;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
@@ -50,9 +50,6 @@ import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmentService {
 
     private Logger log = Logger.getLogger("Warp");
-
-    @Inject
-    private Event<RegisterPayloadRemotelyEvent> registerEvent;
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
@@ -126,7 +123,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         try {
             String requestEnrichment = SerializationUtils.serializeToBase64(payload);
             long serialId = payload.getSerialId();
-            registerEvent.fire(new RegisterPayloadRemotelyEvent(requestEnrichment));
+            remoteOperationService().execute(new RegisterPayloadRemotely(requestEnrichment));
 
             org.jboss.netty.handler.codec.http.HttpRequest nettyHttpRequest = ((HttpRequestWrapper) request).unwrap();
             nettyHttpRequest.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(Long.toString(serialId)));
@@ -161,7 +158,28 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         return WarpContextStore.get();
     }
 
-    private RemoteOperationService remoteOperationService() {
-        return serviceLoader.on
+    private CommandService remoteOperationService() {
+        return serviceLoader.get().onlyOne(CommandService.class);
     }
+
+    public static class RegisterPayloadRemotely implements Command {
+
+        private static final long serialVersionUID = 1L;
+
+        @Inject
+        private transient Instance<PayloadRegistry> registry;
+
+        private String requestPayload;
+
+        public RegisterPayloadRemotely(String requestPayload) {
+            this.requestPayload = requestPayload;
+        }
+
+        @Override
+        public void perform() {
+            RequestPayload payload = SerializationUtils.deserializeFromBase64(requestPayload);
+            registry.get().register(payload);
+        }
+    }
+
 }

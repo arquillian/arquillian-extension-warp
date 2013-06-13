@@ -28,8 +28,9 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.impl.client.eventbus.CommandBusObserver.StartBus;
-import org.jboss.arquillian.warp.impl.client.eventbus.CommandBusObserver.StopBus;
+import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver;
+import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver.StartBus;
+import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver.StopBus;
 import org.junit.Test;
 
 public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
@@ -63,16 +64,13 @@ public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
     }
 
     @Test
-    public void when_test_not_annotated_as_warp_test_then_event_bus_is_started() throws Exception {
+    public void when_test_is_annotated_as_warp_test_then_event_bus_is_started() throws Exception {
         // given
         FakeTest testInstance = new FakeTest();
         Method testMethod = FakeTest.class.getMethod("test");
 
         // when
         before.fire(new Before(testInstance, testMethod));
-
-
-
         after.fire(new After(testInstance, testMethod));
 
         // then
@@ -88,7 +86,10 @@ public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
     }
 
     private static class StartBlockingObserver {
-        public void block(@Observes EventContext<StartBus> ctx) {
+        public void blockStart(@Observes EventContext<StartBus> ctx) {
+        }
+
+        public void blockStop(@Observes EventContext<StopBus> ctx) {
         }
     }
 }

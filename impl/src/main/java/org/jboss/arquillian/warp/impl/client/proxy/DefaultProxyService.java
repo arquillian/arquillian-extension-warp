@@ -21,13 +21,13 @@ import java.net.URL;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.warp.impl.client.context.operation.ContextualOperation;
+import org.jboss.arquillian.warp.impl.client.context.operation.Contextualizer;
+import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContext;
+import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContextRetriver;
+import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContexts;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
-import org.jboss.arquillian.warp.impl.client.operation.Operation;
-import org.jboss.arquillian.warp.impl.client.operation.OperationalContext;
-import org.jboss.arquillian.warp.impl.client.operation.OperationalContextRetriver;
-import org.jboss.arquillian.warp.impl.client.operation.OperationalContexts;
-import org.jboss.arquillian.warp.impl.client.operation.Wrapper;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.littleshoot.proxy.HttpFilter;
@@ -48,11 +48,11 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     private Instance<OperationalContexts> operationalContexts;
 
     @Inject
-    private Instance<URLToContextMapping> urlToContextMappingInst;
+    private Instance<ProxyURLToContextMapping> urlToContextMappingInst;
 
     @Override
     public HttpProxyServer startProxy(final URL realUrl, final URL proxyUrl) {
-        final URLToContextMapping urlToContextMapping = urlToContextMappingInst.get();
+        final ProxyURLToContextMapping urlToContextMapping = urlToContextMappingInst.get();
 
         OperationalContextRetriver retriever = new OperationalContextRetriver() {
             @Override
@@ -85,9 +85,9 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     private HttpRequestEnrichmentFilter getHttpRequestEnrichmentFilter(OperationalContextRetriver retriever) {
         final HttpRequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(HttpRequestEnrichmentFilter.class);
 
-        final Operation<HttpRequest, Void> operation = Wrapper.wrap(retriever, new Operation<HttpRequest, Void>() {
+        final ContextualOperation<HttpRequest, Void> operation = Contextualizer.contextualize(retriever, new ContextualOperation<HttpRequest, Void>() {
             @Override
-            public Void perform(HttpRequest request) {
+            public Void performInContext(HttpRequest request) {
                 requestFilter.filter(request);
                 return null;
             }
@@ -96,7 +96,7 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         return new HttpRequestEnrichmentFilter() {
             @Override
             public void filter(HttpRequest request) {
-                operation.perform(request);
+                operation.performInContext(request);
             }
         };
     }
@@ -104,23 +104,23 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     private HttpResponseDeenrichmentFilter getHttpResponseDeenrichmentFilter(OperationalContextRetriver retriever) {
         final HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(HttpResponseDeenrichmentFilter.class);
 
-        final Operation<FilterResponseContext, HttpResponse> filterResponse = Wrapper.wrap(retriever, new Operation<FilterResponseContext, HttpResponse>() {
+        final ContextualOperation<FilterResponseContext, HttpResponse> filterResponse = Contextualizer.contextualize(retriever, new ContextualOperation<FilterResponseContext, HttpResponse>() {
             @Override
-            public HttpResponse perform(FilterResponseContext ctx) {
+            public HttpResponse performInContext(FilterResponseContext ctx) {
                 return responseDeenrichmentFilter.filterResponse(ctx.request, ctx.response);
             }
         });
 
-        final Operation<HttpRequest, Boolean> shouldFilterResponses = Wrapper.wrap(retriever, new Operation<HttpRequest, Boolean>() {
+        final ContextualOperation<HttpRequest, Boolean> shouldFilterResponses = Contextualizer.contextualize(retriever, new ContextualOperation<HttpRequest, Boolean>() {
             @Override
-            public Boolean perform(HttpRequest request) {
+            public Boolean performInContext(HttpRequest request) {
                 return responseDeenrichmentFilter.filterResponses(request);
             }
         });
 
-        final Operation<Void, Integer> getMaxResponseSize = Wrapper.wrap(retriever, new Operation<Void, Integer>() {
+        final ContextualOperation<Void, Integer> getMaxResponseSize = Contextualizer.contextualize(retriever, new ContextualOperation<Void, Integer>() {
             @Override
-            public Integer perform(Void argument) {
+            public Integer performInContext(Void argument) {
                 return responseDeenrichmentFilter.getMaxResponseSize();
             }
         });
@@ -129,17 +129,17 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
             @Override
             public HttpResponse filterResponse(HttpRequest request, HttpResponse response) {
-                return filterResponse.perform(new FilterResponseContext(request, response));
+                return filterResponse.performInContext(new FilterResponseContext(request, response));
             }
 
             @Override
             public boolean filterResponses(HttpRequest httpRequest) {
-                return shouldFilterResponses.perform(httpRequest);
+                return shouldFilterResponses.performInContext(httpRequest);
             }
 
             @Override
             public int getMaxResponseSize() {
-                return getMaxResponseSize.perform(null);
+                return getMaxResponseSize.performInContext(null);
             }
         };
     }

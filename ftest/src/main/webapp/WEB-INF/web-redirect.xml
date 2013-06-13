@@ -22,7 +22,7 @@
   
   <filter>
     <filter-name>RedirectFilter</filter-name>
-    <filter-class>org.jboss.arquillian.warp.ftest.eventbus.RedirectFilter</filter-class>
+    <filter-class>org.jboss.arquillian.warp.ftest.commandBus.RedirectFilter</filter-class>
   </filter>
   <filter-mapping>
   	<filter-name>RedirectFilter</filter-name>

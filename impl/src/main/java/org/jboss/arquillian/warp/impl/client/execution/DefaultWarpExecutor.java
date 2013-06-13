@@ -21,13 +21,13 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.client.result.WarpResult;
-import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.event.AdvertiseEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.AwaitResponse;
 import org.jboss.arquillian.warp.impl.client.event.CleanEnrichment;
 import org.jboss.arquillian.warp.impl.client.event.FinishEnrichment;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ActivityException;
+import org.jboss.arquillian.warp.impl.utils.Rethrow;
 
 /**
  * Default {@link WarpExecutor}
@@ -123,15 +123,7 @@ public class DefaultWarpExecutor implements WarpExecutor {
     }
 
     private void propagateException(Throwable e) {
-        if (e instanceof AssertionError) {
-            throw (AssertionError) e;
-        } else if (e instanceof ClientWarpExecutionException) {
-            throw (ClientWarpExecutionException) e;
-        } else if (e instanceof RuntimeException) {
-            throw (RuntimeException) e;
-        } else {
-            throw new ServerWarpExecutionException(e);
-        }
+        Rethrow.asUnchecked(e, ServerWarpExecutionException.class);
     }
 
     private void propagateSkip() {

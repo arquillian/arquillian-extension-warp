@@ -32,9 +32,10 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.impl.client.eventbus.RemoteSuiteLifecyclePropagation.AfterSuiteRemoteOperation;
-import org.jboss.arquillian.warp.impl.client.eventbus.RemoteSuiteLifecyclePropagation.BeforeSuiteRemoteOperation;
-import org.jboss.arquillian.warp.impl.server.command.CommandEventBusService;
+import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecyclePropagation.FireAfterSuiteOnServer;
+import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecyclePropagation.FireBeforeSuiteOnServer;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService.RegisterPayloadRemotely;
+import org.jboss.arquillian.warp.impl.server.commandBus.CommandBusOnServer;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
@@ -74,11 +75,12 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             "org.jboss.arquillian.warp.impl.server.provider",
             "org.jboss.arquillian.warp.impl.server.request",
             "org.jboss.arquillian.warp.impl.server.test",
-            "org.jboss.arquillian.warp.impl.server.command",
+            "org.jboss.arquillian.warp.impl.server.commandBus",
             "org.jboss.arquillian.warp.impl.server.delegation",
             "org.jboss.arquillian.warp.impl.server.remote",
             "org.jboss.arquillian.warp.impl.shared",
             "org.jboss.arquillian.warp.impl.shared.event",
+            "org.jboss.arquillian.warp.impl.shared.command",
             "org.jboss.arquillian.warp.impl.utils",
 
             // Servlet Extension
@@ -87,8 +89,9 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
     };
 
     static Class<?>[] REQUIRED_WARP_INNER_CLASSES = new Class<?>[] {
-        BeforeSuiteRemoteOperation.class,
-        AfterSuiteRemoteOperation.class
+        FireBeforeSuiteOnServer.class,
+        FireAfterSuiteOnServer.class,
+        RegisterPayloadRemotely.class
     };
 
     @Inject
@@ -145,7 +148,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
 
             // register RequestProcessingDelegationService
-            archive.addAsServiceProvider(RequestDelegationService.class, CommandEventBusService.class);
+            archive.addAsServiceProvider(RequestDelegationService.class, CommandBusOnServer.class);
 
             return archive;
         } else {

@@ -23,15 +23,16 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchive
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
+import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver;
+import org.jboss.arquillian.warp.impl.client.commandBus.CommandServiceOnClient;
+import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecyclePropagation;
+import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContextInitializer;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentEnricher;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentValidator;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
-import org.jboss.arquillian.warp.impl.client.eventbus.CommandBusObserver;
-import org.jboss.arquillian.warp.impl.client.eventbus.RemoteOperationServiceOnClient;
-import org.jboss.arquillian.warp.impl.client.eventbus.RemoteSuiteLifecyclePropagation;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService;
@@ -49,7 +50,6 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpExecutionObserver;
 import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 import org.jboss.arquillian.warp.impl.client.filter.http.DefaultHttpFilterBuilder;
-import org.jboss.arquillian.warp.impl.client.operation.OperationalContextInitializer;
 import org.jboss.arquillian.warp.impl.client.proxy.ClassProxyUsageTracker;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultURLMapping;
@@ -59,7 +59,7 @@ import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
 import org.jboss.arquillian.warp.impl.client.proxy.URLMapping;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
 import org.jboss.arquillian.warp.impl.client.verification.ResponsePayloadVerifier;
-import org.jboss.arquillian.warp.impl.shared.RemoteOperationService;
+import org.jboss.arquillian.warp.impl.shared.command.CommandService;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
 
 /**
@@ -107,6 +107,6 @@ public class WarpExtension implements LoadableExtension {
         builder.observer(RemoteSuiteLifecyclePropagation.class);
         builder.observer(OperationalContextInitializer.class);
         builder.observer(ClassProxyUsageTracker.class);
-        builder.service(RemoteOperationService.class, RemoteOperationServiceOnClient.class);
+        builder.service(CommandService.class, CommandServiceOnClient.class);
     }
 }
