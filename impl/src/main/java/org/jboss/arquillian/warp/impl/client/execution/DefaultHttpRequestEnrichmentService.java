@@ -178,7 +178,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
         @Override
         public void perform() {
             RequestPayload payload = SerializationUtils.deserializeFromBase64(requestPayload);
-            registry.get().register(payload);
+            registry.get().registerRequestPayload(payload);
         }
     }
 

@@ -16,9 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,11 +26,11 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.VerifyResponsePayload;
+import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
+import org.jboss.arquillian.warp.impl.shared.command.Command;
+import org.jboss.arquillian.warp.impl.shared.command.CommandService;
 import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
@@ -70,23 +67,8 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
         final WarpContext context = WarpContextStore.get();
         try {
 
-            final ChannelBuffer content = response.getContent();
-
-            long originalLength = HttpHeaders.getContentLength(response);
-            int payloadLength = Integer.valueOf(getHeader(response));
-
-            String responseEnrichment = content.toString(0, payloadLength, Charset.defaultCharset());
-            content.readerIndex(payloadLength);
-            content.discardReadBytes();
-
-            HttpHeaders.setContentLength(response, originalLength - payloadLength);
-
-            ResponsePayload payload = SerializationUtils.deserializeFromBase64(responseEnrichment);
-            response.setStatus(HttpResponseStatus.valueOf(payload.getStatus()));
-
-            for (Entry<String, List<String>> entry : payload.getHeaders().entrySet()) {
-                response.setHeader(entry.getKey(), entry.getValue());
-            }
+            long serialId = Long.valueOf(getHeader(response));
+            ResponsePayload payload = remoteOperationService().execute(new RetrievePayloadFromServer(serialId)).getResponsePayload();
 
             if (context != null) {
                 verifyResponsePayload.fire(new VerifyResponsePayload(payload));
@@ -115,5 +97,33 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
 
     private String getHeader(HttpResponse response) {
         return response.getHeader(WarpCommons.ENRICHMENT_RESPONSE);
+    }
+
+    private CommandService remoteOperationService() {
+        return serviceLoader.get().onlyOne(CommandService.class);
+    }
+
+    public static class RetrievePayloadFromServer implements Command {
+
+        private static final long serialVersionUID = 1L;
+
+        @Inject
+        private transient Instance<PayloadRegistry> registry;
+
+        private long serialId;
+        private ResponsePayload responsePayload;
+
+        public RetrievePayloadFromServer(long serialId) {
+            this.serialId = serialId;
+        }
+
+        public ResponsePayload getResponsePayload() {
+            return responsePayload;
+        }
+
+        @Override
+        public void perform() {
+            responsePayload = registry.get().retrieveResponsePayload(serialId);
+        }
     }
 }

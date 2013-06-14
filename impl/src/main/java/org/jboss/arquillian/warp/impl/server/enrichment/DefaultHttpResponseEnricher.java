@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.impl.server.execution.NonWritingResponse;
+import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 
 public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
@@ -46,6 +46,9 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
 
     @Inject
     private Instance<NonWritingResponse> nonWritingResponse;
+
+    @Inject
+    private Instance<PayloadRegistry> payloadRegistry;
 
     @Override
     public void enrichResponse() {
@@ -66,29 +69,15 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
     private void enrich(ResponsePayload payload, HttpServletResponse response, NonWritingResponse nonWritingResponse)
             throws IOException {
 
-        Integer originalLength = nonWritingResponse.getContentLength();
-
         payload.setStatus(nonWritingResponse.getStatus());
         payload.setHeaders(nonWritingResponse.getHeaders());
 
-        String enrichment = SerializationUtils.serializeToBase64(payload);
+        payloadRegistry.get().registerResponsePayload(payload);
 
-        // set a header with the size of the payload
-        response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Integer.toString(enrichment.length()));
+        // set a header with the serialId of a payload
+        response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Long.toString(payload.getSerialId()));
 
-        // update context-length
-        if (originalLength != null) {
-            int enrichmentLength = enrichment.length();
-            int newLength = originalLength + enrichmentLength;
-            nonWritingResponse.setContentLength(newLength);
-        }
-
-        // must be set to OK:200 to deliver payload - will be switched on proxy filter
-        response.setStatus(200);
-
-        // write enrichment
         ServletOutputStream servletOutputStream = response.getOutputStream();
-        servletOutputStream.write(enrichment.getBytes());
 
         // finalize
         nonWritingResponse.finallyWriteAndClose(servletOutputStream);

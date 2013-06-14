@@ -35,6 +35,7 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecyclePropagation.FireAfterSuiteOnServer;
 import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecyclePropagation.FireBeforeSuiteOnServer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService.RegisterPayloadRemotely;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService.RetrievePayloadFromServer;
 import org.jboss.arquillian.warp.impl.server.commandBus.CommandBusOnServer;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
@@ -91,7 +92,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
     static Class<?>[] REQUIRED_WARP_INNER_CLASSES = new Class<?>[] {
         FireBeforeSuiteOnServer.class,
         FireAfterSuiteOnServer.class,
-        RegisterPayloadRemotely.class
+        RegisterPayloadRemotely.class,
+        RetrievePayloadFromServer.class
     };
 
     @Inject

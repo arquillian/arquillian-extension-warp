@@ -45,6 +45,6 @@ public class DefaultHttpRequestDeenricher implements HttpRequestDeenricher {
     public RequestPayload resolvePayload() {
         long serialId = Long.valueOf(getSerialId());
 
-        return payloadRegistry.get().get(serialId);
+        return payloadRegistry.get().retrieveRequestPayload(serialId);
     }
 }
