@@ -58,7 +58,7 @@ public class PayloadRegistry {
     public ResponsePayload retrieveResponsePayload(long serialId) {
         ResponsePayload payload = responsePayloads.remove(serialId);
         if (payload == null) {
-            throw new IllegalStateException("The response payload with serialId" + serialId + " was never registered");
+            throw new IllegalStateException("The response payload with serialId " + serialId + " was never registered");
         }
         return payload;
     }

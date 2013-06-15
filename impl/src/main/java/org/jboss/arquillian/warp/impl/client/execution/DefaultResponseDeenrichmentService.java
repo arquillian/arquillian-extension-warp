@@ -31,8 +31,8 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.shared.command.Command;
 import org.jboss.arquillian.warp.impl.shared.command.CommandService;
 import org.jboss.arquillian.warp.spi.WarpCommons;
+import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * Default service for de-enriching responses.
@@ -51,31 +51,43 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService#isEnriched(org.jboss.netty.handler.codec.http.HttpResponse)
+     *
+     * @see
+     * org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService#isEnriched(org.jboss.netty.handler.codec
+     * .http.HttpResponse)
      */
     @Override
-    public boolean isEnriched(HttpResponse response) {
-        return getHeader(response) != null;
+    public boolean isEnriched(HttpRequest request, HttpResponse response) {
+        Long serialId = getSerialId(request);
+        return serialId != null;
     }
 
     /*
      * (non-Javadoc)
-     * @see org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService#deenrichResponse(org.jboss.netty.handler.codec.http.HttpResponse)
+     *
+     * @see
+     * org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService#deenrichResponse(org.jboss.netty.handler
+     * .codec.http.HttpResponse)
      */
     @Override
-    public void deenrichResponse(HttpResponse response) {
+    public void deenrichResponse(HttpRequest request, HttpResponse response) {
         final WarpContext context = WarpContextStore.get();
         try {
 
-            long serialId = Long.valueOf(getHeader(response));
-            ResponsePayload payload = remoteOperationService().execute(new RetrievePayloadFromServer(serialId)).getResponsePayload();
+            // ensures that some content has been already written
+            // we should actually ensure here that whole message was read
+            response.getContent().readableBytes();
+
+            long serialId = getSerialId(request);
+
+            ResponsePayload payload = remoteOperationService().execute(new RetrievePayloadFromServer(serialId))
+                    .getResponsePayload();
 
             if (context != null) {
                 verifyResponsePayload.fire(new VerifyResponsePayload(payload));
                 context.pushResponsePayload(payload);
             }
         } catch (Exception originalException) {
-            response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
 
             if (context != null) {
 
@@ -95,8 +107,14 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
         }
     }
 
-    private String getHeader(HttpResponse response) {
-        return response.getHeader(WarpCommons.ENRICHMENT_RESPONSE);
+    private Long getSerialId(HttpRequest request) {
+        String header = request.getHeader(WarpCommons.ENRICHMENT_REQUEST);
+
+        if (header == null || header.isEmpty()) {
+            return null;
+        }
+
+        return Long.valueOf(header);
     }
 
     private CommandService remoteOperationService() {

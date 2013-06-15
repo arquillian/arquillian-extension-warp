@@ -17,13 +17,12 @@
 package org.jboss.arquillian.warp.impl.client.event;
 
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 
 public class FilterHttpRequest implements FilterRequest<HttpRequest> {
 
     private HttpRequest request;
 
-    public FilterHttpRequest(HttpRequest request, HttpRequestEnrichmentService service) {
+    public FilterHttpRequest(HttpRequest request) {
         super();
         this.request = request;
     }

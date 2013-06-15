@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.enrichment;
 
+import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
@@ -28,10 +29,10 @@ public interface HttpResponseDeenrichmentService {
     /**
      * Determines if given response is enriched.
      */
-    boolean isEnriched(HttpResponse response);
+    boolean isEnriched(HttpRequest request, HttpResponse response);
 
     /**
      * De-enriches given response
      */
-    void deenrichResponse(HttpResponse response);
+    void deenrichResponse(HttpRequest request, HttpResponse response);
 }

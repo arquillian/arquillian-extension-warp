@@ -35,6 +35,7 @@ import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 
 public class HttpRequestProcessor {
@@ -60,9 +61,11 @@ public class HttpRequestProcessor {
 
         if (requestDeenricher.isEnriched()) {
 
-            RequestPayload payload = requestDeenricher.resolvePayload();
-            responsePayload.set(new ResponsePayload(payload.getSerialId()));
-            requestPayload.set(payload);
+            RequestPayload p = requestDeenricher.resolvePayload();
+            long serialId = p.getSerialId();
+            responsePayload.set(new ResponsePayload(serialId));
+            response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Long.toString(serialId));
+            requestPayload.set(p);
 
             processWarpRequest.fire(new ProcessWarpRequest());
 

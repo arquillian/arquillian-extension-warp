@@ -21,6 +21,7 @@ import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -61,7 +62,7 @@ public class WarpLifecycle {
      *
      * @return {@link ResponsePayload} based on the lifecycle tests results
      */
-    public void execute(@Observes ExecuteWarp event, HttpServletRequest request, NonWritingResponse nonWritingResponse,
+    public void execute(@Observes ExecuteWarp event, HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain, RequestPayload requestPayload, ResponsePayload responsePayload) throws Throwable {
 
         List<Inspection> inspections = requestPayload.getInspections();
@@ -73,7 +74,7 @@ public class WarpLifecycle {
             warpLifecycleStarted.fire(new WarpLifecycleStarted());
             lifecycleManager.get().fireEvent(new BeforeServlet());
 
-            filterChain.doFilter(request, nonWritingResponse);
+            filterChain.doFilter(request, response);
 
             lifecycleManager.get().fireEvent(new AfterServlet());
 

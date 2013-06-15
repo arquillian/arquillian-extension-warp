@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
+import java.lang.reflect.Field;
 import java.net.URL;
 
 import org.jboss.arquillian.core.api.Instance;
@@ -33,6 +34,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.HttpRequestFilter;
+import org.littleshoot.proxy.LittleProxyConfig;
 
 /**
  * The holder for instantiated proxies.
@@ -66,6 +68,7 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         HttpFilter responseFilter = getHttpResponseDeenrichmentFilter(retriever);
         String hostPort = realUrl.getHost() + ":" + realUrl.getPort();
 
+        setupLittleProxyConfig();
         HttpProxyServer server = new WarpHttpProxyServer(proxyUrl.getPort(), hostPort, requestFilter, responseFilter);
 
         server.start();
@@ -85,13 +88,14 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     private HttpRequestEnrichmentFilter getHttpRequestEnrichmentFilter(OperationalContextRetriver retriever) {
         final HttpRequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(HttpRequestEnrichmentFilter.class);
 
-        final ContextualOperation<HttpRequest, Void> operation = Contextualizer.contextualize(retriever, new ContextualOperation<HttpRequest, Void>() {
-            @Override
-            public Void performInContext(HttpRequest request) {
-                requestFilter.filter(request);
-                return null;
-            }
-        });
+        final ContextualOperation<HttpRequest, Void> operation = Contextualizer.contextualize(retriever,
+                new ContextualOperation<HttpRequest, Void>() {
+                    @Override
+                    public Void performInContext(HttpRequest request) {
+                        requestFilter.filter(request);
+                        return null;
+                    }
+                });
 
         return new HttpRequestEnrichmentFilter() {
             @Override
@@ -102,28 +106,32 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     }
 
     private HttpResponseDeenrichmentFilter getHttpResponseDeenrichmentFilter(OperationalContextRetriver retriever) {
-        final HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(HttpResponseDeenrichmentFilter.class);
+        final HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(
+                HttpResponseDeenrichmentFilter.class);
 
-        final ContextualOperation<FilterResponseContext, HttpResponse> filterResponse = Contextualizer.contextualize(retriever, new ContextualOperation<FilterResponseContext, HttpResponse>() {
-            @Override
-            public HttpResponse performInContext(FilterResponseContext ctx) {
-                return responseDeenrichmentFilter.filterResponse(ctx.request, ctx.response);
-            }
-        });
+        final ContextualOperation<FilterResponseContext, HttpResponse> filterResponse = Contextualizer.contextualize(retriever,
+                new ContextualOperation<FilterResponseContext, HttpResponse>() {
+                    @Override
+                    public HttpResponse performInContext(FilterResponseContext ctx) {
+                        return responseDeenrichmentFilter.filterResponse(ctx.request, ctx.response);
+                    }
+                });
 
-        final ContextualOperation<HttpRequest, Boolean> shouldFilterResponses = Contextualizer.contextualize(retriever, new ContextualOperation<HttpRequest, Boolean>() {
-            @Override
-            public Boolean performInContext(HttpRequest request) {
-                return responseDeenrichmentFilter.filterResponses(request);
-            }
-        });
+        final ContextualOperation<HttpRequest, Boolean> shouldFilterResponses = Contextualizer.contextualize(retriever,
+                new ContextualOperation<HttpRequest, Boolean>() {
+                    @Override
+                    public Boolean performInContext(HttpRequest request) {
+                        return responseDeenrichmentFilter.filterResponses(request);
+                    }
+                });
 
-        final ContextualOperation<Void, Integer> getMaxResponseSize = Contextualizer.contextualize(retriever, new ContextualOperation<Void, Integer>() {
-            @Override
-            public Integer performInContext(Void argument) {
-                return responseDeenrichmentFilter.getMaxResponseSize();
-            }
-        });
+        final ContextualOperation<Void, Integer> getMaxResponseSize = Contextualizer.contextualize(retriever,
+                new ContextualOperation<Void, Integer>() {
+                    @Override
+                    public Integer performInContext(Void argument) {
+                        return responseDeenrichmentFilter.getMaxResponseSize();
+                    }
+                });
 
         return new HttpResponseDeenrichmentFilter() {
 
@@ -147,9 +155,24 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     private static class FilterResponseContext {
         private HttpRequest request;
         private HttpResponse response;
+
         public FilterResponseContext(HttpRequest request, HttpResponse response) {
             this.request = request;
             this.response = response;
+        }
+    }
+
+    private void setupLittleProxyConfig() {
+
+        try {
+            Field field = LittleProxyConfig.class.getDeclaredField("transparent");
+            field.setAccessible(true);
+            field.set(null, true);
+            field.setAccessible(false);
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                    "Warp proxy server hacks LittleProxy configuration in order to configure it transparently - this hack was designed to work with LittleProxy 0.5.3",
+                    e);
         }
     }
 }

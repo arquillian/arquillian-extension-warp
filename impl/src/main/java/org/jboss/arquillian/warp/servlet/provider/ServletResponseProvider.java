@@ -19,17 +19,17 @@ package org.jboss.arquillian.warp.servlet.provider;
 import java.lang.annotation.Annotation;
 
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.impl.server.execution.NonWritingResponse;
 
 public class ServletResponseProvider implements ResourceProvider {
 
     @Inject
-    private Instance<NonWritingResponse> response;
+    private Instance<HttpServletResponse> response;
 
     @Override
     public boolean canProvide(Class<?> type) {

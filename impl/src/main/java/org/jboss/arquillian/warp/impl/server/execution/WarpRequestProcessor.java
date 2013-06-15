@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Event;
-import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -35,7 +34,6 @@ import org.jboss.arquillian.warp.impl.server.event.RequestProcessingFinished;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingStarted;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.arquillian.warp.spi.context.RequestScoped;
 
 public class WarpRequestProcessor {
 
@@ -51,10 +49,6 @@ public class WarpRequestProcessor {
     private Event<EnrichHttpResponse> enrichHttpResponse;
 
     @Inject
-    @RequestScoped
-    private InstanceProducer<NonWritingResponse> nonWritingResponse;
-
-    @Inject
     private Event<ExecuteWarp> executeWarp;
 
     @Inject
@@ -66,8 +60,6 @@ public class WarpRequestProcessor {
         requestProcessingStarted.fire(new RequestProcessingStarted());
 
         try {
-            nonWritingResponse.set(new NonWritingResponse(response));
-
             executeWarp.fire(new ExecuteWarp());
 
         } catch (Throwable e) {

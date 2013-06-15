@@ -24,12 +24,11 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.impl.server.execution.NonWritingResponse;
 
 public class HttpServletResponseProvider implements ResourceProvider {
 
     @Inject
-    private Instance<NonWritingResponse> response;
+    private Instance<HttpServletResponse> response;
 
     @Override
     public boolean canProvide(Class<?> type) {

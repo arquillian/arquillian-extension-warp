@@ -20,16 +20,13 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.warp.impl.server.execution.NonWritingResponse;
 import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.arquillian.warp.spi.WarpCommons;
 
 public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
 
@@ -45,41 +42,25 @@ public class DefaultHttpResponseEnricher implements HttpResponseEnricher {
     private Instance<HttpServletResponse> response;
 
     @Inject
-    private Instance<NonWritingResponse> nonWritingResponse;
-
-    @Inject
     private Instance<PayloadRegistry> payloadRegistry;
 
     @Override
     public void enrichResponse() {
         try {
-            enrich(responsePayload.get(), response.get(), nonWritingResponse.get());
+            registerResponsePayload(responsePayload.get());
         } catch (Exception e) {
             log.log(Level.WARNING, "Response enrichment failed", e);
 
             ResponsePayload exceptionPayload = new ResponsePayload(requestPayload.get().getSerialId());
             try {
-                enrich(exceptionPayload, response.get(), nonWritingResponse.get());
+                registerResponsePayload(exceptionPayload);
             } catch (Exception ex) {
                 log.log(Level.SEVERE, "Response enrichment failed to attach enrichment failure", ex);
             }
         }
     }
 
-    private void enrich(ResponsePayload payload, HttpServletResponse response, NonWritingResponse nonWritingResponse)
-            throws IOException {
-
-        payload.setStatus(nonWritingResponse.getStatus());
-        payload.setHeaders(nonWritingResponse.getHeaders());
-
+    private void registerResponsePayload(ResponsePayload payload) throws IOException {
         payloadRegistry.get().registerResponsePayload(payload);
-
-        // set a header with the serialId of a payload
-        response.setHeader(WarpCommons.ENRICHMENT_RESPONSE, Long.toString(payload.getSerialId()));
-
-        ServletOutputStream servletOutputStream = response.getOutputStream();
-
-        // finalize
-        nonWritingResponse.finallyWriteAndClose(servletOutputStream);
     }
 }

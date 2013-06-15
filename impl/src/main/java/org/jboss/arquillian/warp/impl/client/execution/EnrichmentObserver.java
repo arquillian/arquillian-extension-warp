@@ -82,18 +82,20 @@ public class EnrichmentObserver {
 
     public void tryDeenrichResponse(@Observes FilterHttpResponse event) {
         final HttpResponse response = event.getResponse();
+        final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
         final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
-        if (service.isEnriched(response)) {
-            deenrichHttpResponse.fire(new DeenrichHttpResponse(response, service));
+        if (service.isEnriched(request, response)) {
+            deenrichHttpResponse.fire(new DeenrichHttpResponse(request, response));
         }
     }
 
     public void deenrichResponse(@Observes DeenrichHttpResponse event) {
         final HttpResponse response = event.getResponse();
+        final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
         final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
-        service.deenrichResponse(response);
+        service.deenrichResponse(request, response);
     }
 
     private WarpContext warpContext() {
