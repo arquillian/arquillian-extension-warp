@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -73,7 +72,7 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         HttpFilter responseFilter = getHttpResponseDeenrichmentFilter(retriever);
         String hostPort = realUrl.getHost() + ":" + realUrl.getPort();
 
-        setupLittleProxyConfig();
+        LittleProxyConfig.setTransparent(true);
         HttpProxyServer server = new WarpHttpProxyServer(proxyUrl.getPort(), hostPort, requestFilter, responseFilter);
 
         server.start();
@@ -173,20 +172,6 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         public FilterResponseContext(HttpRequest request, HttpResponse response) {
             this.request = request;
             this.response = response;
-        }
-    }
-
-    private void setupLittleProxyConfig() {
-
-        try {
-            Field field = LittleProxyConfig.class.getDeclaredField("transparent");
-            field.setAccessible(true);
-            field.set(null, true);
-            field.setAccessible(false);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Warp proxy server hacks LittleProxy configuration in order to configure it transparently - this hack was designed to work with LittleProxy 0.5.3",
-                    e);
         }
     }
 }
