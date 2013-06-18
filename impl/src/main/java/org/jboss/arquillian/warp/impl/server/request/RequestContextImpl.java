@@ -30,9 +30,7 @@ import org.jboss.arquillian.warp.spi.context.RequestScoped;
  * @author Lukas Fryc
  *
  */
-public class RequestContextImpl extends AbstractContext<String> implements RequestContext {
-
-    private static final String REQUEST_CONTEXT_ID = "request";
+public class RequestContextImpl extends AbstractContext<Integer> implements RequestContext {
 
     /*
      * (non-Javadoc)
@@ -52,25 +50,5 @@ public class RequestContextImpl extends AbstractContext<String> implements Reque
     @Override
     protected ObjectStore createNewObjectStore() {
         return new HashObjectStore();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#activate()
-     */
-    @Override
-    public void activate() {
-        super.activate(REQUEST_CONTEXT_ID);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#destroy()
-     */
-    @Override
-    public void destroy() {
-        super.destroy(REQUEST_CONTEXT_ID);
     }
 }

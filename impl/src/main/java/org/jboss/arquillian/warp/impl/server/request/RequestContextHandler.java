@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.server.request;
 
+import javax.servlet.ServletRequest;
+
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -36,8 +38,9 @@ public class RequestContextHandler {
     private Instance<RequestContext> requestContextInstance;
 
     public void createRequestContext(@Observes(precedence = 100) EventContext<BeforeRequest> context) {
+        ServletRequest request = context.getEvent().getRequest();
         RequestContext requestContext = this.requestContextInstance.get();
-        requestContext.activate();
+        requestContext.activate(request.hashCode());
         context.proceed();
     }
 

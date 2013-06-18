@@ -18,12 +18,12 @@ package org.jboss.arquillian.warp.spi.context;
 
 import javax.servlet.ServletRequest;
 
-import org.jboss.arquillian.core.spi.context.NonIdBoundContext;
+import org.jboss.arquillian.core.spi.context.IdBoundContext;
 
 /**
  * The context bound with current {@link ServletRequest}.
  *
  * @author Lukas Fryc
  */
-public interface RequestContext extends NonIdBoundContext {
+public interface RequestContext extends IdBoundContext<Integer> {
 }

@@ -51,7 +51,7 @@ public class LifecycleManagerObserver {
         return injector.get().inject(object);
     }
 
-    public void initializeManagerAndDriver(@Observes BeforeRequest event) {
+    public void initializeLifecycleManagerAndInspectionRegistry(@Observes BeforeRequest event) {
         manager.set(inject(new LifecycleManagerImpl()));
         registry.set(inject(new InspectionRegistry()));
     }
