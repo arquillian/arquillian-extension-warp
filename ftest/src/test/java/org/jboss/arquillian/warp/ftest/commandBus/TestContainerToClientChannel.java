@@ -29,6 +29,7 @@ import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
@@ -43,6 +44,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author atzoum
@@ -56,16 +58,13 @@ public class TestContainerToClientChannel {
     @ArquillianResource
     private URL contextPath;
 
-
+    @Drone
+    private WebDriver browser;
 
     private Activity pingUrl = new Activity() {
         @Override
         public void perform() {
-            try {
-                contextPath.getContent();
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
+            browser.navigate().to(contextPath + "index.html");
         }
     };
 

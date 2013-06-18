@@ -30,8 +30,6 @@ import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -78,12 +76,5 @@ public class TestInspectionFailurePropagation {
                 }
             }
         );
-    }
-
-    public static class JsfRequestFilter implements RequestFilter<HttpRequest> {
-        @Override
-        public boolean matches(HttpRequest httpRequest) {
-            return httpRequest.getUri().contains("index.jsf");
-        }
     }
 }
