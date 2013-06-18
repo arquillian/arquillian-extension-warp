@@ -27,6 +27,7 @@ import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.VerifyResponsePayload;
 import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry;
+import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry.ResponsePayloadWasNeverRegistered;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.shared.command.Command;
 import org.jboss.arquillian.warp.impl.shared.command.CommandService;
@@ -74,14 +75,9 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
         final WarpContext context = WarpContextStore.get();
         try {
 
-            // ensures that some content has been already written
-            // we should actually ensure here that whole message was read
-            response.getContent().readableBytes();
-
             long serialId = getSerialId(request);
 
-            ResponsePayload payload = remoteOperationService().execute(new RetrievePayloadFromServer(serialId))
-                    .getResponsePayload();
+            ResponsePayload payload = retrieveResponsePayload(serialId);
 
             if (context != null) {
                 verifyResponsePayload.fire(new VerifyResponsePayload(payload));
@@ -105,6 +101,25 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
                 log.log(Level.WARNING, "Unable to push exception to WarpContext", originalException);
             }
         }
+    }
+
+    /**
+     * Contacts server and tries to retrieve response payload via serialId.
+     *
+     * Repeats the retrieval until the payload is found or number of allowed iterations is reached.
+     */
+    private ResponsePayload retrieveResponsePayload(long serialId) throws InterruptedException {
+        ResponsePayloadWasNeverRegistered last = null;
+        for (int i = 0; i <= 10; i++) {
+            try {
+                return remoteOperationService().execute(new RetrievePayloadFromServer(serialId))
+                        .getResponsePayload();
+            } catch (ResponsePayloadWasNeverRegistered e) {
+                Thread.sleep(300);
+                last = e;
+            }
+        }
+        throw last;
     }
 
     private Long getSerialId(HttpRequest request) {

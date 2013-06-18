@@ -58,9 +58,30 @@ public class PayloadRegistry {
     public ResponsePayload retrieveResponsePayload(long serialId) {
         ResponsePayload payload = responsePayloads.remove(serialId);
         if (payload == null) {
-            throw new IllegalStateException("The response payload with serialId " + serialId + " was never registered");
+            throw new ResponsePayloadWasNeverRegistered("The response payload with serialId " + serialId + " was never registered");
         }
         return payload;
+    }
+
+    public static class ResponsePayloadWasNeverRegistered extends RuntimeException {
+
+        private static final long serialVersionUID = 6156176090793881709L;
+
+        public ResponsePayloadWasNeverRegistered() {
+            super();
+        }
+
+        public ResponsePayloadWasNeverRegistered(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public ResponsePayloadWasNeverRegistered(String message) {
+            super(message);
+        }
+
+        public ResponsePayloadWasNeverRegistered(Throwable cause) {
+            super(cause);
+        }
     }
 
 }

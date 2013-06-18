@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -29,6 +30,8 @@ import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContex
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContexts;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.execution.HttpRequestWrapper;
+import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLToContextMapping.OperationalContextNotBoundException;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.littleshoot.proxy.HttpFilter;
@@ -42,6 +45,8 @@ import org.littleshoot.proxy.LittleProxyConfig;
  * @author Lukas Fryc
  */
 public class DefaultProxyService implements ProxyService<HttpProxyServer> {
+
+    private Logger log = Logger.getLogger(DefaultProxyService.class.getName());
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
@@ -100,7 +105,11 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         return new HttpRequestEnrichmentFilter() {
             @Override
             public void filter(HttpRequest request) {
-                operation.performInContext(request);
+                try {
+                    operation.performInContext(request);
+                } catch (OperationalContextNotBoundException e) {
+                    log.info("The request was observed out of a test's context, it won't be enriched: " + new HttpRequestWrapper(request));
+                }
             }
         };
     }
@@ -137,7 +146,12 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
             @Override
             public HttpResponse filterResponse(HttpRequest request, HttpResponse response) {
-                return filterResponse.performInContext(new FilterResponseContext(request, response));
+                try {
+                    return filterResponse.performInContext(new FilterResponseContext(request, response));
+                } catch (OperationalContextNotBoundException e) {
+                    log.info("The response was observed out of a test's context, it won't be inspected: " + new HttpRequestWrapper(request));
+                    return response;
+                }
             }
 
             @Override

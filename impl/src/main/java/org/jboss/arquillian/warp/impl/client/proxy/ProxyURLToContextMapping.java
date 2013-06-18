@@ -50,7 +50,7 @@ public class ProxyURLToContextMapping {
     public OperationalContext get(URL proxyUrl) {
         OperationalContext operationalContext = urlToContext.get(proxyUrl);
         if (operationalContext == null) {
-            throw new IllegalStateException("The OperationalContext wasn't setup for this URL: " + proxyUrl);
+            throw new OperationalContextNotBoundException("The OperationalContext wasn't setup for this URL: " + proxyUrl);
         }
         return operationalContext;
     }
@@ -63,6 +63,27 @@ public class ProxyURLToContextMapping {
                     throw new IllegalStateException("The OperationalContext wasn't setup for this URL: " + url);
                 }
             }
+        }
+    }
+
+    public static class OperationalContextNotBoundException extends RuntimeException {
+
+        private static final long serialVersionUID = 4855105259819295574L;
+
+        public OperationalContextNotBoundException() {
+            super();
+        }
+
+        public OperationalContextNotBoundException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public OperationalContextNotBoundException(String message) {
+            super(message);
+        }
+
+        public OperationalContextNotBoundException(Throwable cause) {
+            super(cause);
         }
     }
 

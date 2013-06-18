@@ -74,6 +74,7 @@ public class WarpFilter implements Filter {
     @Override
     public void destroy() {
         manager.shutdown();
+        manager = null;
         delegator = null;
     }
 
@@ -85,11 +86,15 @@ public class WarpFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, final FilterChain chain) throws IOException,
             ServletException {
 
-        if (req instanceof HttpServletRequest && resp instanceof HttpServletResponse) {
+        if (manager == null || isHttpRequest(req, resp)) {
             doFilterHttp((HttpServletRequest) req, (HttpServletResponse) resp, chain);
         } else {
             chain.doFilter(req, resp);
         }
+    }
+
+    private boolean isHttpRequest(ServletRequest req, ServletResponse resp) {
+        return req instanceof HttpServletRequest && resp instanceof HttpServletResponse;
     }
 
     /**

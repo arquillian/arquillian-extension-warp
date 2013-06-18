@@ -80,7 +80,6 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             "org.jboss.arquillian.warp.impl.server.delegation",
             "org.jboss.arquillian.warp.impl.server.remote",
             "org.jboss.arquillian.warp.impl.shared",
-            "org.jboss.arquillian.warp.impl.shared.event",
             "org.jboss.arquillian.warp.impl.shared.command",
             "org.jboss.arquillian.warp.impl.utils",
 
