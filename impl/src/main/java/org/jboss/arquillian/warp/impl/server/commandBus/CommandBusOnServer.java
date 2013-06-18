@@ -103,7 +103,6 @@ public class CommandBusOnServer implements
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
