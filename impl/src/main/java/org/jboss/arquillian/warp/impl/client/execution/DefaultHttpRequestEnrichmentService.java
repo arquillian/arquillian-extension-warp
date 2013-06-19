@@ -38,6 +38,7 @@ import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.command.Command;
 import org.jboss.arquillian.warp.impl.shared.command.CommandService;
+import org.jboss.arquillian.warp.impl.utils.Rethrow;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
@@ -128,8 +129,9 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
             org.jboss.netty.handler.codec.http.HttpRequest nettyHttpRequest = ((HttpRequestWrapper) request).unwrap();
             nettyHttpRequest.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(Long.toString(serialId)));
         } catch (Throwable originalException) {
-            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed:\n"
-                    + originalException.getMessage(), originalException);
+            Throwable cause = Rethrow.getOriginalCause(originalException);
+            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed; caused by:\n"
+                    + cause.getClass().getName() + ": " + cause.getMessage(), originalException);
             warpContext().pushException(explainingException);
         }
     }

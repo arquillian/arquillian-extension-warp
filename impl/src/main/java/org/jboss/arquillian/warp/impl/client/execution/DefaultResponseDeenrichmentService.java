@@ -23,7 +23,10 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.spi.ExceptionProxy;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
+import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
+import org.jboss.arquillian.warp.exception.WarpExecutionException;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.event.VerifyResponsePayload;
 import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry;
@@ -31,6 +34,7 @@ import org.jboss.arquillian.warp.impl.server.inspection.PayloadRegistry.Response
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.impl.shared.command.Command;
 import org.jboss.arquillian.warp.impl.shared.command.CommandService;
+import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
@@ -87,10 +91,10 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
 
             if (context != null) {
 
-                ClientWarpExecutionException explainingException;
+                WarpExecutionException explainingException;
 
-                if (originalException instanceof ClientWarpExecutionException) {
-                    explainingException = (ClientWarpExecutionException) originalException;
+                if (originalException instanceof WarpExecutionException) {
+                    explainingException = (WarpExecutionException) originalException;
                 } else {
                     explainingException = new ClientWarpExecutionException("deenriching response failed: "
                             + originalException.getMessage(), originalException);
@@ -112,8 +116,12 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
         ResponsePayloadWasNeverRegistered last = null;
         for (int i = 0; i <= 10; i++) {
             try {
-                return remoteOperationService().execute(new RetrievePayloadFromServer(serialId))
-                        .getResponsePayload();
+                RetrievePayloadFromServer result = remoteOperationService().execute(new RetrievePayloadFromServer(serialId));
+                if (result.getExceptionProxy() != null) {
+                    throw new ServerWarpExecutionException(result.getExceptionProxy().createException());
+                } else {
+                    return result.getResponsePayload();
+                }
             } catch (ResponsePayloadWasNeverRegistered e) {
                 Thread.sleep(300);
                 last = e;
@@ -144,19 +152,29 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
         private transient Instance<PayloadRegistry> registry;
 
         private long serialId;
-        private ResponsePayload responsePayload;
+        private byte[] serializedPayload;
+        private ExceptionProxy exceptionProxy;
 
         public RetrievePayloadFromServer(long serialId) {
             this.serialId = serialId;
         }
 
         public ResponsePayload getResponsePayload() {
-            return responsePayload;
+            return SerializationUtils.deserializeFromBytes(serializedPayload);
         }
 
         @Override
         public void perform() {
-            responsePayload = registry.get().retrieveResponsePayload(serialId);
+            try {
+                ResponsePayload responsePayload = registry.get().retrieveResponsePayload(serialId);
+                serializedPayload = SerializationUtils.serializeToBytes(responsePayload);
+            } catch (Throwable e) {
+                exceptionProxy = ExceptionProxy.createForException(e);
+            }
+        }
+
+        public ExceptionProxy getExceptionProxy() {
+            return exceptionProxy;
         }
     }
 }

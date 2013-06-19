@@ -16,15 +16,20 @@
  */
 package org.jboss.arquillian.warp.exception;
 
-public class ServerWarpExecutionException extends RuntimeException {
+/**
+ * The exception thrown on a server in reaction to unexpected behavior during Warp execution.
+ *
+ * @author Lukas Fryc
+ */
+public class ServerWarpExecutionException extends WarpExecutionException {
 
     private static final long serialVersionUID = 7447102661182849547L;
 
     public ServerWarpExecutionException(String message) {
-        super("The error occured during server request: " + message);
+        super("The error occured during server request processing:\n" + message);
     }
 
     public ServerWarpExecutionException(Throwable cause) {
-        super("The error occured during server request: " + cause.getMessage(), cause);
+        super("The error occured during server request processing:\n" + cause.getMessage(), cause);
     }
 }

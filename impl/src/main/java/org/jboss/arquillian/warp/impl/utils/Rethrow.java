@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.utils;
 
+import java.lang.reflect.InvocationTargetException;
+
+
 /**
  * Helper for rethrowing exceptions as unchecked exceptions
  *
@@ -50,5 +53,18 @@ public final class Rethrow {
             }
             throw exception;
         }
+    }
+
+    /**
+     * Retrieves original cause from a stack of exceptions bound together with {@link Throwable#getCause()} references.
+     */
+    public static Throwable getOriginalCause(Throwable e) {
+        if (e instanceof InvocationTargetException) {
+            return getOriginalCause(((InvocationTargetException) e).getTargetException());
+        }
+        if (e.getCause() instanceof Throwable) {
+            return getOriginalCause(e.getCause());
+        }
+        return e;
     }
 }

@@ -80,7 +80,7 @@ public class DefaultWarpExecutor implements WarpExecutor {
         activityException = null;
         try {
             executeActivity.fire(activity);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             activityException = new ActivityException(e);
         }
     }

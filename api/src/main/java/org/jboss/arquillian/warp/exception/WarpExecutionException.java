@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,26 +17,29 @@
 package org.jboss.arquillian.warp.exception;
 
 /**
- * The exception thrown on a client in reaction to unexpected behavior during Warp execution.
+ * The exception thrown in reaction to unexpected behavior during Warp execution.
+ *
+ * @see ClientWarpExecutionException
+ * @see ServerWarpExecutionException
  *
  * @author Lukas Fryc
  */
-public class ClientWarpExecutionException extends WarpExecutionException {
+public class WarpExecutionException extends RuntimeException {
 
-    private static final long serialVersionUID = -2549252400983707523L;
+    private static final long serialVersionUID = -7337485507346640475L;
 
-    public ClientWarpExecutionException() {
+    public WarpExecutionException() {
     }
 
-    public ClientWarpExecutionException(String message, Throwable cause) {
+    public WarpExecutionException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ClientWarpExecutionException(String message) {
+    public WarpExecutionException(String message) {
         super(message);
     }
 
-    public ClientWarpExecutionException(Throwable cause) {
+    public WarpExecutionException(Throwable cause) {
         super(cause);
     }
 }
