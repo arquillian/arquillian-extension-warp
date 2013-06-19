@@ -18,12 +18,17 @@ package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.util.logging.Logger;
 
+import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.jboss.netty.util.HashedWheelTimer;
 import org.littleshoot.proxy.ChainProxyManager;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
+import org.littleshoot.proxy.HandshakeHandlerFactory;
 import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpRequestFilter;
 import org.littleshoot.proxy.HttpResponseFilters;
+import org.littleshoot.proxy.ProxyCacheManager;
 
 public class WarpHttpProxyServer extends DefaultHttpProxyServer {
 
@@ -35,8 +40,9 @@ public class WarpHttpProxyServer extends DefaultHttpProxyServer {
 
     private WarpHttpProxyServer(int port, HttpRequestFilter requestFilter, HttpResponseFilters responseFilters,
             ChainProxyManager chainProxyManager) {
-
-        super(port, responseFilters, chainProxyManager, null, requestFilter);
+        super(port, responseFilters, chainProxyManager, (HandshakeHandlerFactory) null, requestFilter,
+                new NioClientSocketChannelFactory(), new HashedWheelTimer(), new NioServerSocketChannelFactory(),
+                (ProxyCacheManager) new ProxyRequestInterceptor());
     }
 
     private static ChainProxyManager createChainProxy(final String forwardHostPort) {
