@@ -54,7 +54,7 @@
     <properties>
         <!-- Arquillian -->
         <version.servlet_api>3.0.1</version.servlet_api>
-        <version.arquillian_core>1.0.3.Final</version.arquillian_core>
+        <version.arquillian_core>1.0.4.Final</version.arquillian_core>
         <version.arquillian_drone>1.1.0.Final</version.arquillian_drone>
         <version.arquillian_jacoco>1.0.0.Alpha5</version.arquillian_jacoco>
 
@@ -66,7 +66,7 @@
         <version.hamcrest>1.1</version.hamcrest>
         <version.mockito>1.9.0</version.mockito>
         <version.jacoco>0.6.0.201210061924</version.jacoco>
-        <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
+        <version.shrinkwrap_resolver>2.0.0</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
         <version.org.wildfly>8.0.0.Alpha1</version.org.wildfly>
