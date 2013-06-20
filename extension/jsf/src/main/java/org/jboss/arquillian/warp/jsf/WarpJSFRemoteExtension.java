@@ -17,7 +17,9 @@
 package org.jboss.arquillian.warp.jsf;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
+import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.warp.jsf.enricher.ManagedPropertyTestEnricher;
 import org.jboss.arquillian.warp.jsf.provider.ApplicationProvider;
 import org.jboss.arquillian.warp.jsf.provider.ELContextProvider;
 import org.jboss.arquillian.warp.jsf.provider.ELResolverProvider;
@@ -55,5 +57,7 @@ public class WarpJSFRemoteExtension implements RemoteLoadableExtension {
         builder.service(ResourceProvider.class, StateManagerProvider.class);
         builder.service(ResourceProvider.class, UIViewRootProvider.class);
         builder.service(ResourceProvider.class, ViewHandlerProvider.class);
+
+        builder.service(TestEnricher.class, ManagedPropertyTestEnricher.class);
     }
 }
