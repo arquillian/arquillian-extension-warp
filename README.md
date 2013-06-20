@@ -10,9 +10,26 @@ Warp has built-in support for following frameworks
 
 and it has also several framework extensions
 
-* [Spring MVC](http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/) `Alpha`
-* [REST](https://github.com/jmnarloch/arquillian-extension-warp-rest/blob/master/ftest/ftest-resteasy/src/test/java/org/jboss/arquillian/quickstart/resteasy/service/rs/StockServiceAjaxTestCase.java#L78) `Proof of Concept`
+* [Spring MVC](http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/) `Alpha` - led by [Jakub Narloch](https://github.com/jmnarloch/)
+* [REST](https://github.com/jmnarloch/arquillian-extension-warp-rest/blob/master/ftest/ftest-resteasy/src/test/java/org/jboss/arquillian/quickstart/resteasy/service/rs/StockServiceAjaxTestCase.java#L78) `Proof of Concept` - led by [Jakub Narloch](https://github.com/jmnarloch/)
+* [SeamTest migration layer](https://github.com/maschmid/warped-seam-test) `Proof of Concept` - led by [Marek Schmidt](https://github.com/maschmid)
 
+Documentation
+-------------
+
+* [Draft for the Documentation](https://github.com/lfryc/arquillian.github.com/blob/warp-docs/docs/warp.adoc)
+
+Reading
+-------
+
+* [Testing JSF with Arquillian Warp and Graphene](http://lukas.fryc.eu/blog/tags/testing-jsf/)
+* [Warp Spring Extension](http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/)
+* [Arquillian Warp and TomEE](http://rmannibucau.wordpress.com/2012/10/23/arquillian-warp-and-tomee/)
+
+<h3>Release blogs</h3>
+
+* [1.0.0.Alpha2 Release Blog](http://arquillian.org/blog/2013/01/15/arquillian-extension-warp-1-0-0-Alpha2/)
+* [1.0.0.Alpha1 Release Blog](http://arquillian.org/blog/2012/05/27/arquillian-extension-warp-1-0-0-Alpha1/)
 
 Links
 -----
@@ -20,28 +37,25 @@ Links
 * [Issue Tracker](https://issues.jboss.org/browse/ARQ/component/12315782)
 * [Continuous Integration](https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/)
 
-Reading
--------
-
-* [1.0.0.Alpha1 Release Blog](http://arquillian.org/blog/2012/05/27/arquillian-extension-warp-1-0-0-Alpha1/)
-* [Warp Spring Extension](http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/)
-
 Community
 ---------
 
-* IRC: #jbosstesting @ irc.freenode.net
+* Chat: #jbosstesting channel @ [irc.freenode.net](http://webchat.freenode.net/)
 * [Blogs](http://arquillian.org/blog/tags/warp/)
 * [Forums](https://community.jboss.org/en/arquillian/dev)
+* [Roadmap](https://community.jboss.org/thread/222044)
 
-Configuration
--------------
+Getting Started
+---------------
+
+<h3>Setting up a project</h3>
 
 Just add impl module to classpath and run test either from IDE or maven.
 
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp</artifactId>
-        <version>1.0.0.Alpha2</version>
+        <version>1.0.0.Alpha3</version>
         <type>pom</type>
     </dependency>
 
@@ -50,16 +64,16 @@ or any framework-specific extension:
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-jsf</artifactId>
-        <version>1.0.0.Alpha2</version>
+        <version>1.0.0.Alpha3</version>
     </dependency>
 
 Use the servlet protocol in `arquillian.xml` configuration:
 
     <defaultProtocol type="Servlet 3.0"/>
 
+For more information on getting started, see documentation.
 
-Writing Warp tests
-------------------
+<h3>Writing Warp tests</h3>
 
 To allow your test to use the Warp, place a `@WarpTest` annotation to the test class:
 
@@ -72,8 +86,7 @@ To allow your test to use the Warp, place a `@WarpTest` annotation to the test c
 Don't forget to force Arquillian to run the test on a client with a `@RunAsClient` annotation.
 
 
-Using `Warp` to trigger the client action
-------------------------------------------
+<h3>Using `Warp` to trigger the client action</h3>
 
 You can use any HTTP client, such as WebDriver (driven by [`@Drone`](https://docs.jboss.org/author/display/ARQ/Drone)), to trigger the server logic:
 
@@ -104,8 +117,7 @@ Finally, in the `inspect` method, you need to provide object which implements `I
 Don't forget to provide `serialVersionUID` for `Inspection` objects.
 
 
-Asserting server state with `Inspection`
------------------------------------------
+<h3>Asserting server state with `Inspection`</h3>
 
 In the `Inspection` implementation, you can provide test methods annotated with lifecycle-test annotations:
 
@@ -131,8 +143,8 @@ Simple assertion may look like:
 
 Note that you can use dependency injection to bring the classes such as CDI beans, EJB beans, or any other resource supported by Arquillian.
 
-Learning
---------
+Learning from Tests
+-------------------
 
 In order to explore more use cases for Warp, the best way is to explore functional tests:
 
