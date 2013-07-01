@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
@@ -38,6 +39,7 @@ import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichm
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService.RetrievePayloadFromServer;
 import org.jboss.arquillian.warp.impl.server.commandBus.CommandBusOnServer;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
+import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
@@ -143,6 +145,10 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             archive.addClasses(REQUIRED_WARP_INNER_CLASSES);
 
+            // Delete the WarpFilter from the auxiliary jar.
+            // It must go into the testable war that may be only a module of an ear
+            archive.delete("org/jboss/arquillian/warp/impl/server/execution/WarpFilter.class");
+
             // register remote extension
             archive.addClass(WarpRemoteExtension.class);
             archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),"!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
@@ -181,6 +187,16 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
                 applicationArchive.delete(archivePath);
             }
 
+            // Add the WebFilter to the protocolArchive and not to the auxiliary jar that may be added as
+            // a library to the ear
+            // TODO: Add the filter to the web.xml for the Servlet 2.5 protocol.
+            if (Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
+                protocolArchive.as(WebArchive.class).addAsLibrary(
+                    ShrinkWrap.create(JavaArchive.class, "arquillian-warp-filter.jar")
+                        .addClass(WarpFilter.class));
+            } else {
+                throw new IllegalArgumentException("Protocol archives of type "+protocolArchive.getClass()+" not supported. Please use the Servlet 3.0 protocol.");
+            }
         }
     }
 }
