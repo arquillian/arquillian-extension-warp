@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
@@ -188,10 +189,14 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             // Add the WebFilter to the protocolArchive and not to the auxiliary jar that may be added as
             // a library to the ear
-            WebArchive protocolWar = (WebArchive)protocolArchive;
-            protocolWar.addAsLibrary(
+            // TODO: Add the filter to the web.xml for the Servlet 2.5 protocol.
+            if (Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
+                protocolArchive.as(WebArchive.class).addAsLibrary(
                     ShrinkWrap.create(JavaArchive.class, "arquillian-warp-filter.jar")
                         .addClass(WarpFilter.class));
+            } else {
+                throw new IllegalArgumentException("Protocol archives of type "+protocolArchive.getClass()+" not supported. Please use the Servlet 3.0 protocol.");
+            }
         }
     }
 }
