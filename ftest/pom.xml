@@ -15,7 +15,6 @@
     <properties>
         <browser>htmlUnit</browser>
         <remoteReusable>false</remoteReusable>
-        <version.org.jboss.jbossas>7.2.0.Final</version.org.jboss.jbossas>
     </properties>
 
     <dependencies>
