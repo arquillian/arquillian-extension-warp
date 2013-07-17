@@ -32,7 +32,9 @@ public final class ShrinkWrapUtils {
 
             // get a absolute file system path
             String file = url.getFile();
-            file = file.substring(file.indexOf(":") + 1);
+            if (file.startsWith("file:")) {
+                file = file.substring(file.indexOf(":") + 1);
+            }
             file = file.substring(0, file.indexOf('!'));
 
             JavaArchive jar = ShrinkWrap.create(ZipImporter.class, file + "!").importFrom(new File(file)).as(JavaArchive.class);
