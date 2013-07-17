@@ -145,8 +145,7 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
 
             archive.addClasses(REQUIRED_WARP_INNER_CLASSES);
 
-            // Delete the WarpFilter from the auxiliary jar.
-            // It must go into the testable war that may be only a module of an ear
+            // WarpFilter must go into the testable war that may be only a module of an ear (ARQ-1422)
             archive.delete("org/jboss/arquillian/warp/impl/server/execution/WarpFilter.class");
 
             // register remote extension
@@ -187,15 +186,14 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
                 applicationArchive.delete(archivePath);
             }
 
-            // Add the WebFilter to the protocolArchive and not to the auxiliary jar that may be added as
-            // a library to the ear
-            // TODO: Add the filter to the web.xml for the Servlet 2.5 protocol.
+            // Add the WarpFilter to the protocolArchive and not to the auxiliary jar that may be added as
+            // a library to the ear (ARQ-1422)
             if (Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
                 protocolArchive.as(WebArchive.class).addAsLibrary(
-                    ShrinkWrap.create(JavaArchive.class, "arquillian-warp-filter.jar")
-                        .addClass(WarpFilter.class));
+                        ShrinkWrap.create(JavaArchive.class, "arquillian-warp-filter.jar").addClass(WarpFilter.class));
             } else {
-                throw new IllegalArgumentException("Protocol archives of type "+protocolArchive.getClass()+" not supported. Please use the Servlet 3.0 protocol.");
+                throw new IllegalArgumentException("Protocol archives of type " + protocolArchive.getClass()
+                        + " not supported. Please use the Servlet 3.0 protocol.");
             }
         }
     }
