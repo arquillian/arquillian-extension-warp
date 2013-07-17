@@ -17,14 +17,10 @@
 package org.jboss.arquillian.warp.impl.client.deployment;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
-import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -39,7 +35,6 @@ import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichm
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService.RetrievePayloadFromServer;
 import org.jboss.arquillian.warp.impl.server.commandBus.CommandBusOnServer;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
-import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
 import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
@@ -52,12 +47,12 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- * Adds all parts required by JSFUnit into web archive.
+ * Adds all required resources into web archive
  *
  * @author Lukas Fryc
  *
  */
-public class DeploymentEnricher implements ApplicationArchiveProcessor, AuxiliaryArchiveAppender, ProtocolArchiveProcessor {
+public class DeploymentEnricher implements ProtocolArchiveProcessor {
 
 
     static String[] REQUIRED_WARP_PACKAGES = new String[] {
@@ -90,6 +85,8 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
             "org.jboss.arquillian.warp.servlet.provider"
     };
 
+    static final String WARP_FILTER_CLASS_FQN = "org.jboss.arquillian.warp.impl.server.execution.WarpFilter";
+
     static Class<?>[] REQUIRED_WARP_INNER_CLASSES = new Class<?>[] {
         FireBeforeSuiteOnServer.class,
         FireAfterSuiteOnServer.class,
@@ -98,103 +95,94 @@ public class DeploymentEnricher implements ApplicationArchiveProcessor, Auxiliar
     };
 
     @Inject
-    Instance<ServiceLoader> serviceLoader;
+    private Instance<ServiceLoader> serviceLoader;
 
     @Inject
-    Instance<TestClass> testClass;
+    private Instance<TestClass> testClass;
 
     /**
-     * Adds Warp lifecycle extensions to the application archive
-     */
-    @Override
-    public void process(Archive<?> applicationArchive, TestClass testClass) {
-        if (testClass.isAnnotationPresent(WarpTest.class)) {
-            if (applicationArchive instanceof WebArchive) {
-                WebArchive webArchive = (WebArchive) applicationArchive;
-
-                // add warp extensions
-                Collection<WarpDeploymentEnrichmentExtension> lifecycleExtensions = serviceLoader.get().all(WarpDeploymentEnrichmentExtension.class);
-                for (WarpDeploymentEnrichmentExtension extension : lifecycleExtensions) {
-                    JavaArchive library = extension.getEnrichmentLibrary();
-                    if (library != null) {
-                        webArchive.addAsLibrary(library);
-                    }
-                    extension.enrichWebArchive(webArchive);
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates Warp archive
-     */
-    @Override
-    public Archive<?> createAuxiliaryArchive() {
-        TestClass testClass = this.testClass.get();
-
-        if (testClass.isAnnotationPresent(WarpTest.class)) {
-            JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-warp.jar");
-
-            // API
-            archive.addClass(Inspection.class);
-            archive.addClasses(BeforeServlet.class, AfterServlet.class);
-
-            for (String packageName : REQUIRED_WARP_PACKAGES) {
-                archive.addPackage(packageName);
-            }
-
-            archive.addClasses(REQUIRED_WARP_INNER_CLASSES);
-
-            // WarpFilter must go into the testable war that may be only a module of an ear (ARQ-1422)
-            archive.delete("org/jboss/arquillian/warp/impl/server/execution/WarpFilter.class");
-
-            // register remote extension
-            archive.addClass(WarpRemoteExtension.class);
-            archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),"!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
-            archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
-
-            // register RequestProcessingDelegationService
-            archive.addAsServiceProvider(RequestDelegationService.class, CommandBusOnServer.class);
-
-            return archive;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Removes test class from web archive
-     *
-     * (test class will be suplied by transformed asserions)
+     * Adds Warp archive to the protocol archive to make it available for WARs and EARs.
      */
     @Override
     public void process(TestDeployment testDeployment, Archive<?> protocolArchive) {
-        TestClass testClass = this.testClass.get();
+        final TestClass testClass = this.testClass.get();
+        final Archive<?> applicationArchive = testDeployment.getApplicationArchive();
 
         if (testClass.isAnnotationPresent(WarpTest.class)) {
-            Archive<?> applicationArchive = testDeployment.getApplicationArchive();
-            List<ArchivePath> classPathsToRemove = new LinkedList<ArchivePath>();
-            for (ArchivePath archivePath : applicationArchive.getContent().keySet()) {
-                String path = archivePath.get();
-                String classPath = testClass.getName().replace(".", "/");
-                // remove TestClass and its anonymous classes - do not remove static inner classes
-                if (path.matches("/WEB-INF/classes/" + classPath + "(\\$[0-9]*)?\\.class")) {
-                    classPathsToRemove.add(archivePath);
-                }
-            }
-            for (ArchivePath archivePath : classPathsToRemove) {
-                applicationArchive.delete(archivePath);
+            if (!Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
+                throw new IllegalArgumentException("Protocol archives of type " + protocolArchive.getClass()
+                        + " not supported by Warp. Please use the Servlet 3.0 protocol.");
             }
 
-            // Add the WarpFilter to the protocolArchive and not to the auxiliary jar that may be added as
-            // a library to the ear (ARQ-1422)
-            if (Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
-                protocolArchive.as(WebArchive.class).addAsLibrary(
-                        ShrinkWrap.create(JavaArchive.class, "arquillian-warp-filter.jar").addClass(WarpFilter.class));
-            } else {
-                throw new IllegalArgumentException("Protocol archives of type " + protocolArchive.getClass()
-                        + " not supported. Please use the Servlet 3.0 protocol.");
+            addWarpPackageToDeployment(protocolArchive.as(WebArchive.class));
+
+            addWarpExtensionsDeployment(protocolArchive.as(WebArchive.class));
+
+            removeTestClassFromDeployment(applicationArchive, testClass);
+        }
+    }
+
+    /**
+     * Adds the JAR package required by Warp core to the archive
+     */
+    private void addWarpPackageToDeployment(WebArchive archive) {
+        archive.addAsLibrary(createWarpArchive());
+    }
+
+    /**
+     * Adds all Warp lifecycle extension packages to the archive
+     */
+    private void addWarpExtensionsDeployment(WebArchive archive) {
+        final Collection<WarpDeploymentEnrichmentExtension> lifecycleExtensions = serviceLoader.get().all(
+                WarpDeploymentEnrichmentExtension.class);
+
+        for (WarpDeploymentEnrichmentExtension extension : lifecycleExtensions) {
+            JavaArchive library = extension.getEnrichmentLibrary();
+            if (library != null) {
+                archive.addAsLibrary(library);
+            }
+            extension.enrichWebArchive(archive);
+        }
+    }
+
+    /**
+     * removes test class from web archive (test class will be replaced by transformed assertions)
+     */
+    private void removeTestClassFromDeployment(Archive<?> archive, TestClass testClass) {
+        for (ArchivePath archivePath : archive.getContent().keySet()) {
+            String path = archivePath.get();
+            String classPath = testClass.getName().replace(".", "/");
+            // remove TestClass and its anonymous classes - do not remove static inner classes
+            if (path.matches("/WEB-INF/classes/" + classPath + "(\\$[0-9]*)?\\.class")) {
+                archive.delete(archivePath);
             }
         }
+    }
+
+    /**
+     * creates a {@link JavaArchive} as composition of resources required by Warp runtime in a container
+     */
+    JavaArchive createWarpArchive() {
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-warp.jar");
+
+        // API
+        archive.addClass(Inspection.class);
+        archive.addClasses(BeforeServlet.class, AfterServlet.class);
+
+        for (String packageName : REQUIRED_WARP_PACKAGES) {
+            archive.addPackage(packageName);
+        }
+
+        archive.addClasses(REQUIRED_WARP_INNER_CLASSES);
+
+        // register remote extension
+        archive.addClass(WarpRemoteExtension.class);
+        archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),"!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
+        archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
+
+        // register RequestProcessingDelegationService
+        archive.addAsServiceProvider(RequestDelegationService.class, CommandBusOnServer.class);
+
+        return archive;
     }
 }
