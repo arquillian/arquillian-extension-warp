@@ -23,7 +23,6 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.test.spi.ExceptionProxy;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.arquillian.warp.exception.WarpExecutionException;
@@ -117,14 +116,12 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
         for (int i = 0; i <= 10; i++) {
             try {
                 RetrievePayloadFromServer result = remoteOperationService().execute(new RetrievePayloadFromServer(serialId));
-                if (result.getExceptionProxy() != null) {
-                    throw new ServerWarpExecutionException(result.getExceptionProxy().createException());
-                } else {
-                    return result.getResponsePayload();
-                }
+                return result.getResponsePayload();
             } catch (ResponsePayloadWasNeverRegistered e) {
                 Thread.sleep(300);
                 last = e;
+            } catch (Throwable e) {
+                throw new ServerWarpExecutionException("failed to retrieve a response payloade: " + e.getMessage(), e);
             }
         }
         throw last;
@@ -144,6 +141,9 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
         return serviceLoader.get().onlyOne(CommandService.class);
     }
 
+    /**
+     * Command which retrieves the inspection payload from server
+     */
     public static class RetrievePayloadFromServer implements Command {
 
         private static final long serialVersionUID = 1L;
@@ -153,7 +153,6 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
 
         private long serialId;
         private byte[] serializedPayload;
-        private ExceptionProxy exceptionProxy;
 
         public RetrievePayloadFromServer(long serialId) {
             this.serialId = serialId;
@@ -165,16 +164,8 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
 
         @Override
         public void perform() {
-            try {
-                ResponsePayload responsePayload = registry.get().retrieveResponsePayload(serialId);
-                serializedPayload = SerializationUtils.serializeToBytes(responsePayload);
-            } catch (Throwable e) {
-                exceptionProxy = ExceptionProxy.createForException(e);
-            }
-        }
-
-        public ExceptionProxy getExceptionProxy() {
-            return exceptionProxy;
+            ResponsePayload responsePayload = registry.get().retrieveResponsePayload(serialId);
+            serializedPayload = SerializationUtils.serializeToBytes(responsePayload);
         }
     }
 }
