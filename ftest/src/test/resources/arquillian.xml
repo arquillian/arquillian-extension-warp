@@ -35,7 +35,7 @@
     <extension qualifier="webdriver">
         <property name="javascriptEnabled">true</property>
         
-        <property name="browserCapabilities">${browser}</property>
+        <property name="browser">${browser}</property>
         <property name="remoteReusable">${remoteReusable}</property>
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
     </extension>
