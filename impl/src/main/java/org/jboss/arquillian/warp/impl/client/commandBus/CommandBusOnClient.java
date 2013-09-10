@@ -46,8 +46,8 @@ import org.jboss.arquillian.warp.impl.client.context.operation.Contextualizer;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContext;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContexts;
 import org.jboss.arquillian.warp.impl.server.commandBus.CommandBusOnServer;
-import org.jboss.arquillian.warp.impl.shared.command.CommandPayload;
 import org.jboss.arquillian.warp.impl.shared.command.Command;
+import org.jboss.arquillian.warp.impl.shared.command.CommandPayload;
 import org.jboss.arquillian.warp.impl.shared.command.OperationMode;
 import org.jboss.arquillian.warp.impl.utils.Rethrow;
 

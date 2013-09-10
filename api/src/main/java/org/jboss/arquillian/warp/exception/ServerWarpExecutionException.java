@@ -32,4 +32,8 @@ public class ServerWarpExecutionException extends WarpExecutionException {
     public ServerWarpExecutionException(Throwable cause) {
         super("The error occured during server request processing:\n" + cause.getMessage(), cause);
     }
+
+    public ServerWarpExecutionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

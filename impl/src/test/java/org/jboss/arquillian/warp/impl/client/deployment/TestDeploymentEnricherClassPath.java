@@ -72,14 +72,7 @@ public class TestDeploymentEnricherClassPath {
     @Test
     public void test_that_warp_does_not_require_any_non_required_dependencies_during_packaging() {
         DeploymentEnricher deploymentEnricher = new DeploymentEnricher();
-        deploymentEnricher.testClass = new Instance<TestClass>() {
-            @Override
-            public TestClass get() {
-                return new TestClass(TestingClass.class);
-            }
-        };
-
-        deploymentEnricher.createAuxiliaryArchive();
+        deploymentEnricher.createWarpArchive();
     }
 
     @WarpTest
