@@ -26,6 +26,7 @@ import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRuntime;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * Injects instance of {@link WarpRequestSpecifier} to {@link Warp} API.
@@ -38,7 +39,7 @@ public class WarpRuntimeInitializer {
     private Instance<ServiceLoader> serviceLoader;
 
     public void injectWarpRuntime(@Observes BeforeClass event) {
-        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
+        if (WarpCommons.isWarpTest(event.getTestClass().getJavaClass())) {
             DefaultWarpRuntime runtime = new DefaultWarpRuntime();
             runtime.setWarpActivityBuilder(serviceLoader.get().onlyOne(WarpRequestSpecifier.class));
             runtime.setHttpFilterBuilder(serviceLoader.get().onlyOne(HttpFilterBuilder.class));
@@ -47,8 +48,6 @@ public class WarpRuntimeInitializer {
     }
 
     public void cleanWarpRuntime(@Observes AfterClass event) {
-        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
-            WarpRuntime.setInstance(null);
-        }
+        WarpRuntime.setInstance(null);
     }
 }

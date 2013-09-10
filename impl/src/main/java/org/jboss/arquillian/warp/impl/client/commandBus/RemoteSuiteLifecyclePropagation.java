@@ -25,9 +25,9 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.shared.command.Command;
 import org.jboss.arquillian.warp.impl.shared.command.CommandService;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * <p>
@@ -51,13 +51,13 @@ public class RemoteSuiteLifecyclePropagation {
     private Instance<ServiceLoader> serviceLoader;
 
     void sendBefore(@Observes Before event) throws Exception {
-        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
+        if (WarpCommons.isWarpTest(event.getTestClass().getJavaClass())) {
             remoteOperationService().execute(new FireBeforeSuiteOnServer());
         }
     }
 
     void sendAfter(@Observes After event) throws Exception {
-        if (event.getTestClass().isAnnotationPresent(WarpTest.class)) {
+        if (WarpCommons.isWarpTest(event.getTestClass().getJavaClass())) {
             remoteOperationService().execute(new FireAfterSuiteOnServer());
         }
     }

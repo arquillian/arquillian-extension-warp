@@ -30,7 +30,7 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
-import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * <p>
@@ -64,7 +64,7 @@ public class CommandBusObserver {
     void beforeTest(@Observes(precedence = 500) Before event) {
         Class<?> testClass = event.getTestInstance().getClass();
 
-        if (testClass.isAnnotationPresent(WarpTest.class)) {
+        if (WarpCommons.isWarpTest(testClass)) {
             startBus.fire(new StartBus(event));
         }
     }
@@ -72,7 +72,7 @@ public class CommandBusObserver {
     void afterTest(@Observes(precedence = -500) After event) {
         Class<?> testClass = event.getTestInstance().getClass();
 
-        if (testClass.isAnnotationPresent(WarpTest.class)) {
+        if (WarpCommons.isWarpTest(testClass)) {
             stopBus.fire(new StopBus(event));
         }
     }

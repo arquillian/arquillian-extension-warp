@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
-import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecyclePropagation.FireAfterSuiteOnServer;
 import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecyclePropagation.FireBeforeSuiteOnServer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService.RegisterPayloadRemotely;
@@ -39,6 +38,7 @@ import org.jboss.arquillian.warp.impl.server.lifecycle.LifecycleManagerStoreImpl
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.WarpDeploymentEnrichmentExtension;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -108,7 +108,7 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
         final TestClass testClass = this.testClass.get();
         final Archive<?> applicationArchive = testDeployment.getApplicationArchive();
 
-        if (testClass.isAnnotationPresent(WarpTest.class)) {
+        if (WarpCommons.isWarpTest(testClass.getJavaClass())) {
             if (!Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
                 throw new IllegalArgumentException("Protocol archives of type " + protocolArchive.getClass()
                         + " not supported by Warp. Please use the Servlet 3.0 protocol.");

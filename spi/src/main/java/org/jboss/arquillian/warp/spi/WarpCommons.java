@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.spi;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 
@@ -37,6 +38,21 @@ public final class WarpCommons {
     public static final String ENRICHMENT_SEQUENCE_NUMBER = "X-Arq-Enrichment-Id";
 
     /**
+     * Checks whether either given class or its superclasses are annoated with {@link WarpTest} annotation indicating that the
+     * Warp is used in the test.
+     */
+    public static boolean isWarpTest(Class<?> testClass) {
+        Class<?> clazz = testClass;
+        while (clazz != null) {
+            if (clazz.isAnnotationPresent(WarpTest.class)) {
+                return true;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return false;
+    }
+
+    /**
      * Determines whether Warp is in debug mode
      */
     public static boolean debugMode() {
@@ -46,7 +62,6 @@ public final class WarpCommons {
     /**
      * Decides whether given annotation type is {@link WarpLifecycleTest}
      * @param annotationType
-     * @return
      */
     public static boolean isWarpLifecycleTest(Class<? extends Annotation> annotationType) {
         return annotationType.getAnnotation(WarpLifecycleTest.class) != null

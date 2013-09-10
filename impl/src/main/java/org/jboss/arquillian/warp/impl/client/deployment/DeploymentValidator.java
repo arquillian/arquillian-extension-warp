@@ -23,7 +23,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 
 public class DeploymentValidator {
 
@@ -34,7 +34,7 @@ public class DeploymentValidator {
      * Verifies that deployments for Warp tests are all testable
      */
     public void verifyWarpDeployment(@Observes DeploymentScenario deploymentScenario) {
-        if (testClass.get().getJavaClass().getAnnotation(WarpTest.class) != null) {
+        if (WarpCommons.isWarpTest(testClass.get().getJavaClass())) {
             for (Deployment deployment : deploymentScenario.deployments()) {
                 DeploymentDescription description = deployment.getDescription();
                 if (!description.testable()) {
