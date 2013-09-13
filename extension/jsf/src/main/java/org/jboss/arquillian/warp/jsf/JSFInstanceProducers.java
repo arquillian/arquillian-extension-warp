@@ -121,8 +121,14 @@ public class JSFInstanceProducers {
 
     public void observesRestoreView(@Observes EventContext<AfterRestoreView> eventContext) {
         FacesContext facesContext = this.facesContext.get();
-        this.viewRoot.set(facesContext.getViewRoot());
-        this.renderKit.set(facesContext.getRenderKit());
+        UIViewRoot vr = facesContext.getViewRoot();
+        if (vr != null) {
+            this.viewRoot.set(vr);
+        }
+        RenderKit rk = facesContext.getRenderKit();
+        if (rk != null) {
+            this.renderKit.set(rk);
+        }
 
         eventContext.proceed();
     }
