@@ -60,19 +60,19 @@ public class TestJSFResourceNotFound {
     public void testNotFound() {
         try {
             Warp.initiate(new Activity() {
-                
+
                 @Override
                 public void perform() {
                     browser.navigate().to(contextPath + "faces/notFound.xhtml");
                 }
-                
+
             }).inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
             });
-            
+
             fail("expected server exception");
         } catch (ArquillianProxyException e) {
-        	// FileNotFoundException on server 
+            // FileNotFoundException on server
         } catch (ServerWarpExecutionException e) {
             if (!(e.getCause() instanceof FileNotFoundException)) {
                 fail("expected FileNotFound on server");
