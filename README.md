@@ -13,7 +13,7 @@ Warp has built-in support for following frameworks
 and it has also several framework extensions
 
 * [Spring MVC](http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/) `Alpha` - led by [Jakub Narloch](https://github.com/jmnarloch/)
-* [REST](https://github.com/jmnarloch/arquillian-extension-warp-rest/blob/master/ftest/ftest-resteasy/src/test/java/org/jboss/arquillian/quickstart/resteasy/service/rs/StockServiceAjaxTestCase.java#L78) `Proof of Concept` - led by [Jakub Narloch](https://github.com/jmnarloch/)
+* [REST](https://github.com/arquillian/arquillian-extension-rest/tree/master/warp-rest) `Alpha` - led by [Jakub Narloch](https://github.com/jmnarloch/)
 * [SeamTest migration layer](https://github.com/maschmid/warped-seam-test) `Proof of Concept` - led by [Marek Schmidt](https://github.com/maschmid)
 
 Documentation
@@ -30,6 +30,8 @@ Reading
 
 <h3>Release blogs</h3>
 
+* [1.0.0.Alpha4 Release Blog](http://arquillian.org/blog/2013/09/12/arquillian-extension-warp-1-0-0-Alpha4/)
+* [1.0.0.Alpha3 Release Blog](http://arquillian.org/blog/2013/06/20/arquillian-extension-warp-1-0-0-Alpha3/)
 * [1.0.0.Alpha2 Release Blog](http://arquillian.org/blog/2013/01/15/arquillian-extension-warp-1-0-0-Alpha2/)
 * [1.0.0.Alpha1 Release Blog](http://arquillian.org/blog/2012/05/27/arquillian-extension-warp-1-0-0-Alpha1/)
 
@@ -42,7 +44,7 @@ Links
 Community
 ---------
 
-* Chat: #jbosstesting channel @ [irc.freenode.net](http://webchat.freenode.net/)
+* Chat: #arquillian channel @ [irc.freenode.net](http://webchat.freenode.net/)
 * [Blogs](http://arquillian.org/blog/tags/warp/)
 * [Forums](https://community.jboss.org/en/arquillian/dev)
 * [Roadmap](https://community.jboss.org/thread/222044)
@@ -57,7 +59,7 @@ Just add impl module to classpath and run test either from IDE or maven.
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp</artifactId>
-        <version>1.0.0.Alpha3</version>
+        <version>1.0.0.Alpha4</version>
         <type>pom</type>
     </dependency>
 
@@ -66,7 +68,7 @@ or any framework-specific extension:
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-jsf</artifactId>
-        <version>1.0.0.Alpha3</version>
+        <version>1.0.0.Alpha4</version>
     </dependency>
 
 Use the servlet protocol in `arquillian.xml` configuration:
