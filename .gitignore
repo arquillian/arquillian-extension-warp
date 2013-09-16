@@ -10,3 +10,5 @@ log.txt
 *.faces-config.xml.jsfdia
 *.*~
 .checkstyle
+*.iml
+.idea
