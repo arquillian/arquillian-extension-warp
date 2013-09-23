@@ -50,8 +50,10 @@ public class ClassProxyUsageTracker {
     }
 
     public void registerOperationalContextToUrl(@Observes RequireProxy requireProxy) {
-        OperationalContext context = contexts.get().test();
-        mapping.get().register(requireProxy.getProxyUrl(), testClass.get().getJavaClass(), context);
+        if (!mapping.get().isRegistered(requireProxy.getProxyUrl())) {
+            OperationalContext context = contexts.get().test();
+            mapping.get().register(requireProxy.getProxyUrl(), testClass.get().getJavaClass(), context);
+        }
     }
 
     public void unregisterOperationalContext(@Observes After afterTest) {

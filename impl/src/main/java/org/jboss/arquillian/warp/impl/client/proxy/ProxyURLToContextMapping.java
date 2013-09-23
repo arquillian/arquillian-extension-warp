@@ -66,6 +66,10 @@ public class ProxyURLToContextMapping {
         }
     }
 
+    public boolean isRegistered(URL proxyUrl) {
+        return urlToContext.containsKey(proxyUrl);
+    }
+
     public static class OperationalContextNotBoundException extends RuntimeException {
 
         private static final long serialVersionUID = 4855105259819295574L;
