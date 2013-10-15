@@ -17,6 +17,9 @@
 package org.jboss.arquillian.warp.jsf;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.faces.event.PhaseId;
 
@@ -39,35 +42,41 @@ public abstract class PhaseLifecycleEvent extends WarpLifecycleEvent {
     }
 
     @Override
-    public Annotation getAnnotation() {
+    public List<Annotation> getQualifiers() {
         switch (when) {
             case BEFORE:
-                return new BeforePhase() {
+                return new ArrayList<Annotation>(
+                    Arrays.asList(new BeforePhase() {
 
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return BeforePhase.class;
-                    }
+                            @Override
+                            public Class<? extends Annotation> annotationType () {
+                                return BeforePhase.class;
+                            }
 
-                    @Override
-                    public Phase value() {
-                        return phase;
-                    }
-                };
+                            @Override
+                            public Phase value () {
+                                return phase;
+                            }
+                        }
+                    )
+                );
 
             case AFTER:
-                return new AfterPhase() {
+                return new ArrayList<Annotation>(
+                    Arrays.asList(new AfterPhase() {
 
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return AfterPhase.class;
-                    }
+                            @Override
+                            public Class<? extends Annotation> annotationType () {
+                                return AfterPhase.class;
+                            }
 
-                    @Override
-                    public Phase value() {
-                        return phase;
-                    }
-                };
+                            @Override
+                            public Phase value () {
+                                return phase;
+                            }
+                        }
+                    )
+                );
         }
         throw new IllegalStateException();
     }

@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.client.verification;
+package org.jboss.arquillian.warp.impl.server.test;
 
-import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
-import org.jboss.arquillian.warp.impl.shared.ExecutedMethod;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class InspectionMethodWasNotInvokedException extends ClientWarpExecutionException {
-
-    private static final long serialVersionUID = -2562948787400815278L;
-
-    public InspectionMethodWasNotInvokedException(ExecutedMethod method) {
-        super("Lifecycle test declared on " + method.getMethod() + " with qualifiers " + method.getQualifiers()
-                + " was not executed");
-    }
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AnotherTestAnnotation {
+    int value();
 }

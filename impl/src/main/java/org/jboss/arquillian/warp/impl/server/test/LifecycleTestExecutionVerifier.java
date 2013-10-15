@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.server.test;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -43,9 +44,9 @@ public class LifecycleTestExecutionVerifier {
             context.proceed();
         } finally {
             if (event.getTestMethodExecutor() instanceof LifecycleMethodExecutor) {
-                Annotation annotation = ((LifecycleMethodExecutor) event.getTestMethodExecutor()).getAnnotation();
+                List<Annotation> qualifiers = ((LifecycleMethodExecutor) event.getTestMethodExecutor()).getQualifiers();
 
-                ExecutedMethod executedMethod = new ExecutedMethod(event.getTestMethod(), annotation);
+                ExecutedMethod executedMethod = new ExecutedMethod(event.getTestMethod(), qualifiers);
 
                 responsePayload.get().getExecutedMethods().add(executedMethod);
             }

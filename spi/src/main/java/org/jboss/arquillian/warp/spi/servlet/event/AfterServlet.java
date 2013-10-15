@@ -17,6 +17,9 @@
 package org.jboss.arquillian.warp.spi.servlet.event;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
@@ -40,13 +43,16 @@ import org.jboss.arquillian.warp.spi.event.AfterRequest;
 public class AfterServlet extends WarpLifecycleEvent {
 
     @Override
-    public Annotation getAnnotation() {
-        return new org.jboss.arquillian.warp.servlet.AfterServlet() {
+    public List<Annotation> getQualifiers() {
+        return new ArrayList<Annotation>(
+                Arrays.asList(new org.jboss.arquillian.warp.servlet.AfterServlet() {
+                        @Override
+                        public Class<? extends Annotation> annotationType () {
+                            return org.jboss.arquillian.warp.servlet.AfterServlet.class;
+                        }
+                    }
+                )
+        );
 
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return org.jboss.arquillian.warp.servlet.AfterServlet.class;
-            }
-        };
     }
 }

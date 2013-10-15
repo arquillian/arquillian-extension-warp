@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,24 +17,26 @@
 package org.jboss.arquillian.warp.spi;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 import org.jboss.arquillian.warp.Inspection;
 
 /**
- * The lifecycle event which will is observed by {@link LifecycleTestDriver} and all methods annotated with annotation specified
- * by {@link #getAnnotation()} will be executed.
+ * The lifecycle event which is observed by {@link LifecycleTestDriver} and all methods annotated with set of qualifiers
+ * specified by {@link #getQualifiers()} will be executed.
  *
  * @author Lukas Fryc
+ * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  *
  */
 public abstract class WarpLifecycleEvent {
 
     /**
-     * Returns the annotation which annotates methods on {@link Inspection} which will be executed during this
+     * Returns the qualifiers which annotates methods on {@link Inspection} which will be executed during this
      * {@link WarpLifecycleEvent}.
      *
-     * @return the annotation which annotates methods on {@link Inspection} which will be executed during this
+     * @return the qualifiers which annotates methods on {@link Inspection} which will be executed during this
      *         {@link WarpLifecycleEvent}.
      */
-    public abstract Annotation getAnnotation();
+    public abstract List<Annotation> getQualifiers();
 }

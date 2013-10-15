@@ -36,7 +36,7 @@ import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
 
 /**
  * Observes {@link WarpLifecycleEvent} events and executed verification methods annotated with
- * {@link WarpLifecycleEvent#getAnnotation()} annotation.
+ * {@link WarpLifecycleEvent#getQualifiers()} annotation.
  *
  * See {@link LifecycleTestClassExecutor} which executes {@link BeforeClass} and {@link AfterClass} events.
  *
@@ -60,25 +60,35 @@ public class LifecycleTestDriver {
     public void fireTest(@Observes WarpLifecycleEvent event) {
 
         for (final Object inspection : registry().getInspections()) {
-            final Annotation annotation = event.getAnnotation();
+            final List<Annotation> qualifiers = event.getQualifiers();
 
-            if (annotation == null || !WarpCommons.isWarpLifecycleTest(annotation.annotationType())) {
+            if (qualifiers == null || qualifiers.size() == 0 || !isWarpLifecycleEvent(qualifiers)) {
                 throw new IllegalStateException("Warp lifecycle event must contain annotation marked with @"
                         + WarpLifecycleTest.class.getSimpleName());
             }
 
-            List<Method> methods = SecurityActions.getMethodsWithAnnotation(inspection.getClass(), annotation);
+            List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(inspection.getClass(), qualifiers);
 
             for (final Method testMethod : methods) {
-                executeTest(inspection, testMethod, annotation);
+                executeTest(inspection, testMethod, qualifiers);
             }
         }
     }
 
-    private void executeTest(Object inspection, Method method, Annotation annotation) {
+    private boolean isWarpLifecycleEvent(List<Annotation> qualifiers) {
+        for (Annotation qualifier : qualifiers) {
+            if (!WarpCommons.isWarpLifecycleTest(qualifier.annotationType())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void executeTest(Object inspection, Method method, List<Annotation> qualifiers) {
         before.fire(new Before(inspection, method));
 
-        test.fire(new Test(new LifecycleMethodExecutor(inspection, method, annotation)));
+        test.fire(new Test(new LifecycleMethodExecutor(inspection, method, qualifiers)));
 
         after.fire(new After(inspection, method));
     }
