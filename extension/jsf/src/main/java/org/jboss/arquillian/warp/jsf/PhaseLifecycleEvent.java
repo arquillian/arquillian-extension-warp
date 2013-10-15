@@ -45,8 +45,7 @@ public abstract class PhaseLifecycleEvent extends WarpLifecycleEvent {
     public List<Annotation> getQualifiers() {
         switch (when) {
             case BEFORE:
-                return new ArrayList<Annotation>(
-                    Arrays.asList(new BeforePhase() {
+                return Arrays.asList((Annotation) new BeforePhase() {
 
                             @Override
                             public Class<? extends Annotation> annotationType () {
@@ -58,12 +57,10 @@ public abstract class PhaseLifecycleEvent extends WarpLifecycleEvent {
                                 return phase;
                             }
                         }
-                    )
                 );
 
             case AFTER:
-                return new ArrayList<Annotation>(
-                    Arrays.asList(new AfterPhase() {
+                return Arrays.asList((Annotation) new AfterPhase() {
 
                             @Override
                             public Class<? extends Annotation> annotationType () {
@@ -75,7 +72,6 @@ public abstract class PhaseLifecycleEvent extends WarpLifecycleEvent {
                                 return phase;
                             }
                         }
-                    )
                 );
         }
         throw new IllegalStateException();

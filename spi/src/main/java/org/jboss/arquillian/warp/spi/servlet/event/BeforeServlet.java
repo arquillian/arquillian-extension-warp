@@ -44,14 +44,12 @@ public class BeforeServlet extends WarpLifecycleEvent {
 
     @Override
     public List<Annotation> getQualifiers() {
-        return new ArrayList<Annotation>(
-                Arrays.asList(new org.jboss.arquillian.warp.servlet.BeforeServlet() {
+        return Arrays.asList((Annotation) new org.jboss.arquillian.warp.servlet.BeforeServlet() {
                         @Override
                         public Class<? extends Annotation> annotationType() {
                             return org.jboss.arquillian.warp.servlet.BeforeServlet.class;
                         }
                     }
-                )
         );
     }
 
