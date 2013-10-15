@@ -25,6 +25,7 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -199,18 +200,49 @@ final class SecurityActions {
         return declaredAccessableMethods;
     }
 
-    static List<Method> getMethodsWithAnnotation(final Class<?> source, final Annotation annotation) {
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-        List<Method> declaredAccessableMethods = getMethodsWithAnnotation(source, annotationType);
-        Set<Method> result = new HashSet<Method>(declaredAccessableMethods);
+    static List<Method> getMethodsMatchingAllQualifiers(final Class<?> source, final List<Annotation> qualifiers) {
+        List<Method> declaredAccessableMethods = null;
+
+        for (Annotation qualifier : qualifiers) {
+            Class<? extends Annotation> annotationType = qualifier.annotationType();
+            if (declaredAccessableMethods == null) {
+                declaredAccessableMethods = getMethodsWithAnnotation(source, annotationType);
+            } else {
+                declaredAccessableMethods.retainAll(getMethodsWithAnnotation(source, annotationType));
+            }
+        }
+
+        Set<Method> matchedAccessableMethods = new HashSet<Method>(declaredAccessableMethods);
         for (Method method : declaredAccessableMethods) {
-            Annotation methodAnnotation = method.getAnnotation(annotationType);
-            for (Method parameter : annotationType.getMethods()) {
-                if (parameter.getDeclaringClass() == annotationType) {
-                    Object annotationValue = invokeSafely(methodAnnotation, parameter);
-                    Object referenceValue = invokeSafely(annotation, parameter);
-                    if (!annotationValue.equals(referenceValue)) {
-                        result.remove(method);
+            List<Annotation> methodQualifiers = Arrays.asList(method.getDeclaredAnnotations());
+
+            if (methodQualifiers.size() != qualifiers.size()) {
+                matchedAccessableMethods.remove(method);
+                continue;
+            }
+
+            for (Annotation qualifier : qualifiers) {
+                if (!method.isAnnotationPresent(qualifier.annotationType())) {
+                    matchedAccessableMethods.remove(method);
+                    break;
+                }
+            }
+        }
+
+        Set<Method> result = new HashSet<Method>(matchedAccessableMethods);
+        for (Method method : matchedAccessableMethods) {
+            for (Annotation qualifier : qualifiers) {
+                Class<? extends Annotation> annotationType = qualifier.annotationType();
+                Annotation methodAnnotation = method.getAnnotation(annotationType);
+
+                for (Method parameter : annotationType.getMethods()) {
+                    if (parameter.getDeclaringClass() == annotationType) {
+                        Object annotationValue = invokeSafely(methodAnnotation, parameter);
+                        Object referenceValue = invokeSafely(qualifier, parameter);
+                        if (!annotationValue.equals(referenceValue)) {
+                            result.remove(method);
+                            break;
+                        }
                     }
                 }
             }

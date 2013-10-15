@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -41,12 +42,68 @@ public class TestAnnotationScanning {
             }
         };
 
-        List<Method> methods = SecurityActions.getMethodsWithAnnotation(TestingClass.class, annotation);
+        List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation));
 
         assertEquals(1, methods.size());
 
         assertEquals("testMethod2", methods.get(0).getName());
 
+    }
+
+    @Test
+    public void test2() {
+        TestAnnotation annotation = new TestAnnotation() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return TestAnnotation.class;
+            }
+
+            @Override
+            public int value() {
+                return 3;
+            }
+        };
+
+        List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation));
+
+        assertEquals(0, methods.size());
+
+    }
+
+    @Test
+    public void test3() {
+        TestAnnotation annotation = new TestAnnotation() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return TestAnnotation.class;
+            }
+
+            @Override
+            public int value() {
+                return 2;
+            }
+        };
+
+        AnotherTestAnnotation annotation2 = new AnotherTestAnnotation() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return AnotherTestAnnotation.class;
+            }
+
+            @Override
+            public int value() {
+                return 1;
+            }
+        };
+
+        List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation, annotation2));
+
+        assertEquals(1, methods.size());
+
+        assertEquals("testMethod4", methods.get(0).getName());
     }
 
     public static class TestingClass {
@@ -58,6 +115,21 @@ public class TestAnnotationScanning {
 
         @TestAnnotation(2)
         public void testMethod2() {
+
+        }
+
+        @TestAnnotation(1) @AnotherTestAnnotation(2)
+        public void testMethod3() {
+
+        }
+
+        @TestAnnotation(2) @AnotherTestAnnotation(1)
+        public void testMethod4() {
+
+        }
+
+        @TestAnnotation(3) @AnotherTestAnnotation(1)
+        public void testMethod5() {
 
         }
     }

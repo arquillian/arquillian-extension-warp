@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.impl.server.test;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -27,16 +28,16 @@ public class LifecycleMethodExecutor implements TestMethodExecutor {
 
     private Object instance;
     private Method method;
-    private Annotation annotation;
+    private List<Annotation> qualifiers;
 
-    public LifecycleMethodExecutor(Object instance, Method method, Annotation annotation) {
+    public LifecycleMethodExecutor(Object instance, Method method, List<Annotation> qualifiers) {
         Validate.notNull(instance, "instance must not be null");
         Validate.notNull(method, "method must not be null");
-        Validate.notNull(annotation, "annotation must not be null");
+        Validate.notNull(qualifiers, "qualifiers must not be null");
 
         this.instance = instance;
         this.method = method;
-        this.annotation = annotation;
+        this.qualifiers = qualifiers;
     }
 
     @Override
@@ -49,8 +50,8 @@ public class LifecycleMethodExecutor implements TestMethodExecutor {
         return instance;
     }
 
-    public Annotation getAnnotation() {
-        return annotation;
+    public List<Annotation> getQualifiers() {
+        return qualifiers;
     }
 
     @Override

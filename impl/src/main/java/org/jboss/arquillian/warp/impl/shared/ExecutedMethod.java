@@ -22,22 +22,24 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.arquillian.core.spi.Validate;
 
 public class ExecutedMethod implements Externalizable {
 
     private Method method;
-    private Annotation annotation;
+    private List<Annotation> qualifiers;
 
     public ExecutedMethod() {
     }
 
-    public ExecutedMethod(Method method, Annotation annotation) {
+    public ExecutedMethod(Method method, List<Annotation> qualifiers) {
         Validate.notNull(method, "method must not be null");
-        Validate.notNull(annotation, "annotation must not be null");
+        Validate.notNull(qualifiers, "qualifiers must not be null");
         this.method = method;
-        this.annotation = annotation;
+        this.qualifiers = qualifiers;
     }
 
     public Method getMethod() {
@@ -48,19 +50,19 @@ public class ExecutedMethod implements Externalizable {
         this.method = method;
     }
 
-    public Annotation getAnnotation() {
-        return annotation;
+    public List<Annotation> getQualifiers() {
+        return qualifiers;
     }
 
-    public void setAnnotation(Annotation annotation) {
-        this.annotation = annotation;
+    public void setQualifiers(List<Annotation> qualifiers) {
+        this.qualifiers = qualifiers;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((annotation == null) ? 0 : annotation.hashCode());
+        result = prime * result + ((qualifiers == null) ? 0 : qualifiers.hashCode());
         result = prime * result + ((method == null) ? 0 : method.hashCode());
         return result;
     }
@@ -74,10 +76,10 @@ public class ExecutedMethod implements Externalizable {
         if (getClass() != obj.getClass())
             return false;
         ExecutedMethod other = (ExecutedMethod) obj;
-        if (annotation == null) {
-            if (other.annotation != null)
+        if (qualifiers == null) {
+            if (other.qualifiers != null)
                 return false;
-        } else if (!annotation.equals(other.annotation))
+        } else if (!qualifiers.equals(other.qualifiers))
             return false;
         if (method == null) {
             if (other.method != null)
@@ -90,12 +92,19 @@ public class ExecutedMethod implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(new SerializedMethod(method));
-        out.writeObject(new SerializedAnnotation(annotation));
+        out.writeInt(qualifiers.size());
+        for (Annotation qualifier : qualifiers) {
+            out.writeObject(new SerializedAnnotation(qualifier));
+        }
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         method = ((SerializedMethod) in.readObject()).getMethod();
-        annotation = ((SerializedAnnotation) in.readObject()).getAnnotation();
+        int size = in.readInt();
+        qualifiers = new ArrayList<Annotation>(size);
+        for (int i = 0; i < size; i++) {
+            qualifiers.add(((SerializedAnnotation) in.readObject()).getAnnotation());
+        }
     }
 }

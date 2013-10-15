@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.impl.client.verification;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class ResponsePayloadVerifier {
                         Class<? extends Annotation> annotationType = annotation.annotationType();
 
                         if (WarpCommons.isWarpLifecycleTest(annotationType)) {
-                            specifiedMethods.add(new ExecutedMethod(method, annotation));
+                            specifiedMethods.add(new ExecutedMethod(method, Arrays.asList(method.getDeclaredAnnotations())));
                         }
                     }
                 }
