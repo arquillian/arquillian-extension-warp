@@ -29,8 +29,6 @@ import java.io.PrintWriter;
  */
 @WebServlet("/form")
 public class FormServlet extends HttpServlet {
-    public static final String VALUE = "warp";
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
@@ -39,7 +37,6 @@ public class FormServlet extends HttpServlet {
 
         writeStart(out);
         out.write("<form action=\"http://127.0.0.1:8080/test/form\" method=\"post\">\n");
-        out.write("<input type=\"text\" id=\"data\" value=\"" + VALUE + "\" />\n");
         out.write("<input type=\"submit\" id=\"submit\" />\n");
         out.write("</form>\n");
         writeEnd(out);
@@ -55,7 +52,6 @@ public class FormServlet extends HttpServlet {
 
         writeStart(out);
         out.write("congratulations\n");
-        out.write("form input set to:" + req.getParameter("data"));
         writeEnd(out);
 
         out.close();
