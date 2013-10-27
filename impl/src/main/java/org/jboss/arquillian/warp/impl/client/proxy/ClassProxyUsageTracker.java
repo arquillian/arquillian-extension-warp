@@ -43,16 +43,25 @@ public class ClassProxyUsageTracker {
     private InstanceProducer<ProxyURLToContextMapping> mapping;
 
     @Inject
+    @ApplicationScoped
+    private InstanceProducer<RealURLToProxyURLMapping> realToProxyMapping;
+
+    @Inject
     private Instance<OperationalContexts> contexts;
 
     public void initializeMapping(@Observes ManagerStarted event) {
         mapping.set(new ProxyURLToContextMapping());
+        realToProxyMapping.set(new RealURLToProxyURLMapping());
     }
 
     public void registerOperationalContextToUrl(@Observes RequireProxy requireProxy) {
         if (!mapping.get().isRegistered(requireProxy.getProxyUrl())) {
             OperationalContext context = contexts.get().test();
             mapping.get().register(requireProxy.getProxyUrl(), testClass.get().getJavaClass(), context);
+        }
+
+        if (!realToProxyMapping.get().isRegistered(requireProxy.getRealUrl())) {
+            realToProxyMapping.get().register(requireProxy.getRealUrl(), requireProxy.getProxyUrl());
         }
     }
 

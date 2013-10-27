@@ -31,12 +31,14 @@ import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFil
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseTransformationService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultExecutionSynchronizer;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestObserverChainManager;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseTransformationService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier;
 import org.jboss.arquillian.warp.impl.client.execution.EnrichmentObserver;
@@ -95,6 +97,7 @@ public class WarpExtension implements LoadableExtension {
         builder.observer(EnrichmentObserver.class);
         builder.service(HttpRequestEnrichmentService.class, DefaultHttpRequestEnrichmentService.class);
         builder.service(HttpResponseDeenrichmentService.class, DefaultResponseDeenrichmentService.class);
+        builder.service(HttpResponseTransformationService.class, DefaultResponseTransformationService.class);
         builder.service(WarpContext.class, WarpContextImpl.class);
         builder.service(HttpFilterBuilder.class, DefaultHttpFilterBuilder.class);
         builder.service(RequestObserverChainManager.class, DefaultRequestObserverChainManager.class);

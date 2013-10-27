@@ -27,10 +27,12 @@ import org.jboss.arquillian.warp.client.exception.MultipleGroupsPerRequestExcept
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
+import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseTransformationService;
 import org.jboss.arquillian.warp.impl.client.event.DeenrichHttpResponse;
 import org.jboss.arquillian.warp.impl.client.event.EnrichHttpRequest;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpRequest;
 import org.jboss.arquillian.warp.impl.client.event.FilterHttpResponse;
+import org.jboss.arquillian.warp.impl.client.event.TransformHttpResponse;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.netty.handler.codec.http.HttpResponse;
@@ -50,6 +52,9 @@ public class EnrichmentObserver {
 
     @Inject
     private Event<DeenrichHttpResponse> deenrichHttpResponse;
+
+    @Inject
+    private Event<TransformHttpResponse> transformHttpResponse;
 
     public void tryEnrichRequest(@Observes FilterHttpRequest event) {
         final HttpRequest request = event.getRequest();
@@ -85,9 +90,19 @@ public class EnrichmentObserver {
         final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
         final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
+        transformHttpResponse.fire(new TransformHttpResponse(request, response));
+
         if (service.isEnriched(request, response)) {
             deenrichHttpResponse.fire(new DeenrichHttpResponse(request, response));
         }
+    }
+
+    public void transformResponse(@Observes TransformHttpResponse event) {
+        final HttpResponse response = event.getResponse();
+        final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
+        final HttpResponseTransformationService service = load(HttpResponseTransformationService.class);
+
+        service.transformResponse(request, response);
     }
 
     public void deenrichResponse(@Observes DeenrichHttpResponse event) {
