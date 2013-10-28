@@ -46,10 +46,12 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
     public FacesContext getFacesContext(Object context, Object request, Object response, Lifecycle lifecycle)
             throws FacesException {
 
-        FacesContext facesContext = new WrappedFacesContext(delegate.getFacesContext(context, request, response, lifecycle));
+        FacesContext facesContext = delegate.getFacesContext(context, request, response, lifecycle);
 
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpReq = (HttpServletRequest) request;
+
+            facesContext = new WrappedFacesContext(facesContext);
 
             facesContext.getAttributes().put(WARP_ENABLED, Boolean.FALSE);
 
