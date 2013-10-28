@@ -25,7 +25,6 @@ public class ContainerInstaller {
 
     private Logger log = Logger.getLogger(ContainerInstaller.class.getName());
 
-
     @Inject
     private Instance<IntegrationTestConfiguration> configuration;
 
@@ -85,7 +84,8 @@ public class ContainerInstaller {
         Validate.notNull(configuration.get().getContainerHome(), "container home must be set");
         File containerHome = new File(configuration.get().getContainerHome());
 
-        InputStream artifactStream = Maven.resolver().resolve(configurationFiles).withClassPathResolution(false).withoutTransitivity().asSingleInputStream();
+        InputStream artifactStream = Maven.resolver().resolve(configurationFiles).withClassPathResolution(false)
+                .withoutTransitivity().asSingleInputStream();
         unzip(artifactStream, containerHome, true);
 
         log.info(String.format("The container configuration '%s' was unpacked into '%s'", configurationFiles,

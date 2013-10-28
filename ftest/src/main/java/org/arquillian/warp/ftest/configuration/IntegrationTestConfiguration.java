@@ -86,7 +86,7 @@ public class IntegrationTestConfiguration implements DroneConfiguration<Integrat
      */
     @Override
     public String getConfigurationName() {
-        return "richfaces";
+        return "suite";
     }
 
     /*

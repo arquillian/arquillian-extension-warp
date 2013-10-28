@@ -12,13 +12,6 @@
     <name>Arquillian Warp: Functional Test</name>
 
     <properties>
-        <!-- Container Versions -->
-        <version.jbossas71>7.1.1.Final</version.jbossas71>
-        <version.tomee15>1.5.1</version.tomee15>
-        <version.glassfish31>3.1.2.2</version.glassfish31>
-        <version.tomcat6>6.0.35</version.tomcat6>
-        <version.tomcat7>7.0.26</version.tomcat7>
-        
         <version.shrinkwrap>1.1.2</version.shrinkwrap>
         <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
         <version.shrinkwrap.descriptors>2.0.0-alpha-3</version.shrinkwrap.descriptors>
@@ -34,7 +27,8 @@
         <arquillian.container.distribution />
         <arquillian.container.configuration />
         <arquillian.container.uninstall>true</arquillian.container.uninstall>
-        <arquillian.container.vmargs>-Xmx768m -XX:MaxPermSize=256m -Darquillian.debug=true</arquillian.container.vmargs>
+        <arquillian.container.vmargs>-Xmx768m -XX:MaxPermSize=256m -Darquillian.debug=${arquillian.debug}</arquillian.container.vmargs>
+        <arquillian.contaner.maxTestClassesBeforeRestart>50</arquillian.contaner.maxTestClassesBeforeRestart>
         
         <!-- Container Selection -->
         <arquillian.launch.jbossas71>false</arquillian.launch.jbossas71>
@@ -131,6 +125,19 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-configuration</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
@@ -185,28 +192,34 @@
         <!-- Containers -->
         
         <profile>
-            <id>wildfly-managed-8</id>
+            <id>wildfly-managed-8-0</id>
+            <activation>
+                <property>
+                    <name>integration</name>
+                    <value>wildfly80</value>
+                </property>
+            </activation>
             <properties>
                 <arquillian.launch.jbossas71>true</arquillian.launch.jbossas71>
-                <arquillian.container.home>${project.build.directory}/wildfly-${version.org.wildfly}</arquillian.container.home>
-                <arquillian.container.distribution>org.wildfly:wildfly-dist:zip:${version.org.wildfly}</arquillian.container.distribution>
+                <arquillian.container.home>${project.build.directory}/wildfly-${version.wildfly}</arquillian.container.home>
+                <arquillian.container.distribution>org.wildfly:wildfly-dist:zip:${version.wildfly}</arquillian.container.distribution>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly}</version>
+                    <version>${version.wildfly}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>wildfly-remote-8</id>
+            <id>wildfly-remote-8-0</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
-                    <version>${version.org.wildfly}</version>
+                    <version>${version.wildfly}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -214,6 +227,7 @@
         <profile>
             <id>jbossas-managed-7-1</id>
             <activation>
+                <activeByDefault>true</activeByDefault>
                 <property>
                     <name>integration</name>
                     <value>jbossas71</value>
