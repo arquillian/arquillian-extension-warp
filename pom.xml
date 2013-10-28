@@ -97,7 +97,8 @@
         <!-- extensions -->
         <module>extension/jsf</module>
         <module>extension/jsf-ftest</module>
-        <module>arquillian-warp-depchain</module>
+
+        <module>depchain</module>
     </modules>
 
     <build>
