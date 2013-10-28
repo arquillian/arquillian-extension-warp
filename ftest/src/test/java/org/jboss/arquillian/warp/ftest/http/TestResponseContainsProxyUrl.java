@@ -16,6 +16,14 @@
  */
 package org.jboss.arquillian.warp.ftest.http;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.net.URL;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
@@ -34,11 +42,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
-import javax.servlet.http.HttpServletRequest;
-import java.net.URL;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
@@ -64,6 +67,8 @@ public class TestResponseContainsProxyUrl {
     @Test
     public void test() {
         browser.navigate().to(contextPath + "form");
+
+        assertThat(browser.getPageSource(), containsString(contextPath.toExternalForm()));
 
         Warp
                 .initiate(new Activity() {

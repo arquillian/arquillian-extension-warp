@@ -50,12 +50,12 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpExecutionObserver;
 import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 import org.jboss.arquillian.warp.impl.client.filter.http.DefaultHttpFilterBuilder;
-import org.jboss.arquillian.warp.impl.client.proxy.ClassProxyUsageTracker;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.DefaultURLMapping;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyObserver;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyService;
 import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLProvider;
+import org.jboss.arquillian.warp.impl.client.proxy.ProxyUsageTracker;
 import org.jboss.arquillian.warp.impl.client.proxy.URLMapping;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
 import org.jboss.arquillian.warp.impl.client.verification.ResponsePayloadVerifier;
@@ -105,7 +105,7 @@ public class WarpExtension implements LoadableExtension {
         builder.observer(CommandBusObserver.class);
         builder.observer(RemoteSuiteLifecyclePropagation.class);
         builder.observer(OperationalContextInitializer.class);
-        builder.observer(ClassProxyUsageTracker.class);
+        builder.observer(ProxyUsageTracker.class);
         builder.service(CommandService.class, CommandServiceOnClient.class);
     }
 }

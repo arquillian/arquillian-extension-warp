@@ -18,7 +18,20 @@ package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.net.URL;
 
+/**
+ * Singleton services for tracking
+ * @author Lukas Fryc
+ */
 public interface URLMapping {
 
+    /**
+     * <p>
+     * Returns a proxy URL for given real URL.
+     * </p>
+     *
+     * <p>
+     * If no proxy URL was registered for given real URL, new URL to be used by proxy is generated.
+     * </p>
+     */
     URL getProxyURL(URL realUrl);
 }

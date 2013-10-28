@@ -52,10 +52,6 @@ public class DefaultURLMapping implements URLMapping {
     }
 
     private int generatePort() {
-        return newPort();
-    }
-
-    private int newPort() {
         return BASE + sequenceNumber++;
     }
 

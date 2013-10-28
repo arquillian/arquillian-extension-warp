@@ -17,8 +17,9 @@
 package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -37,8 +38,8 @@ public class RealURLToProxyURLMapping {
         realToProxy.put(realUrl, proxyUrl);
     }
 
-    public Set<Map.Entry<URL, URL>> getMap() {
-        return realToProxy.entrySet();
+    public Map<URL, URL> asMap() {
+        return Collections.unmodifiableMap(new HashMap<URL, URL>(realToProxy));
     }
 
     public boolean isRegistered(URL realUrl) {

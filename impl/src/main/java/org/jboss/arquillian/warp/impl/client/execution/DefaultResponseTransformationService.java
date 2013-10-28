@@ -16,8 +16,12 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.net.URL;
+import java.util.Map;
+
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseTransformationService;
 import org.jboss.arquillian.warp.impl.client.proxy.RealURLToProxyURLMapping;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -25,10 +29,6 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
-
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Map;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
@@ -38,8 +38,12 @@ public class DefaultResponseTransformationService implements HttpResponseTransfo
     @Inject
     private Instance<RealURLToProxyURLMapping> realToProxyURLMappingInst;
 
+    @Inject
+    private Instance<ServiceLoader> services;
+
     @Override
     public void transformResponse(HttpRequest request, HttpResponse response) {
+
         final ChannelBuffer content = response.getContent();
 
         byte[] data = new byte[content.readableBytes()];
@@ -48,7 +52,7 @@ public class DefaultResponseTransformationService implements HttpResponseTransfo
         String responseToTransform = new String(data);
         RealURLToProxyURLMapping mapping = realToProxyURLMappingInst.get();
 
-        for (Map.Entry<URL, URL> entry : mapping.getMap()) {
+        for (Map.Entry<URL, URL> entry : mapping.asMap().entrySet()) {
             String realUrl = entry.getKey().toExternalForm();
             String proxyUrl = entry.getValue().toExternalForm();
 

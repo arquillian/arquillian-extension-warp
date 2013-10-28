@@ -23,7 +23,9 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContext;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContexts;
 import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
@@ -33,39 +35,42 @@ import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
  *
  * @author Lukas Fryc
  */
-public class ClassProxyUsageTracker {
+public class ProxyUsageTracker {
 
     @Inject
     private Instance<TestClass> testClass;
 
     @Inject
-    @ApplicationScoped
-    private InstanceProducer<ProxyURLToContextMapping> mapping;
+    @ApplicationScoped // contexts are stored for whole suite
+    private InstanceProducer<ProxyURLToContextMapping> contextMapping;
 
     @Inject
-    @ApplicationScoped
-    private InstanceProducer<RealURLToProxyURLMapping> realToProxyMapping;
+    @TestScoped // we keep just URLs for current context
+    private InstanceProducer<RealURLToProxyURLMapping> realUrlMapping;
 
     @Inject
     private Instance<OperationalContexts> contexts;
 
-    public void initializeMapping(@Observes ManagerStarted event) {
-        mapping.set(new ProxyURLToContextMapping());
-        realToProxyMapping.set(new RealURLToProxyURLMapping());
+    public void initializeContextMapping(@Observes ManagerStarted event) {
+        contextMapping.set(new ProxyURLToContextMapping());
     }
 
-    public void registerOperationalContextToUrl(@Observes RequireProxy requireProxy) {
-        if (!mapping.get().isRegistered(requireProxy.getProxyUrl())) {
+    public void initializeRealURLMapping(@Observes(precedence = 1000) Before before) {
+        realUrlMapping.set(new RealURLToProxyURLMapping());
+    }
+
+    public void registerOperationalContextToUrl(@Observes RequireProxy event) {
+        if (!contextMapping.get().isRegistered(event.getProxyUrl())) {
             OperationalContext context = contexts.get().test();
-            mapping.get().register(requireProxy.getProxyUrl(), testClass.get().getJavaClass(), context);
+            contextMapping.get().register(event.getProxyUrl(), testClass.get().getJavaClass(), context);
         }
 
-        if (!realToProxyMapping.get().isRegistered(requireProxy.getRealUrl())) {
-            realToProxyMapping.get().register(requireProxy.getRealUrl(), requireProxy.getProxyUrl());
+        if (!realUrlMapping.get().isRegistered(event.getRealUrl())) {
+            realUrlMapping.get().register(event.getRealUrl(), event.getProxyUrl());
         }
     }
 
     public void unregisterOperationalContext(@Observes After afterTest) {
-        mapping.get().unregister(testClass.get().getJavaClass());
+        contextMapping.get().unregister(testClass.get().getJavaClass());
     }
 }

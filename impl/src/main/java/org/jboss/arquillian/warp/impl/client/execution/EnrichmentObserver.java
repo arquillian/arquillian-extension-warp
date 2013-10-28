@@ -90,11 +90,11 @@ public class EnrichmentObserver {
         final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
         final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
-        transformHttpResponse.fire(new TransformHttpResponse(request, response));
-
         if (service.isEnriched(request, response)) {
             deenrichHttpResponse.fire(new DeenrichHttpResponse(request, response));
         }
+
+        transformHttpResponse.fire(new TransformHttpResponse(request, response));
     }
 
     public void transformResponse(@Observes TransformHttpResponse event) {
