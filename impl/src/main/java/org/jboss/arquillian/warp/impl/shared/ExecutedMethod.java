@@ -62,7 +62,6 @@ public class ExecutedMethod implements Externalizable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qualifiers == null) ? 0 : qualifiers.hashCode());
         result = prime * result + ((method == null) ? 0 : method.hashCode());
         return result;
     }
@@ -79,8 +78,7 @@ public class ExecutedMethod implements Externalizable {
         if (qualifiers == null) {
             if (other.qualifiers != null)
                 return false;
-        } else if (!qualifiers.equals(other.qualifiers))
-            return false;
+        }
         if (method == null) {
             if (other.method != null)
                 return false;
