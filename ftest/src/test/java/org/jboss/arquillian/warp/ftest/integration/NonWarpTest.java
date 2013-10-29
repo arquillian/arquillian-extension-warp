@@ -50,7 +50,7 @@ public class NonWarpTest {
     @ArquillianResource
     URL contextPath;
 
-    @Deployment
+    @Deployment(testable = false)
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")

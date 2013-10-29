@@ -68,8 +68,14 @@
         <version.jacoco>0.6.0.201210061924</version.jacoco>
         <version.shrinkwrap_resolver>2.0.0</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
-        <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
-        <version.org.wildfly>8.0.0.Alpha1</version.org.wildfly>
+
+        <!-- Container Versions -->
+        <version.jbossas71>7.1.1.Final</version.jbossas71>
+        <version.tomee15>1.5.1</version.tomee15>
+        <version.glassfish31>3.1.2.2</version.glassfish31>
+        <version.tomcat6>6.0.35</version.tomcat6>
+        <version.tomcat7>7.0.26</version.tomcat7>
+        <version.wildfly>8.0.0.Beta1</version.wildfly>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -78,9 +84,11 @@
 
     <modules>
         <!-- build modules -->
-        <module>bom</module>
         <module>build</module>
-        <module>build-resources</module>
+        <module>build/bom</module>
+        <module>build/resources</module>
+        <module>build/depchain</module>
+        <module>build/ftest-base</module>
         
         <!-- main modules -->
         <module>api</module>
@@ -91,7 +99,6 @@
         <!-- extensions -->
         <module>extension/jsf</module>
         <module>extension/jsf-ftest</module>
-        <module>arquillian-warp-depchain</module>
     </modules>
 
     <build>
