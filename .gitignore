@@ -12,3 +12,4 @@ log.txt
 .checkstyle
 *.iml
 .idea
+arquillian-settings
