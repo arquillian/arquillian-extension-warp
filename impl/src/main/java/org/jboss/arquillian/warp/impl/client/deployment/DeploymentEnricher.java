@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.deployment;
 
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
@@ -43,6 +44,7 @@ import org.jboss.arquillian.warp.spi.WarpDeploymentEnrichmentExtension;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -173,6 +175,8 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
             archive.addPackage(packageName);
         }
 
+        archive.addAsManifestResource(getWebFragmentAsset(), "web-fragment.xml");
+
         archive.addClasses(REQUIRED_WARP_INNER_CLASSES);
 
         // register remote extension
@@ -184,5 +188,14 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
         archive.addAsServiceProvider(RequestDelegationService.class, CommandBusOnServer.class);
 
         return archive;
+    }
+
+    private Asset getWebFragmentAsset() {
+        return new Asset() {
+            @Override
+            public InputStream openStream() {
+                return ClassLoader.getSystemResourceAsStream("META-INF/web-fragment-warp.xml");
+            }
+        };
     }
 }

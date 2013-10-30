@@ -63,15 +63,19 @@ public class LifecycleTestClassExecutor {
         context.proceed();
     }
 
-    public void afterRequest(@Observes(precedence = 100) EventContext<AfterRequest> context) {
-        List<Object> list = new LinkedList<Object>(executedInspections);
-        Collections.reverse(list);
+    public void afterRequest(@Observes(precedence = 150) EventContext<AfterRequest> context) {
+        try {
+            List<Object> list = new LinkedList<Object>(executedInspections);
+            Collections.reverse(list);
 
-        Iterator<Object> iterator = list.iterator();
+            Iterator<Object> iterator = list.iterator();
 
-        while (iterator.hasNext()) {
-            Object testInstance = iterator.next();
-            afterClass.fire(new AfterClass(testInstance.getClass()));
+            while (iterator.hasNext()) {
+                Object testInstance = iterator.next();
+                afterClass.fire(new AfterClass(testInstance.getClass()));
+            }
+        } finally {
+            context.proceed();
         }
     }
 }

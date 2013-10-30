@@ -27,7 +27,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,9 +47,12 @@ import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
  * Filter that detects whenever the incoming request is enriched and thus should be processed by {@link WarpRequestProcessor}.
  * </p>
  *
+ * <p>
+ * The filter is registered on server-side using /META-INF/web-fragment-warp.xml
+ * </p>
+ *
  * @author Lukas Fryc
  */
-@WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class WarpFilter implements Filter {
     public static final String ARQUILLIAN_MANAGER_ATTRIBUTE = "org.jboss.arquillian.warp.TestManager";
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
@@ -61,7 +63,7 @@ public class WarpFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         try {
-            log.log(Level.FINE, "initializing {0}",WarpFilter.class.getSimpleName());
+            log.log(Level.FINE, "initializing {0}", WarpFilter.class.getSimpleName());
             ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
             manager = builder.create();
             manager.start();

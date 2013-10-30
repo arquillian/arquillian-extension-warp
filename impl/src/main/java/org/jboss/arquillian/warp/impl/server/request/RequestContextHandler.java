@@ -72,7 +72,7 @@ public class RequestContextHandler {
     @Inject
     private Event<AfterRequest> afterRequest;
 
-    public void createRequestContext(@Observes(precedence = 100) EventContext<ProcessHttpRequest> context) {
+    public void handleRequestContext(@Observes(precedence = 100) EventContext<ProcessHttpRequest> context) {
         RequestContext testContext = this.requestContextInstance.get();
 
         String requestId = String.valueOf(context.getEvent().getRequest().getAttribute(WarpCommons.WARP_REQUEST_ID));

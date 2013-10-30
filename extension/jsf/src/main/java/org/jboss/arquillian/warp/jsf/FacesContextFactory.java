@@ -22,11 +22,11 @@ import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextWrapper;
 import javax.faces.lifecycle.Lifecycle;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
@@ -55,14 +55,18 @@ public class FacesContextFactory extends javax.faces.context.FacesContextFactory
             facesContext.getAttributes().put(WARP_ENABLED, Boolean.FALSE);
 
             try {
-                LifecycleManager manager = LifecycleManagerStore.get(ServletRequest.class, httpReq);
+                LifecycleManager manager = (LifecycleManager) httpReq.getAttribute(WarpCommons.WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE);
+
+                if (manager == null) {
+                    log.warning("no association of manager found for this ServletRequest");
+                    return facesContext;
+                }
 
                 manager.bindTo(FacesContext.class, facesContext);
                 facesContext.getAttributes().put(WARP_ENABLED, Boolean.TRUE);
+                facesContext.getAttributes().put(WarpJSFCommons.WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE, manager);
 
                 manager.fireEvent(new FacesContextInitialized(facesContext));
-            } catch (ObjectNotAssociatedException e) {
-                log.fine("no association of manager found for this ServletRequest");
             } catch (ObjectAlreadyAssociatedException e) {
                 throw new IllegalStateException(e);
             }
@@ -92,6 +96,7 @@ public class FacesContextFactory extends javax.faces.context.FacesContextFactory
 
                     LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, context);
                     manager.unbindFrom(FacesContext.class, context);
+                    context.getAttributes().remove(WarpJSFCommons.WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE);
                 }
             } catch (ObjectNotAssociatedException e) {
                 throw new IllegalStateException(e);

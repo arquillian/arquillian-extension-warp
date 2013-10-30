@@ -23,6 +23,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
@@ -52,12 +53,17 @@ public class LifecycleManagerObserver {
     }
 
     public void initializeLifecycleManagerAndInspectionRegistry(@Observes BeforeRequest event) {
-        manager.set(inject(new LifecycleManagerImpl()));
+        LifecycleManager lifecycleManager = inject(new LifecycleManagerImpl());
+
+        manager.set(inject(lifecycleManager));
         registry.set(inject(new InspectionRegistry()));
+
+        event.getRequest().setAttribute(WarpCommons.WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE, lifecycleManager);
     }
 
     public void finalizeManager(@Observes AfterRequest event) {
         try {
+            event.getRequest().setAttribute(WarpCommons.WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE, null);
             manager.get().checkUnbound();
         } catch (StoreHasAssociatedObjectsException e) {
             throw new IllegalStateException(e);

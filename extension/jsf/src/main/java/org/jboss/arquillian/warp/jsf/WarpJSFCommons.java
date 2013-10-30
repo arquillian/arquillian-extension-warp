@@ -20,5 +20,7 @@ import java.util.logging.Logger;
 
 public final class WarpJSFCommons {
 
+    public static final String WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE = "X-Arq-Warp-LifecycleManager".intern();
+
     static Logger LOG = Logger.getLogger("warp-jsf");
 }

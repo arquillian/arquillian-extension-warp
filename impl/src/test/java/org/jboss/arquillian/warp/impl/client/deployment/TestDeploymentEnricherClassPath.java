@@ -58,10 +58,12 @@ public class TestDeploymentEnricherClassPath {
                 .addClasses(DeploymentEnricher.class, WarpTest.class, Inspection.class, BeforeServlet.class,
                         AfterServlet.class, WarpRemoteExtension.class);
 
-        JavaArchive warp = ShrinkWrap.create(JavaArchive.class);
+        JavaArchive warp = ShrinkWrap.create(JavaArchive.class, "warp.jar");
         for (String packageName : DeploymentEnricher.REQUIRED_WARP_PACKAGES) {
             warp.addPackage(packageName);
         }
+
+        base.addAsResource("META-INF/web-fragment-warp.xml", "META-INF/web-fragment-warp.xml");
 
         warp.addClasses(DeploymentEnricher.REQUIRED_WARP_INNER_CLASSES);
 

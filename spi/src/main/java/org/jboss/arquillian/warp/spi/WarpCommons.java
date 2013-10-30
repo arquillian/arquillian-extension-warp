@@ -29,15 +29,16 @@ import org.jboss.arquillian.warp.servlet.BeforeServlet;
  */
 public final class WarpCommons {
 
-    public static final String NAMESPACE = "org.jboss.arquillian.warp";
+    public static final String NAMESPACE = "org.jboss.arquillian.warp".intern();
 
-    private static final String ENRICHMENT = "X-Arq-Enrichment";
+    private static final String ENRICHMENT = "X-Arq-Enrichment".intern();
     public static final String ENRICHMENT_REQUEST = ENRICHMENT + "-Request";
     public static final String ENRICHMENT_RESPONSE = ENRICHMENT + "-Response";
 
-    public static final String ENRICHMENT_SEQUENCE_NUMBER = "X-Arq-Enrichment-Id";
+    public static final String ENRICHMENT_SEQUENCE_NUMBER = "X-Arq-Enrichment-Id".intern();
 
-    public static final String WARP_REQUEST_ID = "X-Arq-Warp-RequestID";
+    public static final String WARP_REQUEST_ID = "X-Arq-Warp-RequestID".intern();
+    public static final String WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE = "X-Arq-Warp-LifecycleManager".intern();
 
     /**
      * Checks whether either given class or its superclasses are annoated with {@link WarpTest} annotation indicating that the
