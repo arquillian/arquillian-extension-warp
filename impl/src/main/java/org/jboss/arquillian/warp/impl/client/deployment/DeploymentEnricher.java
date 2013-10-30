@@ -173,6 +173,8 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
             archive.addPackage(packageName);
         }
 
+        archive.addAsManifestResource("META-INF/web-fragment-warp.xml", "web-fragment.xml");
+
         archive.addClasses(REQUIRED_WARP_INNER_CLASSES);
 
         // register remote extension

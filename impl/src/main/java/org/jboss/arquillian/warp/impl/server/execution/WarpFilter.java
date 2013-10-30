@@ -26,7 +26,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,6 +37,7 @@ import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegator;
 import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
 import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
 import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
+import org.jboss.arquillian.warp.spi.context.RequestContext;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
@@ -49,7 +49,7 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
  *
  * @author Lukas Fryc
  */
-@WebFilter(urlPatterns = "/*", asyncSupported = true)
+// @WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class WarpFilter implements Filter {
     public static final String ARQUILLIAN_MANAGER_ATTRIBUTE = "org.jboss.arquillian.warp.TestManager";
     private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
@@ -60,7 +60,7 @@ public class WarpFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         try {
-            log.log(Level.FINE, "initializing {0}",WarpFilter.class.getSimpleName());
+            log.log(Level.FINE, "initializing {0}", WarpFilter.class.getSimpleName());
             ManagerBuilder builder = ManagerBuilder.from().extension(Class.forName(DEFAULT_EXTENSION_CLASS));
             manager = builder.create();
             manager.start();
@@ -130,22 +130,41 @@ public class WarpFilter implements Filter {
     private void doFilterWarp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
+        RequestContext previousRequestContext = manager.getContext(RequestContext.class);
+        boolean wasAlreadyActive = previousRequestContext.isActive();
+
+        HttpServletRequest previousRequest = null;
+        HttpServletResponse previousResponse = null;
+        FilterChain previousFilterChain = null;
+
+        if (!wasAlreadyActive) {
             manager.fire(new ActivateManager(manager));
-
             manager.fire(new BeforeRequest(request, response));
+        } else {
+            previousRequest = previousRequestContext.getObjectStore().get(HttpServletRequest.class);
+            previousResponse = previousRequestContext.getObjectStore().get(HttpServletResponse.class);
+            previousFilterChain = previousRequestContext.getObjectStore().get(FilterChain.class);
+        }
 
-            manager.bind(RequestScoped.class, ServletRequest.class, request);
-            manager.bind(RequestScoped.class, ServletResponse.class, response);
-            manager.bind(RequestScoped.class, HttpServletRequest.class, request);
-            manager.bind(RequestScoped.class, HttpServletResponse.class, response);
-            manager.bind(RequestScoped.class, FilterChain.class, filterChain);
+        manager.bind(RequestScoped.class, ServletRequest.class, request);
+        manager.bind(RequestScoped.class, ServletResponse.class, response);
+        manager.bind(RequestScoped.class, HttpServletRequest.class, request);
+        manager.bind(RequestScoped.class, HttpServletResponse.class, response);
+        manager.bind(RequestScoped.class, FilterChain.class, filterChain);
 
-            try {
-                manager.fire(new ProcessHttpRequest());
-            } finally {
+        try {
+            manager.fire(new ProcessHttpRequest());
+        } finally {
+            if (!wasAlreadyActive) {
                 manager.fire(new AfterRequest(request, response));
-
+                manager.fire(new PassivateManager(manager));
+            } else {
+                manager.bind(RequestScoped.class, ServletRequest.class, previousRequest);
+                manager.bind(RequestScoped.class, ServletResponse.class, previousResponse);
+                manager.bind(RequestScoped.class, HttpServletRequest.class, previousRequest);
+                manager.bind(RequestScoped.class, HttpServletResponse.class, previousResponse);
+                manager.bind(RequestScoped.class, FilterChain.class, previousFilterChain);
             }
-            manager.fire(new PassivateManager(manager));
+        }
     }
 }

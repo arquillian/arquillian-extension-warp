@@ -33,6 +33,8 @@ public class TestResultObserver {
     }
 
     public void propagateThrowableAsTestResultAndRethrow(@Observes Throwable throwable) throws Throwable {
+        throwable.printStackTrace();
+
         if (responsePayload() != null) {
             storeFirstFailure(new TestResult(Status.FAILED, throwable));
         }
