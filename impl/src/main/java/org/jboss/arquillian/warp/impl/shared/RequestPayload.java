@@ -102,7 +102,7 @@ public class RequestPayload implements Externalizable {
         for (Inspection inspection : inspections) {
             if (inspection.getClass().isAnonymousClass() || inspection.getClass().isMemberClass()) {
                 try {
-                    out.writeBoolean(true);
+                    out.writeBoolean(true); // flag 'anonymous'
 
                     TransformedInspection transformed = new TransformedInspection(inspection);
                     MigratedInspection migrated = new MigratedInspection(transformed);
@@ -113,7 +113,7 @@ public class RequestPayload implements Externalizable {
                     throw new RuntimeException("Could not transform and replicate class " + inspections.getClass() + ":\n" + e.getMessage(), e);
                 }
             } else {
-                out.writeBoolean(false);
+                out.writeBoolean(false); // flag 'not anonymous'
                 out.writeObject(inspection);
             }
         }
