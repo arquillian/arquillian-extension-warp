@@ -66,20 +66,12 @@ public class CdiWarpTest {
     }
 
     @Test
-    public void test() {
+    public void test1() {
 
         Warp
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }
-            })
-            .inspect(new BeanInspection());
-
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.findElement(By.id("sendAjax")).click();
                 }
             })
             .inspect(new BeanInspection());
@@ -96,13 +88,13 @@ public class CdiWarpTest {
             })
             .inspect(new BeanInspection());
 
-//        Warp
-//            .initiate(new Activity() {
-//                public void perform() {
-//                    browser.findElement(By.id("sendAjax")).click();
-//                }
-//            })
-//            .inspect(new BeanInspection());
+        Warp
+            .initiate(new Activity() {
+                public void perform() {
+                    browser.findElement(By.id("sendAjax")).click();
+                }
+            })
+            .inspect(new BeanInspection());
     }
 
     public static class BeanInspection extends Inspection {

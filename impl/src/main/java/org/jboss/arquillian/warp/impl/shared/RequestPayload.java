@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.impl.client.transformation.MigratedInspection;
@@ -40,6 +41,9 @@ public class RequestPayload implements Externalizable {
 
     private List<Inspection> inspections;
     private long serialId;
+
+    private static final DynamicClassLoader cl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
+    private static final ConcurrentHashMap<String, Class<?>> loadedClasses = new ConcurrentHashMap<String, Class<?>>();
 
     public RequestPayload() {
     }
@@ -71,26 +75,42 @@ public class RequestPayload implements Externalizable {
             boolean anonymous = in.readBoolean();
 
             if (anonymous) {
+                String className = (String) in.readObject();
                 byte[] classFile = (byte[]) in.readObject();
                 byte[] obj = (byte[]) in.readObject();
 
-                final DynamicClassLoader cl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
+                final Inspection inspection = (Inspection) loadObject(className, classFile, obj);
 
-                final Class<?> clazz = cl.load(classFile);
-                ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(obj)) {
-                    protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                        if (desc.getName().equals(clazz.getName())) {
-                            return clazz;
-                        }
-                        return super.resolveClass(desc);
-                    }
-                };
-
-                Inspection inspection = (Inspection) input.readObject();
                 inspections.add(inspection);
             } else {
                 inspections.add((Inspection) in.readObject());
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T loadObject(String className, byte[] classFile, final byte[] obj) throws IOException, ClassNotFoundException {
+        final Class<?> clazz = loadClass(className, classFile);
+
+        ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(obj)) {
+            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                if (desc.getName().equals(clazz.getName())) {
+                    return clazz;
+                }
+                return super.resolveClass(desc);
+            }
+        };
+
+        return (T) input.readObject();
+    }
+
+    private Class<?> loadClass(String className, byte[] classFile) {
+        if (loadedClasses.containsKey(className)) {
+            return loadedClasses.get(className);
+        } else {
+            Class<?> clazz = cl.load(classFile);
+            loadedClasses.put(className, clazz);
+            return clazz;
         }
     }
 
@@ -100,13 +120,14 @@ public class RequestPayload implements Externalizable {
         out.write(inspections.size());
 
         for (Inspection inspection : inspections) {
-            if (inspection.getClass().isAnonymousClass() || inspection.getClass().isMemberClass()) {
+            if (shouldBeTransformed(inspection)) {
                 try {
                     out.writeBoolean(true); // flag 'anonymous'
 
                     TransformedInspection transformed = new TransformedInspection(inspection);
                     MigratedInspection migrated = new MigratedInspection(transformed);
 
+                    out.writeObject(transformed.getOriginalClass().getName());
                     out.writeObject(migrated.toBytecode());
                     out.writeObject(migrated.toSerializedForm());
                 } catch (Exception e) {
@@ -117,6 +138,11 @@ public class RequestPayload implements Externalizable {
                 out.writeObject(inspection);
             }
         }
+    }
+
+    private boolean shouldBeTransformed(Inspection inspection) {
+//        return inspection.getClass().isAnonymousClass() || (inspection.getClass().isMemberClass() && !Modifier.isStatic(inspection.getClass().getModifiers()));
+        return inspection.getClass().isAnonymousClass() || (inspection.getClass().isMemberClass());
     }
 
     public static class DynamicClassLoader extends ClassLoader {
