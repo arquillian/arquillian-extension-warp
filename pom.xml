@@ -75,7 +75,7 @@
         <version.glassfish31>3.1.2.2</version.glassfish31>
         <version.tomcat6>6.0.35</version.tomcat6>
         <version.tomcat7>7.0.26</version.tomcat7>
-        <version.wildfly>8.0.0.Beta1</version.wildfly>
+        <version.wildfly>8.0.0.CR1</version.wildfly>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
