@@ -17,8 +17,10 @@
 package org.jboss.arquillian.warp.impl.client.execution;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Map;
 
+import org.apache.http.entity.ContentType;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -44,30 +46,46 @@ public class DefaultResponseTransformationService implements HttpResponseTransfo
     @Override
     public void transformResponse(HttpRequest request, HttpResponse response) {
 
-        final ChannelBuffer content = response.getContent();
+        String contentTypeHeader = response.getHeader("Content-Type");
 
-        byte[] data = new byte[content.readableBytes()];
-        content.readBytes(data);
+        if (contentTypeHeader != null && contentTypeHeader.startsWith("text/")) {
 
-        String responseToTransform = new String(data);
-        RealURLToProxyURLMapping mapping = realToProxyURLMappingInst.get();
+            ContentType contentType = ContentType.parse(contentTypeHeader);
+            Charset charset = contentType.getCharset();
 
-        for (Map.Entry<URL, URL> entry : mapping.asMap().entrySet()) {
-            String realUrl = entry.getKey().toExternalForm();
-            String proxyUrl = entry.getValue().toExternalForm();
+            final ChannelBuffer content = response.getContent();
 
-            int urlStart = responseToTransform.indexOf(realUrl);
+            byte[] data = new byte[content.readableBytes()];
+            content.readBytes(data);
 
-            if (urlStart > 0) {
-                responseToTransform = responseToTransform.replace(realUrl, proxyUrl);
+            String responseToTransform = createStringFromData(data, charset);
+            RealURLToProxyURLMapping mapping = realToProxyURLMappingInst.get();
+
+            for (Map.Entry<URL, URL> entry : mapping.asMap().entrySet()) {
+                String realUrl = entry.getKey().toExternalForm();
+                String proxyUrl = entry.getValue().toExternalForm();
+
+                int urlStart = responseToTransform.indexOf(realUrl);
+
+                if (urlStart > 0) {
+                    responseToTransform = responseToTransform.replace(realUrl, proxyUrl);
+                }
             }
+
+            byte[] bytes = createDataFromString(responseToTransform, charset);
+            ChannelBuffer transformedContent = ChannelBuffers.dynamicBuffer(bytes.length);
+            transformedContent.writeBytes(bytes);
+
+            response.setContent(transformedContent);
+            HttpHeaders.setContentLength(response, bytes.length);
         }
+    }
 
-        byte[] bytes = responseToTransform.getBytes();
-        ChannelBuffer transformedContent = ChannelBuffers.dynamicBuffer(bytes.length);
-        transformedContent.writeBytes(bytes);
+    private String createStringFromData(byte[] data, Charset charset) {
+        return (charset == null) ? new String(data) : new String(data, charset);
+    }
 
-        response.setContent(transformedContent);
-        HttpHeaders.setContentLength(response, bytes.length);
+    private byte[] createDataFromString(String string, Charset charset) {
+        return (charset == null) ? string.getBytes() : string.getBytes(charset);
     }
 }
