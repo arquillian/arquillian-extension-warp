@@ -16,24 +16,22 @@
  */
 package org.jboss.arquillian.warp.jsf.ftest.producer;
 
-import static org.junit.Assert.fail;
-
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.test.spi.ArquillianProxyException;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.exception.ServerWarpExecutionException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,30 +51,28 @@ public class TestJSFResourceNotFound {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "faces-config.xml");
+                .addAsWebInfResource(new StringAsset("<faces-config></faces-config>"), "faces-config.xml");
     }
 
     @Test
     public void testNotFound() {
-        try {
-            Warp.initiate(new Activity() {
+        Warp.initiate(new Activity() {
 
-                @Override
-                public void perform() {
-                    browser.navigate().to(contextPath + "faces/notFound.xhtml");
+            @Override
+            public void perform() {
+                try {
+                    URL url = new URL(contextPath, "faces/notExisting.xhtml");
+                    URLConnection connection = url.openConnection();
+                    connection.getInputStream();
+                } catch (FileNotFoundException e) {
+                    // the FNFE is expected
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
                 }
-
-            }).inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-            });
-
-            fail("expected server exception");
-        } catch (ArquillianProxyException e) {
-            // FileNotFoundException on server
-        } catch (ServerWarpExecutionException e) {
-            if (!(e.getCause() instanceof FileNotFoundException)) {
-                fail("expected FileNotFound on server");
             }
-        }
+
+        }).inspect(new Inspection() {
+            private static final long serialVersionUID = 1L;
+        });
     }
 }
