@@ -27,16 +27,13 @@ import org.jboss.arquillian.warp.impl.client.commandBus.RemoteSuiteLifecycleProp
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContextInitializer;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentEnricher;
 import org.jboss.arquillian.warp.impl.client.deployment.DeploymentValidator;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentService;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseTransformationService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultExecutionSynchronizer;
-import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentFilter;
+import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpFiltersSource;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultHttpRequestEnrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultRequestObserverChainManager;
-import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentFilter;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseDeenrichmentService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultResponseTransformationService;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpExecutor;
@@ -61,6 +58,7 @@ import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContextImpl;
 import org.jboss.arquillian.warp.impl.client.verification.ResponsePayloadVerifier;
 import org.jboss.arquillian.warp.impl.shared.command.CommandService;
 import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
+import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 
 /**
  * <p>The Arquillian Warp extension - client-side.</p>
@@ -91,8 +89,7 @@ public class WarpExtension implements LoadableExtension {
         builder.observer(WarpExecutionInitializer.class);
         builder.service(URLMapping.class, DefaultURLMapping.class);
         builder.service(ProxyService.class, DefaultProxyService.class);
-        builder.service(HttpRequestEnrichmentFilter.class, DefaultHttpRequestEnrichmentFilter.class);
-        builder.service(HttpResponseDeenrichmentFilter.class, DefaultResponseDeenrichmentFilter.class);
+        builder.service(HttpFiltersSourceAdapter.class, DefaultHttpFiltersSource.class);
         builder.observer(ProxyObserver.class);
         builder.observer(EnrichmentObserver.class);
         builder.service(HttpRequestEnrichmentService.class, DefaultHttpRequestEnrichmentService.class);

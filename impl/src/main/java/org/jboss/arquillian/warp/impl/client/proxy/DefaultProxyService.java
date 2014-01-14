@@ -16,8 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
+import io.netty.handler.codec.http.HttpRequest;
+
+import java.net.InetSocketAddress;
 import java.net.URL;
-import java.util.logging.Logger;
+import java.util.Queue;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -27,16 +30,13 @@ import org.jboss.arquillian.warp.impl.client.context.operation.Contextualizer;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContext;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContextRetriver;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContexts;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpRequestEnrichmentFilter;
-import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseDeenrichmentFilter;
-import org.jboss.arquillian.warp.impl.client.execution.HttpRequestWrapper;
-import org.jboss.arquillian.warp.impl.client.proxy.ProxyURLToContextMapping.OperationalContextNotBoundException;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
-import org.littleshoot.proxy.HttpFilter;
+import org.littleshoot.proxy.ChainedProxy;
+import org.littleshoot.proxy.ChainedProxyAdapter;
+import org.littleshoot.proxy.ChainedProxyManager;
+import org.littleshoot.proxy.HttpFilters;
+import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServer;
-import org.littleshoot.proxy.HttpRequestFilter;
-import org.littleshoot.proxy.LittleProxyConfig;
+import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 /**
  * The holder for instantiated proxies.
@@ -44,8 +44,6 @@ import org.littleshoot.proxy.LittleProxyConfig;
  * @author Lukas Fryc
  */
 public class DefaultProxyService implements ProxyService<HttpProxyServer> {
-
-    private Logger log = Logger.getLogger(DefaultProxyService.class.getName());
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
@@ -60,24 +58,62 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     public HttpProxyServer startProxy(final URL realUrl, final URL proxyUrl) {
         final ProxyURLToContextMapping urlToContextMapping = urlToContextMappingInst.get();
 
-        OperationalContextRetriver retriever = new OperationalContextRetriver() {
+        final OperationalContextRetriver retriever = new OperationalContextRetriver() {
             @Override
             public OperationalContext retrieve() {
                 return urlToContextMapping.get(proxyUrl);
             }
         };
 
-        HttpRequestFilter requestFilter = getHttpRequestEnrichmentFilter(retriever);
+        final HttpFiltersSourceAdapter httpFiltersSource = serviceLoader().onlyOne(HttpFiltersSourceAdapter.class);
 
-        HttpFilter responseFilter = getHttpResponseDeenrichmentFilter(retriever);
-        String hostPort = realUrl.getHost() + ":" + realUrl.getPort();
+        final ContextualOperation<HttpRequest, HttpFilters> filterRequest = Contextualizer.contextualize(retriever,
+            new ContextualOperation<HttpRequest, HttpFilters>() {
+                @Override
+                public HttpFilters performInContext(HttpRequest originalRequest) {
+                    return httpFiltersSource.filterRequest(originalRequest);
+                }
+            }
+        );
 
-        LittleProxyConfig.setTransparent(true);
-        HttpProxyServer server = new WarpHttpProxyServer(proxyUrl.getPort(), hostPort, requestFilter, responseFilter);
+        final InetSocketAddress forwardToAddress = new InetSocketAddress(realUrl.getHost(), realUrl.getPort());
 
-        server.start();
+        return DefaultHttpProxyServer
+            .bootstrap()
+            .withPort(proxyUrl.getPort())
+            .withTransparent(true)
+            .withChainProxyManager(new ChainedProxyManager() {
 
-        return server;
+                @Override
+                public void lookupChainedProxies(HttpRequest httpRequest, Queue<ChainedProxy> chainedProxies) {
+                    chainedProxies.add(new ChainedProxyAdapter() {
+                        @Override
+                        public InetSocketAddress getChainedProxyAddress() {
+                            return forwardToAddress;
+                        }
+                    });
+                }
+            })
+            .withFiltersSource(new HttpFiltersSourceAdapter() {
+
+                @Override
+                public HttpFilters filterRequest(HttpRequest originalRequest) {
+                    return filterRequest.performInContext(originalRequest);
+                }
+
+
+
+                @Override
+                public int getMaximumRequestBufferSizeInBytes() {
+                    return httpFiltersSource.getMaximumRequestBufferSizeInBytes();
+                }
+
+                @Override
+                public int getMaximumResponseBufferSizeInBytes() {
+                    return httpFiltersSource.getMaximumResponseBufferSizeInBytes();
+                }
+            })
+            .start();
     }
 
     @Override
@@ -87,91 +123,5 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
     private ServiceLoader serviceLoader() {
         return serviceLoader.get();
-    }
-
-    private HttpRequestEnrichmentFilter getHttpRequestEnrichmentFilter(OperationalContextRetriver retriever) {
-        final HttpRequestEnrichmentFilter requestFilter = serviceLoader().onlyOne(HttpRequestEnrichmentFilter.class);
-
-        final ContextualOperation<HttpRequest, Void> operation = Contextualizer.contextualize(retriever,
-                new ContextualOperation<HttpRequest, Void>() {
-                    @Override
-                    public Void performInContext(HttpRequest request) {
-                        requestFilter.filter(request);
-                        return null;
-                    }
-                });
-
-        return new HttpRequestEnrichmentFilter() {
-            @Override
-            public void filter(HttpRequest request) {
-                try {
-                    operation.performInContext(request);
-                } catch (OperationalContextNotBoundException e) {
-                    log.info("The request was observed out of a test's context, it won't be enriched: " + new HttpRequestWrapper(request));
-                }
-            }
-        };
-    }
-
-    private HttpResponseDeenrichmentFilter getHttpResponseDeenrichmentFilter(OperationalContextRetriver retriever) {
-        final HttpResponseDeenrichmentFilter responseDeenrichmentFilter = serviceLoader().onlyOne(
-                HttpResponseDeenrichmentFilter.class);
-
-        final ContextualOperation<FilterResponseContext, HttpResponse> filterResponse = Contextualizer.contextualize(retriever,
-                new ContextualOperation<FilterResponseContext, HttpResponse>() {
-                    @Override
-                    public HttpResponse performInContext(FilterResponseContext ctx) {
-                        return responseDeenrichmentFilter.filterResponse(ctx.request, ctx.response);
-                    }
-                });
-
-        final ContextualOperation<HttpRequest, Boolean> shouldFilterResponses = Contextualizer.contextualize(retriever,
-                new ContextualOperation<HttpRequest, Boolean>() {
-                    @Override
-                    public Boolean performInContext(HttpRequest request) {
-                        return responseDeenrichmentFilter.filterResponses(request);
-                    }
-                });
-
-        final ContextualOperation<Void, Integer> getMaxResponseSize = Contextualizer.contextualize(retriever,
-                new ContextualOperation<Void, Integer>() {
-                    @Override
-                    public Integer performInContext(Void argument) {
-                        return responseDeenrichmentFilter.getMaxResponseSize();
-                    }
-                });
-
-        return new HttpResponseDeenrichmentFilter() {
-
-            @Override
-            public HttpResponse filterResponse(HttpRequest request, HttpResponse response) {
-                try {
-                    return filterResponse.performInContext(new FilterResponseContext(request, response));
-                } catch (OperationalContextNotBoundException e) {
-                    log.info("The response was observed out of a test's context, it won't be inspected: " + new HttpRequestWrapper(request));
-                    return response;
-                }
-            }
-
-            @Override
-            public boolean filterResponses(HttpRequest httpRequest) {
-                return shouldFilterResponses.performInContext(httpRequest);
-            }
-
-            @Override
-            public int getMaxResponseSize() {
-                return getMaxResponseSize.performInContext(null);
-            }
-        };
-    }
-
-    private static class FilterResponseContext {
-        private HttpRequest request;
-        private HttpResponse response;
-
-        public FilterResponseContext(HttpRequest request, HttpResponse response) {
-            this.request = request;
-            this.response = response;
-        }
     }
 }

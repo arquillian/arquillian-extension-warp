@@ -126,8 +126,8 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
             long serialId = payload.getSerialId();
             remoteOperationService().execute(new RegisterPayloadRemotely(requestEnrichment));
 
-            org.jboss.netty.handler.codec.http.HttpRequest nettyHttpRequest = ((HttpRequestWrapper) request).unwrap();
-            nettyHttpRequest.setHeader(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(Long.toString(serialId)));
+            io.netty.handler.codec.http.HttpRequest nettyHttpRequest = ((HttpRequestWrapper) request).unwrap();
+            nettyHttpRequest.headers().set(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(Long.toString(serialId)));
         } catch (Throwable originalException) {
             Throwable cause = Rethrow.getOriginalCause(originalException);
             ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed; caused by:\n"

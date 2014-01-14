@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,8 +38,6 @@ import org.jboss.arquillian.warp.impl.shared.command.Command;
 import org.jboss.arquillian.warp.impl.shared.command.CommandService;
 import org.jboss.arquillian.warp.impl.utils.SerializationUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
  * Default service for de-enriching responses.
@@ -128,7 +129,7 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
     }
 
     private Long getSerialId(HttpRequest request) {
-        String header = request.getHeader(WarpCommons.ENRICHMENT_REQUEST);
+        String header = request.headers().get(WarpCommons.ENRICHMENT_REQUEST);
 
         if (header == null || header.isEmpty()) {
             return null;

@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.enrichment;
 
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 
 /**
  * Service for transforming responses.
@@ -29,5 +29,5 @@ public interface HttpResponseTransformationService {
     /**
      * Transforms given response
      */
-    void transformResponse(HttpRequest request, HttpResponse response);
+    HttpResponse transformResponse(HttpRequest request, HttpResponse response);
 }

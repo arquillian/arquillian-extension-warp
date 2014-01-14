@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import io.netty.handler.codec.http.HttpRequest;
+
 import java.net.URL;
 import java.util.List;
 import java.util.Map.Entry;
@@ -23,7 +25,6 @@ import java.util.Set;
 
 import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
-import org.jboss.netty.handler.codec.http.HttpRequest;
 
 public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filter.http.HttpRequest {
 
@@ -35,7 +36,7 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
 
     @Override
     public HttpMethod getMethod() {
-        return HttpMethod.valueOf(request.getMethod().getName());
+        return HttpMethod.valueOf(request.getMethod().name());
     }
 
     @Override
@@ -50,27 +51,27 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
 
     @Override
     public String getHeader(String name) {
-        return request.getHeader(name);
+        return request.headers().get(name);
     }
 
     @Override
     public List<String> getHeaders(String name) {
-        return request.getHeaders(name);
+        return request.headers().getAll(name);
     }
 
     @Override
     public List<Entry<String, String>> getHeaders() {
-        return request.getHeaders();
+        return request.headers().entries();
     }
 
     @Override
     public boolean containsHeader(String name) {
-        return request.containsHeader(name);
+        return request.headers().contains(name);
     }
 
     @Override
     public Set<String> getHeaderNames() {
-        return request.getHeaderNames();
+        return request.headers().names();
     }
 
     public HttpRequest unwrap() {

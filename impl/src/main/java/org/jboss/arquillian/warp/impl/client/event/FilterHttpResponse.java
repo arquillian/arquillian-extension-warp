@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 
 public class FilterHttpResponse implements FilterResponse<HttpResponse> {
 

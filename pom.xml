@@ -58,7 +58,7 @@
         <version.arquillian_drone>1.2.0.Final</version.arquillian_drone>
         <version.arquillian_jacoco>1.0.0.Alpha5</version.arquillian_jacoco>
 
-        <version.littleproxy>0.5.3</version.littleproxy>
+        <version.littleproxy>1.0.0-beta5</version.littleproxy>
         <version.javassist>3.12.1.GA</version.javassist>
 
         <!-- Tests -->

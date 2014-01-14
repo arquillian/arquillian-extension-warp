@@ -16,6 +16,14 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -26,11 +34,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.impl.client.enrichment.HttpResponseTransformationService;
 import org.jboss.arquillian.warp.impl.client.proxy.RealURLToProxyURLMapping;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
@@ -43,42 +46,54 @@ public class DefaultResponseTransformationService implements HttpResponseTransfo
     @Inject
     private Instance<ServiceLoader> services;
 
+    // TODO fix
     @Override
-    public void transformResponse(HttpRequest request, HttpResponse response) {
+    public HttpResponse transformResponse(HttpRequest request, HttpResponse response) {
 
-        String contentTypeHeader = response.getHeader("Content-Type");
+        if (response instanceof FullHttpResponse) {
 
-        if (contentTypeHeader != null && contentTypeHeader.startsWith("text/")) {
+            FullHttpResponse fullResponse = (FullHttpResponse) response;
 
-            ContentType contentType = ContentType.parse(contentTypeHeader);
-            Charset charset = contentType.getCharset();
+            String contentTypeHeader = fullResponse.headers().get("Content-Type");
 
-            final ChannelBuffer content = response.getContent();
+            if (contentTypeHeader != null && contentTypeHeader.startsWith("text/")) {
 
-            byte[] data = new byte[content.readableBytes()];
-            content.readBytes(data);
+                ContentType contentType = ContentType.parse(contentTypeHeader);
+                Charset charset = contentType.getCharset();
 
-            String responseToTransform = createStringFromData(data, charset);
-            RealURLToProxyURLMapping mapping = realToProxyURLMappingInst.get();
+                ByteBuf content = fullResponse.content();
 
-            for (Map.Entry<URL, URL> entry : mapping.asMap().entrySet()) {
-                String realUrl = entry.getKey().toExternalForm();
-                String proxyUrl = entry.getValue().toExternalForm();
+                byte[] data = new byte[content.readableBytes()];
+                content.readBytes(data);
 
-                int urlStart = responseToTransform.indexOf(realUrl);
+                String responseToTransform = createStringFromData(data, charset);
+                RealURLToProxyURLMapping mapping = realToProxyURLMappingInst.get();
 
-                if (urlStart > 0) {
-                    responseToTransform = responseToTransform.replace(realUrl, proxyUrl);
+                for (Map.Entry<URL, URL> entry : mapping.asMap().entrySet()) {
+                    String realUrl = entry.getKey().toExternalForm();
+                    String proxyUrl = entry.getValue().toExternalForm();
+
+                    int urlStart = responseToTransform.indexOf(realUrl);
+
+                    if (urlStart > 0) {
+                        responseToTransform = responseToTransform.replace(realUrl, proxyUrl);
+                    }
                 }
+
+                byte[] bytes = createDataFromString(responseToTransform, charset);
+                ByteBuf transformedContent = Unpooled.buffer(bytes.length);
+                transformedContent.writeBytes(bytes);
+
+                DefaultFullHttpResponse transformedResponse = new DefaultFullHttpResponse(fullResponse.getProtocolVersion(),
+                        fullResponse.getStatus(), transformedContent);
+                transformedResponse.headers().set(fullResponse.headers());
+                HttpHeaders.setContentLength(transformedResponse, bytes.length);
+
+                return transformedResponse;
             }
-
-            byte[] bytes = createDataFromString(responseToTransform, charset);
-            ChannelBuffer transformedContent = ChannelBuffers.dynamicBuffer(bytes.length);
-            transformedContent.writeBytes(bytes);
-
-            response.setContent(transformedContent);
-            HttpHeaders.setContentLength(response, bytes.length);
         }
+
+        return response;
     }
 
     private String createStringFromData(byte[] data, Charset charset) {

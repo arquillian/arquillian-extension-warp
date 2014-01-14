@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.enrichment;
 
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 
 /**
  * Service for de-enriching responses.

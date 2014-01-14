@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import io.netty.handler.codec.http.HttpResponse;
+
 import java.util.Collection;
 
 import org.jboss.arquillian.core.api.Event;
@@ -35,7 +37,6 @@ import org.jboss.arquillian.warp.impl.client.event.FilterHttpResponse;
 import org.jboss.arquillian.warp.impl.client.event.TransformHttpResponse;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
  * Listens on filter and tries enrich request and de-enrich response
@@ -52,9 +53,6 @@ public class EnrichmentObserver {
 
     @Inject
     private Event<DeenrichHttpResponse> deenrichHttpResponse;
-
-    @Inject
-    private Event<TransformHttpResponse> transformHttpResponse;
 
     public void tryEnrichRequest(@Observes FilterHttpRequest event) {
         final HttpRequest request = event.getRequest();
@@ -87,30 +85,30 @@ public class EnrichmentObserver {
 
     public void tryDeenrichResponse(@Observes FilterHttpResponse event) {
         final HttpResponse response = event.getResponse();
-        final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
+        final io.netty.handler.codec.http.HttpRequest request = event.getRequest();
         final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
         if (service.isEnriched(request, response)) {
             deenrichHttpResponse.fire(new DeenrichHttpResponse(request, response));
         }
-
-        transformHttpResponse.fire(new TransformHttpResponse(request, response));
-    }
-
-    public void transformResponse(@Observes TransformHttpResponse event) {
-        final HttpResponse response = event.getResponse();
-        final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
-        final HttpResponseTransformationService service = load(HttpResponseTransformationService.class);
-
-        service.transformResponse(request, response);
     }
 
     public void deenrichResponse(@Observes DeenrichHttpResponse event) {
         final HttpResponse response = event.getResponse();
-        final org.jboss.netty.handler.codec.http.HttpRequest request = event.getRequest();
+        final io.netty.handler.codec.http.HttpRequest request = event.getRequest();
         final HttpResponseDeenrichmentService service = load(HttpResponseDeenrichmentService.class);
 
         service.deenrichResponse(request, response);
+    }
+
+    public void transformResponse(@Observes TransformHttpResponse event) {
+        HttpResponse response = event.getResponse();
+        final io.netty.handler.codec.http.HttpRequest request = event.getRequest();
+        final HttpResponseTransformationService service = load(HttpResponseTransformationService.class);
+
+        response = service.transformResponse(request, response);
+
+        event.setResponse(response);
     }
 
     private WarpContext warpContext() {
