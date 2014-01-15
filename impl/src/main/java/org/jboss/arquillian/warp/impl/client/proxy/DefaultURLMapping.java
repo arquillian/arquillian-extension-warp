@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
@@ -57,10 +58,18 @@ public class DefaultURLMapping implements URLMapping {
 
     private URL newProxyUrlWithPort(URL url, int port) {
         try {
-            String localHost = InetAddress.getLocalHost().getHostAddress();
-            return new URL(url.getProtocol(), localHost, port, url.getFile());
+            String host = getProxyHost();
+            return new URL(url.getProtocol(), host, port, url.getFile());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    protected String getProxyHost() {
+        return getProxyAddress().getHostAddress();
+    }
+
+    private InetAddress getProxyAddress() {
+        return Inet4Address.getLoopbackAddress();
     }
 }
