@@ -76,11 +76,12 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
             }
         );
 
+        final InetSocketAddress bindToAddress = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
         final InetSocketAddress forwardToAddress = new InetSocketAddress(realUrl.getHost(), realUrl.getPort());
 
         return DefaultHttpProxyServer
             .bootstrap()
-            .withPort(proxyUrl.getPort())
+            .withAddress(bindToAddress)
             .withTransparent(true)
             .withChainProxyManager(new ChainedProxyManager() {
 
