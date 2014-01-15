@@ -17,6 +17,8 @@
 package org.jboss.arquillian.warp.client.filter.http;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import org.jboss.arquillian.warp.client.filter.Request;
 
@@ -51,4 +53,12 @@ public interface HttpRequest extends HttpMessage, Request {
      * Returns the URL of this request
      */
     URL getUrl();
+
+    /**
+     * Returns
+     * @return
+     */
+    Map<String, List<String>> getQueryParameters();
+
+    Map<String, List<String>> getHttpDataAttributes();
 }
