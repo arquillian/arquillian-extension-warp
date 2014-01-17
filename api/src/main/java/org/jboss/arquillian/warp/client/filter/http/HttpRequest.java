@@ -55,10 +55,12 @@ public interface HttpRequest extends HttpMessage, Request {
     URL getUrl();
 
     /**
-     * Returns
-     * @return
+     * Returns a map of query parameters
      */
     Map<String, List<String>> getQueryParameters();
 
+    /**
+     * Returns a map of HTTP form data attributes
+     */
     Map<String, List<String>> getHttpDataAttributes();
 }

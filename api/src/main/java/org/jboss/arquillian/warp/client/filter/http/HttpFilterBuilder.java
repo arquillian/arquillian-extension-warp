@@ -18,6 +18,7 @@ package org.jboss.arquillian.warp.client.filter.http;
 
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.matcher.HttpHeaderMatcherBuilder;
+import org.jboss.arquillian.warp.client.filter.matcher.HttpParameterMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.MethodMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
 import org.jboss.arquillian.warp.client.observer.ObserverBuilder;
@@ -47,6 +48,8 @@ public interface HttpFilterBuilder extends ObserverBuilder<HttpFilterBuilder, Re
      * @return the method matcher builder
      */
     HttpHeaderMatcherBuilder<HttpFilterBuilder> header();
+
+    HttpParameterMatcherBuilder<HttpFilterBuilder> parameter();
 
     /**
      * Matches the request which has given index (number; order) in sequence of matched requests.

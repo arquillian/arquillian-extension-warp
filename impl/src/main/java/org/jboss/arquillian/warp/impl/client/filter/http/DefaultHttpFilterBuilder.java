@@ -23,9 +23,11 @@ import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 import org.jboss.arquillian.warp.client.filter.matcher.HttpHeaderMatcherBuilder;
+import org.jboss.arquillian.warp.client.filter.matcher.HttpParameterMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.MethodMatcherBuilder;
 import org.jboss.arquillian.warp.client.filter.matcher.UriMatcherBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.matcher.DefaultHttpHeaderMatcherBuilder;
+import org.jboss.arquillian.warp.impl.client.filter.matcher.DefaultHttpParameterMatcherBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.matcher.DefaultMethodMatcherBuilder;
 import org.jboss.arquillian.warp.impl.client.filter.matcher.DefaultUriMatcherBuilder;
 
@@ -82,6 +84,14 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
     public HttpHeaderMatcherBuilder<HttpFilterBuilder> header() {
 
         return new DefaultHttpHeaderMatcherBuilder(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpParameterMatcherBuilder<HttpFilterBuilder> parameter() {
+        return new DefaultHttpParameterMatcherBuilder(this);
     }
 
     /**
