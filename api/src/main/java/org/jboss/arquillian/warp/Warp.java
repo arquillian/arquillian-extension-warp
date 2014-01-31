@@ -39,7 +39,7 @@ public final class Warp {
 
         if (runtime == null) {
             throw new IllegalStateException(
-                    "The Warp runtime isn't initialized. You need to annotate a test class with @WarpTest in order to initialize Warp.");
+                    "The Warp runtime isn't initialized. You need to make sure arquillian-warp-impl is on classpath and annotate a test class with @WarpTest in order to initialize Warp.");
         }
 
         return runtime.getWarpActivityBuilder().initiate(activity);
