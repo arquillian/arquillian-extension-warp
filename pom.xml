@@ -72,7 +72,7 @@
 
         <!-- Container Versions -->
         <version.jbossas71>7.1.1.Final</version.jbossas71>
-        <version.tomee15>1.5.1</version.tomee15>
+        <version.tomee16>1.6.0</version.tomee16>
         <version.glassfish31>3.1.2.2</version.glassfish31>
         <version.tomcat6>6.0.35</version.tomcat6>
         <version.tomcat7>7.0.26</version.tomcat7>
