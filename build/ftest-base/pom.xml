@@ -16,7 +16,7 @@
         <version.shrinkwrap>1.1.2</version.shrinkwrap>
         <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
         <version.shrinkwrap.descriptors>2.0.0-alpha-3</version.shrinkwrap.descriptors>
-        <version.arquillian.glassfish31>1.0.0.CR3</version.arquillian.glassfish31>
+        <version.arquillian.glassfish40>1.0.0.CR4</version.arquillian.glassfish40>
         
         <!-- Arquillian Configuration -->
         <arquillian.debug>false</arquillian.debug>
@@ -36,7 +36,7 @@
         <arquillian.launch.tomcat6>false</arquillian.launch.tomcat6>
         <arquillian.launch.tomcat7>false</arquillian.launch.tomcat7>
         <arquillian.launch.tomee16>false</arquillian.launch.tomee16>
-        <arquillian.launch.glassfish31>false</arquillian.launch.glassfish31>
+        <arquillian.launch.glassfish40>false</arquillian.launch.glassfish40>
     </properties>
 
     <dependencyManagement>
@@ -316,43 +316,43 @@
             </dependencies>
         </profile>
         <profile>
-            <id>glassfish-managed-3-1</id>
+            <id>glassfish-managed-4-0</id>
             <activation>
                 <property>
                     <name>integration</name>
-                    <value>glassfish31</value>
+                    <value>glassfish40</value>
                 </property>
             </activation>
             <properties>
-                <arquillian.launch.glassfish31>true</arquillian.launch.glassfish31>
-                <arquillian.container.home>${project.build.directory}/glassfish3</arquillian.container.home>
-                <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish31}</arquillian.container.distribution>
+                <arquillian.launch.glassfish40>true</arquillian.launch.glassfish40>
+                <arquillian.container.home>${project.build.directory}/glassfish4</arquillian.container.home>
+                <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish40}</arquillian.container.distribution>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-glassfish-managed-3.1</artifactId>
-                    <version>1.0.0.CR3</version>
+                    <version>${version.arquillian.glassfish40}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>glassfish-remote-3-1</id>
+            <id>glassfish-remote-4-0</id>
             <activation>
                 <property>
                     <name>integration</name>
-                    <value>glassfish31-remote</value>
+                    <value>glassfish40-remote</value>
                 </property>
             </activation>
             <properties>
-                <arquillian.launch.glassfish31>true</arquillian.launch.glassfish31>
+                <arquillian.launch.glassfish40>true</arquillian.launch.glassfish40>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-glassfish-remote-3.1</artifactId>
-                    <version>1.0.0.CR3</version>
+                    <version>${version.arquillian.glassfish40}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
