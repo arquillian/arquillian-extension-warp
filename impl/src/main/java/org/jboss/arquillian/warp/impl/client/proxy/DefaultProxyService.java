@@ -16,19 +16,15 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
-import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Queue;
-import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.warp.impl.client.context.operation.ContextualOperation;
 import org.jboss.arquillian.warp.impl.client.context.operation.Contextualizer;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContext;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContextRetriver;
@@ -37,7 +33,7 @@ import org.littleshoot.proxy.ChainedProxy;
 import org.littleshoot.proxy.ChainedProxyAdapter;
 import org.littleshoot.proxy.ChainedProxyManager;
 import org.littleshoot.proxy.HttpFilters;
-import org.littleshoot.proxy.HttpFiltersSourceAdapter;
+import org.littleshoot.proxy.HttpFiltersSource;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
@@ -68,16 +64,8 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
             }
         };
 
-        final HttpFiltersSourceAdapter httpFiltersSource = serviceLoader().onlyOne(HttpFiltersSourceAdapter.class);
-
-        final ContextualOperation<HttpRequest, HttpFilters> filterRequest = Contextualizer.contextualize(retriever,
-            new ContextualOperation<HttpRequest, HttpFilters>() {
-                @Override
-                public HttpFilters performInContext(final HttpRequest originalRequest) {
-                    return new ContextualHttpFilters(retriever, httpFiltersSource.filterRequest(originalRequest));
-                }
-            }
-        );
+        final HttpFiltersSource httpFiltersSource = Contextualizer.contextualize(retriever,
+                serviceLoader().onlyOne(HttpFiltersSource.class), HttpFiltersSource.class, HttpFilters.class);
 
         final InetSocketAddress bindToAddress = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
         final InetSocketAddress forwardToAddress = new InetSocketAddress(realUrl.getHost(), realUrl.getPort());
@@ -98,23 +86,7 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
                     });
                 }
             })
-            .withFiltersSource(new HttpFiltersSourceAdapter() {
-
-                @Override
-                public HttpFilters filterRequest(HttpRequest originalRequest) {
-                    return filterRequest.performInContext(originalRequest);
-                }
-
-                @Override
-                public int getMaximumRequestBufferSizeInBytes() {
-                    return httpFiltersSource.getMaximumRequestBufferSizeInBytes();
-                }
-
-                @Override
-                public int getMaximumResponseBufferSizeInBytes() {
-                    return httpFiltersSource.getMaximumResponseBufferSizeInBytes();
-                }
-            })
+            .withFiltersSource(httpFiltersSource)
             .start();
     }
 
@@ -125,55 +97,5 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
     private ServiceLoader serviceLoader() {
         return serviceLoader.get();
-    }
-
-    private static class ContextualHttpFilters implements HttpFilters {
-        private HttpFilters delegate;
-        private OperationalContextRetriver retriver;
-
-        public ContextualHttpFilters(OperationalContextRetriver retriver, HttpFilters delegate) {
-            this.retriver = retriver;
-            this.delegate = delegate;
-        }
-
-        @Override
-        public HttpResponse requestPre(final HttpObject httpObject) {
-            return contextual(new Callable<HttpResponse>() {
-                public HttpResponse call() throws Exception { return delegate.requestPre(httpObject); }
-             });
-        }
-
-        @Override
-        public HttpResponse requestPost(final HttpObject httpObject) {
-            return contextual(new Callable<HttpResponse>() {
-               public HttpResponse call() throws Exception { return delegate.requestPost(httpObject); }
-            });
-        }
-
-        @Override
-        public HttpObject responsePre(final HttpObject httpObject) {
-            return contextual(new Callable<HttpObject>() {
-                public HttpObject call() throws Exception { return delegate.responsePre(httpObject); }
-             });
-        }
-
-        @Override
-        public HttpObject responsePost(final HttpObject httpObject) {
-            return contextual(new Callable<HttpObject>() {
-                public HttpObject call() throws Exception { return delegate.responsePost(httpObject); }
-             });
-        }
-
-        private <T> T contextual(Callable<T> callable) {
-            OperationalContext context = retriver.retrieve();
-            try {
-                context.activate();
-                return callable.call();
-            } catch(Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                context.deactivate();
-            }
-        }
     }
 }

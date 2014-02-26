@@ -152,7 +152,7 @@ public class CommandBusOnClient {
                 command.perform();
                 return null;
             }
-        });
+        }, ContextualOperation.class);
     }
 
     public Command executeRemotely(Command command) {
