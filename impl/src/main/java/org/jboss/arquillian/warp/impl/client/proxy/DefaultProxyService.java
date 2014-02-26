@@ -16,11 +16,14 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
+import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Queue;
+import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -70,8 +73,8 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         final ContextualOperation<HttpRequest, HttpFilters> filterRequest = Contextualizer.contextualize(retriever,
             new ContextualOperation<HttpRequest, HttpFilters>() {
                 @Override
-                public HttpFilters performInContext(HttpRequest originalRequest) {
-                    return httpFiltersSource.filterRequest(originalRequest);
+                public HttpFilters performInContext(final HttpRequest originalRequest) {
+                    return new ContextualHttpFilters(retriever, httpFiltersSource.filterRequest(originalRequest));
                 }
             }
         );
@@ -102,8 +105,6 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
                     return filterRequest.performInContext(originalRequest);
                 }
 
-
-
                 @Override
                 public int getMaximumRequestBufferSizeInBytes() {
                     return httpFiltersSource.getMaximumRequestBufferSizeInBytes();
@@ -124,5 +125,55 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
 
     private ServiceLoader serviceLoader() {
         return serviceLoader.get();
+    }
+
+    private static class ContextualHttpFilters implements HttpFilters {
+        private HttpFilters delegate;
+        private OperationalContextRetriver retriver;
+
+        public ContextualHttpFilters(OperationalContextRetriver retriver, HttpFilters delegate) {
+            this.retriver = retriver;
+            this.delegate = delegate;
+        }
+
+        @Override
+        public HttpResponse requestPre(final HttpObject httpObject) {
+            return contextual(new Callable<HttpResponse>() {
+                public HttpResponse call() throws Exception { return delegate.requestPre(httpObject); }
+             });
+        }
+
+        @Override
+        public HttpResponse requestPost(final HttpObject httpObject) {
+            return contextual(new Callable<HttpResponse>() {
+               public HttpResponse call() throws Exception { return delegate.requestPost(httpObject); }
+            });
+        }
+
+        @Override
+        public HttpObject responsePre(final HttpObject httpObject) {
+            return contextual(new Callable<HttpObject>() {
+                public HttpObject call() throws Exception { return delegate.responsePre(httpObject); }
+             });
+        }
+
+        @Override
+        public HttpObject responsePost(final HttpObject httpObject) {
+            return contextual(new Callable<HttpObject>() {
+                public HttpObject call() throws Exception { return delegate.responsePost(httpObject); }
+             });
+        }
+
+        private <T> T contextual(Callable<T> callable) {
+            OperationalContext context = retriver.retrieve();
+            try {
+                context.activate();
+                return callable.call();
+            } catch(Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                context.deactivate();
+            }
+        }
     }
 }
