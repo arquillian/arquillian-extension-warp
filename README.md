@@ -1,4 +1,4 @@
-Arquillian Warp [![Build Status](https://buildhive.cloudbees.com/job/arquillian/job/arquillian-extension-warp/badge/icon)](https://buildhive.cloudbees.com/job/arquillian/job/arquillian-extension-warp/)
+Arquillian Warp [![Build Status](https://arquillian.ci.cloudbees.com/buildStatus/icon?job=Arquillian-Extension-Warp)](https://arquillian.ci.cloudbees.com/view/Extensions/job/Arquillian-Extension-Warp/)
 ===============
 
 > Warp fills the void between client-side and server-side testing
