@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.server.execution;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +40,7 @@ import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegator;
 import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
 import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
 
 /**
@@ -139,6 +141,9 @@ public class WarpFilter implements Filter {
      */
     private void doFilterWarp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
+
+        String requestId = UUID.randomUUID().toString();
+        request.setAttribute(WarpCommons.WARP_REQUEST_ID, requestId);
 
         manager.fire(new ActivateManager(manager));
         manager.fire(new ProcessHttpRequest(request, response, filterChain));

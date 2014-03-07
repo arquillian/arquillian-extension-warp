@@ -30,7 +30,7 @@ import org.jboss.arquillian.warp.spi.context.RequestScoped;
  * @author Lukas Fryc
  *
  */
-public class RequestContextImpl extends AbstractContext<Integer> implements RequestContext {
+public class RequestContextImpl extends AbstractContext<String> implements RequestContext {
 
     /*
      * (non-Javadoc)

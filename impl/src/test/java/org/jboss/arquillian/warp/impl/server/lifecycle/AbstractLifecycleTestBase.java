@@ -17,7 +17,7 @@
 package org.jboss.arquillian.warp.impl.server.lifecycle;
 
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.spi.Manager;
@@ -39,6 +39,6 @@ public class AbstractLifecycleTestBase extends AbstractContainerTestTestBase {
     @Override
     protected void startContexts(Manager manager) {
         super.startContexts(manager);
-        manager.getContext(RequestContext.class).activate(new Random().nextInt());
+        manager.getContext(RequestContext.class).activate(UUID.randomUUID().toString());
     }
 }

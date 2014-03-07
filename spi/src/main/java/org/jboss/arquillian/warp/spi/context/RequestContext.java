@@ -25,5 +25,5 @@ import org.jboss.arquillian.core.spi.context.IdBoundContext;
  *
  * @author Lukas Fryc
  */
-public interface RequestContext extends IdBoundContext<Integer> {
+public interface RequestContext extends IdBoundContext<String> {
 }

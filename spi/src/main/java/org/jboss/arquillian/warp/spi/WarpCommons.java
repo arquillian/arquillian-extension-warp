@@ -37,6 +37,8 @@ public final class WarpCommons {
 
     public static final String ENRICHMENT_SEQUENCE_NUMBER = "X-Arq-Enrichment-Id";
 
+    public static final String WARP_REQUEST_ID = "X-Arq-Warp-RequestID";
+
     /**
      * Checks whether either given class or its superclasses are annoated with {@link WarpTest} annotation indicating that the
      * Warp is used in the test.

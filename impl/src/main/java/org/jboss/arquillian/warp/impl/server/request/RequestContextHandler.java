@@ -28,6 +28,7 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.context.RequestContext;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
@@ -74,8 +75,9 @@ public class RequestContextHandler {
     public void createRequestContext(@Observes(precedence = 100) EventContext<ProcessHttpRequest> context) {
         RequestContext testContext = this.requestContextInstance.get();
 
+        String requestId = String.valueOf(context.getEvent().getRequest().getAttribute(WarpCommons.WARP_REQUEST_ID));
         try {
-            testContext.activate(context.getEvent().getRequest().hashCode());
+            testContext.activate(requestId);
 
             servletRequest.set(context.getEvent().getRequest());
             servletResponse.set(context.getEvent().getResponse());
@@ -87,10 +89,12 @@ public class RequestContextHandler {
 
             context.proceed();
         } finally {
-            afterRequest.fire(new AfterRequest(context.getEvent().getRequest(), context.getEvent().getResponse()));
-
-            testContext.deactivate();
-            testContext.destroy(context.getEvent().getRequest().hashCode());
+            try {
+                afterRequest.fire(new AfterRequest(context.getEvent().getRequest(), context.getEvent().getResponse()));
+            } finally {
+                testContext.deactivate();
+                testContext.destroy(requestId);
+            }
         }
     }
 }
