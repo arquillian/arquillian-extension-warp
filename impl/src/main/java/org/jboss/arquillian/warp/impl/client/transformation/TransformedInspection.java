@@ -27,7 +27,6 @@ import javassist.CtNewConstructor;
 import javassist.Modifier;
 import javassist.bytecode.EnclosingMethodAttribute;
 import javassist.bytecode.InnerClassesAttribute;
-
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.shrinkwrap.api.asset.NamedAsset;
 
@@ -96,17 +95,25 @@ public class TransformedInspection {
 
     private Inspection cloneToNew(Inspection obj) throws InspectionTransformationException {
         try {
-            Class<? extends Inspection> oldClass = obj.getClass();
-            Inspection newObj = transformedClass.newInstance();
-            for (Field newF : transformedClass.getDeclaredFields()) {
-                if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
-                    && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
-                    continue;
+            Class<?> oldClass = obj.getClass();
+            Inspection newObj = (Inspection)InstanceCreator.createInstance(transformedClass);
+
+            Class<?> newClass = transformedClass;
+
+            while(newClass != Object.class) {
+                for (Field newF : newClass.getDeclaredFields()) {
+                    if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
+                            && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
+                        continue;
+                    }
+                    Field oldF = oldClass.getDeclaredField(newF.getName());
+                    oldF.setAccessible(true);
+                    newF.setAccessible(true);
+
+                    newF.set(newObj, oldF.get(obj));
                 }
-                Field oldF = oldClass.getDeclaredField(newF.getName());
-                oldF.setAccessible(true);
-                newF.setAccessible(true);
-                newF.set(newObj, oldF.get(obj));
+                newClass = newClass.getSuperclass();
+                oldClass = oldClass.getSuperclass();
             }
             return newObj;
         } catch (Exception e) {
@@ -147,4 +154,5 @@ public class TransformedInspection {
     public Class<?> getOriginalClass() {
         return originalClass;
     }
+
 }

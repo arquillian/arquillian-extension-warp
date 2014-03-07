@@ -52,7 +52,7 @@ public class TestTransformedInspection {
             .addClasses(WarpCommons.class, Inspection.class, RequestPayload.class, BeforeServlet.class)
             .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
             .addClasses(TestTransformedInspection.class, TransformedInspection.class, MigratedInspection.class,
-                InspectionTransformationException.class, NoSerialVersionUIDException.class)
+                InspectionTransformationException.class, NoSerialVersionUIDException.class, InstanceCreator.class)
             .addClasses(SeparateInvocator.class, CtClassAsset.class,
                 SeparatedClassLoader.class);
 
@@ -71,6 +71,38 @@ public class TestTransformedInspection {
 
         Inspection inspection = getAnonymousServerInspection();
 
+        TransformedInspection transformedInspection = new TransformedInspection(inspection);
+        Object modifiedInspection = transformedInspection.getTransformedInspection();
+
+        verifyServerInspectionClass(modifiedInspection);
+    }
+
+    @Test
+    public void testInnerClass() throws Exception {
+
+        Inspection inspection = new InnerInspection();
+
+        TransformedInspection transformedInspection = new TransformedInspection(inspection);
+        Object modifiedInspection = transformedInspection.getTransformedInspection();
+
+        verifyServerInspectionClass(modifiedInspection);
+    }
+
+    @Test
+    public void testInnerClassWithArgsConstructor() throws Exception {
+
+        Inspection inspection = new InnerWithArgsInspection("Test");
+
+        TransformedInspection transformedInspection = new TransformedInspection(inspection);
+        Object modifiedInspection = transformedInspection.getTransformedInspection();
+
+        verifyServerInspectionClass(modifiedInspection);
+    }
+
+    @Test
+    public void testInnerClassWithArgsConstructorInheritance() throws Exception {
+
+        Inspection inspection = new InnerWithArgsInheritedInspection("Test");
         TransformedInspection transformedInspection = new TransformedInspection(inspection);
         Object modifiedInspection = transformedInspection.getTransformedInspection();
 
@@ -105,6 +137,38 @@ public class TestTransformedInspection {
         print(inspection.getClass());
 
         return inspection;
+    }
+
+    public static class InnerInspection extends Inspection {
+        private static final long serialVersionUID = 1L;
+
+        @BeforeServlet
+        public String get() {
+            return "Test";
+        }
+    };
+
+    public static class InnerWithArgsInspection extends Inspection {
+        private static final long serialVersionUID = 1L;
+
+        private String value;
+
+        public InnerWithArgsInspection(String value) {
+            this.value = value;
+        }
+        @BeforeServlet
+        public String get() {
+            return value;
+        }
+    };
+
+    public static class InnerWithArgsInheritedInspection extends InnerWithArgsInspection {
+
+        private static final long serialVersionUID = 1L;
+
+        public InnerWithArgsInheritedInspection(String value) {
+            super(value);
+        }
     }
 
     public static void verifyServerInspectionClass(Object modifiedInspection) throws Exception {

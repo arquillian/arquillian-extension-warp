@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.shared.inspection;
 
-import static org.junit.Assert.assertFalse;
-
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -27,6 +25,7 @@ import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.client.separation.SeparatedClassLoader;
 import org.jboss.arquillian.warp.impl.client.transformation.CtClassAsset;
 import org.jboss.arquillian.warp.impl.client.transformation.InspectionTransformationException;
+import org.jboss.arquillian.warp.impl.client.transformation.InstanceCreator;
 import org.jboss.arquillian.warp.impl.client.transformation.MigratedInspection;
 import org.jboss.arquillian.warp.impl.client.transformation.NoSerialVersionUIDException;
 import org.jboss.arquillian.warp.impl.client.transformation.TransformedInspection;
@@ -42,6 +41,8 @@ import org.jboss.shrinkwrap.spi.MemoryMapArchive;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
 
 public class TestInspectionLoading {
 
@@ -192,7 +193,7 @@ public class TestInspectionLoading {
             .addClasses(ServerInterface.class)
             .addClasses(SharingClass.class, Inspection.class, RequestPayload.class)
             .addClasses(TransformedInspection.class, MigratedInspection.class, InspectionTransformationException.class,
-                NoSerialVersionUIDException.class)
+                NoSerialVersionUIDException.class, InstanceCreator.class)
             .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
             .addClasses(SeparateInvocator.class, CtClassAsset.class, SeparatedClassLoader.class);
 
