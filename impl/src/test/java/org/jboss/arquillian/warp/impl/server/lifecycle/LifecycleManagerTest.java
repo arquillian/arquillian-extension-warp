@@ -18,22 +18,24 @@ package org.jboss.arquillian.warp.impl.server.lifecycle;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.context.Context;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
-import org.jboss.arquillian.warp.spi.event.AfterRequest;
-import org.jboss.arquillian.warp.spi.event.BeforeRequest;
+import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,10 +48,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class LifecycleManagerTest extends AbstractManagerTestBase {
 
     @Mock
-    ServletRequest request;
+    HttpServletRequest request;
 
     @Mock
-    ServletResponse response;
+    HttpServletResponse response;
+
+    @Mock
+    FilterChain filterChain;
 
     @Inject
     Instance<LifecycleManager> lifecycleManager;
@@ -61,6 +66,7 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(LifecycleManagerObserver.class);
         extensions.add(RequestContextHandler.class);
+        extensions.add(VerifyLifecycleManager.class);
     }
 
     @Override
@@ -73,25 +79,43 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
     public void lifecycle_manager_should_be_initialized_before_request() {
         // having
         assertNull(lifecycleManager.get());
+        VerifyLifecycleManager.invoked = false;
 
         // when
-        fire(new BeforeRequest(request, response));
+        fire(new ProcessHttpRequest(request, response, filterChain));
 
         // then
-        assertNotNull("lifecycle manager should be initialized on BeforeRequest", lifecycleManager.get());
+        assertTrue(VerifyLifecycleManager.invoked);
+        injector.get().inject(this);
+        assertNull(lifecycleManager.get());
+
     }
 
     @Test
     public void lifecycle_manager_should_be_finalized_after_request() {
         // having
-        // - lifecycle manager instantiated on before request
-        fire(new BeforeRequest(request, response));
+        assertNull(lifecycleManager.get());
+        VerifyLifecycleManager.invoked = false;
 
         // when
-        fire(new AfterRequest(request, response));
+        fire(new ProcessHttpRequest(request, response, filterChain));
 
         // then
+        assertTrue(VerifyLifecycleManager.invoked);
         injector.get().inject(this);
-        assertNull("lifecycle manager should be finalized on AfterRequest", lifecycleManager.get());
+        assertNull("lifecycle manager should be finalized after ProcessHttpRequest ", lifecycleManager.get());
+    }
+
+    public static class VerifyLifecycleManager {
+
+        private static boolean invoked = false;
+
+        @Inject
+        Instance<LifecycleManager> lifecycleManager;
+
+        public void observeProcessHttpRequest(@Observes ProcessHttpRequest processHttpRequest) {
+            invoked = true;
+            assertNotNull("lifecycle manager should be initialized by ProcessHttpRequest event", lifecycleManager.get());
+        }
     }
 }

@@ -14,8 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.impl.server.event;
+package org.jboss.arquillian.warp.spi.servlet.event;
 
+/**
+ * <p>
+ * This event is fired as a reaction to {@link ProcessHttpRequest} for every request that should be processed by Warp.
+ * </p>
+ *
+ * <p>
+ * Requests that should not be processed by Warp fires {@link ProcessHttpRequest} but their processing needs to be separated and
+ * so they do not fire {@link ProcessWarpRequest}.
+ * </p>
+ *
+ * <p>
+ * As a reaction to this event, Warp implementation should fire {@link ExecuteWarp} event and then watch for Warp execution
+ * result - in this stage Warp guards all exception that may arise from processing and finally it waits for result of the test.
+ * Finally it saves this result so that it can be retrieved by Warp Client.
+ * </p>
+ *
+ * @see ExecuteWarp
+ * @see ProcessHttpRequest
+ */
 public class ProcessWarpRequest {
 
 }

@@ -28,12 +28,12 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.impl.server.event.EnrichHttpResponse;
-import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
-import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingFinished;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingStarted;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.WarpCommons;
+import org.jboss.arquillian.warp.spi.servlet.event.ExecuteWarp;
+import org.jboss.arquillian.warp.spi.servlet.event.ProcessWarpRequest;
 
 public class WarpRequestProcessor {
 

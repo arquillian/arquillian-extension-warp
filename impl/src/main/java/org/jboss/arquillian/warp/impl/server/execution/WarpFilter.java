@@ -30,6 +30,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.protocol.RequestContent;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
@@ -37,10 +38,8 @@ import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegator;
 import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
 import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
-import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
-import org.jboss.arquillian.warp.spi.context.RequestScoped;
-import org.jboss.arquillian.warp.spi.event.AfterRequest;
-import org.jboss.arquillian.warp.spi.event.BeforeRequest;
+import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
+import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
 
 /**
  * <p>
@@ -126,26 +125,23 @@ public class WarpFilter implements Filter {
      * <p>
      * Throws {@link ProcessHttpRequest} event which is used for further request processing.
      * </p>
+     *
+     * <p>
+     * Usually, the request is processed further by {@link HttpRequestProcessor} event observer.
+     * </p>
+     *
+     * <p>
+     * The {@link ProcessHttpRequest} event is also intercepted by {@link RequestContextHandler} that activates {@link RequestContent}.
+     * </p>
+     *
+     * @see HttpRequestProcessor
+     * @see RequestContextHandler
      */
     private void doFilterWarp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
-            manager.fire(new ActivateManager(manager));
-
-            manager.fire(new BeforeRequest(request, response));
-
-            manager.bind(RequestScoped.class, ServletRequest.class, request);
-            manager.bind(RequestScoped.class, ServletResponse.class, response);
-            manager.bind(RequestScoped.class, HttpServletRequest.class, request);
-            manager.bind(RequestScoped.class, HttpServletResponse.class, response);
-            manager.bind(RequestScoped.class, FilterChain.class, filterChain);
-
-            try {
-                manager.fire(new ProcessHttpRequest());
-            } finally {
-                manager.fire(new AfterRequest(request, response));
-
-            }
-            manager.fire(new PassivateManager(manager));
+        manager.fire(new ActivateManager(manager));
+        manager.fire(new ProcessHttpRequest(request, response, filterChain));
+        manager.fire(new PassivateManager(manager));
     }
 }

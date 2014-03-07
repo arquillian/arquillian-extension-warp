@@ -16,15 +16,23 @@
  */
 package org.jboss.arquillian.warp.impl.server.request;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.warp.spi.context.RequestContext;
+import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.event.AfterRequest;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
+import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
 
 /**
  * The handler for current context.
@@ -37,19 +45,52 @@ public class RequestContextHandler {
     @Inject
     private Instance<RequestContext> requestContextInstance;
 
-    public void createRequestContext(@Observes(precedence = 100) EventContext<BeforeRequest> context) {
-        ServletRequest request = context.getEvent().getRequest();
-        RequestContext requestContext = this.requestContextInstance.get();
-        requestContext.activate(request.hashCode());
-        context.proceed();
-    }
+    @Inject
+    @RequestScoped
+    private InstanceProducer<ServletRequest> servletRequest;
 
-    public void destroyRequestContext(@Observes(precedence = 100) EventContext<AfterRequest> context) {
-        RequestContext requestContext = this.requestContextInstance.get();
+    @Inject
+    @RequestScoped
+    private InstanceProducer<ServletResponse> servletResponse;
+
+    @Inject
+    @RequestScoped
+    private InstanceProducer<HttpServletRequest> httpServletRequest;
+
+    @Inject
+    @RequestScoped
+    private InstanceProducer<HttpServletResponse> httpServletResponse;
+
+    @Inject
+    @RequestScoped
+    private InstanceProducer<FilterChain> filterChain;
+
+    @Inject
+    private Event<BeforeRequest> beforeRequest;
+
+    @Inject
+    private Event<AfterRequest> afterRequest;
+
+    public void createRequestContext(@Observes(precedence = 100) EventContext<ProcessHttpRequest> context) {
+        RequestContext testContext = this.requestContextInstance.get();
+
         try {
+            testContext.activate(context.getEvent().getRequest().hashCode());
+
+            servletRequest.set(context.getEvent().getRequest());
+            servletResponse.set(context.getEvent().getResponse());
+            httpServletRequest.set(context.getEvent().getRequest());
+            httpServletResponse.set(context.getEvent().getResponse());
+            filterChain.set(context.getEvent().getFilterChain());
+
+            beforeRequest.fire(new BeforeRequest(context.getEvent().getRequest(), context.getEvent().getResponse()));
+
             context.proceed();
         } finally {
-            requestContext.deactivate();
+            afterRequest.fire(new AfterRequest(context.getEvent().getRequest(), context.getEvent().getResponse()));
+
+            testContext.deactivate();
+            testContext.destroy(context.getEvent().getRequest().hashCode());
         }
     }
 }

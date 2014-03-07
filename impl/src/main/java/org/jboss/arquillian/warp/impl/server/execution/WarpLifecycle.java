@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.warp.Inspection;
-import org.jboss.arquillian.warp.impl.server.event.ExecuteWarp;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleFinished;
 import org.jboss.arquillian.warp.impl.server.event.WarpLifecycleStarted;
 import org.jboss.arquillian.warp.impl.server.inspection.InspectionRegistry;
@@ -37,6 +36,7 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.servlet.event.AfterServlet;
 import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
+import org.jboss.arquillian.warp.spi.servlet.event.ExecuteWarp;
 
 /**
  * The lifecycle of Warp request verification

@@ -39,14 +39,14 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpRequestDeenricher;
 import org.jboss.arquillian.warp.impl.server.enrichment.HttpResponseEnricher;
 import org.jboss.arquillian.warp.impl.server.event.EnrichHttpResponse;
-import org.jboss.arquillian.warp.impl.server.event.ProcessHttpRequest;
-import org.jboss.arquillian.warp.impl.server.event.ProcessWarpRequest;
 import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
 import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.context.RequestContext;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
+import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
+import org.jboss.arquillian.warp.spi.servlet.event.ProcessWarpRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,7 +103,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         when(deenricher.isEnriched()).thenReturn(false);
 
         // when
-        fire(new ProcessHttpRequest());
+        fire(new ProcessHttpRequest(request, response, filterChain));
 
         // then
         verify(filterChain).doFilter(request, response);
@@ -116,7 +116,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         when(deenricher.isEnriched()).thenReturn(false);
 
         // when
-        fire(new ProcessHttpRequest());
+        fire(new ProcessHttpRequest(request, response, filterChain));
 
         // then
         assertEventNotFiredInContext(ProcessWarpRequest.class, RequestContext.class);
@@ -130,7 +130,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         when(deenricher.resolvePayload()).thenReturn(requestPayload);
 
         // when
-        fire(new ProcessHttpRequest());
+        fire(new ProcessHttpRequest(request, response, filterChain));
 
         // then
         assertEventFired(ProcessWarpRequest.class);
@@ -144,7 +144,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         when(deenricher.resolvePayload()).thenReturn(requestPayload);
 
         // when
-        fire(new ProcessHttpRequest());
+        fire(new ProcessHttpRequest(request, response, filterChain));
 
         // then
         RequestPayload resolvedRequestPayload = getManager().getContext(RequestContext.class).getObjectStore()
@@ -160,7 +160,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         when(deenricher.resolvePayload()).thenReturn(requestPayload);
 
         // when
-        fire(new ProcessHttpRequest());
+        fire(new ProcessHttpRequest(request, response, filterChain));
 
         // then
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
@@ -180,7 +180,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
 
         // when
         try {
-            fire(new ProcessHttpRequest());
+            fire(new ProcessHttpRequest(request, response, filterChain));
             fail();
         } catch (Exception e) {
             assertEquals(exception, e);
