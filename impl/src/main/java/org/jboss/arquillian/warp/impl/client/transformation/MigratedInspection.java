@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.impl.client.transformation;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -112,7 +113,7 @@ public class MigratedInspection {
 
             try {
                 Class<?> oldClass = transformedInspection.getClass();
-                Serializable migratedInspection = migratedClass.newInstance();
+                Serializable migratedInspection = (Serializable)createInstance(migratedClass);
                 for (Field newF : migratedClass.getDeclaredFields()) {
                     if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
                             && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
@@ -130,6 +131,44 @@ public class MigratedInspection {
             }
 
             return result;
+        }
+
+        private static Object createInstance(Class<?> clazz) {
+            Object instance = createUnSafeInstance(clazz);
+            if(instance == null) {
+                try {
+                    instance = clazz.newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException("Could not create new instance of Transformed class: " + clazz.getName(), e);
+                }
+            }
+            return instance;
+        }
+
+        private static Object createUnSafeInstance(Class<?> clazz) {
+            Object unsafe = getUnsafe();
+            if(unsafe == null) {
+                return null;
+            }
+            try {
+                Method newInstance = unsafe.getClass().getMethod("allocateInstance", new Class[] {Class.class});
+                return newInstance.invoke(unsafe, clazz);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private static Object getUnsafe() {
+            try {
+                Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+                Field field = unsafeClass.getDeclaredField("theUnsafe");
+                field.setAccessible(true);
+                return field.get(null);
+            }
+            catch(Exception e) {
+                return null;
+            }
         }
     }
 

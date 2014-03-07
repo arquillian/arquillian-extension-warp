@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.client.transformation;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import javassist.ClassPool;
@@ -93,17 +94,25 @@ public class TransformedInspection {
 
     private Inspection cloneToNew(Inspection obj) throws InspectionTransformationException {
         try {
-            Class<? extends Inspection> oldClass = obj.getClass();
-            Inspection newObj = transformedClass.newInstance();
-            for (Field newF : transformedClass.getDeclaredFields()) {
-                if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
-                        && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
-                    continue;
+            Class<?> oldClass = obj.getClass();
+            Inspection newObj = (Inspection)createInstance(transformedClass);
+
+            Class<?> newClass = transformedClass;
+
+            while(newClass != Object.class) {
+                for (Field newF : newClass.getDeclaredFields()) {
+                    if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
+                            && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
+                        continue;
+                    }
+                    Field oldF = oldClass.getDeclaredField(newF.getName());
+                    oldF.setAccessible(true);
+                    newF.setAccessible(true);
+
+                    newF.set(newObj, oldF.get(obj));
                 }
-                Field oldF = oldClass.getDeclaredField(newF.getName());
-                oldF.setAccessible(true);
-                newF.setAccessible(true);
-                newF.set(newObj, oldF.get(obj));
+                newClass = newClass.getSuperclass();
+                oldClass = oldClass.getSuperclass();
             }
             return newObj;
         } catch (Exception e) {
@@ -145,4 +154,41 @@ public class TransformedInspection {
         return originalClass;
     }
 
+    private static Object createInstance(Class<?> clazz) {
+        Object instance = createUnSafeInstance(clazz);
+        if(instance == null) {
+            try {
+                instance = clazz.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not create new instance of Transformed class: " + clazz.getName(), e);
+            }
+        }
+        return instance;
+    }
+
+    private static Object createUnSafeInstance(Class<?> clazz) {
+        Object unsafe = getUnsafe();
+        if(unsafe == null) {
+            return null;
+        }
+        try {
+            Method newInstance = unsafe.getClass().getMethod("allocateInstance", new Class[] {Class.class});
+            return newInstance.invoke(unsafe, clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static Object getUnsafe() {
+        try {
+            Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field field = unsafeClass.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            return field.get(null);
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
 }

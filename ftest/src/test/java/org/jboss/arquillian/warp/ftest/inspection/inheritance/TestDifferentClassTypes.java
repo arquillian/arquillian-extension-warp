@@ -78,7 +78,6 @@ public class TestDifferentClassTypes {
     }
 
     @Test
-    @Ignore("ARQ-1253")
     public void test_static_class_extending_class_with_constructor_with_arguments() {
         Warp
             .initiate(new Activity() {

@@ -39,6 +39,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
 import org.jboss.shrinkwrap.spi.MemoryMapArchive;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -78,6 +79,40 @@ public class TestTransformedInspection {
     }
 
     @Test
+    public void testInnerClass() throws Exception {
+
+        Inspection inspection = new InnerInspection();
+
+        TransformedInspection transformedInspection = new TransformedInspection(inspection);
+        Object modifiedInspection = transformedInspection.getTransformedInspection();
+
+        verifyServerInspectionClass(modifiedInspection);
+    }
+
+    @Test
+    public void testInnerClassWithArgsConstructor() throws Exception {
+
+        Inspection inspection = new InnerWithArgsInspection("Test");
+
+        TransformedInspection transformedInspection = new TransformedInspection(inspection);
+        Object modifiedInspection = transformedInspection.getTransformedInspection();
+
+        verifyServerInspectionClass(modifiedInspection);
+    }
+
+    @Test
+    //@Ignore("ARQ-1253")
+    public void testInnerClassWithArgsConstructorInheritance() throws Exception {
+
+        Inspection inspection = new InnerWithArgsInheritedInspection("Test");
+        //System.out.println(inspection.getClass().getDeclaredField("value"));
+        TransformedInspection transformedInspection = new TransformedInspection(inspection);
+        Object modifiedInspection = transformedInspection.getTransformedInspection();
+
+        verifyServerInspectionClass(modifiedInspection);
+    }
+
+    @Test
     public void testSerialization() throws Exception {
 
         Inspection inspection = getAnonymousServerInspection();
@@ -105,6 +140,38 @@ public class TestTransformedInspection {
         print(inspection.getClass());
 
         return inspection;
+    }
+
+    public static class InnerInspection extends Inspection {
+        private static final long serialVersionUID = 1L;
+
+        @BeforeServlet
+        public String get() {
+            return "Test";
+        }
+    };
+
+    public static class InnerWithArgsInspection extends Inspection {
+        private static final long serialVersionUID = 1L;
+
+        private String value;
+
+        public InnerWithArgsInspection(String value) {
+            this.value = value;
+        }
+        @BeforeServlet
+        public String get() {
+            return value;
+        }
+    };
+
+    public static class InnerWithArgsInheritedInspection extends InnerWithArgsInspection {
+
+        private static final long serialVersionUID = 1L;
+
+        public InnerWithArgsInheritedInspection(String value) {
+            super(value);
+        }
     }
 
     public static void verifyServerInspectionClass(Object modifiedInspection) throws Exception {
