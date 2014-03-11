@@ -19,14 +19,14 @@ package org.jboss.arquillian.warp.jsf;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
-import javax.faces.event.PhaseListener;
 
+import org.jboss.arquillian.warp.jsf.FacesContextFactory.WarpFacesContext;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
 @SuppressWarnings("serial")
-public class WarpPhaseListener implements PhaseListener {
+public class PhaseListener implements javax.faces.event.PhaseListener {
 
     /*
      * (non-Javadoc)
@@ -60,11 +60,11 @@ public class WarpPhaseListener implements PhaseListener {
 
     private void executeEvents(When when, PhaseEvent event) {
         FacesContext facesContext = event.getFacesContext();
-        Boolean initialized = (Boolean) facesContext.getAttributes().get(FacesContextFactoryWrapper.WARP_ENABLED);
+        Boolean initialized = (Boolean) facesContext.getAttributes().get(FacesContextFactory.WARP_ENABLED);
 
         if (initialized) {
             try {
-                LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, event.getFacesContext());
+                LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, WarpFacesContext.getInstance(event.getFacesContext()));
                 manager.fireEvent(PhaseLifecycleEvent.getInstance(event.getPhaseId(), when));
             } catch (ObjectNotAssociatedException e) {
                 throw new IllegalStateException(e);

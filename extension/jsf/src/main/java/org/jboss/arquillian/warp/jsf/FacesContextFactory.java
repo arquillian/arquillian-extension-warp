@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
-import javax.faces.context.FacesContextFactory;
 import javax.faces.context.FacesContextWrapper;
 import javax.faces.lifecycle.Lifecycle;
 import javax.servlet.ServletRequest;
@@ -31,15 +30,15 @@ import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
-public class FacesContextFactoryWrapper extends FacesContextFactory {
+public class FacesContextFactory extends javax.faces.context.FacesContextFactory {
 
-    public static final String WARP_ENABLED = FacesContextFactoryWrapper.class.getName() + ".ENABLED";
+    public static final String WARP_ENABLED = FacesContextFactory.class.getName() + ".ENABLED";
 
     private Logger log = WarpJSFCommons.LOG;
 
-    private FacesContextFactory delegate;
+    private javax.faces.context.FacesContextFactory delegate;
 
-    public FacesContextFactoryWrapper(FacesContextFactory facesContextFactory) {
+    public FacesContextFactory(javax.faces.context.FacesContextFactory facesContextFactory) {
         delegate = facesContextFactory;
     }
 
@@ -51,7 +50,7 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpReq = (HttpServletRequest) request;
 
-            facesContext = new WrappedFacesContext(facesContext);
+            facesContext = new WarpFacesContext(facesContext);
 
             facesContext.getAttributes().put(WARP_ENABLED, Boolean.FALSE);
 
@@ -72,11 +71,11 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
         return facesContext;
     }
 
-    public class WrappedFacesContext extends FacesContextWrapper {
+    public static class WarpFacesContext extends FacesContextWrapper {
 
         private FacesContext wrapped;
 
-        public WrappedFacesContext(FacesContext wrapped) {
+        public WarpFacesContext(FacesContext wrapped) {
             this.wrapped = wrapped;
         }
 
@@ -89,9 +88,10 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
         public void release() {
             try {
                 if ((Boolean) this.getAttributes().get(WARP_ENABLED)) {
-                    LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, this);
+                    WarpFacesContext context = WarpFacesContext.getInstance(this);
 
-                    manager.unbindFrom(FacesContext.class, this);
+                    LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, context);
+                    manager.unbindFrom(FacesContext.class, context);
                 }
             } catch (ObjectNotAssociatedException e) {
                 throw new IllegalStateException(e);
@@ -100,6 +100,17 @@ public class FacesContextFactoryWrapper extends FacesContextFactory {
             }
         }
 
+        public static WarpFacesContext getInstance(FacesContext facesContext) {
+            while (facesContext instanceof FacesContextWrapper) {
+                if (facesContext instanceof WarpFacesContext) {
+                    return (WarpFacesContext) facesContext;
+                } else {
+                    facesContext = ((FacesContextWrapper) facesContext).getWrapped();
+                }
+            }
+
+            throw new IllegalArgumentException("provided FacesContext does not wrap WarpFacesContext");
+        }
     }
 
 }

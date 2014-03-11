@@ -23,11 +23,11 @@
     <name>Warp_JSF</name>
 
     <lifecycle>
-        <phase-listener>org.jboss.arquillian.warp.jsf.WarpPhaseListener</phase-listener>
+        <phase-listener>org.jboss.arquillian.warp.jsf.PhaseListener</phase-listener>
     </lifecycle>
 
     <factory>
-        <faces-context-factory>org.jboss.arquillian.warp.jsf.FacesContextFactoryWrapper</faces-context-factory>
+        <faces-context-factory>org.jboss.arquillian.warp.jsf.FacesContextFactory</faces-context-factory>
     </factory>
 
 </faces-config>
