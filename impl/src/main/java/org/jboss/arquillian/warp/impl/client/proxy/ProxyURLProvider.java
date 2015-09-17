@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
+import java.lang.annotation.Annotation;
+import java.net.URL;
+
 import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
@@ -29,9 +32,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
-
-import java.lang.annotation.Annotation;
-import java.net.URL;
 
 /**
  * Provides the proxy URL instead of real URL.
