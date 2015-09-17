@@ -16,13 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
-import java.lang.annotation.Annotation;
-import java.net.URL;
-
 import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -31,6 +29,9 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
 import org.jboss.arquillian.warp.spi.WarpCommons;
+
+import java.lang.annotation.Annotation;
+import java.net.URL;
 
 /**
  * Provides the proxy URL instead of real URL.
@@ -54,6 +55,9 @@ public class ProxyURLProvider implements ResourceProvider {
     @Inject
     private Instance<TestClass> testClass;
 
+    @Inject
+    private Instance<URLMapping> urlMapping;
+
     private URLResourceProvider urlResourceProvider = new URLResourceProvider();
 
     @Override
@@ -76,7 +80,7 @@ public class ProxyURLProvider implements ResourceProvider {
 
     private URL getProxyUrl(URL realURL) {
         URL baseRealURL = URLUtils.getUrlBase(realURL);
-        URL baseProxyURL = urlMapping().getProxyURL(baseRealURL);
+        URL baseProxyURL = urlMapping.get().getProxyURL(baseRealURL);
         URL proxyURL = URLUtils.buildUrl(baseProxyURL, realURL.getPath());
 
         requireProxy.fire(new RequireProxy(baseRealURL, baseProxyURL));
