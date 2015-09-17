@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
+import org.openqa.selenium.net.PortProber;
 
 /**
  * Maps real URL to proxied URL.
@@ -32,9 +33,6 @@ import org.jboss.arquillian.warp.impl.utils.URLUtils;
  *
  */
 public class DefaultURLMapping implements URLMapping {
-
-    private static final int BASE = 18080;
-    private int sequenceNumber = 0;
 
     private Map<URL, URL> map = new HashMap<URL, URL>();
 
@@ -45,15 +43,11 @@ public class DefaultURLMapping implements URLMapping {
             return map.get(base);
         }
 
-        int proxyPort = generatePort();
+        int proxyPort = PortProber.findFreePort();
         URL proxyUrl = newProxyUrlWithPort(base, proxyPort);
 
         map.put(base, proxyUrl);
         return proxyUrl;
-    }
-
-    private int generatePort() {
-        return BASE + sequenceNumber++;
     }
 
     private URL newProxyUrlWithPort(URL url, int port) {

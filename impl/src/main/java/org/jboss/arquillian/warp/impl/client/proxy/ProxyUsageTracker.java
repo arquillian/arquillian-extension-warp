@@ -45,6 +45,10 @@ public class ProxyUsageTracker {
     private InstanceProducer<ProxyURLToContextMapping> contextMapping;
 
     @Inject
+    @ApplicationScoped // proxy url mapping can be kept for the whole execution
+    private InstanceProducer<URLMapping> urlMapping;
+
+    @Inject
     @TestScoped // we keep just URLs for current context
     private InstanceProducer<RealURLToProxyURLMapping> realUrlMapping;
 
@@ -52,6 +56,9 @@ public class ProxyUsageTracker {
     private Instance<OperationalContexts> contexts;
 
     public void initializeContextMapping(@Observes ManagerStarted event) {
+        if (urlMapping.get() == null) {
+            urlMapping.set(new DefaultURLMapping());
+        }
         contextMapping.set(new ProxyURLToContextMapping());
     }
 
