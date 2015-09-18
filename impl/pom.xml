@@ -130,6 +130,8 @@
                 <configuration>
                     <excludes>
                         <exclude>src/main/resources/log4j.properties</exclude>
+                        <exclude>src/main/java/org/jboss/arquillian/warp/impl/utils/Platform.java</exclude>
+                        <exclude>src/main/java/org/jboss/arquillian/warp/impl/utils/net/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
