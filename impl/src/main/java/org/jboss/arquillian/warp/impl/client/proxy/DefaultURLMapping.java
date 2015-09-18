@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
-import org.openqa.selenium.net.PortProber;
+import org.jboss.arquillian.warp.impl.utils.net.PortProber;
 
 /**
  * Maps real URL to proxied URL.

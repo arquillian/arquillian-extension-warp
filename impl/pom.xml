@@ -56,11 +56,6 @@
             <artifactId>littleproxy</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-remote-driver</artifactId>
-        </dependency>
-
         <!-- Javasist -->
         <dependency>
             <groupId>javassist</groupId>
