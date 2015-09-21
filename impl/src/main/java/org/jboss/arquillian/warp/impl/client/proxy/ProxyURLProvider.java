@@ -23,7 +23,6 @@ import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourcePro
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -90,10 +89,6 @@ public class ProxyURLProvider implements ResourceProvider {
 
     private Injector injector() {
         return injector.get();
-    }
-
-    private URLMapping urlMapping() {
-        return serviceLoader.get().onlyOne(URLMapping.class);
     }
 
 }
