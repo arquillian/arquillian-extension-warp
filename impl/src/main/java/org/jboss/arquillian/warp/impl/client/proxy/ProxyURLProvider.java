@@ -30,6 +30,7 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.impl.client.event.RequireProxy;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
+import org.jboss.arquillian.warp.impl.utils.WarpTestValidator;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
@@ -57,8 +58,6 @@ public class ProxyURLProvider implements ResourceProvider {
     @Inject
     private Instance<URLMapping> urlMapping;
 
-    private URLResourceProvider urlResourceProvider = new URLResourceProvider();
-
     @Override
     public boolean canProvide(Class<?> type) {
         return URL.class.isAssignableFrom(type);
@@ -66,11 +65,23 @@ public class ProxyURLProvider implements ResourceProvider {
 
     @Override
     public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
-        injector().inject(urlResourceProvider);
+        URL realURL = null;
 
-        URL realURL = (URL) urlResourceProvider.lookup(resource, qualifiers);
+        ResourceProvider coreResourceProvider =
+            serviceLoader.get().onlyOne(ResourceProvider.class, URLResourceProvider.class);
+        if (coreResourceProvider != null && coreResourceProvider instanceof URLResourceProvider) {
+            if (WarpTestValidator.hasDeployment(testClass.get())) {
+                realURL = (URL) coreResourceProvider.lookup(resource, qualifiers);
+            } else {
+                realURL = (URL) ((URLResourceProvider) coreResourceProvider).doLookup(resource, qualifiers);
+            }
+        }
 
-        if ("http".equals(realURL.getProtocol()) && WarpCommons.isWarpTest(testClass.get().getJavaClass())) {
+        if (!WarpCommons.isWarpTest(testClass.get().getJavaClass())) {
+            return realURL;
+        }
+
+        if (realURL != null && "http".equals(realURL.getProtocol())) {
             return getProxyUrl(realURL);
         } else {
             return realURL;
