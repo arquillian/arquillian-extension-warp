@@ -20,12 +20,14 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRuntime;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
+import org.jboss.arquillian.warp.impl.utils.WarpTestValidator;
 import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
@@ -39,11 +41,26 @@ public class WarpRuntimeInitializer {
     private Instance<ServiceLoader> serviceLoader;
 
     public void injectWarpRuntime(@Observes BeforeClass event) {
-        if (WarpCommons.isWarpTest(event.getTestClass().getJavaClass())) {
-            DefaultWarpRuntime runtime = new DefaultWarpRuntime();
-            runtime.setWarpActivityBuilder(serviceLoader.get().onlyOne(WarpRequestSpecifier.class));
-            runtime.setHttpFilterBuilder(serviceLoader.get().onlyOne(HttpFilterBuilder.class));
-            WarpRuntime.setInstance(runtime);
+        TestClass testClass = event.getTestClass();
+        if (WarpCommons.isWarpTest(testClass.getJavaClass())) {
+            if (WarpTestValidator.isAnnotatedRunAsClient(testClass)) {
+                if (WarpTestValidator.hasTestableDeployment(testClass)) {
+                    DefaultWarpRuntime runtime = new DefaultWarpRuntime();
+                    runtime.setWarpActivityBuilder(serviceLoader.get().onlyOne(WarpRequestSpecifier.class));
+                    runtime.setHttpFilterBuilder(serviceLoader.get().onlyOne(HttpFilterBuilder.class));
+                    WarpRuntime.setInstance(runtime);
+                } else {
+                    throw new IllegalArgumentException(
+                        "The test " + testClass.getJavaClass() + " doesn't have declared any deployment "
+                            + "or none of the declared deloyments is testable. "
+                            + "Check that you have a deployment annotated by @Deployment(testable=true) and try it again.");
+                }
+            } else {
+                throw new IllegalArgumentException(
+                    "You are trying to run a Warp test " + testClass.getJavaClass()
+                        + " which is NOT annotated by the annotation: @RunAsClient. "
+                        + "Add the annotation and try it again.");
+            }
         }
     }
 

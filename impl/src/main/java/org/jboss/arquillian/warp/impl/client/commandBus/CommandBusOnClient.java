@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
@@ -40,6 +41,7 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver.StartBus;
 import org.jboss.arquillian.warp.impl.client.context.operation.ContextualOperation;
 import org.jboss.arquillian.warp.impl.client.context.operation.Contextualizer;
@@ -50,6 +52,7 @@ import org.jboss.arquillian.warp.impl.shared.command.Command;
 import org.jboss.arquillian.warp.impl.shared.command.CommandPayload;
 import org.jboss.arquillian.warp.impl.shared.command.OperationMode;
 import org.jboss.arquillian.warp.impl.utils.Rethrow;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * <p>
@@ -64,6 +67,8 @@ import org.jboss.arquillian.warp.impl.utils.Rethrow;
  */
 public class CommandBusOnClient {
 
+    private final Logger log = Logger.getLogger(CommandBusOnClient.class.getName());
+
     @Inject
     private Event<Object> eventExecutedRemotely;
 
@@ -76,11 +81,24 @@ public class CommandBusOnClient {
     @Inject
     private Instance<Injector> injector;
 
+    @Inject
+    private Instance<TestClass> testClass;
+
     private String channelUrl;
 
     private static Timer eventBusTimer;
 
     public void startBus(StartBus event) {
+        if (!WarpCommons.isWarpTest(testClass.get().getJavaClass())){
+            return;
+        }
+        if (protocolMetadata.get() == null) {
+            log.warning(
+                "There is no protocol metadata - possible causes: "
+                    + "URL wasn't resolved because of some failure or there is no testable deployment");
+            return;
+        }
+
         Class<?> testClass = event.getTestInstance().getClass();
         Method testMethod = event.getTestMethod();
 
