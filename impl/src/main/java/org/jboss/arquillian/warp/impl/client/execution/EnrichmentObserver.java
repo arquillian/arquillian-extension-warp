@@ -59,7 +59,7 @@ public class EnrichmentObserver {
         final HttpRequestEnrichmentService enrichmentService = load(HttpRequestEnrichmentService.class);
 
         if (WarpCommons.debugMode()) {
-            System.out.println("        (R) " + request.getUri());
+            System.out.println("        (R) " + request.getUri() +  " " + request.getMethod());
         }
 
         Collection<RequestPayload> matchingPayloads = enrichmentService.getMatchingPayloads(request);
