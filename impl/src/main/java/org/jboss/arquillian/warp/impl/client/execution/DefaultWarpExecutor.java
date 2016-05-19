@@ -119,6 +119,11 @@ public class DefaultWarpExecutor implements WarpExecutor {
     private void propagateFailure(TestResult testResult) {
         Throwable e = testResult.getThrowable();
 
+        // Client errors are more important than server assertion errors
+        if (e instanceof AssertionError) {
+            checkActivityFailure();
+        }
+
         propagateException(e);
     }
 
