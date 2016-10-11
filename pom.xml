@@ -81,6 +81,8 @@
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
         <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
+
+        <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
 
     <modules>
