@@ -1,0 +1,36 @@
+== Debugging Warp
+
+In order to debug Warp execution effectively, one needs to know few facts:
+
+* Warp tries to provide as much context during its failures as possible
+** (if you are not provided with a context of a failure, let's report it)
+* the client-side execution can be debugged by usual approaches
+* the server-side execution can be debugged by usual approaches
+* Arquillian's debug output can reveal issues
+
+=== Arquillian Debugging Mode
+
+In order to debug the tests effectively, one can reveal their internals by switching into the Arquillian debugging mode:
+
+*just pass `-Darquillian.debug=true` to the test and application server VM*.
+
+It will show an event tree in a console which exposes you:
+
+* what events are happening during test execution
+* what requests/responses were registered by Warp
+* what requests/responses were inspected by Warp
+* what lifecycle hooks were hit
+
+=== Debug Warp and WebDriver
+
+In order to debug Warp used together with WebDriver, one can use developer tools provided by browsers, such as:
+
+* Chrome Developer Tools
+* Firefox Developer Tools / Firebug
+* IE Developer Tools
+* Opera Dragonfly
+
+and their ability to analyze Network traffic.
+
+// TODO Add link to Graphene Reusable Session
+Refer to Graphene Reusable Session for best practices on how to develop with WebDriver.

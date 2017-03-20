@@ -1,0 +1,383 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+== How to Use Warp?
+
+=== Project Setup
+
+==== Setting Up Maven Dependencies
+
+Following dependencies needs to be configured:
+
+NOTE: Warp depchain (does contain support just for Servlets API)
+
+----
+<dependency>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-warp</artifactId>
+    <version>${version.warp}</version>
+    <type>pom</type>
+</dependency>
+----
+
+or JSF-specific binding:
+
+----
+<dependency>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-warp-jsf</artifactId>
+    <version>${version.warp}</version>
+</dependency>
+----
+
+==== Use Servlet Protocol
+
+In `arquillian.xml`:
+
+----
+<defaultProtocol type="Servlet 3.0"/>
+----
+
+==== Create a Test
+
+The test needs to be annotated with `@WarpTest` and needs to be run on a client (`@RunAsClient`).
+
+It needs to contain WAR deployment which will be testable:
+
+----
+@RunWith(Arquillian.class)
+@WarpTest
+@RunAsClient
+public class BasicTest {
+
+    @Deployment(testable = true)
+    public static WebArchive deployment() {
+       ...
+    }
+
+    @Test
+    public void test() {
+      // now we can use Warp
+      Warp
+        ...
+    }
+}
+----
+
+=== Warp API
+
+The Warp requires two inputs from the user:
+
+* what activity should be done in order to trigger a request
+* how the server processing should be inspected
+
+That intuitively leads us to the simplest possible high-level API:
+
+----
+Warp
+  .initiate(Activity)
+  .inspect(Inspection);
+----
+
+NOTE: This is a so called single-request execution API. In this API, the first observed request is inspected.
+
+The result of single-request execution API is an `Inspection` returned from a server:
+
+----
+CustomInspection result =
+  Warp
+  .initiate(Activity)
+  .inspect(CustomInspection);
+----
+
+=== Activity
+
+The `Activity` is a manipulation with a client which leads to communication (emits a HTTP request). You are unlimited in tooling choices, but you should always use an URL provided by the Arquillian:
+
+----
+@ArquillianResource
+URL contextPath;
+----
+
+So we can e.g. use simplest possible Warp activity:
+
+----
+Warp
+  .initiate(new Activity() {
+    InputStream connection = contextPath.getResourceAsStream();
+    connection.open();
+  }
+----
+
+You can use whatever tool you want here (e.g. HttpClient, Selenium WebDriver, etc.).
+
+----
+Warp
+  .initiate(new Activity() {
+    webdriver.navigate().to(contextPath.toString());
+  }
+----
+
+=== Request Observers
+
+Since HTTP clients can generally emit more than one request at a time, we may need to limit what will Warp react on.
+
+We can achieve that using Warp API extended for Request Observing:
+
+----
+Warp
+  .initiate(Activity)
+  .observe(Observer)
+  .inspect(Inspection);
+----
+
+In case of HTTP requests, we want to use `HttpObserver` specifically. We can implement our own or use predefined fluent API for observer specification.
+
+==== Fluent API for HTTP Request Observing
+
+In order to make observer definitions as accessible and readable as possible, there is fluent API for request observer specification:
+
+----
+import static ...request;
+...
+Warp
+  .initiate(Activity)
+  .observe(request().url().contains("index.html"))
+  .inspect(Inspection);
+----
+
+=== Request Groups
+
+An `Activity` inspected by `Warp` can lead not only to just one request, but also several parallel or sequential requests.
+
+In order to test multiple requests during one `Warp` execution, you can use Request Groups API:
+
+----
+Warp
+  .initiate(Activity)
+  .group(id1)
+    .observe(Observer)
+    .inspect(Inspection...)
+  .group(id2)
+    .observe(Observer)
+    .inspect(Inspection...)
+  .execute();
+----
+
+NOTE: The identifiers (`id1`, `id2`) are optional, they serve just the purpose of identification of a group in a result.
+
+CAUTION: Don't forget to use `.execute()` at the end of a Warp specification - it ends a specification and starts Warp execution process.
+
+NOTE: The observers need to be used for each of the groups, since no request can belong to more than one group.
+
+==== Multiple Requests per Group
+
+The Request Group API can be used also for verification of multiple requests with same inspection:
+
+----
+Warp
+  .initiate(Activity)
+  .group()
+    .count(2)
+    .inspect(Inspection)
+  .execute();
+----
+
+The definition above expresses that there are two similar requests expected which will be inspected by given Inspection.
+
+
+==== Group Identifiers
+
+For identification of a group, you can use arbitrary identifier (either primitive value or an object with correctly implemented equivalence), so e.g.:
+
+----
+   .group("group1")
+   .group(1)
+   .group(object);
+   .group() // identifier is optional
+----
+
+==== Result of Warp Group Execution
+
+As a result of non-trivial (not single-request) execution of a Warp is a `WarpResult`.
+
+----
+WarpResult result =
+  Warp
+  .initiate(Activity)
+  .group(id)
+    .inspect()
+  .execute();
+----
+
+Once you have provided an identifier for a group, you can retrieve a `WarpGroup` result:
+
+----
+WarpGroup group = result.getGroup(id);
+----
+
+The `WarpGroup` result can be used to:
+
+* obtain an inspection returned from the server
+* verify the state of responses
+
+=== Inspection
+
+An initiated request can be inspected during its execution using
+
+----
+.inspect(new Inspection() {
+  ...
+})
+----
+
+An `Inspection` object
+
+* is serialized on a client and sent to a server
+* can bear a payload
+* can contain lifecycle hooks which triggers verification logic
+* can be enriched using dependency injection
+
+=== Lifecycle Hooks
+
+Once an inspection is transferred to a server VM, it can be used to assert a state.
+
+In order to define, when the inspection should execute its logic, one needs to use so called request lifecycle hooks.
+
+Most basic lifecycle hooks are:
+
+|===
+| `@BeforeServlet`  | executed before a servlet request enters servlet processing (in a servlet's filter chain)
+| `@AfterServlet`   | executed after a servlet request leaves servlet processing (in a servlet's filter chain)
+|===
+
+The lifecycle hooks are used to invoke methods:
+
+----
+Warp
+  .initiate(Activity)
+  .inspect(new Inspection() {
+
+    @BeforeServlet
+    public void verifyRequest() {
+      ...
+    }
+  });
+----
+
+
+There are also hooks specific for each of the supported frameworks.
+
+==== JavaServer Faces Lifecycle Hooks
+
+JSF allows to hook into the request lifecycle:
+
+|===
+| @BeforePhase(Phase) | executed before a given JSF lifecycle phase is processed
+| @AfterPhase(Phase)  | executed after a given JSF lifecycle phase is processed
+|===
+
+=== Dependency Injection
+
+In order to test server-side state effectively, the `Inspection` can be enriched with any of the dependencies injectable by Arquillian:
+
+* `@Inject` for CDI beans
+* `@EJB` for EJB beans
+* `@ArquillianResource` for Arquillian Resources
+* `@ManagedProperty("#{expression}")` for beans from Expression Language context (JSF)
+
+The injection can be either at class-level or method-level:
+
+----
+Warp
+  .initiate(Activity)
+  .inspect(new Inspection() {
+
+    @ArquillianResource
+    private HttpServletRequest request;
+
+    @ManagedProperty("#{user.friends}")
+    private Set<User> friends;
+
+    @AfterPhase(INVOKE_APPLICATION)
+    public void verifyRequest(@CurrentUser User user) {
+      ...
+    }
+  });
+----
+
+NOTE: As you can see in the sample above, CDI beans can be injected at method-level even though you don't specify `@Inject`.
+
+==== Dependencies Specific to Servlets
+
+Following resources can be injected using @ArquillianResource:
+
+|===
+| ServletRequest     | HttpServletRequest
+| ServletResponse  | HttpServletResponse
+|===
+
+==== Dependencies Specific to JavaServer Faces
+
+Following resources can be injected using @ArquillianResource:
+
+|===
+| FacesContext  | Application  | ExternalContext
+| PartialViewContext  | ELContext  | ELResolver
+| ExpressionFactory  | ViewHandler  | NavigationHandler
+| ResourceHandler  | ExceptionHandler  | Flash
+| RenderKit  | UIViewRoot  | StateManager
+|===
+
+=== Payload
+
+Since an `Inspection` is a serializable object, it can contain a serializable payload which can be transferred with a request to a server, where it can be used as a base for a verification, for example:
+
+* contain an object which will be used to initialize UI
+
+Similarly, an `Inspection` processed on a server is serialized and sent to a client, thus it can contain an arbitrary information which can be used as a base for client verification logic, for example:
+
+* provide a client with the locale information of a server
+* provide identifiers for UI elements in the generated page DOM
+
+Following is an example of how one can use payload:
+
+----
+class CustomInspection {
+  private SomePayload payload;
+  ...
+}
+
+CustomInspection inspection = Warp
+  .initiate(Activity)
+  .inspect(new CustomInspection(payload));
+
+SomePayload payload = inspection.getPayload();
+----
+
+
+=== Ability to Transfer an Inspection
+
+The `Inspection` object has to follow just one contract in order to be transferable from a client to a server VM: _all of its content has to be serializable_.
+
+NOTE: Keep in mind that `Inspection` will be deployed to the server VM, so during its invocation, you can use only APIs available on server-side.
+
+You can add desired APIs to the deployment and make them available to the server VM, but you should avoid exposing unwanted APIs to the server (e.g. API of client-side testing tools such as WebDriver).
+
+WARNING: The execution of an inspection may lead to `ClassNotFoundException` or `LinkageError` if you don't stay compliant with this requirement.
+
+==== Serializability of Anonymous/Inner Inspections
+
+Anonymous and inner classes can be used as inspections due to transformation process which removes the binding from  non-static inner classes to top-level classes.
+
+[NOTE]
+.Keep in mind:
+====
+* you should not store a reference to a field in a top-level class
+* the state of an inspection is serialized and thus its mutations on a server are not directly exposed to the client
+====
