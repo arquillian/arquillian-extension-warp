@@ -13,3 +13,4 @@ log.txt
 *.iml
 .idea
 arquillian-settings
+gh-pages
