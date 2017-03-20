@@ -12,7 +12,7 @@
 
 == What is Warp ?
 
-*'Arquillian Warp fills the void between client-side and server-side testing.'*
+*Arquillian Warp fills the void between client-side and server-side testing.*
 
 Warp extension allows you to write client-side test which asserts
 server-side logic.
@@ -29,27 +29,21 @@ Warp effectively removes a need for mocking and opens new possibilities for debu
 and it also has several framework extensions:
 
 * http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Spring
-MVC] `Alpha` - led by https://github.com/jmnarloch/[Jakub Narloch]
-* https://github.com/arquillian/arquillian-extension-rest/tree/master/warp-rest[REST]
-`Alpha` - led by https://github.com/jmnarloch/[Jakub Narloch]
+MVC] - led by https://github.com/jmnarloch/[Jakub Narloch]
+* https://github.com/arquillian/arquillian-extension-rest/tree/master/warp-rest[REST] - led by https://github.com/jmnarloch/[Jakub Narloch]
 * https://github.com/maschmid/warped-seam-test[SeamTest migration layer]
 `Proof of Concept` - led by https://github.com/maschmid[Marek Schmidt]
 
 
 include::{asciidoctor-source}/where-to-use-warp.adoc[]
-
 include::{asciidoctor-source}/getting-started.adoc[]
-
 include::{asciidoctor-source}/how-to-use-warp.adoc[]
-
 include::{asciidoctor-source}/debugging-warp.adoc[]
-
 include::{asciidoctor-source}/architecture.adoc[]
-
 include::{asciidoctor-source}/learning-from-tests.adoc[]
 
 [[reading]]
-== Reading
+== Further Reading
 
 * http://lukas.fryc.eu/blog/tags/testing-jsf/[Testing JSF with
 Arquillian Warp and Graphene]
@@ -60,17 +54,10 @@ Warp and TomEE]
 
 Release blogs
 
-* http://arquillian.org/blog/2013/09/12/arquillian-extension-warp-1-0-0-Alpha4/[1.0.0.Alpha4
-Release Blog]
-* http://arquillian.org/blog/2013/06/20/arquillian-extension-warp-1-0-0-Alpha3/[1.0.0.Alpha3
-Release Blog]
-* http://arquillian.org/blog/2013/01/15/arquillian-extension-warp-1-0-0-Alpha2/[1.0.0.Alpha2
-Release Blog]
-* http://arquillian.org/blog/2012/05/27/arquillian-extension-warp-1-0-0-Alpha1/[1.0.0.Alpha1
-Release Blog]
+* http://arquillian.org/blog/tags/warp/
 
 [[links]]
-== Links
+== Useful links
 
 * https://issues.jboss.org/browse/ARQ/component/12315782[Issue Tracker]
 * https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/[Continuous

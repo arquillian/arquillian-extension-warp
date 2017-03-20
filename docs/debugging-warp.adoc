@@ -32,5 +32,4 @@ In order to debug Warp used together with WebDriver, one can use developer tools
 
 and their ability to analyze Network traffic.
 
-// TODO Add link to Graphene Reusable Session
-Refer to Graphene Reusable Session for best practices on how to develop with WebDriver.
+Refer to http://arquillian.org/arquillian-graphene/#drone-reusable-session[Graphene Reusable Session] for best practices on how to develop with WebDriver.

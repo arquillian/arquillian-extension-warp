@@ -5,7 +5,6 @@
 In order to hook into client-to-server communication, Warp puts a HTTP proxy in between as illustrated on a image bellow.
 
 // TODO Diagram
-TODO diagram
 
 This proxy observes requests incoming from a client and then enhances a request with a payload required for server inspection (processed referred to as "piggy-backing on a request").
 

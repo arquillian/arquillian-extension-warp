@@ -1,5 +1,5 @@
 [[learning-from-tests]]
-== Learning From Tests
+== Learning From The Tests
 
 In order to explore more use cases for Warp, the best way is to explore
 functional tests:
