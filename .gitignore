@@ -1,0 +1,15 @@
+target
+test-output
+bin
+.classpath
+.settings
+.project
+chromedriver.log
+log.txt
+*.dia~
+*.faces-config.xml.jsfdia
+*.*~
+.checkstyle
+*.iml
+.idea
+arquillian-settings
