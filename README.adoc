@@ -1,0 +1,74 @@
+= Arquillian Warp https://arquillian.ci.cloudbees.com/view/Extensions/job/Arquillian-Extension-Warp/[image:https://arquillian.ci.cloudbees.com/buildStatus/icon?job=Arquillian-Extension-Warp[Build Status]]
+:asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-extension-warp/documentation/docs
+:numbered:
+:sectlink:
+:sectanchors:
+:sectid:
+:source-language: java
+:source-highlighter: coderay
+:sectnums:
+:icons: font
+:toc: left
+
+== What is Warp ?
+
+*Arquillian Warp fills the void between client-side and server-side testing.*
+
+Warp extension allows you to write client-side test which asserts
+server-side logic.
+
+Using Warp, you can initiate a HTTP request using a client-side testing tool such as WebDriver and, in the same request cycle, execute in-container server-side tests. This powerful combination lets you cover integration across client and server.
+
+Warp effectively removes a need for mocking and opens new possibilities for debugging.
+
+*Warp has built-in support for following frameworks:*
+
+* Servlet API
+* JSF 2
+
+and it also has several framework extensions:
+
+* http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Spring
+MVC] - led by https://github.com/jmnarloch/[Jakub Narloch]
+* https://github.com/arquillian/arquillian-extension-rest/tree/master/warp-rest[REST] - led by https://github.com/jmnarloch/[Jakub Narloch]
+* https://github.com/maschmid/warped-seam-test[SeamTest migration layer]
+`Proof of Concept` - led by https://github.com/maschmid[Marek Schmidt]
+
+
+include::{asciidoctor-source}/where-to-use-warp.adoc[]
+include::{asciidoctor-source}/getting-started.adoc[]
+include::{asciidoctor-source}/how-to-use-warp.adoc[]
+include::{asciidoctor-source}/debugging-warp.adoc[]
+include::{asciidoctor-source}/architecture.adoc[]
+include::{asciidoctor-source}/learning-from-tests.adoc[]
+
+[[reading]]
+== Further Reading
+
+* http://lukas.fryc.eu/blog/tags/testing-jsf/[Testing JSF with
+Arquillian Warp and Graphene]
+* http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Warp
+Spring Extension]
+* http://rmannibucau.wordpress.com/2012/10/23/arquillian-warp-and-tomee/[Arquillian
+Warp and TomEE]
+
+Release blogs
+
+* http://arquillian.org/blog/tags/warp/
+
+[[links]]
+== Useful links
+
+* https://issues.jboss.org/browse/ARQ/component/12315782[Issue Tracker]
+* https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/[Continuous
+Integration]
+
+[[community]]
+== Community
+
+* Chat: #arquillian channel @
+http://webchat.freenode.net/[irc.freenode.net]
+* http://arquillian.org/blog/tags/warp/[Blogs]
+* https://community.jboss.org/en/arquillian/dev[Forums]
+* https://community.jboss.org/thread/222044[Roadmap]
+

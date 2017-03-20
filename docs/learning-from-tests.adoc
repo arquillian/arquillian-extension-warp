@@ -1,0 +1,10 @@
+[[learning-from-tests]]
+== Learning From The Tests
+
+In order to explore more use cases for Warp, the best way is to explore
+functional tests:
+
+* https://github.com/arquillian/arquillian-extension-warp/tree/master/ftest/src/test/java/org/jboss/arquillian/warp/ftest[Servlet
+API]
+* https://github.com/arquillian/arquillian-extension-warp/tree/master/extension/jsf-ftest/src/test/java/org/jboss/arquillian/warp/jsf/ftest[JSF
+2]

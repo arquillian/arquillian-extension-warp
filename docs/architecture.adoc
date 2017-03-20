@@ -1,0 +1,19 @@
+== Architecture
+
+=== Warp Request Processing
+
+In order to hook into client-to-server communication, Warp puts a HTTP proxy in between as illustrated on a image bellow.
+
+// TODO Diagram
+
+This proxy observes requests incoming from a client and then enhances a request with a payload required for server inspection (processed referred to as "piggy-backing on a request").
+
+Once an enhanced request enters a server, it is blocked by a request filter and an inspection is registered into an Arquillian system. The Warp's filter then delegates the processing to the traditional request processing.
+
+During request processing lifecycle, the Warp listens for appropriate lifecycle hooks, and as a response it can execute arbitrary actions which inspects the state of the request context.
+
+To help with the full-featured verification, a Warp's inspection process can leverage Arquillian's dependency injection system.
+
+Once the request is processed by the server, leading into committing response, Warp can collect the result of inspection and enhance a built response to the client (again using piggy-backing method).
+
+The Warp's proxy evaluates the response and either reports a failure (in case of server failure) or continues with execution of the test.

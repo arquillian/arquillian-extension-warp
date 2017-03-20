@@ -1,0 +1,76 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+== Where to Use Warp?
+
+Warp allows you to know as little or as much of the application under test as you want.
+
+=== Gray-box Testing
+
+Initially, Warp can be used from any black-box testing tool (like HttpClient, REST client, Selenium WebDriver, etc.). But it then allows you to hook into server's request lifecycle and verify what happens inside the box (referred to as white-box testing). That is why we identify Warp as a gray-box testing framework.
+
+=== Integration Testing
+
+On the scale of granularity of a test, Warp fits best at integration level of testing with an overlap to functional testing. You can either test components, application API or functional behavior.
+
+=== Technology Independence
+
+No matter which client-side tool you use for emitting HTTP request or which server-side framework runs on the server, Warp allows you to assert and verify logic at the most appropriate place of client-server request lifecycle.
+
+=== Use Cases
+
+Using Warp is limited just by your imagination, as long as you have in mind facts we had described earlier.
+
+Just to note some specific use cases, Warp can:
+
+* send a payload to a server
+* verify an incoming request
+* assert the state of a server context
+* verify that given event was fired during request processing
+* verify a completed response
+* send a payload to a client
+
+=== Deploying Warp
+
+Warp is a good fit for basically any stage of a project:
+
+* prototyping (TDD)
+* legacy projects
+* issue reproduction
+* debugging issue
+
+Due to it's ability to bring an arbitrary payload to a server and hook into server-lifecycle, we can use Warp in partially implemented projects. We needn't have a database layer implemented in order to test UI logic. This is especially useful for projects based on loosely coupled components (e.g. Java EE's CDI).
+
+Since we can use Warp and start with white-box testing, we can reproduce the issue on the level of application's interface (issue reproduction). Then we can dive deeper into internals of an application, which will not only allow us to reveal how it works, but also debug a system and assert the correct behavior.
+
+=== Supported Tools and Frameworks
+
+==== Cross-Protocol
+
+Warp currently supports only HTTP protocol, but conceptually it can be used with any protocol where we are able to intercept client-to-server communication on both, the client and the server.
+
+==== Client-Side Testing Tools
+
+Warp supports any client-side tools if you are using them in a way that requests can be intercepted (in a case of HTTP protocol, you need to communicate through a proxy instead of direct communication with a server).
+
+The samples of such tools:
+
+* `URL#getResourceAsStream()`
+* Apache HTTP Client
+* Selenium WebDriver
+
+NOTE: In order to use Warp, you should inject an `@ArquillianResource` URL, which points to the proxy automatically.
+
+==== Frameworks
+
+Warp currently focuses on frameworks based on Servlets API, but it provides special hooks and additional support for:
+
+* JSF
+* JAX-RS (REST)
+* Spring MVC
+
