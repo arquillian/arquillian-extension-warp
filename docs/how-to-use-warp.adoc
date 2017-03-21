@@ -21,7 +21,7 @@ NOTE: Warp depchain (does contain support just for Servlets API)
 <dependency>
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-warp</artifactId>
-    <version>{version_warp}</version>
+    <version>{version_project}</version>
     <type>pom</type>
 </dependency>
 ----
@@ -33,7 +33,7 @@ or JSF-specific binding:
 <dependency>
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-warp-jsf</artifactId>
-    <version>{version_warp}</version>
+    <version>{version_project}</version>
 </dependency>
 ----
 

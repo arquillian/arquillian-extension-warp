@@ -18,7 +18,7 @@ Just add impl module to classpath and run test either from an IDE or Maven.
 <dependency>
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-warp</artifactId>
-    <version>{version_warp}</version>
+    <version>{version_project}</version>
     <type>pom</type>
 </dependency>
 ----
@@ -30,7 +30,7 @@ or any framework-specific extension:
 <dependency>
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-warp-jsf</artifactId>
-    <version>{version_warp}</version>
+    <version>{version_project}</version>
 </dependency>
 ----
 
