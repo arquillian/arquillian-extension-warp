@@ -10,6 +10,10 @@
 :icons: font
 :toc: left
 
+ifndef::generated-doc[]
+To read complete documentation visit http://arquillian.org/arquillian-extension-warp/
+endif::generated-doc[]
+
 == What is Warp ?
 
 *Arquillian Warp fills the void between client-side and server-side testing.*
@@ -34,13 +38,14 @@ MVC] - led by https://github.com/jmnarloch/[Jakub Narloch]
 * https://github.com/maschmid/warped-seam-test[SeamTest migration layer]
 `Proof of Concept` - led by https://github.com/maschmid[Marek Schmidt]
 
-
+ifdef::generated-doc[]
 include::{asciidoctor-source}/where-to-use-warp.adoc[]
 include::{asciidoctor-source}/getting-started.adoc[]
 include::{asciidoctor-source}/how-to-use-warp.adoc[]
 include::{asciidoctor-source}/debugging-warp.adoc[]
 include::{asciidoctor-source}/architecture.adoc[]
 include::{asciidoctor-source}/learning-from-tests.adoc[]
+endif::generated-doc[]
 
 [[reading]]
 == Further Reading
