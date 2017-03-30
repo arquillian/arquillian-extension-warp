@@ -71,9 +71,10 @@ public class TestContainerToClientChannel {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(TestCaseEnricher.DEPENDENCIES)
-                .addAsWebResource(new File("src/main/webapp/index.html")).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsServiceProvider(RemoteLoadableExtension.class.getName(), TestCaseEnricher.class.getName());
+            .addClasses(TestCaseEnricher.DEPENDENCIES)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+            .addAsServiceProvider(RemoteLoadableExtension.class.getName(), TestCaseEnricher.class.getName());
     }
 
     @Test
@@ -112,8 +113,6 @@ public class TestContainerToClientChannel {
             executedStatic = true;
         }
     }
-
-
 
     @Test
     public void testFailedOperation() {
@@ -155,7 +154,6 @@ public class TestContainerToClientChannel {
         public static boolean startedStatic = false;
         public boolean executedInstance = false;
         public static boolean executedStatic = false;
-
 
         @Override
         public void perform() {

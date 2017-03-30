@@ -46,7 +46,7 @@ import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
  * <p>
  * Filter that detects whenever the incoming request is enriched and thus should be processed by {@link WarpRequestProcessor}.
  * </p>
- *
+ * <p>
  * <p>
  * The filter is registered on server-side using /META-INF/web-fragment-warp.xml
  * </p>
@@ -55,7 +55,8 @@ import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
  */
 public class WarpFilter implements Filter {
     public static final String ARQUILLIAN_MANAGER_ATTRIBUTE = "org.jboss.arquillian.warp.TestManager";
-    private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
+    private static final String DEFAULT_EXTENSION_CLASS =
+        "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
     private Logger log = Logger.getLogger(WarpFilter.class.getSimpleName());
     private RequestDelegator delegator;
     private Manager manager;
@@ -87,7 +88,7 @@ public class WarpFilter implements Filter {
      */
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, final FilterChain chain) throws IOException,
-            ServletException {
+        ServletException {
 
         if (manager == null || isHttpRequest(req, resp)) {
             doFilterHttp((HttpServletRequest) req, (HttpServletResponse) resp, chain);
@@ -104,13 +105,13 @@ public class WarpFilter implements Filter {
      * <p>
      * Checks whether the request processing can be delegated to one of registered {@link RequestDelegationService}s.
      * </p>
-     *
+     * <p>
      * <p>
      * If not, delegates processing to {@link #doFilterWarp(HttpServletRequest, HttpServletResponse, FilterChain)}.
      * </p>
      */
     private void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
 
         request.setAttribute(ARQUILLIAN_MANAGER_ATTRIBUTE, manager);
 
@@ -125,15 +126,15 @@ public class WarpFilter implements Filter {
      * <p>
      * Starts the Arquillian Manager, starts contexts and registers contextual instances.
      * </p>
-     *
+     * <p>
      * <p>
      * Throws {@link ProcessHttpRequest} event which is used for further request processing.
      * </p>
-     *
+     * <p>
      * <p>
      * Usually, the request is processed further by {@link HttpRequestProcessor} event observer.
      * </p>
-     *
+     * <p>
      * <p>
      * The {@link ProcessHttpRequest} event is also intercepted by {@link RequestContextHandler} that activates {@link RequestContent}.
      * </p>
@@ -142,7 +143,7 @@ public class WarpFilter implements Filter {
      * @see RequestContextHandler
      */
     private void doFilterWarp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
 
         String requestId = UUID.randomUUID().toString();
         request.setAttribute(WarpCommons.WARP_REQUEST_ID, requestId);

@@ -33,15 +33,15 @@ import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
  * <p>
  * The Warp request group as seen by Warp internally.
  * </p>
- *
+ * <p>
  * <p>
  * Extends {@link WarpGroupResult} which is interface exposed to user.
  * </p>
- *
+ * <p>
  * <p>
  * The logic of group is as follows:
  * </p>
- *
+ * <p>
  * <ul>
  * <li>group is created with given id (if not id is provided, it is generated from zero-based sequence of integers)</li>
  * <li>group can be setup with filter and inspections</li>

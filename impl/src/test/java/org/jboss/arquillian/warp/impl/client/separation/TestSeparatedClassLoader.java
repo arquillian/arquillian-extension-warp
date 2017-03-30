@@ -40,13 +40,13 @@ public class TestSeparatedClassLoader {
     @SeparatedClassPath
     public static JavaArchive[] archive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).addClasses(SeparatedClassLoader.class,
-                ClassLoaderUtils.class);
+            ClassLoaderUtils.class);
 
         JavaArchive mockito = ShrinkWrapUtils.getJavaArchiveFromClass(Mockito.class);
 
         JavaArchive junit = ShrinkWrapUtils.getJavaArchiveFromClass(Assert.class);
 
-        return new JavaArchive[] { archive, mockito, junit };
+        return new JavaArchive[] {archive, mockito, junit};
     }
 
     @Test

@@ -21,26 +21,26 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
     http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd" version="3.0">
 
-    <name id="warp">org_arquillian_warp</name>
+  <name id="warp">org_arquillian_warp</name>
 
-    <distributable />
+  <distributable/>
 
-    <ordering>
-        <before>
-            <others />
-        </before>
-    </ordering>
+  <ordering>
+    <before>
+      <others/>
+    </before>
+  </ordering>
 
-    <filter>
-        <filter-name>WarpFilter</filter-name>
-        <filter-class>org.jboss.arquillian.warp.impl.server.execution.WarpFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter-mapping>
-        <filter-name>WarpFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>ASYNC</dispatcher>
-    </filter-mapping>
+  <filter>
+    <filter-name>WarpFilter</filter-name>
+    <filter-class>org.jboss.arquillian.warp.impl.server.execution.WarpFilter</filter-class>
+    <async-supported>true</async-supported>
+  </filter>
+  <filter-mapping>
+    <filter-name>WarpFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ASYNC</dispatcher>
+  </filter-mapping>
 
 </web-fragment>

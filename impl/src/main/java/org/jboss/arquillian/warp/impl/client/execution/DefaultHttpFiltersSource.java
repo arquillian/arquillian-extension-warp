@@ -85,7 +85,7 @@ public class DefaultHttpFiltersSource extends HttpFiltersSourceAdapter {
                     }
                 } catch (Exception originalException) {
                     ClientWarpExecutionException explainingException = new ClientWarpExecutionException(
-                            "enriching request failed: " + originalException.getMessage(), originalException);
+                        "enriching request failed: " + originalException.getMessage(), originalException);
                     context.pushException(explainingException);
                 }
 
@@ -106,7 +106,6 @@ public class DefaultHttpFiltersSource extends HttpFiltersSourceAdapter {
 
                         return transformEvent.getResponse();
                     }
-
                 } catch (Exception originalException) {
                     final WarpContext context = WarpContextStore.get();
 
@@ -115,7 +114,7 @@ public class DefaultHttpFiltersSource extends HttpFiltersSourceAdapter {
                         return httpObject;
                     }
                     ClientWarpExecutionException explainingException = new ClientWarpExecutionException(
-                            "deenriching response failed: " + originalException.getMessage(), originalException);
+                        "deenriching response failed: " + originalException.getMessage(), originalException);
                     context.pushException(explainingException);
                 }
 

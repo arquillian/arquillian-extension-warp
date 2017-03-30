@@ -55,13 +55,12 @@ public class WarpRequestProcessor {
     private Event<TestResult> testResult;
 
     public void processWarpRequest(@Observes ProcessWarpRequest event, HttpServletResponse response,
-            ResponsePayload responsePayload) throws IOException {
+        ResponsePayload responsePayload) throws IOException {
 
         requestProcessingStarted.fire(new RequestProcessingStarted());
 
         try {
             executeWarp.fire(new ExecuteWarp());
-
         } catch (Throwable e) {
             testResult.fire(new TestResult(Status.FAILED, e));
         }
@@ -69,7 +68,8 @@ public class WarpRequestProcessor {
         if (responsePayload.getTestResult() != null) {
             if (responsePayload.getTestResult().getThrowable() != null) {
                 if (WarpCommons.debugMode()) {
-                    log.log(Level.SEVERE, "exception was thrown during Warp execution", responsePayload.getTestResult().getThrowable());
+                    log.log(Level.SEVERE, "exception was thrown during Warp execution",
+                        responsePayload.getTestResult().getThrowable());
                 }
             }
         } else {
@@ -84,5 +84,4 @@ public class WarpRequestProcessor {
 
         requestProcessingFinished.fire(new RequestProcessingFinished());
     }
-
 }

@@ -59,16 +59,16 @@ public class TestVerificationOfMultipleQualifierMethods {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsLibrary(createWarpExtension());
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+            .addAsLibrary(createWarpExtension());
     }
 
     private static JavaArchive createWarpExtension() {
         return ShrinkWrap.create(JavaArchive.class, "test-extension.jar")
-                .addClass(QualifierEnricher.class)
-                .addAsServiceProvider(LoadableExtension.class, QualifierEnricher.class);
+            .addClass(QualifierEnricher.class)
+            .addAsServiceProvider(LoadableExtension.class, QualifierEnricher.class);
     }
 
     @Test
@@ -81,13 +81,13 @@ public class TestVerificationOfMultipleQualifierMethods {
                 }
             })
             .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
+                         private static final long serialVersionUID = 1L;
 
-                @BeforeServlet @DummyAnnotation
-                public void test_should_be_executed() {
-                    assertTrue(true);
-                }
-            }
+                         @BeforeServlet @DummyAnnotation
+                         public void test_should_be_executed() {
+                             assertTrue(true);
+                         }
+                     }
             );
     }
 }

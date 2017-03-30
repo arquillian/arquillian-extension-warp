@@ -64,11 +64,11 @@ public class BasicJsfTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(CdiBean.class)
-                .addAsWebResource(new File("src/main/webapp/index.xhtml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
-                .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+            .addAsWebResource(new File("src/main/webapp/index.xhtml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+            .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
     @Test
@@ -77,19 +77,20 @@ public class BasicJsfTest {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
-                }})
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-
-                @Inject
-                CdiBean myBean;
-
-                @AfterPhase(RENDER_RESPONSE)
-                public void initial_state_havent_changed_yet() {
-                    assertEquals("John", myBean.getName());
                 }
-            }
-        );
+            })
+            .inspect(new Inspection() {
+                         private static final long serialVersionUID = 1L;
+
+                         @Inject
+                         CdiBean myBean;
+
+                         @AfterPhase(RENDER_RESPONSE)
+                         public void initial_state_havent_changed_yet() {
+                             assertEquals("John", myBean.getName());
+                         }
+                     }
+            );
 
         Warp
             .initiate(new Activity() {
@@ -97,31 +98,32 @@ public class BasicJsfTest {
                     WebElement nameInput = browser.findElement(By.id("helloWorldJsf:nameInput"));
                     nameInput.sendKeys("X");
                     browser.findElement(By.tagName("body")).click();
-                }})
+                }
+            })
             .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
+                         private static final long serialVersionUID = 1L;
 
-                @Inject
-                CdiBean myBean;
+                         @Inject
+                         CdiBean myBean;
 
-                private String updatedName;
+                         private String updatedName;
 
-                @BeforePhase(UPDATE_MODEL_VALUES)
-                public void initial_state_havent_changed_yet() {
-                    assertEquals("John", myBean.getName());
-                }
+                         @BeforePhase(UPDATE_MODEL_VALUES)
+                         public void initial_state_havent_changed_yet() {
+                             assertEquals("John", myBean.getName());
+                         }
 
-                @AfterPhase(UPDATE_MODEL_VALUES)
-                public void changed_input_value_has_been_applied() {
-                    assertEquals("JohnX", myBean.getName());
-                    updatedName = myBean.getName();
-                }
+                         @AfterPhase(UPDATE_MODEL_VALUES)
+                         public void changed_input_value_has_been_applied() {
+                             assertEquals("JohnX", myBean.getName());
+                             updatedName = myBean.getName();
+                         }
 
-                public String getUpdatedName() {
-                    return updatedName;
-                }
-            }
-        );
+                         public String getUpdatedName() {
+                             return updatedName;
+                         }
+                     }
+            );
 
         new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
             @Override

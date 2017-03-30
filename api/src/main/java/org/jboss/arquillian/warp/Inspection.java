@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 /**
  * Provides contract for inspection objects which could be sent to a server, where they will execute and verify server logic.
- *
+ * <p>
  * Implementations should use SPI annotations to trigger asserting logic on server such as
  * {@link org.jboss.arquillian.warp.test.BeforeServlet} or {@link org.jboss.arquillian.warp.WarpTest.AfterServlet}.
  *
@@ -29,5 +29,4 @@ import java.io.Serializable;
 public abstract class Inspection implements Serializable {
 
     private static final long serialVersionUID = -8706974268337963961L;
-
 }

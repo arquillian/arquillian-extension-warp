@@ -363,7 +363,6 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
         WarpExecutor warpExecutor = new DefaultWarpExecutor();
         getManager().inject(warpExecutor);
 
-
         WarpContext warpContext = new WarpContextImpl();
 
         when(serviceLoader.onlyOne(WarpRequestSpecifier.class)).thenReturn(requestExecutor);
@@ -402,7 +401,6 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
      *
      * @param method the request http method
      * @param uri    the request url
-     *
      * @return the created request instance
      */
     private static HttpRequest createRequest(HttpMethod method, String uri) {
@@ -421,7 +419,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
     @RunAsClient
     public static final class TestingClass {
         @Deployment
-        public static Archive deploy(){
+        public static Archive deploy() {
             return null;
         }
     }

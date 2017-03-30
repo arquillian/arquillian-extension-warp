@@ -45,11 +45,11 @@ public class WarpExecutionInitializer {
 
     /**
      * Activates/deactivates {@link WarpExecutionContext}.
-     *
+     * <p>
      * Provides {@link WarpContext} instance.
-     *
+     * <p>
      * Provides {@link SynchronizationPoint} instance.
-     *
+     * <p>
      * Setups/resets {@link WarpContextStore}
      */
     public void provideWarpContext(@Observes EventContext<ExecuteWarp> eventContext) {
@@ -62,7 +62,6 @@ public class WarpExecutionInitializer {
             synchronization.set(eventContext.getEvent().getWarpContext().getSynchronization());
 
             eventContext.proceed();
-
         } finally {
             WarpContextStore.reset();
             warpExecutionContext.get().deactivate();

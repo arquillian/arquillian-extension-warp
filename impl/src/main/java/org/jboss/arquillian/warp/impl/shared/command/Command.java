@@ -20,9 +20,9 @@ import java.io.Serializable;
 
 /**
  * The command which will be performed remotely.
- *
+ * <p>
  * The command object will be enriched using dependency injection from Arquillian context on remote side.
- *
+ * <p>
  * However enriched fields should use transient to preserve serializability.
  *
  * @author Lukas Fryc

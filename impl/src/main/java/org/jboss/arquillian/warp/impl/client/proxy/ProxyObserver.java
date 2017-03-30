@@ -36,7 +36,6 @@ import org.jboss.arquillian.warp.impl.client.event.StartProxy;
  * Initializes and finalizes proxies.
  *
  * @author Lukas Fryc
- *
  */
 public class ProxyObserver {
 

@@ -64,11 +64,12 @@ public final class WarpCommons {
 
     /**
      * Decides whether given annotation type is {@link WarpLifecycleTest}
+     *
      * @param annotationType
      */
     public static boolean isWarpLifecycleTest(Class<? extends Annotation> annotationType) {
         return annotationType.getAnnotation(WarpLifecycleTest.class) != null
-                || annotationType == BeforeServlet.class
-                || annotationType == AfterServlet.class;
+            || annotationType == BeforeServlet.class
+            || annotationType == AfterServlet.class;
     }
 }

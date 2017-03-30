@@ -29,7 +29,6 @@ public interface MethodMatcherBuilder<T> extends MatcherBuilder<MethodMatcherBui
      * Matches request that http method is equal to the given value.
      *
      * @param value the method
-     *
      * @return builder type for which the matcher is being build
      */
     T equal(HttpMethod value);

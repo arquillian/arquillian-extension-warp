@@ -59,7 +59,7 @@ public class EnrichmentObserver {
         final HttpRequestEnrichmentService enrichmentService = load(HttpRequestEnrichmentService.class);
 
         if (WarpCommons.debugMode()) {
-            System.out.println("        (R) " + request.getUri() +  " " + request.getMethod());
+            System.out.println("        (R) " + request.getUri() + " " + request.getMethod());
         }
 
         Collection<RequestPayload> matchingPayloads = enrichmentService.getMatchingPayloads(request);
@@ -70,7 +70,8 @@ public class EnrichmentObserver {
             if (matchingPayloads.size() > 1) {
                 warpContext().pushException(new MultipleGroupsPerRequestException(request.getUri()));
             } else {
-                enrichHttpRequest.fire(new EnrichHttpRequest(request, matchingPayloads.iterator().next(), enrichmentService));
+                enrichHttpRequest.fire(
+                    new EnrichHttpRequest(request, matchingPayloads.iterator().next(), enrichmentService));
             }
         }
     }

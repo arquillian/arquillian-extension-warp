@@ -89,7 +89,8 @@ public class RequestPayload implements Externalizable {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T loadObject(String className, byte[] classFile, final byte[] obj) throws IOException, ClassNotFoundException {
+    private <T> T loadObject(String className, byte[] classFile, final byte[] obj)
+        throws IOException, ClassNotFoundException {
         final Class<?> clazz = loadClass(className, classFile);
 
         ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(obj)) {
@@ -131,7 +132,8 @@ public class RequestPayload implements Externalizable {
                     out.writeObject(migrated.toBytecode());
                     out.writeObject(migrated.toSerializedForm());
                 } catch (Exception e) {
-                    throw new RuntimeException("Could not transform and replicate class " + inspections.getClass() + ":\n" + e.getMessage(), e);
+                    throw new RuntimeException(
+                        "Could not transform and replicate class " + inspections.getClass() + ":\n" + e.getMessage(), e);
                 }
             } else {
                 out.writeBoolean(false); // flag 'not anonymous'
@@ -141,7 +143,7 @@ public class RequestPayload implements Externalizable {
     }
 
     private boolean shouldBeTransformed(Inspection inspection) {
-//        return inspection.getClass().isAnonymousClass() || (inspection.getClass().isMemberClass() && !Modifier.isStatic(inspection.getClass().getModifiers()));
+        //        return inspection.getClass().isAnonymousClass() || (inspection.getClass().isMemberClass() && !Modifier.isStatic(inspection.getClass().getModifiers()));
         return inspection.getClass().isAnonymousClass() || (inspection.getClass().isMemberClass());
     }
 

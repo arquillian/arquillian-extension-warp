@@ -31,12 +31,13 @@ public class DefaultRequestObserverChainManager implements RequestObserverChainM
 
     private RequestObserver FAVICON_IGNORE = new FaviconIgnore();
 
-    private AtomicStampedReference<OnlyFirstRequest> firstRequestObserver = new AtomicStampedReference<OnlyFirstRequest>(null,
+    private AtomicStampedReference<OnlyFirstRequest> firstRequestObserver =
+        new AtomicStampedReference<OnlyFirstRequest>(null,
             0);
 
     @Override
     public Deque<RequestObserver> manageObserverChain(Deque<RequestObserver> observers,
-            Class<? extends RequestObserver> expectedObserverType) {
+        Class<? extends RequestObserver> expectedObserverType) {
 
         if (expectedObserverType == HttpRequestFilter.class) {
 

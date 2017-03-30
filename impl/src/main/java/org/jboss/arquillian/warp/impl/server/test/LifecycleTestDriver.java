@@ -37,11 +37,10 @@ import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
 /**
  * Observes {@link WarpLifecycleEvent} events and executed verification methods annotated with
  * {@link WarpLifecycleEvent#getQualifiers()} annotation.
- *
+ * <p>
  * See {@link LifecycleTestClassExecutor} which executes {@link BeforeClass} and {@link AfterClass} events.
  *
  * @author Lukas Fryc
- *
  */
 public class LifecycleTestDriver {
 
@@ -64,7 +63,7 @@ public class LifecycleTestDriver {
 
             if (qualifiers == null || qualifiers.size() == 0 || !isWarpLifecycleEvent(qualifiers)) {
                 throw new IllegalStateException("Warp lifecycle event must contain annotation marked with @"
-                        + WarpLifecycleTest.class.getSimpleName());
+                    + WarpLifecycleTest.class.getSimpleName());
             }
 
             List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(inspection.getClass(), qualifiers);
@@ -96,5 +95,4 @@ public class LifecycleTestDriver {
     private InspectionRegistry registry() {
         return registry.get();
     }
-
 }

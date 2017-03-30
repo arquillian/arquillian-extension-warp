@@ -163,7 +163,8 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_before_event_fails_then_request_payload_is_filled_with_exception() {
 
         // having
-        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(new TestingInspectionForFailingBeforeTest()));
+        when(inspectionRegistry.getInspections()).thenReturn(
+            Arrays.<Inspection>asList(new TestingInspectionForFailingBeforeTest()));
 
         // when
         try {
@@ -185,7 +186,8 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_after_event_fails_then_request_payload_is_filled_with_exception() {
 
         // having
-        when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(new TestingInspectionForFailingAfterTest()));
+        when(inspectionRegistry.getInspections()).thenReturn(
+            Arrays.<Inspection>asList(new TestingInspectionForFailingAfterTest()));
 
         // when
         try {

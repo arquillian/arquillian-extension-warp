@@ -60,8 +60,8 @@ public class TestResponseContainsProxyUrl {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(FormServlet.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(FormServlet.class)
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -71,22 +71,22 @@ public class TestResponseContainsProxyUrl {
         assertThat(browser.getPageSource(), containsString(contextPath.toExternalForm()));
 
         Warp
-                .initiate(new Activity() {
-                    @Override
-                    public void perform() {
-                        browser.findElement(By.id("submit")).click();
-                    }
-                })
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
+            .initiate(new Activity() {
+                @Override
+                public void perform() {
+                    browser.findElement(By.id("submit")).click();
+                }
+            })
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
 
-                    @ArquillianResource
-                    HttpServletRequest request;
+                @ArquillianResource
+                HttpServletRequest request;
 
-                    @BeforeServlet
-                    public void beforeServlet() {
-                        assertTrue("Form post did not occur!", true);
-                    }
-                });
+                @BeforeServlet
+                public void beforeServlet() {
+                    assertTrue("Form post did not occur!", true);
+                }
+            });
     }
 }

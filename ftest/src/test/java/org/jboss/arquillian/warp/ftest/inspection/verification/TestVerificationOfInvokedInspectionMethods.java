@@ -55,9 +55,9 @@ public class TestVerificationOfInvokedInspectionMethods {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test(expected = InspectionMethodWasNotInvokedException.class)
@@ -67,15 +67,16 @@ public class TestVerificationOfInvokedInspectionMethods {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new Inspection() {
 
-                private static final long serialVersionUID = 1L;
+                         private static final long serialVersionUID = 1L;
 
-                @AnnotationNotAvailableOnServer
-                public void test_should_not_be_executed() {
-                }
-            }
-        );
+                         @AnnotationNotAvailableOnServer
+                         public void test_should_not_be_executed() {
+                         }
+                     }
+            );
     }
 }

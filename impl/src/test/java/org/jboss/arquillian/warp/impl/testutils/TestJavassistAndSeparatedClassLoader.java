@@ -17,6 +17,7 @@
 package org.jboss.arquillian.warp.impl.testutils;
 
 import static org.junit.Assert.assertNotNull;
+
 import javassist.ClassPool;
 import javassist.CtClass;
 

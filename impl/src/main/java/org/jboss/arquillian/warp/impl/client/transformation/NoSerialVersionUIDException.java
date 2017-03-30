@@ -31,5 +31,4 @@ public class NoSerialVersionUIDException extends RuntimeException {
     public NoSerialVersionUIDException(Throwable cause) {
         super(cause);
     }
-
 }

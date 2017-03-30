@@ -25,26 +25,26 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * <p>
  * Provides ability of executing events in Warp lifecycle from outside of Arquillian extensions.
  * </p>
- *
+ * <p>
  * <p>
  * Lifecycle manager can execute either:
  * </p>
- *
+ * <p>
  * <ul>
  * <li>{@link WarpLifecycleEvent} events - these will cause executing lifecycle verification methods in all associated
  * {@link Inspection}s</li>
  * <li>any other Arquillian event</li>
  * </ul>
- *
- *
+ * <p>
+ * <p>
  * <p>
  * LifecycleManager can be retrieved from arbitrary objects associated with current request using {@link LifecycleManagerStore}.
  * </p>
- *
+ * <p>
  * <p>
  * Example:
  * </p>
- *
+ * <p>
  * <pre>
  * <code>
  * // having reference to request
@@ -54,11 +54,11 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * manager.fireEvent(new CustomLifecycleEvent());
  * </code>
  * </pre>
- *
+ * <p>
  * <p>
  * with following implementation of <tt>CustomLifecycleEvent</tt>
  * </p>
- *
+ * <p>
  * <pre>
  * <code>
  * public class CustomLifecycleEvent extends WarpLifecycleEvent {
@@ -74,11 +74,11 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * }
  * </code>
  * </pre>
- *
+ * <p>
  * <p>
  * and following implementation of <tt>CustomAnnotation</tt>
  * </p>
- *
+ * <p>
  * <pre>
  * <code>
  * {@literal @}Retention(RUNTIME)
@@ -87,9 +87,9 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * }
  * </code>
  * </pre>
- *
+ * <p>
  * This will cause executing following method in associated user-defined {@link Inspection}:
- *
+ * <p>
  * <pre>
  * <code>
  * {@literal @}CustomAnnotation
@@ -98,10 +98,10 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * }
  * </code>
  * </pre>
- *
+ * <p>
  * <p>
  * For more details how to implement <tt>CustomLifecycleEvent</tt>, see {@link WarpLifecycleEvent}.
- *
+ * <p>
  * <p>
  * For more info on how to retrieve {@link LifecycleManagerStore}, see {@link LifecycleManagerStore#get(Class, Object)}.
  * </p>
@@ -112,10 +112,10 @@ public abstract class LifecycleManager {
 
     /**
      * <p>
-     *
+     * <p>
      * Executes either:
      * </p>
-     *
+     * <p>
      * <ul>
      * <li>{@link WarpLifecycleEvent} events - these will cause executing lifecycle verification methods in all associated
      * {@link Inspection}s</li>
@@ -129,10 +129,10 @@ public abstract class LifecycleManager {
     /**
      * Binds the current {@link LifecycleManager} with given object of given class.
      *
-     * @param clazz the class to be bound
+     * @param clazz  the class to be bound
      * @param object the object to be bound
      * @throws ObjectAlreadyAssociatedException when there is already object bound with {@link LifecycleManager} for given
-     *         class.
+     *                                          class.
      */
     public final <T> void bindTo(Class<T> clazz, T object) throws ObjectAlreadyAssociatedException {
         LifecycleManagerStore.getCurrentStore().bind(this, clazz, object);
@@ -141,7 +141,7 @@ public abstract class LifecycleManager {
     /**
      * Unbinds the {@link LifecycleManager} from given class and given object.
      *
-     * @param clazz the bound class
+     * @param clazz  the bound class
      * @param object the bound class
      * @throws ObjectNotAssociatedException when no object bound with {@link LifecycleManager}.
      */

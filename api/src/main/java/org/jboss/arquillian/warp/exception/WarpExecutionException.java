@@ -19,10 +19,9 @@ package org.jboss.arquillian.warp.exception;
 /**
  * The exception thrown in reaction to unexpected behavior during Warp execution.
  *
+ * @author Lukas Fryc
  * @see ClientWarpExecutionException
  * @see ServerWarpExecutionException
- *
- * @author Lukas Fryc
  */
 public class WarpExecutionException extends RuntimeException {
 

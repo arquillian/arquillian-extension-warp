@@ -35,5 +35,4 @@ public class NavigationHandlerProvider implements ResourceProvider {
     public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
         return FacesContext.getCurrentInstance().getApplication().getNavigationHandler();
     }
-
 }

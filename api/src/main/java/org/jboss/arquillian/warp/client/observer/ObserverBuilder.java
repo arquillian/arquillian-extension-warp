@@ -21,7 +21,7 @@ import org.jboss.arquillian.warp.client.filter.RequestFilter;
 
 /**
  * Provides means for creating an instance of given {@link RequestFilter} through a builder like pattern.
- * <p />
+ * <p/>
  * The builder can be copied through the {@link #copy()} method.
  *
  * @param <T> the builder type

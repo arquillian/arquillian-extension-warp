@@ -45,7 +45,7 @@ import org.jboss.arquillian.warp.servlet.provider.ServletResponseProvider;
 
 /**
  * <p>The Arquillian Warp extension - server-side.</p>
- *
+ * <p>
  * <p>For client-side, see {@link WarpExtension}.</p>
  *
  * @author Lukas Fryc
@@ -84,5 +84,4 @@ public class WarpRemoteExtension implements RemoteLoadableExtension {
 
         builder.observer(InspectionRegistratryInitializer.class);
     }
-
 }

@@ -41,108 +41,109 @@ import org.jboss.arquillian.warp.spi.observer.RequestObserverChainManager;
  */
 public class WarpContextImpl implements WarpContext {
 
-        private Map<Object, WarpGroup> groups = new HashMap<Object, WarpGroup>();
-        private Queue<Exception> exceptions = new ConcurrentLinkedQueue<Exception>();
-        private List<Request> unmatchedRequests = Collections.synchronizedList(new LinkedList<Request>());
+    private Map<Object, WarpGroup> groups = new HashMap<Object, WarpGroup>();
+    private Queue<Exception> exceptions = new ConcurrentLinkedQueue<Exception>();
+    private List<Request> unmatchedRequests = Collections.synchronizedList(new LinkedList<Request>());
 
-        private SynchronizationPoint synchronization = new SynchronizationPoint();
-        private List<RequestObserverChainManager> observerChainManagers;
+    private SynchronizationPoint synchronization = new SynchronizationPoint();
+    private List<RequestObserverChainManager> observerChainManagers;
 
-        @Override
-        public void addGroup(WarpGroup group) {
-            groups.put(group.getId(), group);
-        }
-
-        @Override
-        public Collection<WarpGroup> getAllGroups() {
-            return groups.values();
-        }
-
-        @Override
-        public WarpGroup getGroup(Object identifier) {
-            return groups.get(identifier);
-        }
-
-        public Collection<RequestObserverChainManager> getObserverChainManagers() {
-            return observerChainManagers;
-        }
-
-        @Override
-        public TestResult getFirstNonSuccessfulResult() {
-            for (WarpGroup group : getAllGroups()) {
-                TestResult result = group.getFirstNonSuccessfulResult();
-                if (result != null) {
-                    return result;
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        public void pushResponsePayload(ResponsePayload payload) {
-            for (WarpGroup group : groups.values()) {
-                if (group.pushResponsePayload(payload)) {
-                    synchronization.finishOneResponse();
-                    return;
-                }
-            }
-            throw new IllegalStateException("There was no group found for given response payload");
-        }
-
-        @Override
-        public void pushException(Exception exception) {
-            exceptions.add(exception);
-            synchronization.finishAll();
-        }
-
-        @Override
-        public Exception getFirstException() {
-            return exceptions.peek();
-        }
-
-        @Override
-        public SynchronizationPoint getSynchronization() {
-            return synchronization;
-        }
-
-        @Override
-        public WarpResult getResult() {
-            return new WarpResult() {
-                @Override
-                public WarpGroupResult getGroup(Object identifier) {
-                    return groups.get(identifier);
-                }
-            };
-        }
-
-        @Override
-        public void initialize(ServiceLoader serviceLoader) {
-            // load observer chain managers and sort them by priority
-            observerChainManagers = new LinkedList<RequestObserverChainManager>(serviceLoader.all(RequestObserverChainManager.class));
-            Collections.sort(observerChainManagers, new Comparator<RequestObserverChainManager>() {
-                public int compare(RequestObserverChainManager o1, RequestObserverChainManager o2) {
-                    return o1.priotity() - o2.priotity();
-                }
-            });
-        }
-
-        @Override
-        public int getExpectedRequestCount() {
-            int count = 0;
-            for (WarpGroup group : getAllGroups()) {
-                count += group.getExpectedRequestCount();
-            }
-            return count;
-        }
-
-        @Override
-        public void addUnmatchedRequest(Request request) {
-            unmatchedRequests.add(request);
-        }
-
-        @Override
-        public List<Request> getUnmatchedRequests() {
-            return unmatchedRequests;
-        }
+    @Override
+    public void addGroup(WarpGroup group) {
+        groups.put(group.getId(), group);
     }
+
+    @Override
+    public Collection<WarpGroup> getAllGroups() {
+        return groups.values();
+    }
+
+    @Override
+    public WarpGroup getGroup(Object identifier) {
+        return groups.get(identifier);
+    }
+
+    public Collection<RequestObserverChainManager> getObserverChainManagers() {
+        return observerChainManagers;
+    }
+
+    @Override
+    public TestResult getFirstNonSuccessfulResult() {
+        for (WarpGroup group : getAllGroups()) {
+            TestResult result = group.getFirstNonSuccessfulResult();
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void pushResponsePayload(ResponsePayload payload) {
+        for (WarpGroup group : groups.values()) {
+            if (group.pushResponsePayload(payload)) {
+                synchronization.finishOneResponse();
+                return;
+            }
+        }
+        throw new IllegalStateException("There was no group found for given response payload");
+    }
+
+    @Override
+    public void pushException(Exception exception) {
+        exceptions.add(exception);
+        synchronization.finishAll();
+    }
+
+    @Override
+    public Exception getFirstException() {
+        return exceptions.peek();
+    }
+
+    @Override
+    public SynchronizationPoint getSynchronization() {
+        return synchronization;
+    }
+
+    @Override
+    public WarpResult getResult() {
+        return new WarpResult() {
+            @Override
+            public WarpGroupResult getGroup(Object identifier) {
+                return groups.get(identifier);
+            }
+        };
+    }
+
+    @Override
+    public void initialize(ServiceLoader serviceLoader) {
+        // load observer chain managers and sort them by priority
+        observerChainManagers =
+            new LinkedList<RequestObserverChainManager>(serviceLoader.all(RequestObserverChainManager.class));
+        Collections.sort(observerChainManagers, new Comparator<RequestObserverChainManager>() {
+            public int compare(RequestObserverChainManager o1, RequestObserverChainManager o2) {
+                return o1.priotity() - o2.priotity();
+            }
+        });
+    }
+
+    @Override
+    public int getExpectedRequestCount() {
+        int count = 0;
+        for (WarpGroup group : getAllGroups()) {
+            count += group.getExpectedRequestCount();
+        }
+        return count;
+    }
+
+    @Override
+    public void addUnmatchedRequest(Request request) {
+        unmatchedRequests.add(request);
+    }
+
+    @Override
+    public List<Request> getUnmatchedRequests() {
+        return unmatchedRequests;
+    }
+}

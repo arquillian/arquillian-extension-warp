@@ -57,6 +57,7 @@ public class WarpTestValidator {
 
     /**
      * Checks if the given test class is annotated by the annotation {@link @RunAsClient}
+     *
      * @param testClass to be checked
      * @return whether if the given test class is annotated by the annotation {@link @RunAsClient}
      */

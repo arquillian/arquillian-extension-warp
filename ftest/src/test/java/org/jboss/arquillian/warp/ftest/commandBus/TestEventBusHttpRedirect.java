@@ -31,12 +31,11 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+
 import static junit.framework.Assert.assertTrue;
 
 /**
- *
  * @author Aris Tzoumas
- *
  */
 @RunWith(Arquillian.class)
 @WarpTest
@@ -52,11 +51,10 @@ public class TestEventBusHttpRedirect {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(RedirectFilter.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web-redirect.xml"), "web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
+            .addClass(RedirectFilter.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web-redirect.xml"), "web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -64,5 +62,4 @@ public class TestEventBusHttpRedirect {
         // if test runs this means that redirect is supported in CommandEventBus
         assertTrue(true);
     }
-
 }

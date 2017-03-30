@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
  * Specifies request filter to be applied on all requests in whole annotated method.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
-// TODO not implemented yet
+@Target({ElementType.METHOD})
+    // TODO not implemented yet
 @interface Observe {
 
     /**

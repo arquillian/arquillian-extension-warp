@@ -50,7 +50,7 @@ public class TransformedInspection {
     }
 
     private TransformedInspection(Class<?> originalClass, String newClassName, Inspection serverInspection)
-            throws InspectionTransformationException {
+        throws InspectionTransformationException {
         this.classPool = ClassPool.getDefault();
         this.originalClass = originalClass;
 
@@ -65,7 +65,9 @@ public class TransformedInspection {
             CtClass output = classPool.getAndRename(originalClass.getName(), newClassName);
 
             // remove enclosing reference to the method.
-            output.getClassFile2().getAttributes().remove(output.getClassFile2().getAttribute(EnclosingMethodAttribute.tag));
+            output.getClassFile2()
+                .getAttributes()
+                .remove(output.getClassFile2().getAttribute(EnclosingMethodAttribute.tag));
             output.getClassFile2().getAttributes().remove(output.getClassFile2().getAttribute(InnerClassesAttribute.tag));
 
             output.setModifiers(Modifier.PUBLIC);
@@ -78,7 +80,7 @@ public class TransformedInspection {
             CtField field = output.getField("serialVersionUID");
             if (field.getDeclaringClass() != output) {
                 throw new NoSerialVersionUIDException("serialVersionUID for class " + originalClass.getName()
-                        + " is not set; please set serialVersionUID to allow Warp work correctly");
+                    + " is not set; please set serialVersionUID to allow Warp work correctly");
             }
             for (CtConstructor constructor : output.getConstructors()) {
                 output.removeConstructor(constructor);
@@ -87,7 +89,8 @@ public class TransformedInspection {
 
             return output;
         } catch (Exception e) {
-            throw new InspectionTransformationException("Unable to transform inspection " + originalClass.getName() + ":\n" + e.getMessage(), e);
+            throw new InspectionTransformationException(
+                "Unable to transform inspection " + originalClass.getName() + ":\n" + e.getMessage(), e);
         }
     }
 
@@ -97,7 +100,7 @@ public class TransformedInspection {
             Inspection newObj = transformedClass.newInstance();
             for (Field newF : transformedClass.getDeclaredFields()) {
                 if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
-                        && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
+                    && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
                     continue;
                 }
                 Field oldF = oldClass.getDeclaredField(newF.getName());
@@ -108,7 +111,7 @@ public class TransformedInspection {
             return newObj;
         } catch (Exception e) {
             throw new InspectionTransformationException("Unable to clone " + obj.getClass().getName() + " to "
-                    + transformed.getName(), e);
+                + transformed.getName(), e);
         }
     }
 
@@ -144,5 +147,4 @@ public class TransformedInspection {
     public Class<?> getOriginalClass() {
         return originalClass;
     }
-
 }

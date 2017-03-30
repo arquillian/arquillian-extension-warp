@@ -20,7 +20,7 @@ package org.jboss.arquillian.warp.spi.servlet.event;
  * <p>
  * This event is fired when request should be executed.
  * </p>
- *
+ * <p>
  * <p>
  * For HTTP requests, this event means that request may be passed to filter chain.
  * </p>

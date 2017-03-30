@@ -60,10 +60,10 @@ public class TestInspectionFailurePropagation {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap
-                .create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .create(WebArchive.class, "test.war")
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test(expected = AssertionError.class)
@@ -73,16 +73,17 @@ public class TestInspectionFailurePropagation {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-
-                @BeforeServlet
-                public void beforeServlet() {
-                    fail("AssertionError should be correctly handled and propagated to the client-side");
                 }
-            }
-        );
+            })
+            .inspect(new Inspection() {
+                         private static final long serialVersionUID = 1L;
+
+                         @BeforeServlet
+                         public void beforeServlet() {
+                             fail("AssertionError should be correctly handled and propagated to the client-side");
+                         }
+                     }
+            );
     }
 
     @Test
@@ -93,16 +94,17 @@ public class TestInspectionFailurePropagation {
                 .initiate(new Activity() {
                     public void perform() {
                         browser.navigate().to(contextPath + "index.html");
-                    }})
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
-
-                    @BeforeServlet
-                    public void beforeServlet() throws Exception {
-                        throw new IOException();
                     }
-                }
-            );
+                })
+                .inspect(new Inspection() {
+                             private static final long serialVersionUID = 1L;
+
+                             @BeforeServlet
+                             public void beforeServlet() throws Exception {
+                                 throw new IOException();
+                             }
+                         }
+                );
         } catch (ServerWarpExecutionException e) {
             assertTrue(e.getCause() instanceof IOException);
         }
@@ -114,15 +116,16 @@ public class TestInspectionFailurePropagation {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-
-                @BeforeServlet
-                public void beforeServlet() {
-                    throw new IllegalArgumentException();
                 }
-            }
-        );
+            })
+            .inspect(new Inspection() {
+                         private static final long serialVersionUID = 1L;
+
+                         @BeforeServlet
+                         public void beforeServlet() {
+                             throw new IllegalArgumentException();
+                         }
+                     }
+            );
     }
 }

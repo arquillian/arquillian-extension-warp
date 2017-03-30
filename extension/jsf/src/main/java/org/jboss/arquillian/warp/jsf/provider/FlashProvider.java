@@ -35,5 +35,4 @@ public class FlashProvider implements ResourceProvider {
     public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
         return FacesContext.getCurrentInstance().getExternalContext().getFlash();
     }
-
 }

@@ -27,7 +27,7 @@ public class TestSeparateInvocator {
     @Test
     public void test() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).addClasses(Implementation.class, Interface.class,
-                Argument.class, Result.class, TestSeparateInvocator.class);
+            Argument.class, Result.class, TestSeparateInvocator.class);
 
         SeparateInvocator.<Interface, Implementation>invoke(Implementation.class, archive).run(new Argument(), "xyz");
     }

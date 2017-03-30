@@ -60,9 +60,9 @@ public class TestRequestObserver {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

@@ -22,10 +22,9 @@ import java.util.Map;
 
 import org.jboss.arquillian.warp.client.filter.Request;
 
-
 /**
  * An HTTP request.
- *
+ * <p>
  * <h3>Accessing Query Parameters and Cookie</h3>
  * <p>
  * Unlike the Servlet API, a query string is constructed and decomposed by

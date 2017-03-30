@@ -52,9 +52,10 @@ public class TestDifferentClassTypes {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(TestingServlet.class, AbstractInspection.class, InspectionWithConstructorWithArguments.class, InspectionExtendingInspectionWithConstructorWithArguments.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClasses(TestingServlet.class, AbstractInspection.class, InspectionWithConstructorWithArguments.class,
+                InspectionExtendingInspectionWithConstructorWithArguments.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -63,7 +64,8 @@ public class TestDifferentClassTypes {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new StaticInnerClass());
     }
 
@@ -73,7 +75,8 @@ public class TestDifferentClassTypes {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new StaticInnerClassWithConstructorWithArguments(null));
     }
 
@@ -84,7 +87,8 @@ public class TestDifferentClassTypes {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new StaticInnerClassExtendingClassWithConstructorWithArguments(null));
     }
 
@@ -94,7 +98,8 @@ public class TestDifferentClassTypes {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new InspectionWithConstructorWithArguments(null));
     }
 
@@ -104,7 +109,8 @@ public class TestDifferentClassTypes {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new InspectionExtendingInspectionWithConstructorWithArguments(null));
     }
 
@@ -120,7 +126,7 @@ public class TestDifferentClassTypes {
     }
 
     public static class StaticInnerClassExtendingClassWithConstructorWithArguments extends
-            InspectionWithConstructorWithArguments {
+        InspectionWithConstructorWithArguments {
         private static final long serialVersionUID = 1L;
 
         public StaticInnerClassExtendingClassWithConstructorWithArguments(Object argument) {

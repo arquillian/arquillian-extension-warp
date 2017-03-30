@@ -65,11 +65,11 @@ public class EarWarpTest {
     public static EnterpriseArchive createDeployment() {
 
         return ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
-                .addAsModule(
-                        ShrinkWrap.create(WebArchive.class, "test.war")
-                            .addClass(TestingServlet.class)
-                            .addAsWebResource(new File("src/main/webapp/index.html"))
-                            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
+            .addAsModule(
+                ShrinkWrap.create(WebArchive.class, "test.war")
+                    .addClass(TestingServlet.class)
+                    .addAsWebResource(new File("src/main/webapp/index.html"))
+                    .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class EarWarpTest {
                     assertNotNull("request context must be available", request);
 
                     assertNotNull("responses enrichment is set before servlet processing",
-                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
                 }
 
                 @AfterServlet
@@ -109,7 +109,7 @@ public class EarWarpTest {
                     System.out.println("Servlet just processed my initial request!");
 
                     assertNotNull("responses enrichment is set before servlet processing",
-                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
 
                     assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
                 }

@@ -29,24 +29,24 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * <p>
  * Holds associations of {@link LifecycleManager} with arbitrary objects.
  * </p>
- *
+ * <p>
  * <p>
  * In order to store binding, one can need to use object and its class/interface as key.
  * </p>
- *
+ * <p>
  * <p>
  * Once the binding is stored, one can use that object together with key to restore associated {@link LifecycleManager}.
  * </p>
- *
+ * <p>
  * <p>
  * This way, {@link LifecycleManager} can be propagated to arbitrary contexts without need of shared store (particularly this
  * principle avoids use of {@link ThreadLocal} store.
  * </p>
- *
+ * <p>
  * <p>
  * Storing current references:
  * </p>
- *
+ * <p>
  * <pre><code>
  *
  *
@@ -59,11 +59,11 @@ public abstract class LifecycleManagerStore {
     /**
      * Retrieves instance of {@link LifecycleManager} for given instance of given class.
      *
-     * @param clazz the class used as denominator during retrieval
+     * @param clazz       the class used as denominator during retrieval
      * @param boundObject the object used as key for retriving {@link LifecycleManager}
      * @return the bound instance of {@link LifecycleManager}
      * @throws ObjectNotAssociatedException when instance of no such class and class' instance was associated with any
-     *         {@link LifecycleManager}
+     *                                      {@link LifecycleManager}
      */
     public static <T> LifecycleManager get(Class<T> type, T boundObject) throws ObjectNotAssociatedException {
         return getCurrentStore().obtain(type, boundObject);
@@ -72,28 +72,29 @@ public abstract class LifecycleManagerStore {
     /**
      * Provides implementation of binding a current {@link LifecycleManager} with given object of given class.
      *
-     * @param clazz the class to be bound
+     * @param clazz  the class to be bound
      * @param object the object to be bound
      * @throws ObjectAlreadyAssociatedException when there is already object bound with {@link LifecycleManager} for given
-     *         class.
+     *                                          class.
      */
     protected abstract <T> void bind(LifecycleManager manager, Class<T> clazz, T object)
-            throws ObjectAlreadyAssociatedException;
+        throws ObjectAlreadyAssociatedException;
 
     /**
      * Provides implementation of binding a {@link LifecycleManager} for given class and given object.
      *
-     * @param clazz the bound class
+     * @param clazz  the bound class
      * @param object the bound class
      * @throws ObjectNotAssociatedException when no object bound with {@link LifecycleManager}.
      */
-    protected abstract <T> void unbind(LifecycleManager manager, Class<T> clazz, T object) throws ObjectNotAssociatedException;
+    protected abstract <T> void unbind(LifecycleManager manager, Class<T> clazz, T object)
+        throws ObjectNotAssociatedException;
 
     /**
      * <p>
      * Checks that given manager does not have any associations in context of current store.
      * </p>
-     *
+     * <p>
      * <p>
      * It ensures that all managers associated with {@link #bind(LifecycleManager, Class, Object)} was properly unbound with
      * {@link #unbind(LifecycleManager, Class, Object)}.
@@ -107,22 +108,22 @@ public abstract class LifecycleManagerStore {
     /**
      * Provides implementation of obtaining {@link LifecycleManager} for given instance of given class.
      *
-     * @param clazz the class used as denominator during retrieval
+     * @param clazz       the class used as denominator during retrieval
      * @param boundObject the object used as key for retriving {@link LifecycleManager}
      * @return the bound instance of {@link LifecycleManager}
      * @throws ObjectNotAssociatedException when instance of no such class and class' instance was associated with any
-     *         {@link LifecycleManager}
+     *                                      {@link LifecycleManager}
      */
     protected abstract <T> LifecycleManager obtain(Class<T> clazz, T object) throws ObjectNotAssociatedException;
 
     /**
      * Retrieves instance of {@link LifecycleManager} for given instance of given class.
      *
-     * @param clazz the class used as denominator during retrieval
+     * @param clazz       the class used as denominator during retrieval
      * @param boundObject the object used as key for retriving {@link LifecycleManager}
      * @return the bound instance of {@link LifecycleManager}
      * @throws ObjectNotAssociatedException when instance of no such class and class' instance was associated with any
-     *         {@link LifecycleManager}
+     *                                      {@link LifecycleManager}
      */
     static LifecycleManagerStore getCurrentStore() {
         LifecycleManagerStore store = INSTANCE.get();
@@ -132,7 +133,7 @@ public abstract class LifecycleManagerStore {
 
         try {
             InputStream resourceAsStream = Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream("META-INF/services/" + LifecycleManagerStore.class.getName());
+                .getResourceAsStream("META-INF/services/" + LifecycleManagerStore.class.getName());
 
             if (resourceAsStream != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));

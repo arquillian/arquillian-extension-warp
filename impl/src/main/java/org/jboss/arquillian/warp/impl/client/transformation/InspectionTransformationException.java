@@ -36,5 +36,4 @@ public class InspectionTransformationException extends Exception {
     public InspectionTransformationException(String message) {
         super(message);
     }
-
 }

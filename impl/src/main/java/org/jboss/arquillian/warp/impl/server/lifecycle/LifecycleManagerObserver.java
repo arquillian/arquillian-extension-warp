@@ -33,7 +33,6 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * Drives {@link LifecycleManagerImpl} and {@link InspectionRegistry} lifecycle.
  *
  * @author Lukas Fryc
- *
  */
 public class LifecycleManagerObserver {
 

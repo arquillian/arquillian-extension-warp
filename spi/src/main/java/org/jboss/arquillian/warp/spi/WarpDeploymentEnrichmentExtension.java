@@ -25,7 +25,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  * Service for adding {@link JavaArchive}s to final {@link WebArchive} and modifying final {@link WebArchive} in order to
  * provide extended Warp functionality.
  * </p>
- *
+ * <p>
  * <p>
  * This service will be applied only if test case is annotated with {@link WarpTest}.
  * </p>
@@ -36,14 +36,14 @@ public interface WarpDeploymentEnrichmentExtension {
 
     /**
      * <p>Adds the library to enrich final {@link WebArchive} deployment.</p>
-     *
+     * <p>
      * <p>Can return null when no enrichment library is provided by extension.</p>
      */
     JavaArchive getEnrichmentLibrary();
 
     /**
      * <p>llows enriching of final {@link WebArchive} (any resource in an archive can be manipulated).</p>
-     *
+     * <p>
      * <p>Doesn't need to do any operation on archive.</p>
      */
     void enrichWebArchive(WebArchive webArchive);

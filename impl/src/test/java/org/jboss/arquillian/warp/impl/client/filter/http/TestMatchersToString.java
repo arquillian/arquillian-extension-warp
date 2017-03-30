@@ -39,7 +39,8 @@ public class TestMatchersToString {
     @Test
     public void testContainsHeaderValue() {
         assertThat(request().header().containsValue("xyz", "abc").toString(), equalTo("containsValue('xyz', 'abc')"));
-        assertThat(request().header().not().containsValue("xyz", "abc").toString(), equalTo("not containsValue('xyz', 'abc')"));
+        assertThat(request().header().not().containsValue("xyz", "abc").toString(),
+            equalTo("not containsValue('xyz', 'abc')"));
     }
 
     @Test
@@ -115,5 +116,4 @@ public class TestMatchersToString {
     public void afterTest() {
         WarpRuntime.setInstance(null);
     }
-
 }

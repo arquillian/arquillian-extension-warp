@@ -25,7 +25,6 @@ public interface Matcher<T> {
      * Checks if the passed value matches the expected condition.
      *
      * @param value the value
-     *
      * @return true if the value matches the condition, false otherwise
      */
     boolean matches(T value);

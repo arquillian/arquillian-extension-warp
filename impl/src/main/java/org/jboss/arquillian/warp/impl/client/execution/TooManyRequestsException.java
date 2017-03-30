@@ -19,7 +19,6 @@ package org.jboss.arquillian.warp.impl.client.execution;
 import org.jboss.arquillian.warp.client.filter.Request;
 import org.jboss.arquillian.warp.exception.ClientWarpExecutionException;
 
-
 /**
  * Indicates that Warp has observed more requests in given group than expected.
  *
@@ -67,7 +66,7 @@ public class TooManyRequestsException extends ClientWarpExecutionException {
 
         private void generalIntroMessage() {
             message.append(String.format("There were more requests observed (%s) then expected (%s).\n\n",
-                    1 + group.getHitCount(), group.getExpectedRequestCount()));
+                1 + group.getHitCount(), group.getExpectedRequestCount()));
         }
 
         private void messageListingRequests() {
@@ -85,9 +84,12 @@ public class TooManyRequestsException extends ClientWarpExecutionException {
         }
 
         private void generalAdviceForDebugging() {
-            message.append("If Warp observes wrong request, use observe(...) method to select appropriate request which should be enriched instead.\n");
-            message.append("You can also use method observe(request().index(1)) to select just first from those requests or simply use single-request execution API (Warp.initiate(a).observe(o).inspect(i)).\n");
-            message.append("Otherwise check the server-side log and enable Arquillian debugging mode on both, test and server VM by passing -Darquillian.debug=true.\n");
+            message.append(
+                "If Warp observes wrong request, use observe(...) method to select appropriate request which should be enriched instead.\n");
+            message.append(
+                "You can also use method observe(request().index(1)) to select just first from those requests or simply use single-request execution API (Warp.initiate(a).observe(o).inspect(i)).\n");
+            message.append(
+                "Otherwise check the server-side log and enable Arquillian debugging mode on both, test and server VM by passing -Darquillian.debug=true.\n");
         }
     }
 }

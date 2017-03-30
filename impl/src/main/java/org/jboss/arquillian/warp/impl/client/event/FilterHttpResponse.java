@@ -36,5 +36,4 @@ public class FilterHttpResponse implements FilterResponse<HttpResponse> {
     public HttpResponse getResponse() {
         return response;
     }
-
 }

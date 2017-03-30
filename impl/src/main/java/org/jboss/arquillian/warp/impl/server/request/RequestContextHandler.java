@@ -39,7 +39,6 @@ import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
  * The handler for current context.
  *
  * @author Lukas Fryc
- *
  */
 public class RequestContextHandler {
 

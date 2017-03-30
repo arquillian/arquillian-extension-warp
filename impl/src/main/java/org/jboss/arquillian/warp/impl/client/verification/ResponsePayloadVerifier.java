@@ -62,7 +62,8 @@ public class ResponsePayloadVerifier {
                         Class<? extends Annotation> annotationType = annotation.annotationType();
 
                         if (WarpCommons.isWarpLifecycleTest(annotationType)) {
-                            specifiedMethods.add(new ExecutedMethod(method, Arrays.asList(method.getDeclaredAnnotations())));
+                            specifiedMethods.add(
+                                new ExecutedMethod(method, Arrays.asList(method.getDeclaredAnnotations())));
                         }
                     }
                 }

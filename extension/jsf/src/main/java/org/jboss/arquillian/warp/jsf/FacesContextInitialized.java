@@ -29,5 +29,4 @@ public class FacesContextInitialized {
     public FacesContext getFacesContext() {
         return facesContext;
     }
-
 }

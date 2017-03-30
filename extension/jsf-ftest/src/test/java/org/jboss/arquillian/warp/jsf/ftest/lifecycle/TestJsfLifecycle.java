@@ -60,10 +60,10 @@ public class TestJsfLifecycle {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(CdiBean.class)
-                .addAsWebResource(new File("src/main/webapp/index.xhtml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
-                .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+            .addAsWebResource(new File("src/main/webapp/index.xhtml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+            .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
     @Test
@@ -73,7 +73,8 @@ public class TestJsfLifecycle {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
-                }})
+                }
+            })
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 

@@ -58,7 +58,7 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
  * <p>
  * Provides an event bus during test execution to execute commands on the server
  * </p>
- *
+ * <p>
  * <p>
  * Event Bus functionality is similar to ServletProtocol
  * </p>
@@ -89,7 +89,7 @@ public class CommandBusOnClient {
     private static Timer eventBusTimer;
 
     public void startBus(StartBus event) {
-        if (!WarpCommons.isWarpTest(testClass.get().getJavaClass())){
+        if (!WarpCommons.isWarpTest(testClass.get().getJavaClass())) {
             return;
         }
         if (protocolMetadata.get() == null) {
@@ -108,7 +108,8 @@ public class CommandBusOnClient {
         HTTPContext context = locateHTTPContext(testMethod, contexts);
         URI servletURI = locateCommandEventBusURI(context);
 
-        String url = servletURI.toASCIIString() + "?className=" + testClass.getName() + "&methodName=" + testMethod.getName();
+        String url =
+            servletURI.toASCIIString() + "?className=" + testClass.getName() + "&methodName=" + testMethod.getName();
 
         channelUrl = url;
 
@@ -143,7 +144,6 @@ public class CommandBusOnClient {
                     }
                 }
             }, 0, 100);
-
         } catch (Exception e) {
             throw new IllegalStateException("Error launching test " + testClass.getName() + " " + testMethod, e);
         }
@@ -247,7 +247,8 @@ public class CommandBusOnClient {
                 }
 
                 if (!returnType.isInstance(o)) {
-                    throw new IllegalStateException("Error reading results, expected a " + returnType.getName() + " but got "
+                    throw new IllegalStateException(
+                        "Error reading results, expected a " + returnType.getName() + " but got "
                             + o);
                 }
                 return returnType.cast(o);
@@ -258,7 +259,7 @@ public class CommandBusOnClient {
                 return execute(redirectUrl, returnType, requestObject);
             } else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
                 throw new IllegalStateException("Error launching test at " + url + ". " + "Got "
-                        + httpConnection.getResponseCode() + " (" + httpConnection.getResponseMessage() + ")");
+                    + httpConnection.getResponseCode() + " (" + httpConnection.getResponseMessage() + ")");
             }
         } finally {
             httpConnection.disconnect();
@@ -276,7 +277,8 @@ public class CommandBusOnClient {
                     return context;
                 }
             }
-            throw new IllegalArgumentException("Could not determin HTTPContext from ProtocolMetadata for target: " + targetName
+            throw new IllegalArgumentException(
+                "Could not determin HTTPContext from ProtocolMetadata for target: " + targetName
                     + ". Verify that the given target name in @" + TargetsContainer.class.getSimpleName()
                     + " match a name returned by the deployment container");
         }
@@ -287,7 +289,7 @@ public class CommandBusOnClient {
         List<Servlet> contextServlets = context.getServlets();
         if (contextServlets == null) {
             throw new IllegalArgumentException("Could not determine URI for WarpFilter in context " + context
-                    + ". There are no Servlets in context.");
+                + ". There are no Servlets in context.");
         }
         Set<String> contextRoots = new HashSet<String>();
         for (Servlet servlet : contextServlets) {
@@ -308,11 +310,10 @@ public class CommandBusOnClient {
         } else {
             try {
                 return new URI("http", null, context.getHost(), context.getPort(),
-                        CommandBusOnServer.COMMAND_EVENT_BUS_MAPPING, null, null);
+                    CommandBusOnServer.COMMAND_EVENT_BUS_MAPPING, null, null);
             } catch (URISyntaxException e) {
                 throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
             }
         }
     }
-
 }

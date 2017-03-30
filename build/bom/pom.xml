@@ -1,108 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jboss.arquillian.extension</groupId>
-    <artifactId>arquillian-warp-bom</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0.Beta1-SNAPSHOT</version>
+  <groupId>org.jboss.arquillian.extension</groupId>
+  <artifactId>arquillian-warp-bom</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0.Beta1-SNAPSHOT</version>
 
-    <name>Arquillian Warp: BOM</name>
-    <description>Taking tests from Client to the Server and back</description>
-    <url>http://www.arquillian.org/</url>
+  <name>Arquillian Warp: BOM</name>
+  <description>Taking tests from Client to the Server and back</description>
+  <url>http://www.arquillian.org/</url>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
-    <developers>
-        <developer>
-            <name>Lukas Fryc</name>
-            <email>lfryc@redhat.com</email>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <name>Lukas Fryc</name>
+      <email>lfryc@redhat.com</email>
+    </developer>
+  </developers>
 
-    <issueManagement>
-        <system>JIRA</system>
-        <url>https://issues.jboss.org/browse/ARQ/component/12315782</url>
-    </issueManagement>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://issues.jboss.org/browse/ARQ/component/12315782</url>
+  </issueManagement>
 
-    <scm>
-        <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-warp.git</connection>
-        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-warp.git</developerConnection>
-        <url>git://github.com/arquillian/arquillian-extension-warp.git</url>
-      <tag>HEAD</tag>
+  <scm>
+    <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-warp.git</connection>
+    <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-warp.git</developerConnection>
+    <url>git://github.com/arquillian/arquillian-extension-warp.git</url>
+    <tag>HEAD</tag>
   </scm>
 
-    <ciManagement>
-        <system>CloudBess</system>
-        <url>https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/</url>
-    </ciManagement>
+  <ciManagement>
+    <system>CloudBess</system>
+    <url>https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/</url>
+  </ciManagement>
 
-    <properties>
-        <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
-    </properties>
+  <properties>
+    <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
+    </jboss.releases.repo.url>
+    <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
+    </jboss.snapshots.repo.url>
+  </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-spi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-jsf</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp</artifactId>
-                <type>pom</type>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-warp-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-warp-spi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-warp-impl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-warp-jsf</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-warp</artifactId>
+        <type>pom</type>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.1</version>
-                    <configuration>
-                        <pushChanges>false</pushChanges>
-                        <localCheckout>true</localCheckout>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+            <pushChanges>false</pushChanges>
+            <localCheckout>true</localCheckout>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
-    <distributionManagement>
-        <repository>
-            <id>jboss-releases-repository</id>
-            <name>JBoss Releases Repository</name>
-            <url>${jboss.releases.repo.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>jboss-snapshots-repository</id>
-            <name>JBoss Snapshots Repository</name>
-            <url>${jboss.snapshots.repo.url}</url>
-        </snapshotRepository>
-    </distributionManagement>
+  <distributionManagement>
+    <repository>
+      <id>jboss-releases-repository</id>
+      <name>JBoss Releases Repository</name>
+      <url>${jboss.releases.repo.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>jboss-snapshots-repository</id>
+      <name>JBoss Snapshots Repository</name>
+      <url>${jboss.snapshots.repo.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

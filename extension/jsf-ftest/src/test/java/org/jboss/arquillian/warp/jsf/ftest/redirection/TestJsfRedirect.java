@@ -61,11 +61,11 @@ public class TestJsfRedirect {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(CdiBean.class)
-                .addAsWebResource(new File("src/main/webapp/index.xhtml"))
-                .addAsWebResource(new File("src/main/webapp/redirect.xhtml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
-                .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+            .addAsWebResource(new File("src/main/webapp/index.xhtml"))
+            .addAsWebResource(new File("src/main/webapp/redirect.xhtml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+            .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
     @Test
@@ -77,36 +77,37 @@ public class TestJsfRedirect {
             .initiate(new Activity() {
                 public void perform() {
                     browser.findElement(By.id("form:redirect")).click();
-                }})
+                }
+            })
             .group("redirect.jsf")
-                .observe(request().index(1))
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
+            .observe(request().index(1))
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
 
-                    @ArquillianResource
-                    private HttpServletResponse response;
+                @ArquillianResource
+                private HttpServletResponse response;
 
-                    @AfterPhase(RESTORE_VIEW)
-                    public void verify_that_the_appropriate_page_is_requested(@ArquillianResource FacesContext facesContext) {
-                        assertEquals("/redirect.xhtml", facesContext.getViewRoot().getViewId());
-                    }
+                @AfterPhase(RESTORE_VIEW)
+                public void verify_that_the_appropriate_page_is_requested(@ArquillianResource FacesContext facesContext) {
+                    assertEquals("/redirect.xhtml", facesContext.getViewRoot().getViewId());
+                }
 
-                    @AfterServlet
-                    public void verify_that_response_is_redirected() {
-                        assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
-                        assertTrue(response.getHeader("Location").contains("index.jsf"));
-                    }
-                })
+                @AfterServlet
+                public void verify_that_response_is_redirected() {
+                    assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
+                    assertTrue(response.getHeader("Location").contains("index.jsf"));
+                }
+            })
             .group("index.jsf")
-                .observe(request().index(2))
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
+            .observe(request().index(2))
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
 
-                    @AfterPhase(RESTORE_VIEW)
-                    public void verify_that_the_appropriate_page_is_requested(@ArquillianResource FacesContext facesContext) {
-                        assertEquals("/index.xhtml", facesContext.getViewRoot().getViewId());
-                    }
-                })
+                @AfterPhase(RESTORE_VIEW)
+                public void verify_that_the_appropriate_page_is_requested(@ArquillianResource FacesContext facesContext) {
+                    assertEquals("/index.xhtml", facesContext.getViewRoot().getViewId());
+                }
+            })
             .execute();
 
         assertTrue(browser.getCurrentUrl().contains("index.jsf"));

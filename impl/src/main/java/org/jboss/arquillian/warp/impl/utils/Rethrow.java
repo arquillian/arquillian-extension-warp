@@ -18,7 +18,6 @@ package org.jboss.arquillian.warp.impl.utils;
 
 import java.lang.reflect.InvocationTargetException;
 
-
 /**
  * Helper for rethrowing exceptions as unchecked exceptions
  *

@@ -36,7 +36,8 @@ public class TestShrinkWrapUtils {
     public void testMultipleUse() throws ClassNotFoundException {
         JavaArchive archive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
 
-        ShrinkWrapClassLoader classLoader = new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
+        ShrinkWrapClassLoader classLoader =
+            new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
         Class<?> nestedClass = classLoader.loadClass(Test.class.getName());
 
         JavaArchive nestedArchive = ShrinkWrapUtils.getJavaArchiveFromClass(nestedClass);

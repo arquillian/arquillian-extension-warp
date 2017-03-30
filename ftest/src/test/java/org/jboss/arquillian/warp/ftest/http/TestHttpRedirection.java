@@ -61,9 +61,9 @@ public class TestHttpRedirection {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(RedirectingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(RedirectingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -75,32 +75,32 @@ public class TestHttpRedirection {
                 }
             })
             .group()
-                .observe(request().index(1))
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
+            .observe(request().index(1))
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
 
-                    @ArquillianResource
-                    HttpServletResponse response;
+                @ArquillianResource
+                HttpServletResponse response;
 
-                    @AfterServlet
-                    public void test_that_request_is_redirected() {
-                        assertEquals("Response status is MOVED_TEMPORARILY", HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
-                    }
-                })
+                @AfterServlet
+                public void test_that_request_is_redirected() {
+                    assertEquals("Response status is MOVED_TEMPORARILY", HttpServletResponse.SC_MOVED_TEMPORARILY,
+                        response.getStatus());
+                }
+            })
             .group()
-                .observe(request().index(2))
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
+            .observe(request().index(2))
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
 
-                    @ArquillianResource
-                    HttpServletRequest request;
+                @ArquillianResource
+                HttpServletRequest request;
 
-                    @AfterServlet
-                    public void test_that_this_is_index_page() {
-                        assertTrue("Request URI ends with index.html", request.getRequestURI().endsWith("index.html"));
-                    }
-                })
+                @AfterServlet
+                public void test_that_this_is_index_page() {
+                    assertTrue("Request URI ends with index.html", request.getRequestURI().endsWith("index.html"));
+                }
+            })
             .execute();
     }
-
 }

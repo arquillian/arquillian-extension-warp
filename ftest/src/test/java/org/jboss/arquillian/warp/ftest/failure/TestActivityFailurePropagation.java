@@ -58,10 +58,10 @@ public class TestActivityFailurePropagation {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap
-                .create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .create(WebArchive.class, "test.war")
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test(expected = DefaultWarpRequestSpecifier.ActivityException.class)
@@ -72,13 +72,14 @@ public class TestActivityFailurePropagation {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
                     fail("AssertionError should be correctly handled and propagated to the client-side");
-                }})
+                }
+            })
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 
                 @BeforeServlet
                 public void beforeServlet() {
-                   System.out.println("Hi server, here is AJAX request!");
+                    System.out.println("Hi server, here is AJAX request!");
                 }
             })
         ;
@@ -91,7 +92,8 @@ public class TestActivityFailurePropagation {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
                     throw new IllegalArgumentException();
-                }})
+                }
+            })
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 
@@ -110,7 +112,8 @@ public class TestActivityFailurePropagation {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
                     fail("Show me");
-                }})
+                }
+            })
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 
@@ -128,7 +131,8 @@ public class TestActivityFailurePropagation {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new Inspection() {
                 private static final long serialVersionUID = 1L;
 

@@ -51,13 +51,13 @@ public class TestJSFInstanceProducers {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
-                .addClasses(CdiBean.class, TestingExtension.class)
-                .addAsWebResource(new File("src/main/webapp/index.xhtml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
-                .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"))
-                .addAsServiceProvider(RemoteLoadableExtension.class, TestingExtension.class);
+            .addClasses(CdiBean.class, TestingExtension.class)
+            .addAsWebResource(new File("src/main/webapp/index.xhtml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+            .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"))
+            .addAsServiceProvider(RemoteLoadableExtension.class, TestingExtension.class);
     }
 
     @Test
@@ -66,10 +66,11 @@ public class TestJSFInstanceProducers {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
-                }})
+                }
+            })
             .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-            }
-        );
+                         private static final long serialVersionUID = 1L;
+                     }
+            );
     }
 }

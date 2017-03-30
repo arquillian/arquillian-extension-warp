@@ -78,11 +78,11 @@ public class ContainerInstaller {
         unzip(inputStream, unpackDestination, false);
 
         log.info(String.format("The container distribution '%s' was installed into '%s'", distribution,
-                unpackDestination.getAbsolutePath()));
+            unpackDestination.getAbsolutePath()));
 
         if (!containerHome.exists()) {
             throw new IllegalStateException(String.format(
-                    "The container distribution was unpacked but the containerHome (%s) still doesn't exist", containerHome));
+                "The container distribution was unpacked but the containerHome (%s) still doesn't exist", containerHome));
         }
 
         configuration.get().setContainerInstalledFromDistribution(true);
@@ -101,11 +101,11 @@ public class ContainerInstaller {
         File containerHome = new File(configuration.get().getContainerHome());
 
         InputStream artifactStream = Maven.resolver().resolve(configurationFiles).withClassPathResolution(false)
-                .withoutTransitivity().asSingleInputStream();
+            .withoutTransitivity().asSingleInputStream();
         unzip(artifactStream, containerHome, true);
 
         log.info(String.format("The container configuration '%s' was unpacked into '%s'", configurationFiles,
-                containerHome.getAbsolutePath()));
+            containerHome.getAbsolutePath()));
     }
 
     public void uninstallContainer(@Observes UninstallContainer event) {
@@ -154,7 +154,6 @@ public class ContainerInstaller {
                 fileoutputstream.close();
                 zipinputstream.closeEntry();
                 zipentry = zipinputstream.getNextEntry();
-
             }
 
             zipinputstream.close();

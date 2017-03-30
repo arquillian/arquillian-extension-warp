@@ -45,7 +45,7 @@ public class TestMigratedInspection {
         byte[] bytecode = migratedInspection.toBytecode();
 
         Class<?> migratedClass = SeparateInvocator.<MigrationTest, MigrationTestImpl>invoke(MigrationTestImpl.class,
-                classPath()).process(bytecode);
+            classPath()).process(bytecode);
 
         assertEquals(originalInspection.getClass().getName(), migratedClass.getName());
     }
@@ -70,10 +70,10 @@ public class TestMigratedInspection {
 
     private static JavaArchive[] classPath() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).addClasses(ShrinkWrapClassLoader.class)
-                .addClasses(Inspection.class, MigrationTest.class, MigrationTestImpl.class);
+            .addClasses(Inspection.class, MigrationTest.class, MigrationTestImpl.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
 
-        return new JavaArchive[] { archive, javassistArchive };
+        return new JavaArchive[] {archive, javassistArchive};
     }
 }

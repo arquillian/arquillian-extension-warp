@@ -64,7 +64,8 @@ public class PhaseListener implements javax.faces.event.PhaseListener {
 
         if (initialized) {
             try {
-                LifecycleManager manager = LifecycleManagerStore.get(FacesContext.class, WarpFacesContext.getInstance(event.getFacesContext()));
+                LifecycleManager manager =
+                    LifecycleManagerStore.get(FacesContext.class, WarpFacesContext.getInstance(event.getFacesContext()));
                 manager.fireEvent(PhaseLifecycleEvent.getInstance(event.getPhaseId(), when));
             } catch (ObjectNotAssociatedException e) {
                 throw new IllegalStateException(e);

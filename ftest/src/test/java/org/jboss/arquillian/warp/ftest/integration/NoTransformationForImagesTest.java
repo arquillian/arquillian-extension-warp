@@ -59,8 +59,8 @@ public class NoTransformationForImagesTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addAsWebResource(new File("src/main/webapp/resources/empty.png"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addAsWebResource(new File("src/main/webapp/resources/empty.png"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -73,11 +73,12 @@ public class NoTransformationForImagesTest {
 
                     byte[] transferedBytes = IOUtils.toByteArray(url.openConnection().getInputStream());
 
-                    byte[] expectedBytes = IOUtils.toByteArray(new FileInputStream("src/main/webapp/resources/empty.png"));
+                    byte[] expectedBytes =
+                        IOUtils.toByteArray(new FileInputStream("src/main/webapp/resources/empty.png"));
 
-                    assertTrue("the image loaded from the server through proxy must be same as the one stored on the disk",
-                            Arrays.equals(expectedBytes, transferedBytes));
-
+                    assertTrue(
+                        "the image loaded from the server through proxy must be same as the one stored on the disk",
+                        Arrays.equals(expectedBytes, transferedBytes));
                 } catch (IOException e) {
                     throw new IllegalStateException("url connection failed", e);
                 }
@@ -85,7 +86,6 @@ public class NoTransformationForImagesTest {
         }).inspectAll(new Inspection() {
 
             private static final long serialVersionUID = 1L;
-
         });
     }
 }

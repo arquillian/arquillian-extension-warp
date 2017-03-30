@@ -71,12 +71,12 @@ public class TestJSFResourceProviders {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
-                .addClasses(CdiBean.class)
-                .addAsWebResource(new File("src/main/webapp/index.xhtml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
-                .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+            .addClasses(CdiBean.class)
+            .addAsWebResource(new File("src/main/webapp/index.xhtml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+            .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
     @Test
@@ -85,82 +85,84 @@ public class TestJSFResourceProviders {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
-                }})
+                }
+            })
             .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
+                         private static final long serialVersionUID = 1L;
 
-                @ArquillianResource
-                Application application;
+                         @ArquillianResource
+                         Application application;
 
-                @ArquillianResource
-                ELContext elContext;
+                         @ArquillianResource
+                         ELContext elContext;
 
-                @ArquillianResource
-                ELResolver elResolver;
+                         @ArquillianResource
+                         ELResolver elResolver;
 
-                @ArquillianResource
-                ExceptionHandler exceptionHandler;
+                         @ArquillianResource
+                         ExceptionHandler exceptionHandler;
 
-                @ArquillianResource
-                ExpressionFactory expressionFactory;
+                         @ArquillianResource
+                         ExpressionFactory expressionFactory;
 
-                @ArquillianResource
-                ExternalContext externalContext;
+                         @ArquillianResource
+                         ExternalContext externalContext;
 
-                @ArquillianResource
-                FacesContext facesContext;
+                         @ArquillianResource
+                         FacesContext facesContext;
 
-                @ArquillianResource
-                Flash flash;
+                         @ArquillianResource
+                         Flash flash;
 
-                @ArquillianResource
-                NavigationHandler navigationHandler;
+                         @ArquillianResource
+                         NavigationHandler navigationHandler;
 
-                @ArquillianResource
-                PartialViewContext partialViewContext;
+                         @ArquillianResource
+                         PartialViewContext partialViewContext;
 
-                @ArquillianResource
-                ResourceHandler resourceHandler;
+                         @ArquillianResource
+                         ResourceHandler resourceHandler;
 
-                @ArquillianResource
-                StateManager stateManager;
+                         @ArquillianResource
+                         StateManager stateManager;
 
-                @ArquillianResource
-                ViewHandler viewHandler;
+                         @ArquillianResource
+                         ViewHandler viewHandler;
 
-                @BeforePhase(Phase.RESTORE_VIEW)
-                public void verify_instances_before_view_restore() {
-                    verifyAllInstancesPresent();
-                }
+                         @BeforePhase(Phase.RESTORE_VIEW)
+                         public void verify_instances_before_view_restore() {
+                             verifyAllInstancesPresent();
+                         }
 
-                @AfterPhase(Phase.RESTORE_VIEW)
-                public void verify_instances_after_view_restore(@ArquillianResource RenderKit renderKit, @ArquillianResource UIViewRoot viewRoot) {
-                    verifyAllInstancesPresent();
-                    assertNotNull(renderKit);
-                    assertNotNull(viewRoot);
-                }
+                         @AfterPhase(Phase.RESTORE_VIEW)
+                         public void verify_instances_after_view_restore(@ArquillianResource RenderKit renderKit,
+                             @ArquillianResource UIViewRoot viewRoot) {
+                             verifyAllInstancesPresent();
+                             assertNotNull(renderKit);
+                             assertNotNull(viewRoot);
+                         }
 
-                @AfterPhase(Phase.RENDER_RESPONSE)
-                public void verify_instances_after_rendering() {
-                    verifyAllInstancesPresent();
-                }
+                         @AfterPhase(Phase.RENDER_RESPONSE)
+                         public void verify_instances_after_rendering() {
+                             verifyAllInstancesPresent();
+                         }
 
-                private void verifyAllInstancesPresent() {
-                    assertNotNull(application);
-                    assertNotNull(elContext);
-                    assertNotNull(elResolver);
-                    assertNotNull(exceptionHandler);
-                    assertNotNull(expressionFactory);
-                    assertNotNull(externalContext);
-                    assertNotNull(facesContext);
-                    assertNotNull(flash);
-                    assertNotNull(navigationHandler);
-                    assertNotNull(partialViewContext);
-                    assertNotNull(resourceHandler);
-                    assertNotNull(stateManager);
-                    assertNotNull(viewHandler);
-                }
-            }
-        );
+                         private void verifyAllInstancesPresent() {
+                             assertNotNull(application);
+                             assertNotNull(elContext);
+                             assertNotNull(elResolver);
+                             assertNotNull(exceptionHandler);
+                             assertNotNull(expressionFactory);
+                             assertNotNull(externalContext);
+                             assertNotNull(facesContext);
+                             assertNotNull(flash);
+                             assertNotNull(navigationHandler);
+                             assertNotNull(partialViewContext);
+                             assertNotNull(resourceHandler);
+                             assertNotNull(stateManager);
+                             assertNotNull(viewHandler);
+                         }
+                     }
+            );
     }
 }

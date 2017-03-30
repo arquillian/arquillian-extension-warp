@@ -41,7 +41,6 @@ public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
     @Inject
     private Event<After> after;
 
-
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(CommandBusObserver.class);

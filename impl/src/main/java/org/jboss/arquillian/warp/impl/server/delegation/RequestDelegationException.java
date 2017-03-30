@@ -40,5 +40,4 @@ public class RequestDelegationException extends RuntimeException {
     public RequestDelegationException(Throwable cause) {
         super(cause);
     }
-
 }

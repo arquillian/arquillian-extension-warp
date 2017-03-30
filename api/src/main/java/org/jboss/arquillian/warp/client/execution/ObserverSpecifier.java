@@ -37,7 +37,6 @@ public interface ObserverSpecifier<R> {
      */
     R observe(Class<? extends RequestObserver> what);
 
-
     /**
      * Specifies builder which will be used to construct concrete observer
      *

@@ -26,47 +26,47 @@ import java.io.Reader;
 import java.io.StringReader;
 
 public class LinuxEphemeralPortRangeDetector
-        implements EphemeralPortRangeDetector {
+    implements EphemeralPortRangeDetector {
 
-  final int firstEphemeralPort;
-  final int lastEphemeralPort;
+    final int firstEphemeralPort;
+    final int lastEphemeralPort;
 
-  public static LinuxEphemeralPortRangeDetector getInstance() {
-    File file = new File("/proc/sys/net/ipv4/ip_local_port_range");
-    if (file.exists() && file.canRead()) {
-      Reader inputFil = null;
-      try {
-        inputFil = new FileReader(file);
-      } catch (FileNotFoundException e) {
-        throw new RuntimeException(e);
-      }
-      return new LinuxEphemeralPortRangeDetector(inputFil);
+    public static LinuxEphemeralPortRangeDetector getInstance() {
+        File file = new File("/proc/sys/net/ipv4/ip_local_port_range");
+        if (file.exists() && file.canRead()) {
+            Reader inputFil = null;
+            try {
+                inputFil = new FileReader(file);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            return new LinuxEphemeralPortRangeDetector(inputFil);
+        }
+        return new LinuxEphemeralPortRangeDetector(new StringReader("49152 65535"));
     }
-    return new LinuxEphemeralPortRangeDetector(new StringReader("49152 65535"));
-  }
 
-  LinuxEphemeralPortRangeDetector(Reader inputFil) {
-    FixedIANAPortRange defaultRange = new FixedIANAPortRange();
-    int lowPort = defaultRange.getLowestEphemeralPort();
-    int highPort = defaultRange.getHighestEphemeralPort();
-    try {
-      BufferedReader in = new BufferedReader(inputFil);
-      final String s;
-      s = in.readLine();
-      final String[] split = s.split("\\s");
-      lowPort = Integer.parseInt(split[0]);
-      highPort = Integer.parseInt(split[1]);
-    } catch (IOException ignore) {
+    LinuxEphemeralPortRangeDetector(Reader inputFil) {
+        FixedIANAPortRange defaultRange = new FixedIANAPortRange();
+        int lowPort = defaultRange.getLowestEphemeralPort();
+        int highPort = defaultRange.getHighestEphemeralPort();
+        try {
+            BufferedReader in = new BufferedReader(inputFil);
+            final String s;
+            s = in.readLine();
+            final String[] split = s.split("\\s");
+            lowPort = Integer.parseInt(split[0]);
+            highPort = Integer.parseInt(split[1]);
+        } catch (IOException ignore) {
+        }
+        firstEphemeralPort = lowPort;
+        lastEphemeralPort = highPort;
     }
-    firstEphemeralPort = lowPort;
-    lastEphemeralPort = highPort;
-  }
 
-  public int getLowestEphemeralPort() {
-    return firstEphemeralPort;
-  }
+    public int getLowestEphemeralPort() {
+        return firstEphemeralPort;
+    }
 
-  public int getHighestEphemeralPort() {
-    return lastEphemeralPort;
-  }
+    public int getHighestEphemeralPort() {
+        return lastEphemeralPort;
+    }
 }

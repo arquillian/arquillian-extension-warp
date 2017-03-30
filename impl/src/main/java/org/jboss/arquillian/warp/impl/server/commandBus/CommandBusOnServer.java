@@ -44,7 +44,7 @@ import org.jboss.arquillian.warp.impl.shared.command.OperationMode;
  * @author Aris Tzoumas
  */
 public class CommandBusOnServer implements
-        RequestDelegationService {
+    RequestDelegationService {
 
     public static final String COMMAND_EVENT_BUS_PATH = "CommandEventBus";
     public static final String COMMAND_EVENT_BUS_MAPPING = "/" + COMMAND_EVENT_BUS_PATH;
@@ -62,7 +62,7 @@ public class CommandBusOnServer implements
 
     @Override
     public void delegate(HttpServletRequest request,
-            HttpServletResponse response, FilterChain filterChain) {
+        HttpServletResponse response, FilterChain filterChain) {
         try {
             executeEvent(request, response);
         } catch (ServletException e) {
@@ -72,7 +72,8 @@ public class CommandBusOnServer implements
         }
     }
 
-    private void executeEvent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void executeEvent(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         String className = null;
         String methodName = null;
         String operationMode = null;
@@ -101,7 +102,6 @@ public class CommandBusOnServer implements
             } else {
                 throw new IllegalArgumentException("Unsupported " + OPERATION_MODE + " parameter.");
             }
-
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -110,7 +110,8 @@ public class CommandBusOnServer implements
     /**
      * Container-to-Client command execution
      */
-    private void executeGetOperation(HttpServletRequest request, HttpServletResponse response) throws IOException, ClassNotFoundException {
+    private void executeGetOperation(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ClassNotFoundException {
         if (request.getContentLength() > 0) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
@@ -132,14 +133,15 @@ public class CommandBusOnServer implements
     /**
      * Client-to-Container event propagation
      */
-    private void executePutOperation(HttpServletRequest request, HttpServletResponse response) throws IOException, ClassNotFoundException {
+    private void executePutOperation(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ClassNotFoundException {
         if (request.getContentLength() > 0) {
             ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
             CommandPayload payload = (CommandPayload) input.readObject();
             Command operation = payload.getCommand();
-            Manager manager = (Manager)request.getAttribute(ARQUILLIAN_MANAGER_ATTRIBUTE);
+            Manager manager = (Manager) request.getAttribute(ARQUILLIAN_MANAGER_ATTRIBUTE);
             // execute remote Event
-            try{
+            try {
                 manager.fire(new ActivateManager(manager));
                 manager.inject(operation);
                 operation.perform();
@@ -152,7 +154,6 @@ public class CommandBusOnServer implements
             output.writeObject(payload);
             output.flush();
             output.close();
-
         } else {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }

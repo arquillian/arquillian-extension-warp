@@ -31,12 +31,12 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  * Stores the bindings from auxiliary class instance to {@link LifecycleManager}.
  *
  * @author Lukas Fryc
- *
  */
 public class LifecycleManagerStoreImpl extends LifecycleManagerStore {
 
     private static ConcurrentHashMap<Class<?>, Binding> STORE = new ConcurrentHashMap<Class<?>, Binding>();
-    private static ConcurrentHashMap<LifecycleManager, Tracking> TRACK = new ConcurrentHashMap<LifecycleManager, Tracking>();
+    private static ConcurrentHashMap<LifecycleManager, Tracking> TRACK =
+        new ConcurrentHashMap<LifecycleManager, Tracking>();
 
     @SuppressWarnings("serial")
     private static class Binding extends HashMap<Object, LifecycleManager> {

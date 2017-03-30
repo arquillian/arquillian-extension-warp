@@ -29,11 +29,11 @@ import org.jboss.arquillian.warp.spi.event.AfterRequest;
  * <p>
  * The lifecycle event which comes with {@link org.jboss.arquillian.warp.servlet.AfterServlet} verification execution.
  * </p>
- *
+ * <p>
  * <p>
  * If you observe this event, Warp services are fully initialized and you should have access to them using {@link Inject}.
  * </p>
- *
+ * <p>
  * <p>
  * If you want to observe event right before response leaves Warp servlet filter, observe {@link AfterRequest} event instead.
  * </p>
@@ -45,12 +45,11 @@ public class AfterServlet extends WarpLifecycleEvent {
     @Override
     public List<Annotation> getQualifiers() {
         return Arrays.asList((Annotation) new org.jboss.arquillian.warp.servlet.AfterServlet() {
-                        @Override
-                        public Class<? extends Annotation> annotationType () {
-                            return org.jboss.arquillian.warp.servlet.AfterServlet.class;
-                        }
-                    }
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return org.jboss.arquillian.warp.servlet.AfterServlet.class;
+                }
+            }
         );
-
     }
 }

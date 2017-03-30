@@ -31,18 +31,18 @@ import org.jboss.arquillian.warp.impl.server.commandBus.CommandBusOnServer;
 import org.jboss.arquillian.warp.impl.shared.command.OperationMode;
 
 /**
- *
  * @author Aris Tzoumas
- *
  */
 public class RedirectFilter implements Filter {
     private boolean redirect = true;
+
     @Override
     public void destroy() {
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
+        throws IOException, ServletException {
 
         if (req instanceof HttpServletRequest && resp instanceof HttpServletResponse) {
             HttpServletRequest request = (HttpServletRequest) req;
@@ -55,20 +55,21 @@ public class RedirectFilter implements Filter {
              *  only redirect the first PUT operation - @BeforeSuiteRemoteEvent
              *  If this redirect fails the whole test will fail.
              */
-            if (servletPath != null && servletPath.equals(CommandBusOnServer.COMMAND_EVENT_BUS_MAPPING) && OperationMode.PUT.name().equals(operationMode) && redirect) {
+            if (servletPath != null
+                && servletPath.equals(CommandBusOnServer.COMMAND_EVENT_BUS_MAPPING)
+                && OperationMode.PUT.name().equals(operationMode)
+                && redirect) {
                 redirect = false;
-                response.sendRedirect(request.getRequestURL().toString()+"?"+request.getQueryString());
+                response.sendRedirect(request.getRequestURL().toString() + "?" + request.getQueryString());
             } else {
                 chain.doFilter(req, resp);
             }
         } else {
             chain.doFilter(req, resp);
         }
-
     }
 
     @Override
     public void init(FilterConfig arg0) throws ServletException {
     }
-
 }

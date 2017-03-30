@@ -23,7 +23,7 @@ import org.jboss.arquillian.warp.client.filter.http.HttpRequestFilter;
 
 /**
  * The implementation of {@link HttpFilterChainBuilder} that negates the last added filter.
- * <p />
+ * <p/>
  * This is class implements the decorator pattern.
  */
 public class NotHttpFilterChainBuilder implements HttpFilterChainBuilder<HttpFilterBuilder> {

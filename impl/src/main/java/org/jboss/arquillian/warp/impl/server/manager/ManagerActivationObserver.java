@@ -23,11 +23,9 @@ import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
 import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
 
 /**
- *
  * Activates and deactivates {@link ApplicationContext}
  *
  * @author Aris Tzoumas
- *
  */
 public class ManagerActivationObserver {
 

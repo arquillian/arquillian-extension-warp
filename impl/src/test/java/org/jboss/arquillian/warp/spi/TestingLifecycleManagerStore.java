@@ -38,5 +38,4 @@ public class TestingLifecycleManagerStore extends LifecycleManagerStore {
     protected <T> LifecycleManager obtain(Class<T> clazz, T object) throws ObjectNotAssociatedException {
         return new TestingLifecycleManager();
     }
-
 }

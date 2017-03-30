@@ -187,14 +187,14 @@ public class TestInspectionLoading {
 
     private static JavaArchive[] clientArchive() {
         JavaArchive archive = ShrinkWrap
-                .create(JavaArchive.class)
-                .addClasses(ClientInterface.class, ClientImplementation.class)
-                .addClasses(ServerInterface.class)
-                .addClasses(SharingClass.class, Inspection.class, RequestPayload.class)
-                .addClasses(TransformedInspection.class, MigratedInspection.class, InspectionTransformationException.class,
-                        NoSerialVersionUIDException.class)
-                .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
-                .addClasses(SeparateInvocator.class, CtClassAsset.class, SeparatedClassLoader.class);
+            .create(JavaArchive.class)
+            .addClasses(ClientInterface.class, ClientImplementation.class)
+            .addClasses(ServerInterface.class)
+            .addClasses(SharingClass.class, Inspection.class, RequestPayload.class)
+            .addClasses(TransformedInspection.class, MigratedInspection.class, InspectionTransformationException.class,
+                NoSerialVersionUIDException.class)
+            .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
+            .addClasses(SeparateInvocator.class, CtClassAsset.class, SeparatedClassLoader.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
 
@@ -202,19 +202,18 @@ public class TestInspectionLoading {
         JavaArchive shrinkWrapApi = ShrinkWrapUtils.getJavaArchiveFromClass(JavaArchive.class);
         JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
 
-        return new JavaArchive[] { archive, javassistArchive, shrinkWrapSpi, shrinkWrapApi, shrinkWrapImpl };
+        return new JavaArchive[] {archive, javassistArchive, shrinkWrapSpi, shrinkWrapApi, shrinkWrapImpl};
     }
 
     private static JavaArchive[] serverArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).addClasses(ClientInterface.class)
-                .addClasses(ServerInterface.class, ServerImplemenation.class)
-                .addClasses(Inspection.class, RequestPayload.class).addClasses(SerializationUtils.class);
+            .addClasses(ServerInterface.class, ServerImplemenation.class)
+            .addClasses(Inspection.class, RequestPayload.class).addClasses(SerializationUtils.class);
 
-        return new JavaArchive[] { archive };
+        return new JavaArchive[] {archive};
     }
 
     private ClassLoader separatedClassLoader(JavaArchive... archive) {
         return new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
     }
-
 }

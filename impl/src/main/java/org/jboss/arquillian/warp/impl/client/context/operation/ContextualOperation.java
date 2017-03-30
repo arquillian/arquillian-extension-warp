@@ -18,13 +18,12 @@ package org.jboss.arquillian.warp.impl.client.context.operation;
 
 /**
  * An operation which takes argument of A type and returns result of R
- *
+ * <p>
  * This operation has the "current" context unless you use {@link Contextualizer} to put it in another context.
- *
- * @author Lukas Fryc
  *
  * @param <A> the argument of operation
  * @param <R> the result of operation (can be Void)
+ * @author Lukas Fryc
  */
 public interface ContextualOperation<A, R> {
 

@@ -21,9 +21,8 @@ import org.jboss.arquillian.warp.RequestObserver;
 /**
  * Specifies conditions which must be met in order to verify request
  *
- * @author Lukas Fryc
- *
  * @param <T> the type of requests which can be filtered by this filter
+ * @author Lukas Fryc
  */
 public interface RequestFilter<T> extends RequestObserver {
 

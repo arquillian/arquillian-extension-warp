@@ -26,9 +26,7 @@ import java.lang.annotation.Target;
 import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
 
 /**
- *
  * @author Lukas Fryc
- *
  */
 @Documented
 @Retention(RUNTIME)

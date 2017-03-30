@@ -84,7 +84,8 @@ public class DefaultResponseTransformationService implements HttpResponseTransfo
                 ByteBuf transformedContent = Unpooled.buffer(bytes.length);
                 transformedContent.writeBytes(bytes);
 
-                DefaultFullHttpResponse transformedResponse = new DefaultFullHttpResponse(fullResponse.getProtocolVersion(),
+                DefaultFullHttpResponse transformedResponse =
+                    new DefaultFullHttpResponse(fullResponse.getProtocolVersion(),
                         fullResponse.getStatus(), transformedContent);
                 transformedResponse.headers().set(fullResponse.headers());
                 HttpHeaders.setContentLength(transformedResponse, bytes.length);

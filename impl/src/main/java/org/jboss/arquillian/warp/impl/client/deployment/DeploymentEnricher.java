@@ -52,39 +52,37 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  * Adds all required resources into web archive
  *
  * @author Lukas Fryc
- *
  */
 public class DeploymentEnricher implements ProtocolArchiveProcessor {
 
-
     static String[] REQUIRED_WARP_PACKAGES = new String[] {
-         // SPI
-            "org.jboss.arquillian.warp.spi",
-            "org.jboss.arquillian.warp.spi.context",
-            "org.jboss.arquillian.warp.spi.event",
-            "org.jboss.arquillian.warp.spi.exception",
-            "org.jboss.arquillian.warp.spi.servlet.event",
+        // SPI
+        "org.jboss.arquillian.warp.spi",
+        "org.jboss.arquillian.warp.spi.context",
+        "org.jboss.arquillian.warp.spi.event",
+        "org.jboss.arquillian.warp.spi.exception",
+        "org.jboss.arquillian.warp.spi.servlet.event",
 
-            // Implementation
-            "org.jboss.arquillian.warp.impl.server.inspection",
-            "org.jboss.arquillian.warp.impl.server.enrichment",
-            "org.jboss.arquillian.warp.impl.server.event",
-            "org.jboss.arquillian.warp.impl.server.manager",
-            "org.jboss.arquillian.warp.impl.server.execution",
-            "org.jboss.arquillian.warp.impl.server.lifecycle",
-            "org.jboss.arquillian.warp.impl.server.provider",
-            "org.jboss.arquillian.warp.impl.server.request",
-            "org.jboss.arquillian.warp.impl.server.test",
-            "org.jboss.arquillian.warp.impl.server.commandBus",
-            "org.jboss.arquillian.warp.impl.server.delegation",
-            "org.jboss.arquillian.warp.impl.server.remote",
-            "org.jboss.arquillian.warp.impl.shared",
-            "org.jboss.arquillian.warp.impl.shared.command",
-            "org.jboss.arquillian.warp.impl.utils",
+        // Implementation
+        "org.jboss.arquillian.warp.impl.server.inspection",
+        "org.jboss.arquillian.warp.impl.server.enrichment",
+        "org.jboss.arquillian.warp.impl.server.event",
+        "org.jboss.arquillian.warp.impl.server.manager",
+        "org.jboss.arquillian.warp.impl.server.execution",
+        "org.jboss.arquillian.warp.impl.server.lifecycle",
+        "org.jboss.arquillian.warp.impl.server.provider",
+        "org.jboss.arquillian.warp.impl.server.request",
+        "org.jboss.arquillian.warp.impl.server.test",
+        "org.jboss.arquillian.warp.impl.server.commandBus",
+        "org.jboss.arquillian.warp.impl.server.delegation",
+        "org.jboss.arquillian.warp.impl.server.remote",
+        "org.jboss.arquillian.warp.impl.shared",
+        "org.jboss.arquillian.warp.impl.shared.command",
+        "org.jboss.arquillian.warp.impl.utils",
 
-            // Servlet Extension
-            "org.jboss.arquillian.warp.servlet.event",
-            "org.jboss.arquillian.warp.servlet.provider"
+        // Servlet Extension
+        "org.jboss.arquillian.warp.servlet.event",
+        "org.jboss.arquillian.warp.servlet.provider"
     };
 
     static final String WARP_FILTER_CLASS_FQN = "org.jboss.arquillian.warp.impl.server.execution.WarpFilter";
@@ -113,7 +111,7 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
         if (WarpCommons.isWarpTest(testClass.getJavaClass())) {
             if (!Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
                 throw new IllegalArgumentException("Protocol archives of type " + protocolArchive.getClass()
-                        + " not supported by Warp. Please use the Servlet 3.0 protocol.");
+                    + " not supported by Warp. Please use the Servlet 3.0 protocol.");
             }
 
             addWarpPackageToDeployment(protocolArchive.as(WebArchive.class));
@@ -136,7 +134,7 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
      */
     private void addWarpExtensionsDeployment(WebArchive archive) {
         final Collection<WarpDeploymentEnrichmentExtension> lifecycleExtensions = serviceLoader.get().all(
-                WarpDeploymentEnrichmentExtension.class);
+            WarpDeploymentEnrichmentExtension.class);
 
         for (WarpDeploymentEnrichmentExtension extension : lifecycleExtensions) {
             JavaArchive library = extension.getEnrichmentLibrary();
@@ -181,7 +179,8 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
 
         // register remote extension
         archive.addClass(WarpRemoteExtension.class);
-        archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),"!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
+        archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),
+            "!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
         archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
 
         // register RequestProcessingDelegationService

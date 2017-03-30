@@ -30,7 +30,6 @@ import org.jboss.arquillian.warp.impl.utils.net.PortProber;
  * Maps real URL to proxied URL.
  *
  * @author Lukas Fryc
- *
  */
 public class DefaultURLMapping implements URLMapping {
 

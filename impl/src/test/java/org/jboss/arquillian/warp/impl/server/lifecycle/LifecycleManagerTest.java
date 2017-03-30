@@ -88,7 +88,6 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
         assertTrue(VerifyLifecycleManager.invoked);
         injector.get().inject(this);
         assertNull(lifecycleManager.get());
-
     }
 
     @Test

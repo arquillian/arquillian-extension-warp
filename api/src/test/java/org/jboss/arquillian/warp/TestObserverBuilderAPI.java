@@ -22,7 +22,6 @@ import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
 
 public class TestObserverBuilderAPI {
 
-
     private Activity activity;
     private Inspection inspection;
 
@@ -67,8 +66,8 @@ public class TestObserverBuilderAPI {
         Warp
             .initiate(activity)
             .observe(request().uri().endsWith("resource/Client/1")
-                             .method().equal(HttpMethod.POST)
-                             .header().containsValue("Cookie", "name=Client"))
+                .method().equal(HttpMethod.POST)
+                .header().containsValue("Cookie", "name=Client"))
             .inspect(inspection);
     }
 }

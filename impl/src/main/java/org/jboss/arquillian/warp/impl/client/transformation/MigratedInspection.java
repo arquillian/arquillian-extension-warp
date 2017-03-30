@@ -37,7 +37,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * <p>
  * Takes {@link TransformedInspection} and renames it to original name, providing bytecode of transformed and renamed class.
  * </p>
- *
+ * <p>
  * <p>
  * In order to allow renaming transformed class to the name of original class, {@link MigratedInspection} uses
  * {@link SeparatedClassLoader} internally.
@@ -66,13 +66,15 @@ public class MigratedInspection {
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
             JavaArchive archive = ShrinkWrap.create(JavaArchive.class).add(transformedAsset);
-            ShrinkWrapClassLoader shrinkWrapClassLoader = new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(),
+            ShrinkWrapClassLoader shrinkWrapClassLoader =
+                new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(),
                     archive);
 
-            SeparatedClassLoader separatedClassLoader = new SeparatedClassLoader(shrinkWrapClassLoader, contextClassLoader);
+            SeparatedClassLoader separatedClassLoader =
+                new SeparatedClassLoader(shrinkWrapClassLoader, contextClassLoader);
 
             return SeparateInvocator.<Migration, MigrationImpl>invoke(MigrationImpl.class, separatedClassLoader).process(
-                    oldClassName, newClassName, oldClassFile, serverInspection);
+                oldClassName, newClassName, oldClassFile, serverInspection);
         } catch (Throwable e) {
             throw new IllegalStateException("Cannot migrate transformed inspection back to original name", e);
         }
@@ -88,14 +90,14 @@ public class MigratedInspection {
 
     public interface Migration {
         MigrationResult process(String oldClassName, String newClassName, byte[] oldClassFile,
-                Inspection transformedInspection) throws Exception;
+            Inspection transformedInspection) throws Exception;
     }
 
     public static class MigrationImpl implements Migration {
 
         @Override
         public MigrationResult process(String oldClassName, String newClassName, byte[] oldClassFile,
-                Inspection transformedInspection) throws Exception {
+            Inspection transformedInspection) throws Exception {
 
             MigrationResult result = new MigrationResult();
 
@@ -115,7 +117,7 @@ public class MigratedInspection {
                 Serializable migratedInspection = migratedClass.newInstance();
                 for (Field newF : migratedClass.getDeclaredFields()) {
                     if (java.lang.reflect.Modifier.isStatic(newF.getModifiers())
-                            && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
+                        && java.lang.reflect.Modifier.isFinal(newF.getModifiers())) {
                         continue;
                     }
                     Field oldF = oldClass.getDeclaredField(newF.getName());
@@ -126,7 +128,7 @@ public class MigratedInspection {
                 result.serializedMigratedInspection = SerializationUtils.serializeToBytes(migratedInspection);
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to clone " + transformedInspection.getClass().getName()
-                        + " to migrated class " + migratedClass.getName(), e);
+                    + " to migrated class " + migratedClass.getName(), e);
             }
 
             return result;

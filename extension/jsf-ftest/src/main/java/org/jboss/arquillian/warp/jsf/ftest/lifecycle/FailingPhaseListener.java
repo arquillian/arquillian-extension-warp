@@ -42,7 +42,5 @@ public class FailingPhaseListener implements PhaseListener {
     public static class TestingException extends RuntimeException {
 
         private static final long serialVersionUID = 1L;
-
     }
-
 }

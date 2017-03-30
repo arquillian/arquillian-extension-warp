@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
  * Exception thrown when a annotation is created with a null value for one of the members.
  *
  * @author Stuart Douglas
- *
  */
 public class NullMemberException extends RuntimeException {
 
@@ -44,5 +43,4 @@ public class NullMemberException extends RuntimeException {
     public Method getMethod() {
         return method;
     }
-
 }

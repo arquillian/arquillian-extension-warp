@@ -61,8 +61,8 @@ public class TestHttpParameterFiltering {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/forms.html"));
+            .addClasses(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/forms.html"));
     }
 
     @Test

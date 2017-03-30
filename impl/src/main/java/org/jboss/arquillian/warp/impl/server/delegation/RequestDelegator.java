@@ -37,12 +37,11 @@ public class RequestDelegator {
 
     private final List<RequestDelegationService> delegationServices = new ArrayList<RequestDelegationService>();
 
-
     public RequestDelegator() {
         // Keeping a ServiceLoader Instance and iterating over it at runtime is not a good idea.
         // NoSuchElementExceptions may arise due to ServiceLoader's LazyIterator.
         // Instead, we iterate over the ServiceLoader once and cache the result on a List.
-        for (RequestDelegationService service : ServiceLoader.load(RequestDelegationService.class)){
+        for (RequestDelegationService service : ServiceLoader.load(RequestDelegationService.class)) {
             delegationServices.add(service);
         }
     }
@@ -68,11 +67,12 @@ public class RequestDelegator {
      * @throws RequestDelegationException in case the delegated request processing fails
      */
     private void delegate(RequestDelegationService service, HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain) {
+        FilterChain filterChain) {
         try {
             service.delegate(request, response, filterChain);
         } catch (Exception e) {
-            throw new RequestDelegationException(String.format("The request processing delegation failed: %s", e.getCause()), e);
+            throw new RequestDelegationException(
+                String.format("The request processing delegation failed: %s", e.getCause()), e);
         }
     }
 
@@ -84,8 +84,8 @@ public class RequestDelegator {
             return delegate.canDelegate(request);
         } catch (Exception e) {
             log.log(Level.SEVERE,
-                    String.format("The delegation service can't check the delegability of the request: %s", e.getCause()),
-                    e.getCause());
+                String.format("The delegation service can't check the delegability of the request: %s", e.getCause()),
+                e.getCause());
             return false;
         }
     }

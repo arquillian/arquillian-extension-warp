@@ -29,7 +29,6 @@ import org.jboss.arquillian.core.api.annotation.Scope;
  * The scope of current Warp execution.
  *
  * @author Lukas Fryc
- *
  */
 @Scope
 @Documented

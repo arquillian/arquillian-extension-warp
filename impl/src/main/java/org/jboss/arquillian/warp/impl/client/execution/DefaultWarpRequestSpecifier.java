@@ -155,7 +155,8 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
 
     @SuppressWarnings("unchecked")
     private <T extends RequestObserver> T createFilterInstance(Class<T> filterClass) {
-        return (T) SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {}, RequestFilter.class);
+        return (T) SecurityActions.newInstance(filterClass.getName(), new Class<?>[] {}, new Object[] {},
+            RequestFilter.class);
     }
 
     private void propagateException(Throwable e) {

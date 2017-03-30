@@ -36,7 +36,7 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
  * <p>
  * Provides an event bus during test execution to listen for incoming {@link Command} events.
  * </p>
- *
+ * <p>
  * <p>
  * Event Bus functionality is similar to ServletProtocol
  * </p>
@@ -121,5 +121,4 @@ public class CommandBusObserver {
             return testMethod;
         }
     }
-
 }

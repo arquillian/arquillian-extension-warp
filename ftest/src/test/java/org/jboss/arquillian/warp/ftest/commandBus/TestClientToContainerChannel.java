@@ -46,9 +46,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 /**
- *
  * @author atzoum
- *
  */
 @RunWith(Arquillian.class)
 @WarpTest
@@ -75,8 +73,9 @@ public class TestClientToContainerChannel {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addAsWebResource(new File("src/main/webapp/index.html")).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addClasses(SuccessfulCommand.class);
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+            .addClasses(SuccessfulCommand.class);
     }
 
     @Test

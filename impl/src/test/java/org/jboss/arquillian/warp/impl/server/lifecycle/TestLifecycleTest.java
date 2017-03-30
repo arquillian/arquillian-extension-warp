@@ -88,5 +88,4 @@ public class TestLifecycleTest extends AbstractLifecycleTestBase {
         public void inspection() {
         }
     }
-
 }

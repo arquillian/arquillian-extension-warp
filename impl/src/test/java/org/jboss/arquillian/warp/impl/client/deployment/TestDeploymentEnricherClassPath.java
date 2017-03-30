@@ -54,9 +54,9 @@ public class TestDeploymentEnricherClassPath {
         JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
 
         JavaArchive base = ShrinkWrap
-                .create(JavaArchive.class)
-                .addClasses(DeploymentEnricher.class, WarpTest.class, Inspection.class, BeforeServlet.class,
-                        AfterServlet.class, WarpRemoteExtension.class);
+            .create(JavaArchive.class)
+            .addClasses(DeploymentEnricher.class, WarpTest.class, Inspection.class, BeforeServlet.class,
+                AfterServlet.class, WarpRemoteExtension.class);
 
         JavaArchive warp = ShrinkWrap.create(JavaArchive.class, "warp.jar");
         for (String packageName : DeploymentEnricher.REQUIRED_WARP_PACKAGES) {
@@ -67,8 +67,8 @@ public class TestDeploymentEnricherClassPath {
 
         warp.addClasses(DeploymentEnricher.REQUIRED_WARP_INNER_CLASSES);
 
-        return new JavaArchive[] { base, warp, coreApi, coreSpi, containerTestSpi, testSpi, shrinkWrapSpi, shrinkWrapApi,
-                shrinkWrapImpl };
+        return new JavaArchive[] {base, warp, coreApi, coreSpi, containerTestSpi, testSpi, shrinkWrapSpi, shrinkWrapApi,
+            shrinkWrapImpl};
     }
 
     @Test

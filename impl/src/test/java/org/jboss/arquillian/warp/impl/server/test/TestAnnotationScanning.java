@@ -42,12 +42,12 @@ public class TestAnnotationScanning {
             }
         };
 
-        List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation));
+        List<Method> methods =
+            SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation));
 
         assertEquals(1, methods.size());
 
         assertEquals("testMethod2", methods.get(0).getName());
-
     }
 
     @Test
@@ -65,10 +65,10 @@ public class TestAnnotationScanning {
             }
         };
 
-        List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation));
+        List<Method> methods =
+            SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation));
 
         assertEquals(0, methods.size());
-
     }
 
     @Test
@@ -99,7 +99,8 @@ public class TestAnnotationScanning {
             }
         };
 
-        List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class, Arrays.<Annotation>asList(annotation, annotation2));
+        List<Method> methods = SecurityActions.getMethodsMatchingAllQualifiers(TestingClass.class,
+            Arrays.<Annotation>asList(annotation, annotation2));
 
         assertEquals(1, methods.size());
 
@@ -133,5 +134,4 @@ public class TestAnnotationScanning {
 
         }
     }
-
 }

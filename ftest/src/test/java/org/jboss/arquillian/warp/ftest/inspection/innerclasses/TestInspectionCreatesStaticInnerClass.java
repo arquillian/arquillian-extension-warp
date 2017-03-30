@@ -55,9 +55,9 @@ public class TestInspectionCreatesStaticInnerClass {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -67,17 +67,18 @@ public class TestInspectionCreatesStaticInnerClass {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new Inspection() {
 
-                private static final long serialVersionUID = 1L;
+                         private static final long serialVersionUID = 1L;
 
-                @AfterServlet
-                public void afterServlet() {
-                    new ClassReferencedFromInspection();
-                }
-            }
-        );
+                         @AfterServlet
+                         public void afterServlet() {
+                             new ClassReferencedFromInspection();
+                         }
+                     }
+            );
     }
 
     public static class ClassReferencedFromInspection {

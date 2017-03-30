@@ -42,5 +42,4 @@ public class RenderKitProvider implements ResourceProvider {
     private FacesContext facesContext() {
         return FacesContext.getCurrentInstance();
     }
-
 }

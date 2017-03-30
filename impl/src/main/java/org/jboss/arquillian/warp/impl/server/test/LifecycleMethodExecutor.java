@@ -62,5 +62,4 @@ public class LifecycleMethodExecutor implements TestMethodExecutor {
             throw e.getCause();
         }
     }
-
 }

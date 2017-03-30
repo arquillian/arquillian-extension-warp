@@ -64,9 +64,9 @@ public class TestResourceProviders {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -76,43 +76,44 @@ public class TestResourceProviders {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.html");
-                }})
+                }
+            })
             .inspect(new Inspection() {
 
-                private static final long serialVersionUID = 1L;
+                         private static final long serialVersionUID = 1L;
 
-                @ArquillianResource
-                ServletRequest servletRequest;
+                         @ArquillianResource
+                         ServletRequest servletRequest;
 
-                @ArquillianResource
-                ServletResponse servletResponse;
+                         @ArquillianResource
+                         ServletResponse servletResponse;
 
-                @ArquillianResource
-                HttpServletRequest httpServletRequest;
+                         @ArquillianResource
+                         HttpServletRequest httpServletRequest;
 
-                @ArquillianResource
-                HttpServletResponse httpServletResponse;
+                         @ArquillianResource
+                         HttpServletResponse httpServletResponse;
 
-                @BeforeServlet
-                public void beforeServlet() {
+                         @BeforeServlet
+                         public void beforeServlet() {
 
-                    assertNotNull(servletRequest);
-                    assertEquals(servletRequest, httpServletRequest);
+                             assertNotNull(servletRequest);
+                             assertEquals(servletRequest, httpServletRequest);
 
-                    assertNotNull(servletResponse);
-                    assertEquals(servletResponse, httpServletResponse);
-                }
+                             assertNotNull(servletResponse);
+                             assertEquals(servletResponse, httpServletResponse);
+                         }
 
-                @AfterServlet
-                public void afterServlet() {
+                         @AfterServlet
+                         public void afterServlet() {
 
-                    assertNotNull(servletRequest);
-                    assertEquals(servletRequest, httpServletRequest);
+                             assertNotNull(servletRequest);
+                             assertEquals(servletRequest, httpServletRequest);
 
-                    assertNotNull(servletResponse);
-                    assertEquals(servletResponse, httpServletResponse);
-                }
-            }
-        );
+                             assertNotNull(servletResponse);
+                             assertEquals(servletResponse, httpServletResponse);
+                         }
+                     }
+            );
     }
 }

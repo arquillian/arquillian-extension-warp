@@ -28,7 +28,7 @@ import org.jboss.arquillian.warp.servlet.BeforeServlet;
  * <p>
  * This qualifier annotation marks annotations which supports LifecycleEvent propagation.
  * </p>
- *
+ * <p>
  * <p>
  * For a reference, see {@link BeforeServlet} annotation.
  * </p>

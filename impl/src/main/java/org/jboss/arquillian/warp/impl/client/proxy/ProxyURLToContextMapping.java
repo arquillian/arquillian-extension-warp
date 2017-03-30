@@ -50,7 +50,8 @@ public class ProxyURLToContextMapping {
     public OperationalContext get(URL proxyUrl) {
         OperationalContext operationalContext = urlToContext.get(proxyUrl);
         if (operationalContext == null) {
-            throw new OperationalContextNotBoundException("The OperationalContext wasn't setup for this URL: " + proxyUrl);
+            throw new OperationalContextNotBoundException(
+                "The OperationalContext wasn't setup for this URL: " + proxyUrl);
         }
         return operationalContext;
     }
@@ -90,5 +91,4 @@ public class ProxyURLToContextMapping {
             super(cause);
         }
     }
-
 }

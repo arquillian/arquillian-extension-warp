@@ -53,7 +53,7 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
     @Inject
     private Instance<LifecycleManager> lifecycleManager;
 
-    private  AnotherClass anotherInstance = new AnotherClass();
+    private AnotherClass anotherInstance = new AnotherClass();
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -73,8 +73,9 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
         try {
             LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
             assertNotNull("lifecycle manager should be bound to request", resolvedLifecycleManager);
-            assertSame("resolved lifecycle manager should be the one which which is in the context", lifecycleManager.get(),
-                    resolvedLifecycleManager);
+            assertSame("resolved lifecycle manager should be the one which which is in the context",
+                lifecycleManager.get(),
+                resolvedLifecycleManager);
         } catch (ObjectNotAssociatedException e) {
         } finally {
             try {
@@ -117,15 +118,16 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
             // verify lifecycle manager for request
             LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
             assertNotNull("lifecycle manager should be bound to request", resolvedLifecycleManager);
-            assertSame("resolved lifecycle manager should be the one which which is in the context", lifecycleManager.get(),
-                    resolvedLifecycleManager);
+            assertSame("resolved lifecycle manager should be the one which which is in the context",
+                lifecycleManager.get(),
+                resolvedLifecycleManager);
 
             // verify lifecycle manager for another class
             resolvedLifecycleManager = LifecycleManagerStore.get(AnotherClass.class, anotherInstance);
             assertNotNull("lifecycle manager should be bound to another instance", resolvedLifecycleManager);
-            assertSame("resolved lifecycle manager should be the one which which is in the context", lifecycleManager.get(),
-                    resolvedLifecycleManager);
-
+            assertSame("resolved lifecycle manager should be the one which which is in the context",
+                lifecycleManager.get(),
+                resolvedLifecycleManager);
         } catch (ObjectNotAssociatedException e) {
         } finally {
             try {

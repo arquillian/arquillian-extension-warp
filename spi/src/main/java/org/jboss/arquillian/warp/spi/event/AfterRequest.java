@@ -26,11 +26,11 @@ import org.jboss.arquillian.warp.spi.servlet.event.AfterServlet;
  * <p>
  * The event fired after the request is processed by {@link Servlet}.
  * </p>
- *
+ * <p>
  * <p>
  * Warp service is not initialized at the time of firing this event.
  * </p>
- *
+ * <p>
  * <p>
  * If you want to have access to all Warp services, observe {@link AfterServlet} event instead.
  * </p>

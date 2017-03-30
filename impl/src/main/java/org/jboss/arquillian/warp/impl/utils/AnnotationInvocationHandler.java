@@ -48,7 +48,6 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
         private Object readResolve() throws ObjectStreamException {
             return new AnnotationInvocationHandler(valueMap, annotationType);
         }
-
     }
 
     private static final long serialVersionUID = 4801508041776645033L;
@@ -69,7 +68,8 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
             if (value == null) {
                 value = m.getDefaultValue();
                 if (value == null) {
-                    throw new NullMemberException(annotationType, m, "Error creating annotation @" + annotationType.getName()
+                    throw new NullMemberException(annotationType, m,
+                        "Error creating annotation @" + annotationType.getName()
                             + " member " + m.getName() + " was null and does not provide a default value");
                 } else {
                     valueMap.put(m.getName(), value);
@@ -93,7 +93,6 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
             val = performTypeCoercion(val, r);
             return val;
         }
-
     }
 
     private Object performTypeCoercion(Object val, Class<?> type) {
@@ -269,13 +268,13 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
             return method.invoke(instance);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Error checking value of member method " + method.getName() + " on "
-                    + method.getDeclaringClass(), e);
+                + method.getDeclaringClass(), e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Error checking value of member method " + method.getName() + " on "
-                    + method.getDeclaringClass(), e);
+                + method.getDeclaringClass(), e);
         } catch (InvocationTargetException e) {
             throw new RuntimeException("Error checking value of member method " + method.getName() + " on "
-                    + method.getDeclaringClass(), e);
+                + method.getDeclaringClass(), e);
         }
     }
 }

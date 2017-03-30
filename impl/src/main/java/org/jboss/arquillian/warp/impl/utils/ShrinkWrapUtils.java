@@ -37,7 +37,8 @@ public final class ShrinkWrapUtils {
             }
             file = file.substring(0, file.indexOf('!'));
 
-            JavaArchive jar = ShrinkWrap.create(ZipImporter.class, file + "!").importFrom(new File(file)).as(JavaArchive.class);
+            JavaArchive jar =
+                ShrinkWrap.create(ZipImporter.class, file + "!").importFrom(new File(file)).as(JavaArchive.class);
 
             return jar;
         } catch (Exception e) {

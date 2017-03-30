@@ -26,12 +26,12 @@ import org.jboss.arquillian.warp.spi.context.RequestContext;
  * <p>
  * The event is fired for each incoming request (except Warp command service requests).
  * </p>
- *
+ * <p>
  * <p>
  * The event activates {@link RequestContext} and is observed by Warp implementation in order to trigger request filtering and
  * Warp processing if required.
  * </p>
- *
+ * <p>
  * <p>
  * As a consequence of triggering this event, Warp implementation needs to decide whether HTTP request that fulfills conditions
  * to be processed as Warp request. If yes, {@link ProcessWarpRequest} is fired. Otherwise the request is processed as usually
@@ -63,5 +63,4 @@ public class ProcessHttpRequest {
     public FilterChain getFilterChain() {
         return filterChain;
     }
-
 }

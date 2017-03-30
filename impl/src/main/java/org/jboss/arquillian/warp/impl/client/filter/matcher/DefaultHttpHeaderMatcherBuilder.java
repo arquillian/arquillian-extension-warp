@@ -28,7 +28,8 @@ import org.jboss.arquillian.warp.impl.client.filter.http.NotHttpFilterChainBuild
 /**
  * A default implementation of {@link DefaultHttpHeaderMatcherBuilder}.
  */
-public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilder implements HttpHeaderMatcherBuilder<HttpFilterBuilder> {
+public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilder
+    implements HttpHeaderMatcherBuilder<HttpFilterBuilder> {
 
     /**
      * Creates new instance of {@link DefaultHttpHeaderMatcherBuilder} with given filter builder.

@@ -63,12 +63,11 @@ public class ManagedPropertyTestEnricher implements TestEnricher {
 
         try {
             ValueExpression valueExpression = context.getApplication().getExpressionFactory()
-                    .createValueExpression(context.getELContext(), expression, expectedType);
+                .createValueExpression(context.getELContext(), expression, expectedType);
             return valueExpression.getValue(context.getELContext());
         } catch (Exception e) {
             throw new IllegalStateException("Unable to resolve a value for @ManagedProperty(\"" + expression + "\") on "
-                    + injectionPoint + "\n" + e.getMessage(), e);
+                + injectionPoint + "\n" + e.getMessage(), e);
         }
     }
-
 }

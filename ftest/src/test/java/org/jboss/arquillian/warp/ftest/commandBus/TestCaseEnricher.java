@@ -31,7 +31,7 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  */
 class TestCaseEnricher implements TestEnricher, RemoteLoadableExtension {
 
-    public static Class<?>[] DEPENDENCIES = new Class<?>[] { TestCaseEnricher.class, EnrichTestCase.class };
+    public static Class<?>[] DEPENDENCIES = new Class<?>[] {TestCaseEnricher.class, EnrichTestCase.class};
 
     @Inject
     private Instance<Injector> injector;

@@ -31,7 +31,8 @@ import org.jboss.arquillian.warp.impl.client.filter.http.NotHttpFilterChainBuild
 /**
  * A default implementation of {@link DefaultHttpParameterMatcherBuilder}.
  */
-public class DefaultHttpParameterMatcherBuilder extends AbstractMatcherFilterBuilder implements HttpParameterMatcherBuilder<HttpFilterBuilder> {
+public class DefaultHttpParameterMatcherBuilder extends AbstractMatcherFilterBuilder
+    implements HttpParameterMatcherBuilder<HttpFilterBuilder> {
 
     private Logger log = Logger.getLogger(DefaultHttpParameterMatcherBuilder.class.getName());
 

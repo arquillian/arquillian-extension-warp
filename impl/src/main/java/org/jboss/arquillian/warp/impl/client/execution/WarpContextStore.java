@@ -24,7 +24,7 @@ import org.jboss.arquillian.core.spi.Validate;
  * <p>
  * This class stores current context and makes that available for other threads.
  * </p>
- *
+ * <p>
  * <p>
  * Implementation ensures that there can be only one context active, because context needs to be {@link #reset()} before it can
  * be again {@link #set(WarpContext)}.
@@ -40,9 +40,8 @@ public class WarpContextStore {
      * <p>
      * Sets context store up.
      * </p>
-     *
      * <p>
-     *
+     * <p>
      *
      * @param warpContext
      */
@@ -62,7 +61,7 @@ public class WarpContextStore {
      * <p>
      * Clears current context store.
      * </p>
-     *
+     * <p>
      * <p>
      * This method can't be called only when context was previously set by calling {@link #set(WarpContext)} and that call
      * wasn't followed by another call to {@link #reset()}.

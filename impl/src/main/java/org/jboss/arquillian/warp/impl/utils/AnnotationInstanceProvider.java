@@ -30,9 +30,7 @@ import java.util.Map;
  * @author Lukas Fryc
  * @author Stuart Douglas
  * @author Pete Muir
- *
  * @see AnnotationLiteral
- *
  */
 public class AnnotationInstanceProvider {
 
@@ -40,29 +38,29 @@ public class AnnotationInstanceProvider {
      * <p>
      * Returns an instance of the given annotation type with attribute values specified in the map.
      * </p>
-     *
+     * <p>
      * <ul>
      * <li>
      * For {@link Annotation}, array and enum types the values must exactly match the declared return type of the attribute or a
      * {@link ClassCastException} will result.</li>
-     *
+     * <p>
      * <li>
      * For character types the the value must be an instance of {@link Character} or {@link String}.</li>
-     *
+     * <p>
      * <li>
      * Numeric types do not have to match exactly, as they are converted using {@link Number}.</li>
      * </ul>
-     *
+     * <p>
      * <p>
      * If am member does not have a corresponding entry in the value map then the annotations default value will be used.
      * </p>
-     *
+     * <p>
      * <p>
      * If the annotation member does not have a default value then a NullMemberException will be thrown
      * </p>
      *
      * @param annotationType the type of the annotation instance to generate
-     * @param values the attribute values of this annotation
+     * @param values         the attribute values of this annotation
      */
     public static <T extends Annotation> T get(Class<T> annotationType, Map<String, ?> values) {
         if (annotationType == null) {
@@ -73,23 +71,27 @@ public class AnnotationInstanceProvider {
         AnnotationInvocationHandler handler = new AnnotationInvocationHandler(values, annotationType);
         // create a new instance by obtaining the constructor via relection
         try {
-            return annotationType.cast(clazz.getConstructor(new Class[] { InvocationHandler.class }).newInstance(
-                    new Object[] { handler }));
+            return annotationType.cast(clazz.getConstructor(new Class[] {InvocationHandler.class}).newInstance(
+                new Object[] {handler}));
         } catch (IllegalArgumentException e) {
-            throw new IllegalStateException("Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
+            throw new IllegalStateException(
+                "Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
         } catch (InstantiationException e) {
-            throw new IllegalStateException("Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
+            throw new IllegalStateException(
+                "Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
         } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
+            throw new IllegalStateException(
+                "Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
         } catch (InvocationTargetException e) {
-            throw new IllegalStateException("Error instantiating proxy for annotation. Annotation type: " + annotationType,
-                    e.getCause());
+            throw new IllegalStateException(
+                "Error instantiating proxy for annotation. Annotation type: " + annotationType,
+                e.getCause());
         } catch (SecurityException e) {
             throw new IllegalStateException("Error accessing proxy constructor for annotation. Annotation type: "
-                    + annotationType, e);
+                + annotationType, e);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Error accessing proxy constructor for annotation. Annotation type: "
-                    + annotationType, e);
+                + annotationType, e);
         }
     }
 }

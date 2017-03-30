@@ -69,7 +69,8 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
         final Collection<RequestPayload> payloads = new LinkedList<RequestPayload>();
 
-        groupIteration : for (WarpGroup group : groups) {
+        groupIteration:
+        for (WarpGroup group : groups) {
 
             Deque<RequestObserver> observers = new LinkedList<RequestObserver>();
             if (group.getObserver() != null) {
@@ -83,7 +84,8 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
             for (RequestObserver observer : observers) {
                 if (!isHttpFilter(observer)) {
-                    log.warning("One of the defined observers (" + observer.toString() + ") of class " + observer.getClass()
+                    log.warning(
+                        "One of the defined observers (" + observer.toString() + ") of class " + observer.getClass()
                             + " doesn't match expected type (" + HttpRequestFilter.class
                             + ") - continuing without processing this request group");
                     continue groupIteration;
@@ -130,7 +132,8 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
             nettyHttpRequest.headers().set(WarpCommons.ENRICHMENT_REQUEST, Arrays.asList(Long.toString(serialId)));
         } catch (Throwable originalException) {
             Throwable cause = Rethrow.getOriginalCause(originalException);
-            ClientWarpExecutionException explainingException = new ClientWarpExecutionException("enriching request failed; caused by:\n"
+            ClientWarpExecutionException explainingException =
+                new ClientWarpExecutionException("enriching request failed; caused by:\n"
                     + cause.getClass().getName() + ": " + cause.getMessage(), originalException);
             warpContext().pushException(explainingException);
         }
@@ -138,7 +141,7 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
 
     private boolean isHttpFilter(RequestObserver observer) {
         return observer instanceof RequestFilter
-                && isType((RequestFilter<?>) observer, org.jboss.arquillian.warp.client.filter.http.HttpRequest.class);
+            && isType((RequestFilter<?>) observer, org.jboss.arquillian.warp.client.filter.http.HttpRequest.class);
     }
 
     private boolean isType(RequestFilter<?> filter, Type expectedType) {
@@ -183,5 +186,4 @@ public class DefaultHttpRequestEnrichmentService implements HttpRequestEnrichmen
             registry.get().registerRequestPayload(payload);
         }
     }
-
 }

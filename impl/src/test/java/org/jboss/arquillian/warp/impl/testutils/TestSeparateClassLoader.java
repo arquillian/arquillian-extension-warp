@@ -31,11 +31,13 @@ public class TestSeparateClassLoader {
 
         ClassLoader classLoader = SeparatedClassloaderRunner.initializeClassLoader(TestDynamicClassLoading.class);
 
-        Class<?> loadedClass = SeparatedClassloaderRunner.getFromTestClassloader(classLoader, TestDynamicClassLoading.class);
+        Class<?> loadedClass =
+            SeparatedClassloaderRunner.getFromTestClassloader(classLoader, TestDynamicClassLoading.class);
 
         Method method = loadedClass.getMethod("test");
 
-        Class<? extends Annotation> testAnnotation = (Class<? extends Annotation>) classLoader.loadClass(Test.class.getName());
+        Class<? extends Annotation> testAnnotation =
+            (Class<? extends Annotation>) classLoader.loadClass(Test.class.getName());
 
         Object annotation = method.getAnnotation(testAnnotation);
         assertNotNull("Test annotation wasn't found", annotation);

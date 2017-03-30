@@ -32,13 +32,12 @@ import org.jboss.arquillian.warp.Inspection;
 /**
  * Watches the {@link Inspection} objects and on {@link Before} event, it stores all fields which have been changed during
  * that event.
- *
+ * <p>
  * These changes are the {@link Inspection} enrichment actions.
- *
+ * <p>
  * Then on {@link After} method, it restores all the changed fields, which deenrich the instance.
  *
  * @author Lukas Fryc
- *
  */
 public class LifecycleTestEnrichmentWatcher {
 
@@ -115,7 +114,6 @@ public class LifecycleTestEnrichmentWatcher {
                     field.setAccessible(true);
                 }
                 field.set(instance, oldValue);
-
             }
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -125,7 +123,7 @@ public class LifecycleTestEnrichmentWatcher {
 
     private boolean validateIfFieldCanBeSetAndSerialized(Field field) {
         if (Modifier.isTransient(field.getModifiers())
-                || (Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()))) {
+            || (Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()))) {
             return false;
         }
 

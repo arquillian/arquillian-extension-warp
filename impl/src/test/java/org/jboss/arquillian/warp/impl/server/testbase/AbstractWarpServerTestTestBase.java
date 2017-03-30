@@ -38,5 +38,4 @@ public abstract class AbstractWarpServerTestTestBase extends AbstractContainerTe
         super.startContexts(manager);
         manager.getContext(RequestContext.class).activate(UUID.randomUUID().toString());
     }
-
 }

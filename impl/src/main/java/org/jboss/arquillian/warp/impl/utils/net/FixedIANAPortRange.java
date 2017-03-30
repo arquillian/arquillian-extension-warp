@@ -17,13 +17,12 @@
 
 package org.jboss.arquillian.warp.impl.utils.net;
 
-
 public class FixedIANAPortRange implements EphemeralPortRangeDetector {
-  public int getLowestEphemeralPort() {
-    return 49152;
-  }
+    public int getLowestEphemeralPort() {
+        return 49152;
+    }
 
-  public int getHighestEphemeralPort() {
-    return 65535;
-  }
+    public int getHighestEphemeralPort() {
+        return 65535;
+    }
 }

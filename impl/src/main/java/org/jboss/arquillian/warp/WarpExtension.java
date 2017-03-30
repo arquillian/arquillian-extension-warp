@@ -62,7 +62,7 @@ import org.littleshoot.proxy.HttpFiltersSource;
 
 /**
  * <p>The Arquillian Warp extension - client-side.</p>
- *
+ * <p>
  * <p>For server-side, see {@link WarpRemoteExtension}.</p>
  *
  * @author Lukas Fryc

@@ -17,19 +17,15 @@
 package org.jboss.arquillian.warp.jsf;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.faces.event.PhaseId;
-
 import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 
 /**
  * The lifecycle event which binds with {@link BeforePhase} verification execution.
  *
  * @author Lukas Fryc
- *
  */
 public abstract class PhaseLifecycleEvent extends WarpLifecycleEvent {
 
@@ -47,31 +43,31 @@ public abstract class PhaseLifecycleEvent extends WarpLifecycleEvent {
             case BEFORE:
                 return Arrays.asList((Annotation) new BeforePhase() {
 
-                            @Override
-                            public Class<? extends Annotation> annotationType () {
-                                return BeforePhase.class;
-                            }
-
-                            @Override
-                            public Phase value () {
-                                return phase;
-                            }
+                        @Override
+                        public Class<? extends Annotation> annotationType() {
+                            return BeforePhase.class;
                         }
+
+                        @Override
+                        public Phase value() {
+                            return phase;
+                        }
+                    }
                 );
 
             case AFTER:
                 return Arrays.asList((Annotation) new AfterPhase() {
 
-                            @Override
-                            public Class<? extends Annotation> annotationType () {
-                                return AfterPhase.class;
-                            }
-
-                            @Override
-                            public Phase value () {
-                                return phase;
-                            }
+                        @Override
+                        public Class<? extends Annotation> annotationType() {
+                            return AfterPhase.class;
                         }
+
+                        @Override
+                        public Phase value() {
+                            return phase;
+                        }
+                    }
                 );
         }
         throw new IllegalStateException();

@@ -22,8 +22,8 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+
 /**
- *
  * This {@link CommandService} uses Warp's own command service: {@link org.jboss.arquillian.warp.impl.shared.command.CommandService} to perform an operation on the client.
  *
  * @author Lukas Fryc
@@ -36,10 +36,12 @@ public class WarpCommandService implements CommandService {
 
     @Override
     public <T> T execute(Command<T> command) {
-        org.jboss.arquillian.warp.impl.shared.command.CommandService remoteOperationService = serviceLoader.get().onlyOne(org.jboss.arquillian.warp.impl.shared.command.CommandService.class);
+        org.jboss.arquillian.warp.impl.shared.command.CommandService remoteOperationService =
+            serviceLoader.get().onlyOne(org.jboss.arquillian.warp.impl.shared.command.CommandService.class);
 
         @SuppressWarnings("unchecked")
-        Command<T> newCommand = (Command<T>) remoteOperationService.execute(new FireCommandAsEventOnClient(command)).command;
+        Command<T> newCommand =
+            (Command<T>) remoteOperationService.execute(new FireCommandAsEventOnClient(command)).command;
 
         if (newCommand.getThrowable() != null) {
             throw new RuntimeException(newCommand.getThrowable());

@@ -273,11 +273,12 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
                     prepareForRequest();
                     requestStarted.countDown();
                     secondRequestStarted.countDown();
-                }})
+                }
+            })
             .group(1)
-                .inspect(serverInspection)
+            .inspect(serverInspection)
             .group(2)
-                .inspect(serverInspection)
+            .inspect(serverInspection)
             .execute();
 
         awaitSafely(responseFinished);
@@ -335,7 +336,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
     @RunAsClient
     public static final class TestingClass {
         @Deployment
-        public static Archive deploy(){
+        public static Archive deploy() {
             return null;
         }
     }

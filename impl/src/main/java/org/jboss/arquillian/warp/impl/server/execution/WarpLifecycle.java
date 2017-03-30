@@ -63,7 +63,7 @@ public class WarpLifecycle {
      * @return {@link ResponsePayload} based on the lifecycle tests results
      */
     public void execute(@Observes ExecuteWarp event, HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain, RequestPayload requestPayload, ResponsePayload responsePayload) throws Throwable {
+        FilterChain filterChain, RequestPayload requestPayload, ResponsePayload responsePayload) throws Throwable {
 
         List<Inspection> inspections = requestPayload.getInspections();
 

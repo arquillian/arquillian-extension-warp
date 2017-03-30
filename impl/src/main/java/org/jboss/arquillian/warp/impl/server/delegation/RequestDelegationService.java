@@ -37,7 +37,6 @@ import org.jboss.arquillian.warp.impl.server.execution.WarpFilter;
  * </p>
  *
  * @author Aris Tzoumas
- *
  */
 public interface RequestDelegationService {
 
@@ -60,10 +59,9 @@ public interface RequestDelegationService {
      * <code>true</code>
      * </p>
      *
-     * @param request the incoming {@link HttpServletRequest}.
-     * @param response the {@link HttpServletResponse} to send.
+     * @param request     the incoming {@link HttpServletRequest}.
+     * @param response    the {@link HttpServletResponse} to send.
      * @param filterChain the filter chain
      */
     void delegate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain);
-
 }

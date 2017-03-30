@@ -23,5 +23,4 @@ public class RequireProxy extends AbstractProxyInitializationEvent {
     public RequireProxy(URL realURL, URL proxyURL) {
         super(realURL, proxyURL);
     }
-
 }

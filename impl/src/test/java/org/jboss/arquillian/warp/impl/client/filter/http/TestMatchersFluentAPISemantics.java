@@ -47,8 +47,10 @@ public class TestMatchersFluentAPISemantics {
 
         // then
         assertFalse("the first request doesn't meet URL conditions", filter.matches(request));
-        assertTrue("the second request fulfills conditions - it is first request with given URL", filter.matches(request2));
-        assertFalse("the third request fulfills URL condition, but it isn't first such request", filter.matches(request2));
+        assertTrue("the second request fulfills conditions - it is first request with given URL",
+            filter.matches(request2));
+        assertFalse("the third request fulfills URL condition, but it isn't first such request",
+            filter.matches(request2));
     }
 
     @Test
@@ -65,8 +67,10 @@ public class TestMatchersFluentAPISemantics {
 
         // then
         assertFalse("the first request doesn't meet URL conditions", filter.matches(request));
-        assertFalse("the second request fulfills URL condition, but it isn't second such request", filter.matches(request2));
-        assertTrue("the third request fulfills conditions - it is first request with given URL", filter.matches(request2));
+        assertFalse("the second request fulfills URL condition, but it isn't second such request",
+            filter.matches(request2));
+        assertTrue("the third request fulfills conditions - it is first request with given URL",
+            filter.matches(request2));
     }
 
     @Before
@@ -89,5 +93,4 @@ public class TestMatchersFluentAPISemantics {
     public void afterTest() {
         WarpRuntime.setInstance(null);
     }
-
 }

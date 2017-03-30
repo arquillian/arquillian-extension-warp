@@ -27,7 +27,6 @@ import org.jboss.arquillian.warp.Inspection;
  *
  * @author Lukas Fryc
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
- *
  */
 public abstract class WarpLifecycleEvent {
 
@@ -36,7 +35,7 @@ public abstract class WarpLifecycleEvent {
      * {@link WarpLifecycleEvent}.
      *
      * @return the qualifiers which annotates methods on {@link Inspection} which will be executed during this
-     *         {@link WarpLifecycleEvent}.
+     * {@link WarpLifecycleEvent}.
      */
     public abstract List<Annotation> getQualifiers();
 }

@@ -21,5 +21,4 @@ public class StartProxy extends AbstractProxyInitializationEvent {
     public StartProxy(RequireProxy event) {
         super(event);
     }
-
 }

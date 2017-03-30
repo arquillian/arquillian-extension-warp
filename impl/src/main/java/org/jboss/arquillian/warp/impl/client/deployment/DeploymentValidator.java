@@ -38,7 +38,8 @@ public class DeploymentValidator {
             for (Deployment deployment : deploymentScenario.deployments()) {
                 DeploymentDescription description = deployment.getDescription();
                 if (!description.testable()) {
-                    throw new IllegalArgumentException("Warp deployments must be testable: " + testClass.get().getJavaClass()
+                    throw new IllegalArgumentException(
+                        "Warp deployments must be testable: " + testClass.get().getJavaClass()
                             + " - check that you have @Deployment(testable=true)");
                 }
             }

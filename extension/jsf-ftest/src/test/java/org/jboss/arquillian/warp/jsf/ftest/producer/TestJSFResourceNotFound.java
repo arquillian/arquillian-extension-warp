@@ -51,7 +51,7 @@ public class TestJSFResourceNotFound {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
-                .addAsWebInfResource(new StringAsset("<faces-config></faces-config>"), "faces-config.xml");
+            .addAsWebInfResource(new StringAsset("<faces-config></faces-config>"), "faces-config.xml");
     }
 
     @Test
@@ -70,7 +70,6 @@ public class TestJSFResourceNotFound {
                     throw new IllegalStateException(e);
                 }
             }
-
         }).inspect(new Inspection() {
             private static final long serialVersionUID = 1L;
         });

@@ -38,7 +38,7 @@ public interface SingleInspectionSpecifier {
      * Asserts given server state
      *
      * @param inspections the objects containing inspections which should be verified on the server in the given order of
-     *        execution
+     *                    execution
      * @return the result of server state verification
      */
     WarpResult inspectAll(Inspection... inspections);

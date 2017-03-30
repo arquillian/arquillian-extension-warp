@@ -27,7 +27,6 @@ public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T
      * Matches request that URI is equal to the given value.
      *
      * @param value the value
-     *
      * @return builder type for which the matcher is being build
      */
     T equal(String value);
@@ -36,7 +35,6 @@ public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T
      * Matches request that URI matches case insensitive to the given value.
      *
      * @param value the value
-     *
      * @return builder type for which the matcher is being build
      */
     T equalIgnoreCase(String value);
@@ -45,7 +43,6 @@ public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T
      * Matches request that URI starts with the given value.
      *
      * @param value the value
-     *
      * @return builder type for which the matcher is being build
      */
     T startsWith(String value);
@@ -54,7 +51,6 @@ public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T
      * Matches request that URI contains the given value.
      *
      * @param value the value
-     *
      * @return builder type for which the matcher is being build
      */
     T contains(String value);
@@ -63,7 +59,6 @@ public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T
      * Matches request that URI ends with the given value.
      *
      * @param value the value
-     *
      * @return builder type for which the matcher is being build
      */
     T endsWith(String value);
@@ -72,7 +67,6 @@ public interface UriMatcherBuilder<T> extends MatcherBuilder<UriMatcherBuilder<T
      * Matches request that URI matches the given regular expression.
      *
      * @param value the value
-     *
      * @return builder type for which the matcher is being build
      */
     T matches(String value);

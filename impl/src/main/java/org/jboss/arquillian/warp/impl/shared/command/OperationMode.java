@@ -20,14 +20,13 @@ package org.jboss.arquillian.warp.impl.shared.command;
  * <p>
  * CommandEventBus Service Operation Modes.
  * </p>
- *
+ * <p>
  * <ul>
- *  <li><code>GET</code> - A Command sent from the remote container.
- *  <li><code>PUT</code> - A Command sent from client, targeted to the remote container.
+ * <li><code>GET</code> - A Command sent from the remote container.
+ * <li><code>PUT</code> - A Command sent from client, targeted to the remote container.
  * </ul>
  *
  * @author Aris Tzoumas
- *
  */
 public enum OperationMode {
     GET,

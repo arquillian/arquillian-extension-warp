@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
-
 public interface GroupExecutionSpecifier extends
     GroupInspectionSpecifier,
     ObserverSpecifier<GroupExecutionSpecifier> {

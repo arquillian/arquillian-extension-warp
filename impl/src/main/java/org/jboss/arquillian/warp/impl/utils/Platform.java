@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.impl.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
  * Represents the known and supported Platforms that WebDriver runs on. This is pretty close to the
  * Operating System, but differs slightly, because this class is used to extract information such as
@@ -78,6 +79,7 @@ public enum Platform {
         public Platform family() {
             return MAC;
         }
+
         @Override
         public String toString() {
             return "OS X 10.6";
@@ -89,6 +91,7 @@ public enum Platform {
         public Platform family() {
             return MAC;
         }
+
         @Override
         public String toString() {
             return "OS X 10.8";
@@ -100,6 +103,7 @@ public enum Platform {
         public Platform family() {
             return MAC;
         }
+
         @Override
         public String toString() {
             return "OS X 10.9";
@@ -111,6 +115,7 @@ public enum Platform {
         public Platform family() {
             return MAC;
         }
+
         @Override
         public String toString() {
             return "OS X 10.10";
@@ -154,7 +159,7 @@ public enum Platform {
     private final int minorVersion;
     private final int majorVersion;
 
-    private Platform(String... partOfOsName) {
+    Platform(String... partOfOsName) {
         this.partOfOsName = partOfOsName;
 
         String version = System.getProperty("os.version", "0.0.0");
@@ -194,7 +199,9 @@ public enum Platform {
      * most likely operating system.  If unable to determine the operating system, it will default to
      * UNIX.
      *
-     * @param osName the operating system name to determine the platform of
+     * @param osName
+     *     the operating system name to determine the platform of
+     *
      * @return the most likely platform based on given operating system name
      */
     public static Platform extractFromSysProperty(String osName) {
@@ -206,8 +213,11 @@ public enum Platform {
      * most likely operating system.  If unable to determine the operating system, it will default to
      * UNIX.
      *
-     * @param osName the operating system name to determine the platform of
-     * @param osVersion the operating system version to determine the platform of
+     * @param osName
+     *     the operating system name to determine the platform of
+     * @param osVersion
+     *     the operating system version to determine the platform of
+     *
      * @return the most likely platform based on given operating system name and version
      */
     public static Platform extractFromSysProperty(String osName, String osVersion) {
@@ -250,8 +260,11 @@ public enum Platform {
      * Decides whether the previous match is better or not than the current match.  If previous match
      * is null, the newer match is always better.
      *
-     * @param previous the previous match
-     * @param matcher the newer match
+     * @param previous
+     *     the previous match
+     * @param matcher
+     *     the newer match
+     *
      * @return true if newer match is better, false otherwise
      */
     private static boolean isBetterMatch(String previous, String matcher) {
@@ -263,7 +276,9 @@ public enum Platform {
      * systems) are found to be approximately similar in nature, this will return true.  For instance
      * the LINUX platform is similar to UNIX, and will give a positive result if compared.
      *
-     * @param compareWith the platform to compare with
+     * @param compareWith
+     *     the platform to compare with
+     *
      * @return true if platforms are approximately similar, false otherwise
      */
     public boolean is(Platform compareWith) {

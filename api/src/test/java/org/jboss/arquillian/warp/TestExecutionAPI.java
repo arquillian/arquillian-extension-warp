@@ -63,11 +63,11 @@ public class TestExecutionAPI {
         Warp
             .initiate(activity)
             .group()
-                .observe(what)
-                .inspect(inspection)
+            .observe(what)
+            .inspect(inspection)
             .group()
-                .observe(what)
-                .inspect(inspection)
+            .observe(what)
+            .inspect(inspection)
             .execute();
     }
 
@@ -80,13 +80,12 @@ public class TestExecutionAPI {
         WarpResult result = Warp
             .initiate(activity)
             .group("first")
-                .observe(what)
-                .inspect(inspection)
+            .observe(what)
+            .inspect(inspection)
             .group("second")
-                .observe(what)
-                .inspect(inspection)
+            .observe(what)
+            .inspect(inspection)
             .execute();
-
 
         Inspection firstInspection = result.getGroup("first").getInspection();
 
@@ -95,7 +94,7 @@ public class TestExecutionAPI {
 
     /**
      * Test may specify multiple inspections verified in one request.
-     *
+     * <p>
      * These inspections will preserve order of definition and execution.
      */
     public void testMultipleInspections() {
@@ -106,11 +105,11 @@ public class TestExecutionAPI {
         result = Warp
             .initiate(activity)
             .group()
-                .observe(what)
-                .inspect(inspection, inspection)
+            .observe(what)
+            .inspect(inspection, inspection)
             .group()
-                .observe(what)
-                .inspect(inspection, inspection, inspection)
+            .observe(what)
+            .inspect(inspection, inspection, inspection)
             .execute();
     }
 
@@ -121,17 +120,17 @@ public class TestExecutionAPI {
         Warp
             .initiate(activity)
             .group()
-                .observe(what)
-                .expectCount(2)
-                .inspect(inspection, inspection, inspection)
+            .observe(what)
+            .expectCount(2)
+            .inspect(inspection, inspection, inspection)
             .execute();
 
         Warp
             .initiate(activity)
             .group()
-                .expectCount(2)
-                .observe(what)
-                .inspect(inspection, inspection, inspection)
+            .expectCount(2)
+            .observe(what)
+            .inspect(inspection, inspection, inspection)
             .execute();
     }
 

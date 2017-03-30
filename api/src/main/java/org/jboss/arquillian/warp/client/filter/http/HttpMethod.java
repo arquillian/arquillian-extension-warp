@@ -82,7 +82,7 @@ public class HttpMethod implements Comparable<HttpMethod> {
     public static final HttpMethod CONNECT = new HttpMethod("CONNECT");
 
     private static final Map<String, HttpMethod> methodMap =
-            new HashMap<String, HttpMethod>();
+        new HashMap<String, HttpMethod>();
 
     static {
         methodMap.put(OPTIONS.toString(), OPTIONS);
@@ -138,7 +138,7 @@ public class HttpMethod implements Comparable<HttpMethod> {
             throw new IllegalArgumentException("empty name");
         }
 
-        for (int i = 0; i < name.length(); i ++) {
+        for (int i = 0; i < name.length(); i++) {
             if (Character.isISOControl(name.charAt(i)) ||
                 Character.isWhitespace(name.charAt(i))) {
                 throw new IllegalArgumentException("invalid character in name");

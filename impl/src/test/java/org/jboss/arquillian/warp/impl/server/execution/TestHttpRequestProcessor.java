@@ -148,7 +148,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
 
         // then
         RequestPayload resolvedRequestPayload = getManager().getContext(RequestContext.class).getObjectStore()
-                .get(RequestPayload.class);
+            .get(RequestPayload.class);
         assertSame(requestPayload, resolvedRequestPayload);
     }
 
@@ -164,7 +164,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
 
         // then
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
-                .get(ResponsePayload.class);
+            .get(ResponsePayload.class);
         assertNotNull("response payload is not null", responsePayload);
         assertNull("response payload has empty inspection", responsePayload.getInspections());
         assertNull("response payload has empty test result", responsePayload.getTestResult());
@@ -188,7 +188,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
 
         // then
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
-                .get(ResponsePayload.class);
+            .get(ResponsePayload.class);
         assertNotNull("response payload is not null", responsePayload);
         assertNull("response payload has empty inspection", responsePayload.getInspections());
 
@@ -227,12 +227,11 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         // then
         verify(enricher).enrichResponse();
         ResponsePayload resolvedResponsePayload = getManager().getContext(RequestContext.class).getObjectStore()
-                .get(ResponsePayload.class);
+            .get(ResponsePayload.class);
         assertSame(responsePayload, resolvedResponsePayload);
         assertNull("response payload has empty inspection", responsePayload.getInspections());
 
         TestResult testResult = responsePayload.getTestResult();
         assertEquals(exception, testResult.getThrowable());
     }
-
 }

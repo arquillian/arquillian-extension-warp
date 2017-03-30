@@ -43,7 +43,7 @@ public class FacesContextFactory extends javax.faces.context.FacesContextFactory
     }
 
     public FacesContext getFacesContext(Object context, Object request, Object response, Lifecycle lifecycle)
-            throws FacesException {
+        throws FacesException {
 
         FacesContext facesContext = delegate.getFacesContext(context, request, response, lifecycle);
 
@@ -55,7 +55,8 @@ public class FacesContextFactory extends javax.faces.context.FacesContextFactory
             facesContext.getAttributes().put(WARP_ENABLED, Boolean.FALSE);
 
             try {
-                LifecycleManager manager = (LifecycleManager) httpReq.getAttribute(WarpCommons.WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE);
+                LifecycleManager manager =
+                    (LifecycleManager) httpReq.getAttribute(WarpCommons.WARP_REQUEST_LIFECYCLE_MANAGER_ATTRIBUTE);
 
                 if (manager == null) {
                     log.warning("no association of manager found for this ServletRequest");
@@ -117,5 +118,4 @@ public class FacesContextFactory extends javax.faces.context.FacesContextFactory
             throw new IllegalArgumentException("provided FacesContext does not wrap WarpFacesContext");
         }
     }
-
 }

@@ -57,9 +57,9 @@ public class TestBigResponsePayload {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -68,11 +68,12 @@ public class TestBigResponsePayload {
         TestingInspection requestInspection = new TestingInspection();
 
         TestingInspection responseInspection = Warp
-                .initiate(new Activity() {
-                    public void perform() {
-                        browser.navigate().to(contextPath + "index.html");
-                    }})
-                .inspect(requestInspection);
+            .initiate(new Activity() {
+                public void perform() {
+                    browser.navigate().to(contextPath + "index.html");
+                }
+            })
+            .inspect(requestInspection);
 
         assertNotNull("responseInspection must not be null", responseInspection);
         assertNotNull("payload must not be null", responseInspection.payload);
@@ -92,5 +93,4 @@ public class TestBigResponsePayload {
             payload = new byte[LENGTH];
         }
     }
-
 }

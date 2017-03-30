@@ -65,7 +65,7 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
         };
 
         final HttpFiltersSource httpFiltersSource = Contextualizer.contextualize(retriever,
-                serviceLoader().onlyOne(HttpFiltersSource.class), HttpFiltersSource.class, HttpFilters.class);
+            serviceLoader().onlyOne(HttpFiltersSource.class), HttpFiltersSource.class, HttpFilters.class);
 
         final InetSocketAddress bindToAddress = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
         final InetSocketAddress forwardToAddress = new InetSocketAddress(realUrl.getHost(), realUrl.getPort());

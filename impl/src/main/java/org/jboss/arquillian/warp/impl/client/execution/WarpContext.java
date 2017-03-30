@@ -56,7 +56,7 @@ public interface WarpContext {
      * <p>
      * Pushes {@link ResponsePayload} to context.
      * </p>
-     *
+     * <p>
      * <p>
      * Context should ensure propagating {@link ResponsePayload} to associated {@link WarpGroup} based on the generated serial
      * identifier ({@link RequestPayload#getSerialId()}).
@@ -93,7 +93,7 @@ public interface WarpContext {
      * <p>
      * Initializes Warp context by available services.
      * </p>
-     *
+     * <p>
      * <p>
      * Note: {@link WarpContext} is used in another thread, that's why it can't access injected {@link ServiceLoader} directly.
      * </p>
@@ -114,10 +114,9 @@ public interface WarpContext {
      */
     int getExpectedRequestCount();
 
-
     /**
      * Records that given request was not matched by any observer.
-     *
+     * <p>
      * For debugging purposes.
      */
     void addUnmatchedRequest(Request request);

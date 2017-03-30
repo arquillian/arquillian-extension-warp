@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-
 public interface EnrichRequest<T, P> {
 
     T getRequest();

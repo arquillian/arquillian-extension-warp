@@ -33,11 +33,11 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
  * <p>
  * Controls the Warp's suite lifecycle on container by propagating.
  * </p>
- *
+ * <p>
  * <p>
  * The client-side {@link Before} event will be mapped to {@link BeforeSuite} on server-side.
  * </p>
- *
+ * <p>
  * <p>
  * The client-side {@link After} event will be mapped to {@link AfterSuite} on server-side.
  * </p>

@@ -35,11 +35,10 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
 
 /**
  * Provides the proxy URL instead of real URL.
- *
+ * <p>
  * Stores the mapping between real URL and proxy URL in {@link URLMapping}.
  *
  * @author Lukas Fryc
- *
  */
 public class ProxyURLProvider implements ResourceProvider {
 
@@ -101,5 +100,4 @@ public class ProxyURLProvider implements ResourceProvider {
     private Injector injector() {
         return injector.get();
     }
-
 }

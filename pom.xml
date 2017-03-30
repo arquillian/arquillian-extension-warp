@@ -1,120 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!-- Parent -->
-    <parent>
-        <groupId>org.jboss</groupId>
-        <artifactId>jboss-parent</artifactId>
-        <version>16</version>
-        <relativePath />
-    </parent>
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>16</version>
+    <relativePath/>
+  </parent>
 
-    <!-- Model Version -->
-    <modelVersion>4.0.0</modelVersion>
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
 
-    <!-- Artifact Configuration -->
-    <groupId>org.jboss.arquillian.extension</groupId>
-    <artifactId>arquillian-warp-aggregator</artifactId>
-    <version>1.0.0.Beta1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  <!-- Artifact Configuration -->
+  <groupId>org.jboss.arquillian.extension</groupId>
+  <artifactId>arquillian-warp-aggregator</artifactId>
+  <version>1.0.0.Beta1-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-    <name>Arquillian Warp: Parent</name>
-    <description>Taking tests from Client to the Server and back</description>
+  <name>Arquillian Warp: Parent</name>
+  <description>Taking tests from Client to the Server and back</description>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
-    <developers>
-        <developer>
-            <name>Lukas Fryc</name>
-            <email>lfryc@redhat.com</email>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <name>Lukas Fryc</name>
+      <email>lfryc@redhat.com</email>
+    </developer>
+  </developers>
 
-    <issueManagement>
-        <system>JIRA</system>
-        <url>https://issues.jboss.org/browse/ARQ/component/12315782</url>
-    </issueManagement>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://issues.jboss.org/browse/ARQ/component/12315782</url>
+  </issueManagement>
 
-    <scm>
-        <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-warp.git</connection>
-        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-warp.git</developerConnection>
-        <url>git://github.com/arquillian/arquillian-extension-warp.git</url>
-      <tag>HEAD</tag>
+  <scm>
+    <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-warp.git</connection>
+    <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-warp.git</developerConnection>
+    <url>git://github.com/arquillian/arquillian-extension-warp.git</url>
+    <tag>HEAD</tag>
   </scm>
 
-    <ciManagement>
-        <system>CloudBess</system>
-        <url>https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/</url>
-    </ciManagement>
+  <ciManagement>
+    <system>CloudBess</system>
+    <url>https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/</url>
+  </ciManagement>
 
-    <properties>
-        <!-- Arquillian -->
-        <version.servlet_api>3.0.1</version.servlet_api>
-        <version.arquillian_core>1.1.11.Final</version.arquillian_core>
-        <version.arquillian_drone>2.0.0.Beta1</version.arquillian_drone>
-        <version.arquillian_jacoco>1.0.0.Alpha8</version.arquillian_jacoco>
+  <properties>
+    <!-- Arquillian -->
+    <version.servlet_api>3.0.1</version.servlet_api>
+    <version.arquillian_core>1.1.11.Final</version.arquillian_core>
+    <version.arquillian_drone>2.0.0.Beta1</version.arquillian_drone>
+    <version.arquillian_jacoco>1.0.0.Alpha8</version.arquillian_jacoco>
 
-        <version.littleproxy>1.0.0-beta5</version.littleproxy>
-        <version.javassist>3.12.1.GA</version.javassist>
+    <version.littleproxy>1.0.0-beta5</version.littleproxy>
+    <version.javassist>3.12.1.GA</version.javassist>
 
-        <!-- Tests -->
-        <version.junit>4.12</version.junit>
-        <version.hamcrest>1.1</version.hamcrest>
-        <version.mockito>1.9.0</version.mockito>
-        <version.jacoco>0.7.4.201502262128</version.jacoco>
-        <version.shrinkwrap_resolver>2.2.2</version.shrinkwrap_resolver>
-        <version.jboss_spec>3.0.0.Final</version.jboss_spec>
+    <!-- Tests -->
+    <version.junit>4.12</version.junit>
+    <version.hamcrest>1.1</version.hamcrest>
+    <version.mockito>1.9.0</version.mockito>
+    <version.jacoco>0.7.4.201502262128</version.jacoco>
+    <version.shrinkwrap_resolver>2.2.2</version.shrinkwrap_resolver>
+    <version.jboss_spec>3.0.0.Final</version.jboss_spec>
 
-        <!-- Container Versions -->
-        <version.jbossas71>7.1.1.Final</version.jbossas71>
-        <version.tomee16>1.6.0</version.tomee16>
-        <version.glassfish40>4.0</version.glassfish40>
-        <version.tomcat6>6.0.35</version.tomcat6>
-        <version.tomcat7>7.0.26</version.tomcat7>
-        <version.wildfly>8.0.0.Final</version.wildfly>
+    <!-- Container Versions -->
+    <version.jbossas71>7.1.1.Final</version.jbossas71>
+    <version.tomee16>1.6.0</version.tomee16>
+    <version.glassfish40>4.0</version.glassfish40>
+    <version.tomcat6>6.0.35</version.tomcat6>
+    <version.tomcat7>7.0.26</version.tomcat7>
+    <version.wildfly>8.0.0.Final</version.wildfly>
 
-        <!-- override from parent -->
-        <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
-        <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
+    <!-- override from parent -->
+    <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
+    <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
 
-        <additionalparam>-Xdoclint:none</additionalparam>
-    </properties>
+    <additionalparam>-Xdoclint:none</additionalparam>
+  </properties>
 
-    <modules>
-        <!-- build modules -->
-        <module>build</module>
-        <module>build/bom</module>
-        <module>build/resources</module>
-        <module>build/depchain</module>
-        <module>build/ftest-base</module>
-        
-        <!-- main modules -->
-        <module>api</module>
-        <module>spi</module>
-        <module>impl</module>
-        <module>ftest</module>
+  <modules>
+    <!-- build modules -->
+    <module>build</module>
+    <module>build/bom</module>
+    <module>build/resources</module>
+    <module>build/depchain</module>
+    <module>build/ftest-base</module>
 
-        <!-- extensions -->
-        <module>extension/jsf</module>
-        <module>extension/jsf-ftest</module>
-    </modules>
+    <!-- main modules -->
+    <module>api</module>
+    <module>spi</module>
+    <module>impl</module>
+    <module>ftest</module>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <pushChanges>false</pushChanges>
-                    <localCheckout>true</localCheckout>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <!-- extensions -->
+    <module>extension/jsf</module>
+    <module>extension/jsf-ftest</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <pushChanges>false</pushChanges>
+          <localCheckout>true</localCheckout>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

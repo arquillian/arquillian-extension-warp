@@ -32,6 +32,5 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 @Retention(RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-@interface EnrichTestCase {
+@Target({ElementType.TYPE, ElementType.METHOD}) @interface EnrichTestCase {
 }

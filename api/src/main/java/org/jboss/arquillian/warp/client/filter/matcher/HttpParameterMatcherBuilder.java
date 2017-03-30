@@ -28,7 +28,6 @@ public interface HttpParameterMatcherBuilder<T> extends MatcherBuilder<HttpParam
      *
      * @param name  the parameter name
      * @param value the parameter value
-     *
      * @return builder type for which the matcher is being build
      */
     T equal(String name, String value);
@@ -37,7 +36,6 @@ public interface HttpParameterMatcherBuilder<T> extends MatcherBuilder<HttpParam
      * Matches request that contains HTTP parameter (either query parameter of HTTP form parameter)with given name.
      *
      * @param name the parameter name
-     *
      * @return builder type for which the matcher is being build
      */
     T containsParameter(String name);
@@ -47,7 +45,6 @@ public interface HttpParameterMatcherBuilder<T> extends MatcherBuilder<HttpParam
      *
      * @param name  the parameter name
      * @param value the parameter value
-     *
      * @return builder type for which the matcher is being build
      */
     T containsValue(String name, String value);

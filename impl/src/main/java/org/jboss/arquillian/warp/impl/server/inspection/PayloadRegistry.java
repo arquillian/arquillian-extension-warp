@@ -58,7 +58,8 @@ public class PayloadRegistry {
     public ResponsePayload retrieveResponsePayload(long serialId) {
         ResponsePayload payload = responsePayloads.remove(serialId);
         if (payload == null) {
-            throw new ResponsePayloadWasNeverRegistered("The response payload with serialId " + serialId + " was never registered");
+            throw new ResponsePayloadWasNeverRegistered(
+                "The response payload with serialId " + serialId + " was never registered");
         }
         return payload;
     }
@@ -83,5 +84,4 @@ public class PayloadRegistry {
             super(cause);
         }
     }
-
 }

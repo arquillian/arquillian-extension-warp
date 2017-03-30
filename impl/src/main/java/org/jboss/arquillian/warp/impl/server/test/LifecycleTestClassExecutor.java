@@ -38,7 +38,6 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
  * {@link AfterClass} events once per {@link Inspection} class on the end of a request.
  *
  * @author Lukas Fryc
- *
  */
 public class LifecycleTestClassExecutor {
 

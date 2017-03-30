@@ -48,13 +48,13 @@ public class TestTransformedInspection {
     @SeparatedClassPath
     public static JavaArchive[] archive() {
         JavaArchive archive = ShrinkWrap
-                .create(JavaArchive.class)
-                .addClasses(WarpCommons.class, Inspection.class, RequestPayload.class, BeforeServlet.class)
-                .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
-                .addClasses(TestTransformedInspection.class, TransformedInspection.class, MigratedInspection.class,
-                        InspectionTransformationException.class, NoSerialVersionUIDException.class)
-                .addClasses(SeparateInvocator.class, CtClassAsset.class,
-                        SeparatedClassLoader.class);
+            .create(JavaArchive.class)
+            .addClasses(WarpCommons.class, Inspection.class, RequestPayload.class, BeforeServlet.class)
+            .addClasses(SerializationUtils.class, ShrinkWrapUtils.class, ClassLoaderUtils.class)
+            .addClasses(TestTransformedInspection.class, TransformedInspection.class, MigratedInspection.class,
+                InspectionTransformationException.class, NoSerialVersionUIDException.class)
+            .addClasses(SeparateInvocator.class, CtClassAsset.class,
+                SeparatedClassLoader.class);
 
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
         JavaArchive junitArchive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
@@ -63,7 +63,7 @@ public class TestTransformedInspection {
         JavaArchive shrinkWrapApi = ShrinkWrapUtils.getJavaArchiveFromClass(JavaArchive.class);
         JavaArchive shrinkWrapImpl = ShrinkWrapUtils.getJavaArchiveFromClass(ServiceExtensionLoader.class);
 
-        return new JavaArchive[] { archive, javassistArchive, junitArchive, shrinkWrapSpi, shrinkWrapApi, shrinkWrapImpl };
+        return new JavaArchive[] {archive, javassistArchive, junitArchive, shrinkWrapSpi, shrinkWrapApi, shrinkWrapImpl};
     }
 
     @Test
@@ -85,7 +85,7 @@ public class TestTransformedInspection {
         RequestPayload payload = new RequestPayload(inspection);
 
         RequestPayload deserializedPayload = SerializationUtils.deserializeFromBytes(SerializationUtils
-                .serializeToBytes(payload));
+            .serializeToBytes(payload));
         Inspection deserializedInspection = deserializedPayload.getInspections().get(0);
 
         verifyServerInspectionClass(deserializedInspection);

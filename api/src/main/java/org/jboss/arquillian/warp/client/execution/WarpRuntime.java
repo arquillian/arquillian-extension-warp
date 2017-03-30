@@ -20,7 +20,7 @@ import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 
 /**
  * An abstraction of the Warp runtime. Provides single point of extension for this component.
- * <p />
+ * <p/>
  * Concrete class will be registered during runtime into which all execution will be delegated.
  */
 public abstract class WarpRuntime {

@@ -26,7 +26,7 @@ import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 
 /**
  * List of known contexts as they are in the nested in the hierarchy of contexts.
- *
+ * <p>
  * E.g. class operational contexts associates together ClassContext, SuiteContext and ApplicationContext.
  *
  * @author Lukas Fryc
@@ -147,5 +147,4 @@ public class OperationalContexts {
             super.deactivate();
         }
     }
-
 }

@@ -53,11 +53,11 @@ public class TestInspectionFailurePropagation {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war").addClasses(CdiBean.class)
-                .addAsWebResource(new File("src/main/webapp/index.xhtml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
-                .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+            .addAsWebResource(new File("src/main/webapp/index.xhtml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+            .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
     @Test(expected = AssertionError.class)
@@ -66,15 +66,16 @@ public class TestInspectionFailurePropagation {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
-                }})
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-
-                @BeforeServlet
-                public void initial_state_havent_changed_yet() {
-                    fail("AssertionError should be correctly handled and propagated to the client-side");
                 }
-            }
-        );
+            })
+            .inspect(new Inspection() {
+                         private static final long serialVersionUID = 1L;
+
+                         @BeforeServlet
+                         public void initial_state_havent_changed_yet() {
+                             fail("AssertionError should be correctly handled and propagated to the client-side");
+                         }
+                     }
+            );
     }
 }

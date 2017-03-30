@@ -32,27 +32,28 @@ public interface RequestObserverChainManager {
      * <p>
      * Manages observer chain.
      * </p>
-     *
+     * <p>
      * <p>
      * In modified collection, new observers might be added, observers might be removed or their behavior might be changed.
      * </p>
      *
-     * @param observers collection of observers which were specified for given request
+     * @param observers            collection of observers which were specified for given request
      * @param expectedObserverType the type of observers which is expected during currently processed request
      * @return modified collection of
      */
-    Deque<RequestObserver> manageObserverChain(Deque<RequestObserver> observers, Class<? extends RequestObserver> expectedObserverType);
+    Deque<RequestObserver> manageObserverChain(Deque<RequestObserver> observers,
+        Class<? extends RequestObserver> expectedObserverType);
 
     /**
      * <p>
      * Defines priority of observer service which specifies in which order will be {@link #manageObserverChain(Collection)}
      * method applied on collection of request observers.
      * </p>
-     *
+     * <p>
      * <p>
      * <tt>DefaultRequestObserverService</tt> has priority 0 - no other observer can have this priority.
      * </p>
-     *
+     * <p>
      * <p>
      * Services with priority lower than zero will be applied after DefaultRequestObserverService; services with priority higher
      * will be applied before.

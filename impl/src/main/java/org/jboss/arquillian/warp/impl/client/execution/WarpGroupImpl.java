@@ -74,7 +74,7 @@ public class WarpGroupImpl implements WarpGroup {
     @Override
     public GroupExecutionSpecifier observe(Class<? extends RequestObserver> observer) {
         this.observer = SecurityActions.newInstance(observer.getName(), new Class<?>[] {}, new Object[] {},
-                RequestFilter.class);
+            RequestFilter.class);
         return this;
     }
 

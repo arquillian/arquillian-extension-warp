@@ -33,11 +33,11 @@ public class WarpJSFExtension implements LoadableExtension, WarpDeploymentEnrich
     @Override
     public JavaArchive getEnrichmentLibrary() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-warp-jsf.jar")
-                .addPackage("org.jboss.arquillian.warp.jsf")
-                .addPackage("org.jboss.arquillian.warp.jsf.provider")
-                .addPackage("org.jboss.arquillian.warp.jsf.enricher")
-                .addAsManifestResource("META-INF/warp-extensions/faces-config.xml", "faces-config.xml")
-                .addAsServiceProvider(RemoteLoadableExtension.class, WarpJSFRemoteExtension.class);
+            .addPackage("org.jboss.arquillian.warp.jsf")
+            .addPackage("org.jboss.arquillian.warp.jsf.provider")
+            .addPackage("org.jboss.arquillian.warp.jsf.enricher")
+            .addAsManifestResource("META-INF/warp-extensions/faces-config.xml", "faces-config.xml")
+            .addAsServiceProvider(RemoteLoadableExtension.class, WarpJSFRemoteExtension.class);
     }
 
     @Override

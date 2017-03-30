@@ -30,9 +30,9 @@ public class TestLifecycleManagerStore {
     @SeparatedClassPath
     public static JavaArchive classPath() {
         return ShrinkWrap.create(JavaArchive.class)
-                .addClasses(LifecycleManager.class, TestingLifecycleManager.class, ObjectNotAssociatedException.class)
-                .addClasses(LifecycleManagerStore.class, TestingLifecycleManagerStore.class)
-                .addAsServiceProvider(LifecycleManagerStore.class, TestingLifecycleManagerStore.class);
+            .addClasses(LifecycleManager.class, TestingLifecycleManager.class, ObjectNotAssociatedException.class)
+            .addClasses(LifecycleManagerStore.class, TestingLifecycleManagerStore.class)
+            .addAsServiceProvider(LifecycleManagerStore.class, TestingLifecycleManagerStore.class);
     }
 
     @Test

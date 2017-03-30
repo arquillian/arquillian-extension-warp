@@ -25,6 +25,6 @@ public class InspectionMethodWasNotInvokedException extends ClientWarpExecutionE
 
     public InspectionMethodWasNotInvokedException(ExecutedMethod method) {
         super("Lifecycle test declared on " + method.getMethod() + " with qualifiers " + method.getQualifiers()
-                + " was not executed");
+            + " was not executed");
     }
 }

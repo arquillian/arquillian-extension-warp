@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.warp.client.execution;
 
-
 /**
  * Takes client activity and specifies how to verify its execution.
  */

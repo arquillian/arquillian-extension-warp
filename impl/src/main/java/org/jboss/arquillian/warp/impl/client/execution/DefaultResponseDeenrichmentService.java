@@ -97,7 +97,7 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
                     explainingException = (WarpExecutionException) originalException;
                 } else {
                     explainingException = new ClientWarpExecutionException("deenriching response failed: "
-                            + originalException.getMessage(), originalException);
+                        + originalException.getMessage(), originalException);
                 }
 
                 context.pushException(explainingException);
@@ -109,14 +109,15 @@ public class DefaultResponseDeenrichmentService implements HttpResponseDeenrichm
 
     /**
      * Contacts server and tries to retrieve response payload via serialId.
-     *
+     * <p>
      * Repeats the retrieval until the payload is found or number of allowed iterations is reached.
      */
     private ResponsePayload retrieveResponsePayload(long serialId) throws InterruptedException {
         ResponsePayloadWasNeverRegistered last = null;
         for (int i = 0; i <= 10; i++) {
             try {
-                RetrievePayloadFromServer result = remoteOperationService().execute(new RetrievePayloadFromServer(serialId));
+                RetrievePayloadFromServer result =
+                    remoteOperationService().execute(new RetrievePayloadFromServer(serialId));
                 return result.getResponsePayload();
             } catch (ResponsePayloadWasNeverRegistered e) {
                 Thread.sleep(300);

@@ -115,7 +115,8 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
 
         try {
             if (httpDataAttributes == null) {
-                final HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), request);
+                final HttpPostRequestDecoder decoder =
+                    new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), request);
                 final Map<String, List<String>> map = new HashMap<String, List<String>>();
 
                 try {
@@ -140,10 +141,8 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
             }
 
             return Collections.unmodifiableMap(httpDataAttributes);
-
         } catch (IOException e) {
             throw new IllegalStateException("Cannot parse http request data", e);
         }
     }
-
 }

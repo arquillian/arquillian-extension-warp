@@ -21,13 +21,13 @@ import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 /**
  * An utility class for creating new instance of {@link HttpRequestFilter}. This class introduced a builder pattern
  * for creating filters for common scenarios.
- *
+ * <p>
  * <p>Sample usage:
- *
+ * <p>
  * <pre>
  *     request().uri().endsWith("jsf").method().equal(HttpMethod.POST);
  * </pre>
- *
+ * <p>
  * </p>
  */
 public final class HttpFilters {

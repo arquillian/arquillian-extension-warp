@@ -63,9 +63,9 @@ public class BasicWarpTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class BasicWarpTest {
                     assertNotNull("request context must be available", request);
 
                     assertNotNull("responses enrichment is set before servlet processing",
-                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
                 }
 
                 @AfterServlet
@@ -105,7 +105,7 @@ public class BasicWarpTest {
                     System.out.println("Servlet just processed my initial request!");
 
                     assertNotNull("responses enrichment is set before servlet processing",
-                            response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
 
                     assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
                 }

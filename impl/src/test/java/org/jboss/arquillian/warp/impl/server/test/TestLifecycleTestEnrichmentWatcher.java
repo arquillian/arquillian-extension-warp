@@ -68,7 +68,6 @@ public class TestLifecycleTestEnrichmentWatcher {
                 return null;
             }
         }).when(beforeContext).proceed();
-
     }
 
     @Test

@@ -21,5 +21,4 @@ public class TestingLifecycleManager extends LifecycleManager {
     @Override
     public void fireEvent(Object event) {
     }
-
 }

@@ -23,5 +23,4 @@ public class InspectionExtendingInspectionWithConstructorWithArguments extends I
     public InspectionExtendingInspectionWithConstructorWithArguments(Object object) {
         super(object);
     }
-
 }

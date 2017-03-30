@@ -28,7 +28,6 @@ public interface HttpHeaderMatcherBuilder<T> extends MatcherBuilder<HttpHeaderMa
      *
      * @param name  the header name
      * @param value the header value
-     *
      * @return builder type for which the matcher is being build
      */
     T equal(String name, String value);
@@ -37,7 +36,6 @@ public interface HttpHeaderMatcherBuilder<T> extends MatcherBuilder<HttpHeaderMa
      * Matches request that contains HTTP header with given name.
      *
      * @param name the header name
-     *
      * @return builder type for which the matcher is being build
      */
     T containsHeader(String name);
@@ -47,7 +45,6 @@ public interface HttpHeaderMatcherBuilder<T> extends MatcherBuilder<HttpHeaderMa
      *
      * @param name  the header name
      * @param value the header value
-     *
      * @return builder type for which the matcher is being build
      */
     T containsValue(String name, String value);

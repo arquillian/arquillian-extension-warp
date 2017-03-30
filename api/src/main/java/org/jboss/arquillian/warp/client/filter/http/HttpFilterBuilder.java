@@ -53,7 +53,7 @@ public interface HttpFilterBuilder extends ObserverBuilder<HttpFilterBuilder, Re
 
     /**
      * Matches the request which has given index (number; order) in sequence of matched requests.
-     *
+     * <p>
      * <ul>
      * <li>first request - <tt>index(1)</tt></li>
      * <li>second request - <tt>index(2)</tt></li>

@@ -88,12 +88,12 @@ public class WarpSynchronizationException extends ClientWarpExecutionException {
 
             if (failedGroups.size() == 1 && failedGroups.get(0).getExpectedRequestCount() == 1) {
                 message.append(String.format("There were no requests matched by observer [%s]\n\n", failedGroups.get(0)
-                        .getObserver()));
+                    .getObserver()));
             } else if (failedGroups.size() >= 1) {
                 message.append("There were wrong number of requests matched by observers:\n");
                 for (WarpGroup group : failedGroups) {
                     message.append(String.format(" - [%s]: %s requests expected, %s done", group.getObserver(),
-                            group.getExpectedRequestCount(), group.getHitCount()));
+                        group.getExpectedRequestCount(), group.getHitCount()));
                 }
                 message.append("\n\n");
             }
@@ -103,14 +103,17 @@ public class WarpSynchronizationException extends ClientWarpExecutionException {
             List<Request> unmatchedRequests = context.getUnmatchedRequests();
 
             if (!unmatchedRequests.isEmpty()) {
-                message.append(String.format("The %s other request/-s were noticed by Warp for the given activity: %s\n\n",
+                message.append(
+                    String.format("The %s other request/-s were noticed by Warp for the given activity: %s\n\n",
                         unmatchedRequests.size(), unmatchedRequests));
             }
         }
 
         private void generalAdviceForDebugging() {
-            message.append("If Warp enriched a wrong request, use observe(...) method to select appropriate request which should be enriched instead.\n");
-            message.append("Otherwise check the server-side log and enable Arquillian debugging mode on both, test and server VM by passing -Darquillian.debug=true.\n");
+            message.append(
+                "If Warp enriched a wrong request, use observe(...) method to select appropriate request which should be enriched instead.\n");
+            message.append(
+                "Otherwise check the server-side log and enable Arquillian debugging mode on both, test and server VM by passing -Darquillian.debug=true.\n");
         }
     }
 }

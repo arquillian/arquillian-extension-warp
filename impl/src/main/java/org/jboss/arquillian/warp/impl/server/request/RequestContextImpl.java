@@ -28,7 +28,6 @@ import org.jboss.arquillian.warp.spi.context.RequestScoped;
  * The implementation of {@link RequestContext}.
  *
  * @author Lukas Fryc
- *
  */
 public class RequestContextImpl extends AbstractContext<String> implements RequestContext {
 

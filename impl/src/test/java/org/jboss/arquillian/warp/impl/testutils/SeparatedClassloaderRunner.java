@@ -36,7 +36,8 @@ import org.junit.runners.model.Statement;
 
 public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
 
-    private static String ARCHIVE_MESSAGE = "There must be exactly one no-arg static method which returns JavaArchive with annotation @SeparatedClassPath defined";
+    private static String ARCHIVE_MESSAGE =
+        "There must be exactly one no-arg static method which returns JavaArchive with annotation @SeparatedClassPath defined";
 
     private static Logger log = Logger.getLogger(SeparatedClassloaderRunner.class.getName());
 
@@ -122,7 +123,7 @@ public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
         try {
             Object result = classPath.get(0).invoke(null);
             if (result instanceof JavaArchive) {
-                archives = new JavaArchive[] { (JavaArchive) result };
+                archives = new JavaArchive[] {(JavaArchive) result};
             } else {
                 archives = (JavaArchive[]) result;
             }
@@ -151,7 +152,8 @@ public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private static ClassLoader getSeparatedClassLoader(JavaArchive[] archives, Class<?> testClass) throws InitializationError {
+    private static ClassLoader getSeparatedClassLoader(JavaArchive[] archives, Class<?> testClass)
+        throws InitializationError {
         try {
             ClassLoader bootstrapClassLoader = ClassLoaderUtils.getBootstrapClassLoader();
 
@@ -186,7 +188,7 @@ public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
         try {
 
             Class<? extends Annotation> testAnnotation = (Class<? extends Annotation>) classLoader.loadClass(Test.class
-                    .getName());
+                .getName());
             return getTestClass().getAnnotatedMethods(testAnnotation);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);

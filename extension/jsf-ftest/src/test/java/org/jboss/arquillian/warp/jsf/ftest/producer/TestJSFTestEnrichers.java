@@ -58,11 +58,11 @@ public class TestJSFTestEnrichers {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
-                .addClasses(FacesBean.class)
-                .addAsWebResource(new File("src/main/webapp/index.xhtml"))
-                .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+            .addClasses(FacesBean.class)
+            .addAsWebResource(new File("src/main/webapp/index.xhtml"))
+            .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
     @Test
@@ -71,23 +71,24 @@ public class TestJSFTestEnrichers {
             .initiate(new Activity() {
                 public void perform() {
                     browser.navigate().to(contextPath + "index.jsf");
-                }})
+                }
+            })
             .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
+                         private static final long serialVersionUID = 1L;
 
-                @ManagedProperty("#{facesBean}")
-                FacesBean managedProperty;
+                         @ManagedProperty("#{facesBean}")
+                         FacesBean managedProperty;
 
-                @BeforePhase(Phase.RESTORE_VIEW)
-                public void testFacesBeanIsResolvedBeforeRestoringView() {
-                    assertEquals(managedProperty.getPhase(), PhaseId.RESTORE_VIEW);
-                }
+                         @BeforePhase(Phase.RESTORE_VIEW)
+                         public void testFacesBeanIsResolvedBeforeRestoringView() {
+                             assertEquals(managedProperty.getPhase(), PhaseId.RESTORE_VIEW);
+                         }
 
-                @AfterPhase(Phase.RENDER_RESPONSE)
-                public void testFacesBeanWasResolvedAfterRenderingResponse() {
-                    assertEquals(managedProperty.getPhase(), PhaseId.RENDER_RESPONSE);
-                }
-            }
-        );
+                         @AfterPhase(Phase.RENDER_RESPONSE)
+                         public void testFacesBeanWasResolvedAfterRenderingResponse() {
+                             assertEquals(managedProperty.getPhase(), PhaseId.RENDER_RESPONSE);
+                         }
+                     }
+            );
     }
 }

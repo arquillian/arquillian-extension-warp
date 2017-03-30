@@ -27,11 +27,11 @@ import org.jboss.arquillian.warp.WarpProperties;
  * <p>
  * The point of synchronization of response finishing.
  * </p>
- *
+ * <p>
  * <p>
  * The expected order of calling methods:
  * </p>
- *
+ * <p>
  * <ul>
  * <li>{@link #advertise()} - advertizes incoming Warp activity</li>
  * <li>{@link #close(int)} - closes Warp specification and makes it available for execution, setups number of requests to be
@@ -40,14 +40,14 @@ import org.jboss.arquillian.warp.WarpProperties;
  * <li>{@link #awaitResponses()} - waits for all request to be finished (run parallely to {@link #finishOneResponse()} calls)</li>
  * </ul>
  *
- *
  * @author Lukas Fryc
  */
 public class SynchronizationPoint {
 
     private static final long THREAD_SLEEP = 50;
 
-    private final long WAIT_TIMEOUT_MILISECONDS = Long.parseLong(System.getProperty(WarpProperties.SYNCHRONIZATION_TIMEOUT,
+    private final long WAIT_TIMEOUT_MILISECONDS =
+        Long.parseLong(System.getProperty(WarpProperties.SYNCHRONIZATION_TIMEOUT,
             "5000"));
     private final long NUMBER_OF_WAIT_LOOPS = WAIT_TIMEOUT_MILISECONDS / THREAD_SLEEP;
 

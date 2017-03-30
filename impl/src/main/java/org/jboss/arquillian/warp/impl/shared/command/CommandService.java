@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp.impl.shared.command;
 
 /**
  * Performs a command remotely.
- *
+ * <p>
  * The object on the client side should be enriched with remote injection subjects (enriched fields should use transient to be
  * serializable).
  *

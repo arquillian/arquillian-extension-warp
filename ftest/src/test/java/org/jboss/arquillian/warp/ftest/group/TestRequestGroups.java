@@ -59,9 +59,9 @@ public class TestRequestGroups {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test(expected = MultipleGroupsPerRequestException.class)
@@ -73,13 +73,13 @@ public class TestRequestGroups {
                 }
             })
             .group(1)
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
-                })
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
+            })
             .group(2)
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
-                })
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
+            })
             .execute();
     }
 
@@ -93,15 +93,15 @@ public class TestRequestGroups {
                 }
             })
             .group(1)
-                .observe(request().uri().endsWith("index.html").index(1))
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
-                })
+            .observe(request().uri().endsWith("index.html").index(1))
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
+            })
             .group(2)
-                .observe(request().uri().endsWith("index.html").index(2))
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
-                })
+            .observe(request().uri().endsWith("index.html").index(2))
+            .inspect(new Inspection() {
+                private static final long serialVersionUID = 1L;
+            })
             .execute();
 
         WarpGroupResult group = result.getGroup(1);

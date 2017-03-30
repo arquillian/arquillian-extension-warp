@@ -16,9 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.event;
 
-
 public interface FilterResponse<T> {
 
     T getResponse();
-
 }

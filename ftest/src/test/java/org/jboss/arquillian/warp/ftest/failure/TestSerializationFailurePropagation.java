@@ -59,10 +59,10 @@ public class TestSerializationFailurePropagation {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap
-                .create(WebArchive.class, "test.war")
-                .addClass(TestingServlet.class)
-                .addAsWebResource(new File("src/main/webapp/index.html"))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .create(WebArchive.class, "test.war")
+            .addClass(TestingServlet.class)
+            .addAsWebResource(new File("src/main/webapp/index.html"))
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -77,18 +77,19 @@ public class TestSerializationFailurePropagation {
                         } catch (IOException e) {
                         }
                         fail("the enrichment exception should be reported");
-                    }})
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
-
-                    private Object payload = new NonSerializableObject();
-
-                    @BeforeServlet
-                    public void beforeServlet() {
-                        fail("the inspection should never reach the server");
                     }
-                }
-            );
+                })
+                .inspect(new Inspection() {
+                             private static final long serialVersionUID = 1L;
+
+                             private Object payload = new NonSerializableObject();
+
+                             @BeforeServlet
+                             public void beforeServlet() {
+                                 fail("the inspection should never reach the server");
+                             }
+                         }
+                );
             fail("the test should fail to serialize object");
         } catch (ClientWarpExecutionException e) {
             assertThat(e.getMessage(), containsString(NotSerializableException.class.getName()));
@@ -107,18 +108,19 @@ public class TestSerializationFailurePropagation {
                         } catch (IOException e) {
                         }
                         fail("the enrichment exception should be reported");
-                    }})
-                .inspect(new Inspection() {
-                    private static final long serialVersionUID = 1L;
-
-                    private Object payload;
-
-                    @BeforeServlet
-                    public void beforeServlet() {
-                        payload = new NonSerializableObject();
                     }
-                }
-            );
+                })
+                .inspect(new Inspection() {
+                             private static final long serialVersionUID = 1L;
+
+                             private Object payload;
+
+                             @BeforeServlet
+                             public void beforeServlet() {
+                                 payload = new NonSerializableObject();
+                             }
+                         }
+                );
             fail("the test should fail to serialize object");
         } catch (ServerWarpExecutionException e) {
             assertThat(e.getMessage(), containsString(NotSerializableException.class.getName()));

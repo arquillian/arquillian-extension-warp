@@ -52,7 +52,7 @@ public class HttpRequestProcessor {
     private InstanceProducer<ResponsePayload> responsePayload;
 
     public void processHttpRequest(@Observes ProcessHttpRequest event, ServiceLoader services, HttpServletRequest request,
-            HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         // setup responsePayload with temporary serialId before requestPayload is de-serialized
         responsePayload.set(new ResponsePayload(RequestPayload.FAILURE_SERIAL_ID));
@@ -68,7 +68,6 @@ public class HttpRequestProcessor {
             requestPayload.set(p);
 
             processWarpRequest.fire(new ProcessWarpRequest());
-
         } else {
             filterChain.doFilter(request, response);
         }

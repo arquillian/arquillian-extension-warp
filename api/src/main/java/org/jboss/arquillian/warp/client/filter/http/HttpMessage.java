@@ -37,7 +37,6 @@ public interface HttpMessage {
      * value is returned.
      *
      * @return the header value or {@code null} if there is no such header
-     *
      */
     String getHeader(String name);
 
@@ -45,7 +44,7 @@ public interface HttpMessage {
      * Returns the header values with the specified header name.
      *
      * @return the {@link List} of header values.  An empty list if there is no
-     *         such header.
+     * such header.
      */
     List<String> getHeaders(String name);
 
@@ -53,7 +52,7 @@ public interface HttpMessage {
      * Returns the all header names and values that this message contains.
      *
      * @return the {@link List} of the header name-value pairs.  An empty list
-     *         if there is no header in this message.
+     * if there is no header in this message.
      */
     List<Map.Entry<String, String>> getHeaders();
 

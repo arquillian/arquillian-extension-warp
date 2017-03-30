@@ -32,7 +32,7 @@ public final class URLUtils {
     /**
      * Use URL context and one or more relocations to build end URL.
      *
-     * @param context first URL used like a context root for all relocation changes
+     * @param context     first URL used like a context root for all relocation changes
      * @param relocations array of relocation URLs
      * @return end url after all changes made on context with relocations
      * @throws AssertionError when context or some of relocations are malformed URLs
@@ -48,7 +48,7 @@ public final class URLUtils {
     /**
      * Use URL context and one or more relocations to build end URL.
      *
-     * @param context first URL used like a context root for all relocation changes
+     * @param context     first URL used like a context root for all relocation changes
      * @param relocations array of relocation URLs
      * @return end url after all changes made on context with relocations
      * @throws AssertionError when context or some of relocations are malformed URLs

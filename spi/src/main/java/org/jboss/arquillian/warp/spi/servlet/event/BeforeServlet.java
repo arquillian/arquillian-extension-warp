@@ -29,11 +29,11 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
  * <p>
  * The lifecycle event which comes with {@link org.jboss.arquillian.warp.servlet.BeforeServlet} verification execution.
  * </p>
- *
+ * <p>
  * <p>
  * If you observe this event, Warp services are fully initialized and you should have access to them using {@link Inject}.
  * </p>
- *
+ * <p>
  * <p>
  * If you want to observe event right after request enters Warp servlet filter, observe {@link BeforeRequest} event instead.
  * </p>
@@ -45,12 +45,11 @@ public class BeforeServlet extends WarpLifecycleEvent {
     @Override
     public List<Annotation> getQualifiers() {
         return Arrays.asList((Annotation) new org.jboss.arquillian.warp.servlet.BeforeServlet() {
-                        @Override
-                        public Class<? extends Annotation> annotationType() {
-                            return org.jboss.arquillian.warp.servlet.BeforeServlet.class;
-                        }
-                    }
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return org.jboss.arquillian.warp.servlet.BeforeServlet.class;
+                }
+            }
         );
     }
-
 }

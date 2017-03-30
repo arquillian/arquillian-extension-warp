@@ -23,6 +23,7 @@ import org.jboss.arquillian.warp.impl.utils.Rethrow;
 
 /**
  * Performs commands on the client
+ *
  * @author Lukas Fryc
  */
 public class CommandServiceOnServer implements CommandService {
@@ -37,21 +38,19 @@ public class CommandServiceOnServer implements CommandService {
 
         long timeoutTime = System.currentTimeMillis() + TIMEOUT;
         while (timeoutTime > System.currentTimeMillis()) {
-           CommandPayload responsePayload = CommandBusOnServer.getEvents().get(currentId);
-           if (responsePayload != null && responsePayload.isExecuted()) {
-               if (responsePayload.getThrowable() != null) {
-                   Rethrow.asUnchecked(responsePayload.getThrowable());
-               }
-               return (T) responsePayload.getCommand();
-           }
-           try {
-              Thread.sleep(100);
-           }
-           catch (Exception e) {
-              throw new RuntimeException(e);
-           }
+            CommandPayload responsePayload = CommandBusOnServer.getEvents().get(currentId);
+            if (responsePayload != null && responsePayload.isExecuted()) {
+                if (responsePayload.getThrowable() != null) {
+                    Rethrow.asUnchecked(responsePayload.getThrowable());
+                }
+                return (T) responsePayload.getCommand();
+            }
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         throw new RuntimeException("No command response within timeout of " + TIMEOUT + " ms.");
     }
-
 }

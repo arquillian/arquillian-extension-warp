@@ -30,5 +30,4 @@ public class MultipleGroupsPerRequestException extends ClientWarpExecutionExcept
     public MultipleGroupsPerRequestException(String requestUri) {
         super("There can be at most 1 matching group per request: " + requestUri);
     }
-
 }

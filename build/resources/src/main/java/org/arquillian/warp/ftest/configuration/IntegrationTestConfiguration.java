@@ -33,6 +33,7 @@ public class IntegrationTestConfiguration implements DroneConfiguration<Integrat
     private Boolean debug;
 
     private boolean containerInstalledFromDistribution = false;
+
     /**
      * Add JSF to the WebArchive for support of plain Servlet containers (Tomcat, Jetty, etc.)
      */
@@ -113,8 +114,8 @@ public class IntegrationTestConfiguration implements DroneConfiguration<Integrat
      * , java.lang.Class)
      */
     @Override
-    public IntegrationTestConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+    public IntegrationTestConfiguration configure(ArquillianDescriptor descriptor,
+        Class<? extends Annotation> qualifier) {
         return ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
     }
-
 }
