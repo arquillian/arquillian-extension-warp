@@ -182,6 +182,9 @@
                             <validHeader>licences/warp-license-header-2012.txt</validHeader>
                         </validHeaders>
                         <skipExistingHeaders>true</skipExistingHeaders>
+                        <mapping>
+                            <java>SLASHSTAR_STYLE</java>
+                        </mapping>
                     </configuration>
                     <executions>
                         <execution>
