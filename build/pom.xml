@@ -157,9 +157,9 @@
                     </dependencies>
                 </plugin>
                 <plugin>
-                    <groupId>com.mycila.maven-license-plugin</groupId>
-                    <artifactId>maven-license-plugin</artifactId>
-                    <version>1.9.0</version>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>3.0</version>
                     <configuration>
                         <basedir>${basedir}</basedir>
                         <header>licences/warp-license-header.txt</header>
@@ -175,11 +175,10 @@
                             <exclude>.gitignore</exclude>
                         </excludes>
                         <properties>
-                            <year>2013</year>
+                            <year>^\d{4}$</year>
                         </properties>
                         <validHeaders>
                             <validHeader>licences/apache-commons-codec.txt</validHeader>
-                            <validHeader>licences/warp-license-header-2012.txt</validHeader>
                         </validHeaders>
                         <skipExistingHeaders>true</skipExistingHeaders>
                         <mapping>
