@@ -48,7 +48,7 @@ public class WarpSynchronizationException extends ClientWarpExecutionException {
         private WarpContext context;
         private StringBuilder message = new StringBuilder();
 
-        public MessageGenerator(WarpContext context) {
+        MessageGenerator(WarpContext context) {
             this.context = context;
         }
 

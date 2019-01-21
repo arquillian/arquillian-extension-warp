@@ -95,7 +95,7 @@ public class DefaultMethodMatcherBuilder extends AbstractMatcherFilterBuilder
          *
          * @param matcher the http method matcher
          */
-        public MethodMatcherRequestFilter(Matcher<HttpMethod> matcher) {
+        MethodMatcherRequestFilter(Matcher<HttpMethod> matcher) {
 
             this.matcher = matcher;
         }

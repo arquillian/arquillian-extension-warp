@@ -48,7 +48,7 @@ public class TestSerializationUtils {
 
         private String payload;
 
-        public CustomObject(String payload) {
+        CustomObject(String payload) {
             this.payload = payload;
         }
     }

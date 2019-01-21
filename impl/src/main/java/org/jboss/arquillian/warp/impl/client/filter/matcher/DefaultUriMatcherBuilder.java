@@ -194,7 +194,7 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder
          *
          * @param matcher the http method matcher
          */
-        public UriMatcherRequestFilter(Matcher<String> matcher) {
+        UriMatcherRequestFilter(Matcher<String> matcher) {
 
             this.matcher = matcher;
         }
