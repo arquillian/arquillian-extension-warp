@@ -44,7 +44,7 @@ public class TooManyRequestsException extends ClientWarpExecutionException {
         private Request request;
         private StringBuilder message = new StringBuilder();
 
-        public MessageGenerator(WarpGroup context, Request request) {
+        MessageGenerator(WarpGroup context, Request request) {
             this.group = context;
             this.request = request;
         }

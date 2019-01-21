@@ -199,7 +199,7 @@ public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
 
         private Statement[] statements;
 
-        public ComposedStatement(Statement... statements) {
+        ComposedStatement(Statement... statements) {
             this.statements = statements;
         }
 

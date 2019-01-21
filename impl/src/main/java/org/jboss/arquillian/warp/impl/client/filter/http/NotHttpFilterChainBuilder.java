@@ -67,7 +67,7 @@ public class NotHttpFilterChainBuilder implements HttpFilterChainBuilder<HttpFil
          *
          * @param filter the filter instance
          */
-        public NotHttpRequestFilter(RequestFilter<HttpRequest> filter) {
+        NotHttpRequestFilter(RequestFilter<HttpRequest> filter) {
 
             this.filter = filter;
         }

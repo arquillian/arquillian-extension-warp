@@ -177,7 +177,7 @@ public class DefaultHttpFilterBuilder implements HttpFilterChainBuilder<HttpFilt
         private final int originalCount;
         private AtomicInteger count;
 
-        public IndexRequestFilter(int count) {
+        IndexRequestFilter(int count) {
             this.originalCount = count;
             this.count = new AtomicInteger(count);
         }
