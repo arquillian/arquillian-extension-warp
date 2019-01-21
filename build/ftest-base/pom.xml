@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-warp-build</artifactId>
-    <version>1.0.0.Beta1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -25,9 +24,9 @@
     <arquillian.drone.reusable>false</arquillian.drone.reusable>
     <arquillian.richfaces.servletContainerSetup>false</arquillian.richfaces.servletContainerSetup>
     <arquillian.richfaces.jsfImplementation>org.glassfish:javax.faces</arquillian.richfaces.jsfImplementation>
-    <arquillian.container.home/>
-    <arquillian.container.distribution/>
-    <arquillian.container.configuration/>
+    <arquillian.container.home />
+    <arquillian.container.distribution />
+    <arquillian.container.configuration />
     <arquillian.container.uninstall>true</arquillian.container.uninstall>
     <arquillian.container.vmargs>-Xmx768m -XX:MaxPermSize=256m -Darquillian.debug=${arquillian.debug}
     </arquillian.container.vmargs>
