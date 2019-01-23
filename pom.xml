@@ -59,8 +59,10 @@
     <version.arquillian_drone>2.0.0.Beta1</version.arquillian_drone>
     <version.arquillian_jacoco>1.0.0.Alpha10</version.arquillian_jacoco>
 
-    <version.littleproxy>1.1.2</version.littleproxy>
     <version.javassist>3.12.1.GA</version.javassist>
+    <version.littleproxy>1.1.2</version.littleproxy>
+    <version.apache_httpcomponents>4.4.11</version.apache_httpcomponents>
+    <version.commons_codec>1.11</version.commons_codec>
 
     <!-- Tests -->
     <version.junit>4.12</version.junit>

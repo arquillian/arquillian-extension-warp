@@ -74,11 +74,22 @@
         <version>${version.shrinkwrap_resolver}</version>
       </dependency>
 
-      <!-- LittleProxy -->
       <dependency>
         <groupId>org.littleshoot</groupId>
         <artifactId>littleproxy</artifactId>
         <version>${version.littleproxy}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${version.apache_httpcomponents}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${version.commons_codec}</version>
       </dependency>
 
       <!-- Javassist -->

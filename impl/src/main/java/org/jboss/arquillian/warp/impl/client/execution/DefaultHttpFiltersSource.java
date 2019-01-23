@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -62,7 +61,7 @@ public class DefaultHttpFiltersSource extends HttpFiltersSourceAdapter {
             private HttpRequest request;
 
             @Override
-            public HttpResponse requestPost(HttpObject httpObject) {
+            public HttpResponse proxyToServerRequest(HttpObject httpObject) {
 
                 final WarpContext context = WarpContextStore.get();
 
@@ -93,7 +92,7 @@ public class DefaultHttpFiltersSource extends HttpFiltersSourceAdapter {
             }
 
             @Override
-            public HttpObject responsePost(HttpObject httpObject) {
+            public HttpObject proxyToClientResponse(HttpObject httpObject) {
 
                 try {
                     if (this.request instanceof HttpRequest && httpObject instanceof HttpResponse) {
