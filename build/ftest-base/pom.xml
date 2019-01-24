@@ -14,7 +14,7 @@
 
   <properties>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
-    <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.0.0-alpha-4</version.shrinkwrap.resolver>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
     <version.arquillian.glassfish40>1.0.2</version.arquillian.glassfish40>
 
