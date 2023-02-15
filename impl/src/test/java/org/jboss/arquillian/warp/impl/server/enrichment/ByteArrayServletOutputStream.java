@@ -31,7 +31,7 @@ public class ByteArrayServletOutputStream extends ServletOutputStream {
         baos.write(b);
     }
 
-    private byte toByteArray()[] {
+    private byte[] toByteArray() {
         return baos.toByteArray();
     }
 
