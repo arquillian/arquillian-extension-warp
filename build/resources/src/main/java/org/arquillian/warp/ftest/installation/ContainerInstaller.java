@@ -88,6 +88,10 @@ public class ContainerInstaller {
         configuration.get().setContainerInstalledFromDistribution(true);
     }
 
+    /*
+     * Will only be called if the build\ftest-base\pom.xml property "arquillian.container.configuration" contains the id of a maven artifact.
+     * Probably only valid for managed containers, but not remote containers.
+     */
     public void unpackContainerConfigurationFiles(@Observes ConfigureContainer event) {
         Validate.notNull(configuration, "fundamental test configuration is not setup");
 
@@ -100,7 +104,7 @@ public class ContainerInstaller {
         Validate.notNull(configuration.get().getContainerHome(), "container home must be set");
         File containerHome = new File(configuration.get().getContainerHome());
 
-        InputStream artifactStream = Maven.resolver().resolve(configurationFiles).withClassPathResolution(false)
+        InputStream artifactStream = Maven.configureResolver().withClassPathResolution(false).resolve(configurationFiles)
             .withoutTransitivity().asSingleInputStream();
         unzip(artifactStream, containerHome, true);
 
@@ -118,6 +122,9 @@ public class ContainerInstaller {
 
             if (containerHome.exists()) {
                 FileUtils.deleteQuietly(containerHome);
+                if (FileUtils.deleteQuietly(containerHome) == false) {
+                    log.severe (String.format("could not delete container from '%s'", containerHome.getAbsolutePath()));
+                }
             }
         }
     }
