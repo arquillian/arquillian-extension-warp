@@ -14,7 +14,6 @@
 
   <properties>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
-    <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
     <version.arquillian.glassfish40>1.0.2</version.arquillian.glassfish40>
 
@@ -40,8 +39,27 @@
     <arquillian.launch.glassfish40>false</arquillian.launch.glassfish40>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-depchain</artifactId>
+      <version>${version.shrinkwrap.resolver}</version>
+      <scope>test</scope>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
+
   <dependencyManagement>
     <dependencies>
+      <!--Should not be necessary (https://github.com/shrinkwrap/resolver), but is required here. 
+          Maybe because of a conflict with an older Arquillian version? -->
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>${version.shrinkwrap.resolver}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-build</artifactId>
@@ -58,13 +76,6 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-bom</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
         <artifactId>shrinkwrap-descriptors-bom</artifactId>
         <version>${version.shrinkwrap.descriptors}</version>
@@ -72,31 +83,10 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-depchain</artifactId>
-        <type>pom</type>
-        <version>${version.shrinkwrap.resolver}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
         <artifactId>shrinkwrap-descriptors-depchain</artifactId>
         <type>pom</type>
         <version>${version.shrinkwrap.descriptors}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-api</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
