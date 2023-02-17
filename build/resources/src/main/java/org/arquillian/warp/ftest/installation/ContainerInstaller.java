@@ -89,8 +89,8 @@ public class ContainerInstaller {
     }
 
     /*
-     * Will only be called if the build\ftest-base\pom.xml property "arquillian.container.configuration" contains the id of a maven artifact.
-     * Probably only valid for managed containers, but not remote containers.
+     * Will unpack the maven artifact declared in the build\ftest-base\pom.xml property "arquillian.container.configuration".
+     * Probably only valid for managed containers, but not for remote containers.
      */
     public void unpackContainerConfigurationFiles(@Observes ConfigureContainer event) {
         Validate.notNull(configuration, "fundamental test configuration is not setup");
@@ -121,7 +121,6 @@ public class ContainerInstaller {
             log.info(String.format("The container will be uninstalled from '%s'", containerHome.getAbsolutePath()));
 
             if (containerHome.exists()) {
-                FileUtils.deleteQuietly(containerHome);
                 if (FileUtils.deleteQuietly(containerHome) == false) {
                     log.severe (String.format("could not delete container from '%s'", containerHome.getAbsolutePath()));
                 }
