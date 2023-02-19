@@ -112,7 +112,7 @@ public class DefaultHttpParameterMatcherBuilder extends AbstractMatcherFilterBui
      * {@inheritDoc}
      */
     @Override
-    public HttpParameterMatcherBuilder not() {
+    public HttpParameterMatcherBuilder<HttpFilterBuilder> not() {
 
         return new DefaultHttpParameterMatcherBuilder(new NotHttpFilterChainBuilder(getFilterChainBuilder()));
     }

@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.impl.server.event.EnrichHttpResponse;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingFinished;
 import org.jboss.arquillian.warp.impl.server.event.RequestProcessingStarted;
@@ -62,7 +61,7 @@ public class WarpRequestProcessor {
         try {
             executeWarp.fire(new ExecuteWarp());
         } catch (Throwable e) {
-            testResult.fire(new TestResult(Status.FAILED, e));
+            testResult.fire(TestResult.failed(e));
         }
 
         if (responsePayload.getTestResult() != null) {
@@ -73,7 +72,7 @@ public class WarpRequestProcessor {
                 }
             }
         } else {
-            responsePayload.setTestResult(new TestResult(Status.PASSED));
+            responsePayload.setTestResult(TestResult.passed());
         }
 
         try {

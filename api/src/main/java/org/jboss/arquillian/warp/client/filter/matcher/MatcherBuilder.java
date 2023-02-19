@@ -19,7 +19,7 @@ package org.jboss.arquillian.warp.client.filter.matcher;
 /**
  * A base interface for all matcher builders.
  */
-public interface MatcherBuilder<T extends MatcherBuilder> {
+public interface MatcherBuilder<T extends MatcherBuilder<T>> {
 
     /**
      * Creates negated matcher.

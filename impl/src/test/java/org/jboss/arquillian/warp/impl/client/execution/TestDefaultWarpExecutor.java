@@ -25,7 +25,6 @@ import java.util.List;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ActivityException;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
@@ -74,7 +73,7 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
     @Test
     public void when_client_activity_fails_and_request_result_is_failure_then_server_failure_should_be_reported() {
         // given
-        TestResult result = new TestResult(Status.FAILED, new RuntimeException("server"));
+        TestResult result = TestResult.failed(new RuntimeException("server"));
         when(warpContext.getFirstNonSuccessfulResult()).thenReturn(result);
 
         doThrow(new RuntimeException("client")).when(activity).perform();
@@ -94,7 +93,7 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
     @Test
     public void when_server_activity_fails_without_client_failure_then_server_failure_should_be_reported() {
         // given
-        TestResult result = new TestResult(Status.FAILED, new RuntimeException("server"));
+        TestResult result = TestResult.failed(new RuntimeException("server"));
         when(warpContext.getFirstNonSuccessfulResult()).thenReturn(result);
 
         // when

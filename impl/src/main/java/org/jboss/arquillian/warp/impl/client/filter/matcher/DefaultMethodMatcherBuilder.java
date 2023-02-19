@@ -65,7 +65,7 @@ public class DefaultMethodMatcherBuilder extends AbstractMatcherFilterBuilder
      * {@inheritDoc}
      */
     @Override
-    public MethodMatcherBuilder not() {
+    public MethodMatcherBuilder<HttpFilterBuilder> not() {
 
         return new DefaultMethodMatcherBuilder(new NotHttpFilterChainBuilder(getFilterChainBuilder()));
     }
