@@ -36,7 +36,7 @@ public class TestResultObserver {
         throwable.printStackTrace();
 
         if (responsePayload() != null) {
-            storeFirstFailure(new TestResult(Status.FAILED, throwable));
+            storeFirstFailure(TestResult.failed(throwable));
         }
 
         // throwable must be rethrown, because Arquillian Core checks whether throwable was observed

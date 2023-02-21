@@ -19,7 +19,6 @@ package org.jboss.arquillian.warp.impl.client.transformation;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import javassist.ClassPool;
 import javassist.CtClass;
