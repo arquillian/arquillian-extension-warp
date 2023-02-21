@@ -17,7 +17,6 @@
 package org.jboss.arquillian.warp.spi.servlet.event;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

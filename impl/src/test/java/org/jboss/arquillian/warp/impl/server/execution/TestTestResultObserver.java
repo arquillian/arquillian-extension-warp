@@ -76,7 +76,7 @@ public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
     public void when_test_result_with_failure_is_observed_then_it_is_propagated_to_response_payload() {
 
         // having
-        TestResult testResult = new TestResult(Status.FAILED);
+        TestResult testResult = TestResult.failed(null);
 
         // when
         fire(testResult);
@@ -88,7 +88,7 @@ public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
     @Test
     public void when_test_result_passed_is_observed_then_it_is_ignored() {
         // having
-        TestResult testResult = new TestResult(Status.PASSED);
+        TestResult testResult = TestResult.passed();
 
         // when
         fire(testResult);
@@ -100,8 +100,8 @@ public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
     @Test
     public void when_two_failed_test_results_are_observed_then_first_one_is_saved_in_response_payload() {
         // having
-        TestResult testResult1 = new TestResult(Status.FAILED);
-        TestResult testResult2 = new TestResult(Status.FAILED);
+        TestResult testResult1 = TestResult.failed(null);
+        TestResult testResult2 = TestResult.failed(null);
 
         // when
         fire(testResult1);
@@ -116,7 +116,7 @@ public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
 
         // having
         TestResultSetup setup = new TestResultSetup();
-        setup.testResult = new TestResult(Status.FAILED);
+        setup.testResult = TestResult.failed(null);
 
         // when
         fire(setup);

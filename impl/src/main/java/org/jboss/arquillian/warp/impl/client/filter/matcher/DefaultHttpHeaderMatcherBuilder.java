@@ -119,7 +119,7 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
      * {@inheritDoc}
      */
     @Override
-    public HttpHeaderMatcherBuilder not() {
+    public HttpHeaderMatcherBuilder<HttpFilterBuilder> not() {
 
         return new DefaultHttpHeaderMatcherBuilder(new NotHttpFilterChainBuilder(getFilterChainBuilder()));
     }

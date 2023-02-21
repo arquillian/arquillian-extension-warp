@@ -174,7 +174,7 @@ public class DefaultUriMatcherBuilder extends AbstractMatcherFilterBuilder
      * {@inheritDoc}
      */
     @Override
-    public UriMatcherBuilder not() {
+    public UriMatcherBuilder<HttpFilterBuilder> not() {
 
         return new DefaultUriMatcherBuilder(new NotHttpFilterChainBuilder(getFilterChainBuilder()));
     }
