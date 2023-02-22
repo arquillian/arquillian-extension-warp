@@ -157,6 +157,14 @@
           <artifactId>wildfly-arquillian-container-managed</artifactId>
           <version>${version.wildfly}</version>
           <scope>test</scope>
+          <!--Workaround for error "Missing artifact sun.jdk:jconsole:jar:jdk" in Eclipse.
+              Seems not to be needed for the "wildfly-remote-8-0" profile. -->
+          <exclusions>
+            <exclusion>
+              <groupId>sun.jdk</groupId>
+              <artifactId>jconsole</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
       </dependencies>
     </profile>
