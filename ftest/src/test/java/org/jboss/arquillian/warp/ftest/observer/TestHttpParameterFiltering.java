@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp.ftest.observer;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.net.URL;
