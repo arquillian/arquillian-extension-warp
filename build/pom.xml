@@ -14,6 +14,16 @@
   <dependencyManagement>
     <dependencies>
 
+      <!-- ShrinkWrap -->
+      <!--First declare the shrinkwrap-resolver bom to override version 2.2.6 pulled from elsewhere -->
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>${version.shrinkwrap.resolver}</version>
+        <scope>import</scope>
+        <type>pom</type>
+     </dependency>
+
       <!-- Arquillian dependencies -->
       <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
@@ -55,23 +65,6 @@
         <version>${version.jboss_spec}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-
-      <!-- ShrinkWrap -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-api</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
       </dependency>
 
       <!-- LittleProxy -->

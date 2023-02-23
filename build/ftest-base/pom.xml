@@ -39,27 +39,8 @@
     <arquillian.launch.glassfish40>false</arquillian.launch.glassfish40>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-depchain</artifactId>
-      <version>${version.shrinkwrap.resolver}</version>
-      <scope>test</scope>
-      <type>pom</type>
-    </dependency>
-  </dependencies>
-
   <dependencyManagement>
     <dependencies>
-      <!--Should not be necessary (https://github.com/shrinkwrap/resolver), but is required here. 
-          Maybe because of a conflict with an older Arquillian version? -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-bom</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-build</artifactId>
