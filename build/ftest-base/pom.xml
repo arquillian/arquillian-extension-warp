@@ -41,23 +41,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!--Should not be necessary (https://github.com/shrinkwrap/resolver), but is required here. 
-          Otherwise an error "java.lang.ClassNotFoundException: org.jboss.shrinkwrap.resolver.spi.format.PathFormatProcessor" will occur.
-          Maybe because of a conflict with an older Arquillian version? -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-bom</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-depchain</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-        <scope>test</scope>
-        <type>pom</type>
-      </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-warp-build</artifactId>
