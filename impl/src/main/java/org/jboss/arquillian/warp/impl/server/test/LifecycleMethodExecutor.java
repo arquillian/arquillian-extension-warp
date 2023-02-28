@@ -46,6 +46,11 @@ public class LifecycleMethodExecutor implements TestMethodExecutor {
     }
 
     @Override
+    public String getMethodName() {
+      return method.getName();
+    }
+
+    @Override
     public Object getInstance() {
         return instance;
     }
