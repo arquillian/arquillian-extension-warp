@@ -18,6 +18,8 @@ package org.jboss.arquillian.warp.jsf.ftest.lifecycle;
 
 import java.io.File;
 import java.net.URL;
+import java.time.Duration;
+import java.util.function.Function;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -42,8 +44,6 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.google.common.base.Predicate;
 
 @WarpTest
 @RunAsClient
@@ -159,9 +159,9 @@ public class TestJsfLifecycle {
                 }
             });
 
-        new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
+        new WebDriverWait(browser, Duration.ofSeconds(5)).until(new Function<WebDriver, Boolean>() {
             @Override
-            public boolean apply(WebDriver browser) {
+            public Boolean apply(WebDriver browser) {
                 WebElement output = browser.findElement(By.id("helloWorldJsf:output"));
                 try {
                     return output.getText().contains("JohnX");

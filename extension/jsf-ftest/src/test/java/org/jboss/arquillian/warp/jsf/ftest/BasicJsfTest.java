@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URL;
+import java.time.Duration;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 
@@ -46,8 +48,6 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.google.common.base.Predicate;
 
 @RunWith(Arquillian.class)
 @WarpTest
@@ -125,9 +125,9 @@ public class BasicJsfTest {
                      }
             );
 
-        new WebDriverWait(browser, 5).until(new Predicate<WebDriver>() {
+        new WebDriverWait(browser, Duration.ofSeconds(5)).until(new Function<WebDriver, Boolean>() {
             @Override
-            public boolean apply(WebDriver browser) {
+            public Boolean apply(WebDriver browser) {
                 WebElement output = browser.findElement(By.id("helloWorldJsf:output"));
                 try {
                     return output.getText().contains("JohnX");

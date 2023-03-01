@@ -56,7 +56,7 @@
     <!-- Arquillian -->
     <version.servlet_api>3.0.1</version.servlet_api>
     <version.arquillian_core>1.6.0.Final</version.arquillian_core>
-    <version.arquillian_drone>2.0.0.Beta1</version.arquillian_drone>
+    <version.arquillian_drone>3.0.0-alpha.7</version.arquillian_drone>
     <version.arquillian_jacoco>1.0.0.Alpha10</version.arquillian_jacoco>
 
     <version.littleproxy>1.0.0-beta5</version.littleproxy>
