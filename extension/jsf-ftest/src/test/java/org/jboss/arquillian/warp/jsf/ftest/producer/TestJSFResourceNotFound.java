@@ -51,7 +51,7 @@ public class TestJSFResourceNotFound {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
-            .addAsWebInfResource(new StringAsset("<faces-config></faces-config>"), "faces-config.xml");
+            .addAsWebInfResource(new StringAsset("<faces-config version=\"2.0\" xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd\"></faces-config>"), "faces-config.xml");
     }
 
     @Test
