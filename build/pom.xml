@@ -198,6 +198,13 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${version.jacoco}</version>
+                    <configuration>
+                        <excludes>
+                            <!--Avoid error messages "org.jacoco.agent.rt.internal_1f1cc91.asm.MethodTooLargeException: Method too large" in classes in packages listed here: -->
+                            <exclude>com/gargoylesoftware/htmlunit/css/**</exclude>
+                            <exclude>com/gargoylesoftware/css/parser/javacc/**</exclude>
+                        </excludes>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>prepare-agent</id>
