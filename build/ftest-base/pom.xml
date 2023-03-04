@@ -32,7 +32,7 @@
     <arquillian.contaner.maxTestClassesBeforeRestart>50</arquillian.contaner.maxTestClassesBeforeRestart>
 
     <!-- Container Selection -->
-    <arquillian.launch.wildfly261>true</arquillian.launch.wildfly261>
+    <arquillian.launch.wildfly>true</arquillian.launch.wildfly>
     <arquillian.launch.tomcat6>false</arquillian.launch.tomcat6>
     <arquillian.launch.tomcat7>false</arquillian.launch.tomcat7>
     <arquillian.launch.tomee16>false</arquillian.launch.tomee16>
@@ -118,16 +118,16 @@
     <!-- Containers -->
 
     <profile>
-      <id>wildfly-managed-26-1</id>
+      <id>wildfly-managed</id>
       <activation>
         <activeByDefault>true</activeByDefault>
         <property>
           <name>integration</name>
-          <value>wildfly261</value>
+          <value>wildfly</value>
         </property>
       </activation>
       <properties>
-        <arquillian.launch.wildfly261>true</arquillian.launch.wildfly261>
+        <arquillian.launch.wildfly>true</arquillian.launch.wildfly>
         <arquillian.container.home>${project.build.directory}/wildfly-${version.wildfly}</arquillian.container.home>
         <arquillian.container.distribution>org.wildfly:wildfly-dist:zip:${version.wildfly}
         </arquillian.container.distribution>
@@ -142,7 +142,7 @@
       </dependencies>
     </profile>
     <profile>
-      <id>wildfly-remote-26-1</id>
+      <id>wildfly-remote</id>
       <dependencies>
         <dependency>
           <groupId>org.wildfly.arquillian</groupId>

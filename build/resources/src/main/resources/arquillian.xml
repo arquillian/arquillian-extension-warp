@@ -27,7 +27,7 @@
     <!--         <property name="deploymentExportPath">target/</property> -->
   </engine>
 
-  <container qualifier="wildfly261" default="${arquillian.launch.wildfly261}">
+  <container qualifier="wildfly" default="${arquillian.launch.wildfly}">
     <configuration>
       <property name="javaVmArguments">${arquillian.container.vmargs}</property>
       <property name="jbossHome">${arquillian.container.home}</property>
