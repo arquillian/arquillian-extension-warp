@@ -6,16 +6,3 @@ updates:
     interval: daily
     time: "11:00"
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: org.jboss.as:jboss-as-arquillian-container-managed
-    versions:
-    - "> 7.1.1.Final"
-  - dependency-name: org.jboss.as:jboss-as-arquillian-container-remote
-    versions:
-    - "> 7.1.1.Final"
-  - dependency-name: org.codehaus.mojo:animal-sniffer-maven-plugin
-    versions:
-    - "1.19"
-  - dependency-name: org.jboss.arquillian.extension:arquillian-drone-bom
-    versions:
-    - 2.1.0.Beta1

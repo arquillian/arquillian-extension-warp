@@ -71,12 +71,13 @@
     <version.jboss_spec>3.0.3.Final</version.jboss_spec>
 
     <!-- Container Versions -->
-    <version.jbossas71>7.1.1.Final</version.jbossas71>
     <version.tomee16>1.7.5</version.tomee16>
     <version.glassfish40>4.0</version.glassfish40>
     <version.tomcat6>6.0.35</version.tomcat6>
     <version.tomcat7>7.0.26</version.tomcat7>
-    <version.wildfly>8.2.1.Final</version.wildfly>
+    <version.wildfly>26.1.3.Final</version.wildfly>
+    <!--Don't upgrade beyond 2.2.0.Final. 4.0.0.Alpha6 fails, and 5.0.0.Alpha6 is built with Java 11 -->
+    <version.wildfly.arquillian.container>2.2.0.Final</version.wildfly.arquillian.container>
 
     <additionalparam>-Xdoclint:none</additionalparam>
   </properties>

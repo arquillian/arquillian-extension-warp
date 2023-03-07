@@ -32,7 +32,7 @@
     <arquillian.contaner.maxTestClassesBeforeRestart>50</arquillian.contaner.maxTestClassesBeforeRestart>
 
     <!-- Container Selection -->
-    <arquillian.launch.jbossas71>false</arquillian.launch.jbossas71>
+    <arquillian.launch.wildfly>true</arquillian.launch.wildfly>
     <arquillian.launch.tomcat6>false</arquillian.launch.tomcat6>
     <arquillian.launch.tomcat7>false</arquillian.launch.tomcat7>
     <arquillian.launch.tomee16>false</arquillian.launch.tomee16>
@@ -99,7 +99,7 @@
                 <artifactItem>
                   <groupId>org.jboss.arquillian.extension</groupId>
                   <artifactId>arquillian-warp-build-resources</artifactId>
-                  <version>${version.richfaces}</version>
+                  <version>${project.version}</version>
                   <type>jar</type>
                   <overWrite>true</overWrite>
                 </artifactItem>
@@ -118,138 +118,36 @@
     <!-- Containers -->
 
     <profile>
-      <id>wildfly-managed-8-0</id>
+      <id>wildfly-managed</id>
       <activation>
         <activeByDefault>true</activeByDefault>
         <property>
           <name>integration</name>
-          <value>wildfly80</value>
+          <value>wildfly</value>
         </property>
       </activation>
       <properties>
-        <arquillian.launch.jbossas71>true</arquillian.launch.jbossas71>
+        <arquillian.launch.wildfly>true</arquillian.launch.wildfly>
         <arquillian.container.home>${project.build.directory}/wildfly-${version.wildfly}</arquillian.container.home>
         <arquillian.container.distribution>org.wildfly:wildfly-dist:zip:${version.wildfly}
         </arquillian.container.distribution>
       </properties>
       <dependencies>
         <dependency>
-          <groupId>org.wildfly</groupId>
+          <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <version>${version.wildfly}</version>
+          <version>${version.wildfly.arquillian.container}</version>
           <scope>test</scope>
-          <!--Workaround for error "Missing artifact sun.jdk:jconsole:jar:jdk" in Eclipse.
-              Seems not to be needed for the "wildfly-remote-8-0" profile. -->
-          <exclusions>
-            <exclusion>
-              <groupId>sun.jdk</groupId>
-              <artifactId>jconsole</artifactId>
-            </exclusion>
-          </exclusions>
         </dependency>
       </dependencies>
     </profile>
     <profile>
-      <id>wildfly-remote-8-0</id>
+      <id>wildfly-remote</id>
       <dependencies>
         <dependency>
-          <groupId>org.wildfly</groupId>
+          <groupId>org.wildfly.arquillian</groupId>
           <artifactId>wildfly-arquillian-container-remote</artifactId>
-          <version>${version.wildfly}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>jbossas-managed-7-1</id>
-      <activation>
-        <property>
-          <name>integration</name>
-          <value>jbossas71</value>
-        </property>
-      </activation>
-      <properties>
-        <jbossHome>${project.build.directory}/jboss-as-${version.jbossas71}</jbossHome>
-        <arquillian.launch.jbossas71>true</arquillian.launch.jbossas71>
-        <arquillian.container.home>${project.build.directory}/jboss-as-${version.jbossas71}</arquillian.container.home>
-        <arquillian.container.distribution>org.jboss.as:jboss-as-dist:zip:${version.jbossas71}
-        </arquillian.container.distribution>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-arquillian-container-managed</artifactId>
-          <version>${version.jbossas71}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>jbossas-remote-7-1</id>
-      <activation>
-        <property>
-          <name>integration</name>
-          <value>jbossas71-remote</value>
-        </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-arquillian-container-remote</artifactId>
-          <version>${version.jbossas71}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>jbosseap-managed-6-1</id>
-      <activation>
-        <property>
-          <name>integration</name>
-          <value>jbosseap61</value>
-        </property>
-      </activation>
-      <properties>
-        <version.jbosseap61>7.2.0.Alpha1-redhat-4</version.jbosseap61>
-        <arquillian.launch.jbossas71>true</arquillian.launch.jbossas71>
-        <arquillian.container.home>${project.build.directory}/jboss-eap-6.1</arquillian.container.home>
-        <arquillian.container.distribution>org.jboss.as:jboss-as-dist:zip:${version.jbosseap61}
-        </arquillian.container.distribution>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-arquillian-container-managed</artifactId>
-          <version>7.2.0.Final</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-controller-client</artifactId>
-          <version>7.2.0.Final</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>jbosseap-remote-6-1</id>
-      <activation>
-        <property>
-          <name>integration</name>
-          <value>jbosseap61-remote</value>
-        </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-arquillian-container-remote</artifactId>
-          <version>7.2.0.Final</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-controller-client</artifactId>
-          <version>7.2.0.Final</version>
+          <version>${version.wildfly.arquillian.container}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
