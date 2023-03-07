@@ -47,7 +47,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
@@ -89,6 +89,11 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_registry_contains_inspection_with_annotated_method__matching_current_lifecycle_event_then_method_is_fired() {
 
         // having
+        // Here is the reason why we use "mockito-inline": the mock maker "subclass" copies the annotations of the Inspection to the mock subclass.
+        // This would result in "LifecycleTestDriver.fireTest" calling the test methode twice (because "SecurityActions.getMethodsMatchingAllQualifiers" finds the method twice)
+        // A workaround could be to create the inspection this way:
+        // TestingInspection inspection = mock(TestingInspection.class, withSettings().withoutAnnotations());
+        // The issue does not happen with mock maker "inline".
         TestingInspection inspection = mock(TestingInspection.class);
         when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(inspection));
 
@@ -106,6 +111,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_registry_contains_two_inspection_then_all_methods_are_executed() {
 
         // having
+        // will only work with "mockito-inline", see comment in "when_registry_contains_inspection_with_annotated_method__matching_current_lifecycle_event_then_method_is_fired"
         TestingInspection inspection1 = mock(TestingInspection.class);
         TestingInspectionForMultipleInspections inspection2 = mock(TestingInspectionForMultipleInspections.class);
         when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(inspection1, inspection2));
@@ -125,6 +131,7 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
     public void when_registry_contains_inspection_with_multiple_methods_annotated_with_given_lifecycle_event_annotation_then_all_methods_are_executed() {
 
         // having
+        // will only work with "mockito-inline", see comment in "when_registry_contains_inspection_with_annotated_method__matching_current_lifecycle_event_then_method_is_fired"
         TestingInspectionForMultipleMethods inspection = mock(TestingInspectionForMultipleMethods.class);
         when(inspectionRegistry.getInspections()).thenReturn(Arrays.<Inspection>asList(inspection));
 

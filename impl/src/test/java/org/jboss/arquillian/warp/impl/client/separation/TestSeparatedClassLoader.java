@@ -33,6 +33,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.objenesis.ObjenesisStd;
+
+import net.bytebuddy.dynamic.loading.ClassInjector;
 
 @RunWith(SeparatedClassloaderRunner.class)
 public class TestSeparatedClassLoader {
@@ -43,10 +46,13 @@ public class TestSeparatedClassLoader {
             ClassLoaderUtils.class);
 
         JavaArchive mockito = ShrinkWrapUtils.getJavaArchiveFromClass(Mockito.class);
+        //Add mockito dependencies "bytebuddy" and "objenesis", otherwise "ClassNotFoundException" will be thrown when executing the test.
+        JavaArchive bytebuddy = ShrinkWrapUtils.getJavaArchiveFromClass(ClassInjector.class);
+        JavaArchive objenesis = ShrinkWrapUtils.getJavaArchiveFromClass(ObjenesisStd.class);
 
         JavaArchive junit = ShrinkWrapUtils.getJavaArchiveFromClass(Assert.class);
 
-        return new JavaArchive[] {archive, mockito, junit};
+        return new JavaArchive[] {archive, mockito, bytebuddy, objenesis, junit};
     }
 
     @Test

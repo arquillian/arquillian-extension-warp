@@ -48,11 +48,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -107,7 +108,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         when(serviceLoader.onlyOne(WarpRequestSpecifier.class)).thenReturn(requestExecutor);
         when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(inspectionSynchronizer);
         when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
-        when(serviceLoader.onlyOne(WarpRuntime.class)).thenReturn(warpRuntime);
+        lenient().when(serviceLoader.onlyOne(WarpRuntime.class)).thenReturn(warpRuntime);
         when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
