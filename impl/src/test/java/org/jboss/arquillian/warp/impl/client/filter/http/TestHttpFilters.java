@@ -46,10 +46,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -366,9 +367,9 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
         WarpContext warpContext = new WarpContextImpl();
 
         when(serviceLoader.onlyOne(WarpRequestSpecifier.class)).thenReturn(requestExecutor);
-        when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(inspectionSynchronizer);
-        when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
-        when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
+        lenient().when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(inspectionSynchronizer);
+        lenient().when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
+        lenient().when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
         when(serviceLoader.onlyOne(HttpFilterBuilder.class)).thenReturn(new DefaultHttpFilterBuilder());
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
