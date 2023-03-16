@@ -29,6 +29,11 @@ import java.io.PrintWriter;
  */
 @WebServlet("/form")
 public class FormServlet extends HttpServlet {
+    /**
+     * Eclipse requires a serialVersionUID.
+     */
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
@@ -36,7 +41,20 @@ public class FormServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         writeStart(out);
-        out.write("<form action=\"http://127.0.0.1:8080/test/form\" method=\"post\">\n");
+
+        //TomEE does not replace "127.0.0.1:8080" with the Warp proxy URL, which makes "org.jboss.arquillian.warp.ftest.http.TestResponseContainsProxyUrl" fail.
+        //But "localhost:8080" works.
+        //With WildFly, it is vice versa.
+        //So evaluate the server info:
+        //WildFly 26: "WildFly Full 26.1.3.Final (WildFly Core 18.1.2.Final) - 2.2.19.Final"
+        //TomEE 1.7.5: "Apache Tomcat (TomEE)/7.0.81 (1.7.5)"
+        String serverInfo = this.getServletContext().getServerInfo();
+        if (serverInfo.contains("TomEE") == true) {
+            out.write("<form action=\"http://localhost:8080/test/form\" method=\"post\">\n");
+        }
+        else {
+            out.write("<form action=\"http://127.0.0.1:8080/test/form\" method=\"post\">\n");
+        }
         out.write("<input type=\"submit\" id=\"submit\" />\n");
         out.write("</form>\n");
         writeEnd(out);
