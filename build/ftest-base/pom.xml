@@ -153,6 +153,11 @@
       </dependencies>
     </profile>
     <profile>
+      <!--
+        Note: to run this profile, an additional change has to be made in "extension/jsf-ftest/pom.xml".
+        Otherwise, the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" will fail.
+        See explanation there.
+      -->
       <id>tomee-managed-1-6</id>
       <activation>
         <property>
