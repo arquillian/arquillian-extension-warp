@@ -24,11 +24,28 @@
       <artifactId>cdi-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!--
+        The test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" (see detailed explanation there)
+        will fail in profiles "tomee-managed" and "tomee-remote" with this error:
+
+        javax.servlet.ServletException : null [Proxied because : Original exception caused: class java.io.InvalidClassException: javax.servlet.ServletException;
+        local class incompatible: stream classdesc serialVersionUID = 1, local class serialVersionUID = 4221302886851315160]
+
+        Workaround: replace the dependency on the servlet spec from JBoss with a dependency on "org.apache.tomcat:tomcat-servlet-api".
+      -->
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
       <artifactId>jboss-servlet-api_3.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!--
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <scope>provided</scope>
+      <version>7.0.81</version>
+    </dependency>
+    -->
     <dependency>
       <groupId>org.jboss.spec.javax.faces</groupId>
       <artifactId>jboss-jsf-api_2.1_spec</artifactId>

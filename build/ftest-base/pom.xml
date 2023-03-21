@@ -32,7 +32,7 @@
     <arquillian.contaner.maxTestClassesBeforeRestart>50</arquillian.contaner.maxTestClassesBeforeRestart>
 
     <!-- Container Selection -->
-    <arquillian.launch.wildfly>true</arquillian.launch.wildfly>
+    <arquillian.launch.wildfly>false</arquillian.launch.wildfly>
     <arquillian.launch.tomcat6>false</arquillian.launch.tomcat6>
     <arquillian.launch.tomcat7>false</arquillian.launch.tomcat7>
     <arquillian.launch.tomee16>false</arquillian.launch.tomee16>
@@ -153,6 +153,11 @@
       </dependencies>
     </profile>
     <profile>
+      <!--
+        Note: to run this profile, an additional change has to be made in "extension/jsf-ftest/pom.xml".
+        Otherwise, the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" will fail.
+        See explanation there.
+      -->
       <id>tomee-managed-1-6</id>
       <activation>
         <property>

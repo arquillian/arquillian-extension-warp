@@ -26,12 +26,12 @@ public class FailingPhaseListener implements PhaseListener {
 
     @Override
     public void afterPhase(PhaseEvent event) {
-        throw new TestingException();
+        throw new TestingException("TestingException in afterPhase");
     }
 
     @Override
     public void beforePhase(PhaseEvent event) {
-        throw new TestingException();
+        throw new TestingException("TestingException in beforePhase");
     }
 
     @Override
@@ -40,6 +40,10 @@ public class FailingPhaseListener implements PhaseListener {
     }
 
     public static class TestingException extends RuntimeException {
+
+        public TestingException(String message) {
+            super(message);
+        }
 
         private static final long serialVersionUID = 1L;
     }

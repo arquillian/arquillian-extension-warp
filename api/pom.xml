@@ -34,11 +34,11 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    <!--seems to be unnessary...
+    <!--seems to be unnessary, but keep it in case it is needed... -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
-    </dependency>-->
+    </dependency>
   </dependencies>
 </project>

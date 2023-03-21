@@ -146,6 +146,11 @@ public class ContainerInstaller {
                     continue;
                 }
 
+                //Create parent directory if it does not exist. This happens when expanding "apache-tomee-1.7.5-webprofile.zip".
+                if (newFile.getParentFile().exists() == false) {
+                  newFile.getParentFile().mkdir();
+                }
+
                 if (newFile.exists() && overwrite) {
                     log.info("Overwriting " + newFile);
                     newFile.delete();

@@ -83,6 +83,35 @@ import org.openqa.selenium.WebDriver;
 @RunWith(Arquillian.class)
 public class TestFacesLifecycleFailurePropagation {
 
+    /**
+     * This test will fail in the profiles "tomee-managed" and "tomee-remote" with this error:
+     *
+     * javax.servlet.ServletException : null [Proxied because : Original exception caused: class java.io.InvalidClassException: javax.servlet.ServletException;
+     * local class incompatible: stream classdesc serialVersionUID = 1, local class serialVersionUID = 4221302886851315160]
+     *
+     * Reason (see https://github.com/arquillian/arquillian-extension-warp/pull/108#issuecomment-1475388798):
+     * extension/jsf-ftest/pom.xml declares a dependency "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec", where
+     * no serialVersionUID is defined on "ServletException".
+     * The TomEE implementation of "ServletException" from org.apache.tomcat:tomcat-servlet-api defines a serialVersionUID = 1.
+     * This causes the error.
+     *
+     * Workaround: replace this in extension/jsf-ftest/pom.xml
+     *     <dependency>
+     *       <groupId>org.jboss.spec.javax.servlet</groupId>
+     *       <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+     *       <scope>provided</scope>
+     *     </dependency>
+     *
+     * with this:
+     *
+     *     <dependency>
+     *       <groupId>org.apache.tomcat</groupId>
+     *       <artifactId>tomcat-servlet-api</artifactId>
+     *       <scope>provided</scope>
+     *       <version>...version of TomEE...</version>
+     *     </dependency>
+     */
+
     @Drone
     WebDriver browser;
 
