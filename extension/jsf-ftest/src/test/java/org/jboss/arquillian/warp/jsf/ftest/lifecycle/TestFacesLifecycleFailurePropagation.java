@@ -84,7 +84,7 @@ import org.openqa.selenium.WebDriver;
 public class TestFacesLifecycleFailurePropagation {
 
     /**
-     * This test will fail in the profiles "tomee-managed" and "tomee-remote" with this error:
+     * This test will fail in the profile "tomee-managed" with this error:
      *
      * javax.servlet.ServletException : null [Proxied because : Original exception caused: class java.io.InvalidClassException: javax.servlet.ServletException;
      * local class incompatible: stream classdesc serialVersionUID = 1, local class serialVersionUID = 4221302886851315160]
@@ -108,7 +108,7 @@ public class TestFacesLifecycleFailurePropagation {
      *       <groupId>org.apache.tomcat</groupId>
      *       <artifactId>tomcat-servlet-api</artifactId>
      *       <scope>provided</scope>
-     *       <version>...version of TomEE...</version>
+     *       <version>${version.tomee}</version>
      *     </dependency>
      */
 
