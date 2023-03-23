@@ -43,7 +43,7 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
       <scope>provided</scope>
-      <version>7.0.81</version>
+      <version>${version.tomee}</version>
     </dependency>
     -->
     <dependency>
