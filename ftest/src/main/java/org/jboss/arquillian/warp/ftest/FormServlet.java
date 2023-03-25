@@ -42,14 +42,15 @@ public class FormServlet extends HttpServlet {
 
         writeStart(out);
 
-        //TomEE does not replace "127.0.0.1:8080" with the Warp proxy URL, which makes "org.jboss.arquillian.warp.ftest.http.TestResponseContainsProxyUrl" fail.
+        //TomEE and Glassfish do not replace "127.0.0.1:8080" with the Warp proxy URL, which makes "org.jboss.arquillian.warp.ftest.http.TestResponseContainsProxyUrl" fail.
         //But "localhost:8080" works.
         //With WildFly, it is vice versa.
         //So evaluate the server info:
         //WildFly 26: "WildFly Full 26.1.3.Final (WildFly Core 18.1.2.Final) - 2.2.19.Final"
         //TomEE 1.7.5: "Apache Tomcat (TomEE)/7.0.81 (1.7.5)"
+        //Glassfish 4: "GlassFish Server Open Source Edition  4.0"
         String serverInfo = this.getServletContext().getServerInfo();
-        if (serverInfo.contains("TomEE") == true) {
+        if (serverInfo.contains("TomEE") == true || serverInfo.contains("GlassFish") == true) {
             out.write("<form action=\"http://localhost:8080/test/form\" method=\"post\">\n");
         }
         else {
