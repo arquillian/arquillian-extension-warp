@@ -71,7 +71,7 @@
     <version.jboss_spec>3.0.3.Final</version.jboss_spec>
 
     <!-- Container Versions -->
-    <version.tomee16>1.7.5</version.tomee16>
+    <version.tomee>8.0.14</version.tomee>
     <version.glassfish40>4.0</version.glassfish40>
     <version.tomcat6>6.0.35</version.tomcat6>
     <version.tomcat7>7.0.26</version.tomcat7>
