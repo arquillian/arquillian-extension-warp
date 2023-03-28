@@ -16,11 +16,11 @@
  */
 package org.arquillian.warp.ftest.installation;
 
+import org.jboss.arquillian.container.spi.event.container.AfterStop;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 public class ContainerInitializationObserver {
@@ -40,7 +40,14 @@ public class ContainerInitializationObserver {
         ctx.proceed();
     }
 
-    public void uninstallContainer(@Observes(precedence = 400) EventContext<AfterSuite> ctx) {
+    /**
+     * Removes a managed container from the "target" directory.
+     *
+     * This must happen after the container was stopped, not in "AfterSuite" event (which seems to be fired before the container is stopped).
+     *
+     * @param ctx
+     */
+    public void uninstallContainer(@Observes(precedence = 400) EventContext<AfterStop> ctx) {
         uninstall.fire(new UninstallContainer());
     }
 }
