@@ -62,7 +62,7 @@ public class DefaultHttpFiltersSource extends HttpFiltersSourceAdapter {
             private HttpRequest request;
 
             @Override
-            public HttpResponse requestPost(HttpObject httpObject) {
+            public HttpResponse proxyToServerRequest(HttpObject httpObject) {
 
                 final WarpContext context = WarpContextStore.get();
 
@@ -93,7 +93,7 @@ public class DefaultHttpFiltersSource extends HttpFiltersSourceAdapter {
             }
 
             @Override
-            public HttpObject responsePost(HttpObject httpObject) {
+            public HttpObject proxyToClientResponse(HttpObject httpObject) {
 
                 try {
                     if (this.request instanceof HttpRequest && httpObject instanceof HttpResponse) {

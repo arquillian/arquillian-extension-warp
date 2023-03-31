@@ -19,8 +19,6 @@ package org.jboss.arquillian.warp.impl.utils;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.codec.DecoderException;
-
 /**
  * Abstract superclass for Base-N encoders and decoders.
  *
@@ -268,11 +266,11 @@ public abstract class BaseNCodec {
 
     /**
      * Decodes an Object using the Base-N algorithm. This method is provided in order to satisfy the requirements of the Decoder
-     * interface, and will throw a DecoderException if the supplied object is not of type byte[] or String.
+     * interface, and will throw a IllegalStateException if the supplied object is not of type byte[] or String.
      *
      * @param pObject Object to decode
      * @return An object (of type byte[]) containing the binary data which corresponds to the byte[] or String supplied.
-     * @throws DecoderException if the parameter supplied is not of type byte[]
+     * @throws IllegalStateException if the parameter supplied is not of type byte[]
      */
     public Object decode(Object pObject) throws IllegalStateException {
         if (pObject instanceof byte[]) {
