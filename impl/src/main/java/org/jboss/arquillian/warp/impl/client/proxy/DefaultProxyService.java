@@ -87,6 +87,8 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
                 }
             })
             .withFiltersSource(httpFiltersSource)
+            //Required by LittleProxy 1.1.2 - otherwise "proxyToServerRequest" is never called.
+            .withAllowRequestToOriginServer(true)
             .start();
     }
 
