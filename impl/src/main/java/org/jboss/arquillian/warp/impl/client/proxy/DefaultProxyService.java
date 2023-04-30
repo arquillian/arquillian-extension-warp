@@ -35,6 +35,7 @@ import org.littleshoot.proxy.ChainedProxyManager;
 import org.littleshoot.proxy.HttpFilters;
 import org.littleshoot.proxy.HttpFiltersSource;
 import org.littleshoot.proxy.HttpProxyServer;
+import org.littleshoot.proxy.impl.ClientDetails;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 /**
@@ -77,7 +78,7 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
             .withChainProxyManager(new ChainedProxyManager() {
 
                 @Override
-                public void lookupChainedProxies(HttpRequest httpRequest, Queue<ChainedProxy> chainedProxies) {
+                public void lookupChainedProxies(HttpRequest httpRequest, Queue<ChainedProxy> chainedProxies, ClientDetails clientDetails) {
                     chainedProxies.add(new ChainedProxyAdapter() {
                         @Override
                         public InetSocketAddress getChainedProxyAddress() {
