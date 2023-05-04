@@ -69,7 +69,7 @@
 
       <!-- LittleProxy -->
       <dependency>
-        <groupId>org.littleshoot</groupId>
+        <groupId>xyz.rogfam</groupId>
         <artifactId>littleproxy</artifactId>
         <version>${version.littleproxy}</version>
       </dependency>

@@ -50,17 +50,17 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
 
     @Override
     public HttpMethod getMethod() {
-        return HttpMethod.valueOf(request.getMethod().name());
+        return HttpMethod.valueOf(request.method().name());
     }
 
     @Override
     public String getUri() {
-        return request.getUri();
+        return request.uri();
     }
 
     @Override
     public URL getUrl() {
-        return URLUtils.buildUrl(request.getUri());
+        return URLUtils.buildUrl(request.uri());
     }
 
     @Override
@@ -94,13 +94,13 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
 
     @Override
     public String toString() {
-        return String.format("%s %s", request.getMethod(), request.getUri());
+        return String.format("%s %s", request.method(), request.uri());
     }
 
     @Override
     public Map<String, List<String>> getQueryParameters() {
         if (queryParameters == null) {
-            QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.getUri());
+            QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.uri());
             queryParameters = queryStringDecoder.parameters();
         }
         return Collections.unmodifiableMap(queryParameters);
