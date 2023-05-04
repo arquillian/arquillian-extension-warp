@@ -69,6 +69,14 @@
         <type>pom</type>
         <version>${version.shrinkwrap.descriptors}</version>
       </dependency>
+      <!--LittleProxy logging is done by Log4J: -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${version.log4j}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

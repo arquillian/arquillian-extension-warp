@@ -60,6 +60,8 @@
     <version.arquillian_jacoco>1.1.0</version.arquillian_jacoco>
 
     <version.littleproxy>2.0.5</version.littleproxy>
+    <!--Littleproxy logging is done through SL4J and thus Log4j: -->
+    <version.log4j>2.20.0</version.log4j>
     <version.javassist>3.12.1.GA</version.javassist>
 
     <!-- Tests -->

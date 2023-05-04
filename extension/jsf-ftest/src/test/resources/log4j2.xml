@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2023, Red Hat Middleware LLC, and individual contributors
+by the @authors tag. See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+<Configuration xmlns="http://logging.apache.org/log4j/2.0/config"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config https://raw.githubusercontent.com/apache/logging-log4j2/2.x/log4j-core/src/main/resources/Log4j-config.xsd"
+  status="warn" strict="true">
+ 
+  <Appenders>
+	<Appender type="Console" name="STDOUT">
+	  <Layout type="PatternLayout" pattern="%-5p %d{ISO8601} [%t] %c{2}.%M (%F:%L) - %m%n"/>
+	</Appender>
+  </Appenders>
+ 
+  <Loggers>
+	<Logger name="org.littleshoot.proxy" level="info" additivity="false">
+	  <AppenderRef ref="STDOUT"/>
+	</Logger>
+ 
+	<Root level="info">
+	  <AppenderRef ref="STDOUT"/>
+	</Root>
+  </Loggers>
+ 
+</Configuration>
