@@ -20,9 +20,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpUtil;
 
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -85,10 +85,10 @@ public class DefaultResponseTransformationService implements HttpResponseTransfo
                 transformedContent.writeBytes(bytes);
 
                 DefaultFullHttpResponse transformedResponse =
-                    new DefaultFullHttpResponse(fullResponse.getProtocolVersion(),
-                        fullResponse.getStatus(), transformedContent);
+                    new DefaultFullHttpResponse(fullResponse.protocolVersion(),
+                        fullResponse.status(), transformedContent);
                 transformedResponse.headers().set(fullResponse.headers());
-                HttpHeaders.setContentLength(transformedResponse, bytes.length);
+                HttpUtil.setContentLength(transformedResponse, bytes.length);
 
                 return transformedResponse;
             }
