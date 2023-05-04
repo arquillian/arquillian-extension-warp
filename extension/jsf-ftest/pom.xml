@@ -114,6 +114,24 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
+
+    <!--LittleProxy logging: LittleProxy uses SL4J. Log4j2 is used as the actual log writer: -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <!--This binds to SLF4J 1.7.29 - same that is used by LittleProxy 1.1.2  -->
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
