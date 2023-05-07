@@ -27,7 +27,7 @@
     <arquillian.container.distribution />
     <arquillian.container.configuration />
     <arquillian.container.uninstall>true</arquillian.container.uninstall>
-    <arquillian.container.vmargs>-Xmx768m -XX:MaxPermSize=256m -Darquillian.debug=${arquillian.debug}
+    <arquillian.container.vmargs>-Xmx768m -Darquillian.debug=${arquillian.debug}
     </arquillian.container.vmargs>
     <arquillian.contaner.maxTestClassesBeforeRestart>50</arquillian.contaner.maxTestClassesBeforeRestart>
 
