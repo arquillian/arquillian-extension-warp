@@ -145,7 +145,8 @@ public class TransformedInspection {
     @SuppressWarnings("unchecked")
     private Class<Inspection> toClass() throws InspectionTransformationException {
         try {
-            return transformed.toClass();
+            //Should print a warning with Java 11.
+            return (Class<Inspection>) transformed.toClass();
         } catch (Exception e) {
             throw new InspectionTransformationException("Unable to convert " + transformed.getName() + " to class", e);
         }
