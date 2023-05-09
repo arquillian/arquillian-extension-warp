@@ -56,16 +56,16 @@
       <artifactId>littleproxy</artifactId>
     </dependency>
 
-    <!-- Javasist -->
+    <!-- Javassist -->
     <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
     </dependency>
 
+    <!-- HttpCore -->
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <version>4.4.16</version>
+      <groupId>org.apache.httpcomponents.core5</groupId>
+      <artifactId>httpcore5</artifactId>
     </dependency>
 
     <!-- TESTS -->
