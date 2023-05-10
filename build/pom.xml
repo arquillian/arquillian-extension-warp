@@ -81,6 +81,13 @@
         <version>${version.javassist}</version>
       </dependency>
 
+      <!-- HttpCore -->
+      <dependency>
+        <groupId>org.apache.httpcomponents.core5</groupId>
+        <artifactId>httpcore5</artifactId>
+        <version>${version.httpcore}</version>
+      </dependency>
+
       <!-- JUnit -->
       <dependency>
         <groupId>junit</groupId>
