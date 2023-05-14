@@ -12,7 +12,7 @@
   <name>Arquillian Warp: Functional Test</name>
 
   <dependencies>
-	<!--The dependency on the servlet api must be declared for each profile contained "ftest-base/pom.xml" instead of using "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec",
+    <!--The dependency on the servlet api must be declared for each profile contained "ftest-base/pom.xml" instead of using "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec",
         as the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" would fail for TomEE (see detailed explanation in this test)
       -->
     <dependency>
