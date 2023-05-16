@@ -127,11 +127,15 @@
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <excludes>
-            <exclude>src/main/resources/log4j.properties</exclude>
-            <exclude>src/main/java/org/jboss/arquillian/warp/impl/utils/Platform.java</exclude>
-            <exclude>src/main/java/org/jboss/arquillian/warp/impl/utils/net/*.java</exclude>
-          </excludes>
+          <licenseSets>
+            <licenseSet>
+              <excludes>
+                <exclude>src/main/resources/log4j.properties</exclude>
+                <exclude>src/main/java/org/jboss/arquillian/warp/impl/utils/Platform.java</exclude>
+                <exclude>src/main/java/org/jboss/arquillian/warp/impl/utils/net/*.java</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
         </configuration>
       </plugin>
       <plugin>

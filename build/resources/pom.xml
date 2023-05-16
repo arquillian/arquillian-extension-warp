@@ -42,12 +42,16 @@
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <excludes>
-            <exclude>src/main/resources/licences/apache-commons-codec.txt</exclude>
-            <exclude>src/main/resources/licences/warp-license-header.txt</exclude>
-            <exclude>src/main/resources/licences/warp-license-header-2012.txt</exclude>
-            <exclude>src/main/resources/code-style/checkstyle.xml</exclude>
-          </excludes>
+          <licenseSets>
+            <licenseSet>
+              <excludes>
+                <exclude>src/main/resources/licences/apache-commons-codec.txt</exclude>
+                <exclude>src/main/resources/licences/warp-license-header.txt</exclude>
+                <exclude>src/main/resources/licences/warp-license-header-2012.txt</exclude>
+                <exclude>src/main/resources/code-style/checkstyle.xml</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
         </configuration>
 
       </plugin>

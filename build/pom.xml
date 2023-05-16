@@ -168,28 +168,32 @@
                     <version>4.2</version>
                     <configuration>
                         <basedir>${basedir}</basedir>
-                        <header>licences/warp-license-header.txt</header>
                         <quiet>false</quiet>
                         <failIfMissing>true</failIfMissing>
                         <strictCheck>true</strictCheck>
                         <aggregate>false</aggregate>
-                        <includes>
-                            <include>src/**</include>
-                            <include>**/test/**</include>
-                        </includes>
-                        <excludes>
-                            <exclude>.gitignore</exclude>
-                        </excludes>
                         <properties>
                             <year>^\d{4}$</year>
                         </properties>
-                        <validHeaders>
-                            <validHeader>licences/apache-commons-codec.txt</validHeader>
-                        </validHeaders>
                         <skipExistingHeaders>true</skipExistingHeaders>
                         <mapping>
-                          <java>SLASHSTAR_STYLE</java>
+                            <java>SLASHSTAR_STYLE</java>
                         </mapping>
+                        <licenseSets>
+                            <licenseSet>
+                                <header>licences/warp-license-header.txt</header>
+                                <includes>
+                                    <include>src/**</include>
+                                    <include>**/test/**</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>.gitignore</exclude>
+                                </excludes>
+                                <validHeaders>
+                                    <validHeader>licences/apache-commons-codec.txt</validHeader>
+                                </validHeaders>
+                            </licenseSet>
+                        </licenseSets>
                     </configuration>
                     <executions>
                         <execution>
