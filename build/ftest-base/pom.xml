@@ -233,13 +233,12 @@
         </dependency>
         <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
             test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
-            Here we could also use the JBoss implementation.
+            Here we use the JBoss implementation instead of the one of GlassFish, as it works as well and is easier to configure.
           -->
         <dependency>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>jboss-servlet-api_3.0_spec</artifactId>
           <scope>provided</scope>
-          <version>${version.glassfish40_servlet_api}</version>
         </dependency>
       </dependencies>
     </profile>
@@ -263,12 +262,12 @@
         </dependency>
         <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
             test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+            Here we use the JBoss implementation instead of the one of GlassFish, as it works as well and is easier to configure.
           -->
         <dependency>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>jboss-servlet-api_3.0_spec</artifactId>
           <scope>provided</scope>
-          <version>${version.glassfish40_servlet_api}</version>
         </dependency>
       </dependencies>
     </profile>
