@@ -147,6 +147,14 @@
           <version>${version.wildfly.arquillian.container}</version>
           <scope>test</scope>
         </dependency>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+          -->
+        <dependency>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
     </profile>
     <profile>
@@ -158,14 +166,17 @@
           <version>${version.wildfly.arquillian.container}</version>
           <scope>test</scope>
         </dependency>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+          -->
+        <dependency>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
     </profile>
     <profile>
-      <!--
-        Note: to run this profile, an additional change has to be made in "extension/jsf-ftest/pom.xml".
-        Otherwise, the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" will fail.
-        See explanation there.
-      -->
       <id>tomee-managed</id>
       <activation>
         <property>
@@ -187,6 +198,15 @@
           <artifactId>arquillian-tomee-remote</artifactId>
           <version>${version.tomee}</version>
           <scope>test</scope>
+        </dependency>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+          -->
+        <dependency>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-servlet-api</artifactId>
+          <scope>provided</scope>
+          <version>${version.tomee}</version>
         </dependency>
       </dependencies>
     </profile>
@@ -211,6 +231,15 @@
           <version>${version.arquillian.glassfish40}</version>
           <scope>test</scope>
         </dependency>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+            Here we use the JBoss implementation instead of the one of GlassFish, as it works as well and is easier to configure.
+          -->
+        <dependency>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
     </profile>
     <profile>
@@ -230,6 +259,15 @@
           <artifactId>arquillian-glassfish-remote-3.1</artifactId>
           <version>${version.arquillian.glassfish40}</version>
           <scope>test</scope>
+        </dependency>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+            Here we use the JBoss implementation instead of the one of GlassFish, as it works as well and is easier to configure.
+          -->
+        <dependency>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+          <scope>provided</scope>
         </dependency>
       </dependencies>
     </profile>
