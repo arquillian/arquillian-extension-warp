@@ -1,7 +1,7 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 
-name: default
+name: tomee-managed
 
 on:
   pull_request:
@@ -30,7 +30,7 @@ jobs:
         java-version: ${{ matrix.jdk-version }}
         cache: maven
     - name: Run Tests
-      run: mvn -ntp -U -B clean verify
+      run: mvn -ntp -U -B -Ptomee-managed clean verify
     - uses: actions/upload-artifact@v3
       if: failure()
       with:
