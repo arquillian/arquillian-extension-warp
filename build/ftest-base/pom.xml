@@ -21,8 +21,6 @@
     <arquillian.debug>false</arquillian.debug>
     <arquillian.drone.browser>htmlUnit</arquillian.drone.browser>
     <arquillian.drone.reusable>false</arquillian.drone.reusable>
-    <arquillian.richfaces.servletContainerSetup>false</arquillian.richfaces.servletContainerSetup>
-    <arquillian.richfaces.jsfImplementation>org.glassfish:javax.faces</arquillian.richfaces.jsfImplementation>
     <arquillian.container.home />
     <arquillian.container.distribution />
     <arquillian.container.configuration />
@@ -186,7 +184,6 @@
       </activation>
       <properties>
         <arquillian.launch.tomee>true</arquillian.launch.tomee>
-        <arquillian.richfaces.jsfProvider>myfaces</arquillian.richfaces.jsfProvider>
         <arquillian.container.home>${project.build.directory}/apache-tomee-webprofile-${version.tomee}
         </arquillian.container.home>
         <arquillian.container.distribution>org.apache.tomee:apache-tomee:zip:webprofile:${version.tomee}
@@ -268,84 +265,6 @@
           <groupId>org.jboss.spec.javax.servlet</groupId>
           <artifactId>jboss-servlet-api_3.0_spec</artifactId>
           <scope>provided</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>tomcat-remote-6</id>
-      <activation>
-        <property>
-          <name>integration</name>
-          <value>tomcat6-remote</value>
-        </property>
-      </activation>
-      <properties>
-        <arquillian.launch.tomcat6>true</arquillian.launch.tomcat6>
-        <arquillian.richfaces.servletContainerSetup>true</arquillian.richfaces.servletContainerSetup>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-tomcat-remote-6</artifactId>
-          <version>1.1.0.Final</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>tomcat-managed-6</id>
-      <activation>
-        <property>
-          <name>integration</name>
-          <value>tomcat6</value>
-        </property>
-      </activation>
-      <properties>
-        <arquillian.launch.tomcat6>true</arquillian.launch.tomcat6>
-        <arquillian.richfaces.servletContainerSetup>true</arquillian.richfaces.servletContainerSetup>
-        <arquillian.container.home>${project.build.directory}/apache-tomcat-${version.tomcat6}
-        </arquillian.container.home>
-        <arquillian.container.distribution>com.googlecode.t7mp:tomcat:zip:${version.tomcat6}
-        </arquillian.container.distribution>
-        <arquillian.container.configuration>
-          org.richfaces:richfaces-build-resources:zip:configuration-tomcat:${version.richfaces}
-        </arquillian.container.configuration>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-tomcat-managed-6</artifactId>
-          <version>1.1.0.Final</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>tomcat-managed-7</id>
-      <activation>
-        <property>
-          <name>integration</name>
-          <value>tomcat7</value>
-        </property>
-      </activation>
-      <properties>
-        <catalinaHome>${project.build.directory}/apache-tomcat-${version.tomcat7}</catalinaHome>
-        <arquillian.launch.tomcat7>true</arquillian.launch.tomcat7>
-        <arquillian.richfaces.servletContainerSetup>true</arquillian.richfaces.servletContainerSetup>
-        <arquillian.container.home>${project.build.directory}/apache-tomcat-${version.tomcat7}
-        </arquillian.container.home>
-        <arquillian.container.distribution>com.googlecode.t7mp:tomcat:zip:${version.tomcat7}
-        </arquillian.container.distribution>
-        <arquillian.container.configuration>
-          org.richfaces:richfaces-build-resources:zip:configuration-tomcat:${version.richfaces}
-        </arquillian.container.configuration>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-tomcat-managed-7</artifactId>
-          <version>1.1.0.Final</version>
-          <scope>test</scope>
         </dependency>
       </dependencies>
     </profile>
