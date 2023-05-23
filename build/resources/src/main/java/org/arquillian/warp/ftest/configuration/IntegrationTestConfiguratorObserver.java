@@ -31,7 +31,7 @@ public class IntegrationTestConfiguratorObserver {
 
     public void configure(@Observes ArquillianDescriptor descriptor) {
         IntegrationTestConfiguration c = new IntegrationTestConfiguration();
-        c.configure(descriptor, Default.class).validate();
+        c.configure(descriptor, Default.class);
         configuration.set(c);
     }
 }

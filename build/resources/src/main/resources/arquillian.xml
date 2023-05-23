@@ -88,10 +88,6 @@
   </extension>
 
   <extension qualifier="suite">
-    <!-- true if the JSF should be added to the WebArchive for support of plain Servlet containers (Tomcat, Jetty, etc.) -->
-    <property name="servletContainerSetup">${arquillian.richfaces.servletContainerSetup}</property>
-    <!-- GAV of the JSF implementation used for testing in servlet containers -->
-    <property name="jsfImplementation">${arquillian.richfaces.jsfImplementation}</property>
     <!-- the home of the container -->
     <property name="containerHome">${arquillian.container.home}</property>
     <!-- the GAV of container distribution artifact -->
