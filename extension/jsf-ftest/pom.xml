@@ -24,6 +24,11 @@
       <artifactId>cdi-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.annotation</groupId>
+      <artifactId>jboss-annotations-api_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <!--The dependency on the servlet api must be declared for each profile contained "ftest-base/pom.xml" instead of using "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec",
         as the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" would fail for TomEE (see detailed explanation in this test)
       -->
