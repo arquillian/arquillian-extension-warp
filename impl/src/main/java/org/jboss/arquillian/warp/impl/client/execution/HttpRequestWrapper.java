@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.multipart.Attribute;
@@ -115,8 +117,17 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
 
         try {
             if (httpDataAttributes == null) {
+                //Workaround for issue 134: creating "HttpPostRequestDecoder" changes the reader index of the "request" object,
+                //thus no body data is sent to the server.
+                //The request has to be duplicated before.
+                //Don't call "release()" on the duplicate, as it would also release the original object.
+                //The request variable is a "io.netty.handler.codec.http.FullHttpMessage", which implements "HttpContext".
+                HttpContent content = (HttpContent) request;
+                HttpContent contentDuplicated = content.duplicate();
+
                 final HttpPostRequestDecoder decoder =
-                    new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), request);
+                    new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), (HttpRequest) contentDuplicated);
+
                 final Map<String, List<String>> map = new HashMap<String, List<String>>();
 
                 try {
@@ -133,6 +144,7 @@ public class HttpRequestWrapper implements org.jboss.arquillian.warp.client.filt
                             list.add(attribute.getValue());
                         }
                     }
+
                 } finally {
                     decoder.destroy();
                 }
