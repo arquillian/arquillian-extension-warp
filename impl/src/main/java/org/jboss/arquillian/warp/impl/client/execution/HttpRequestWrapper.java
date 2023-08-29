@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
