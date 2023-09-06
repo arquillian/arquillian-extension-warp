@@ -102,7 +102,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <!--This binds to SLF4J 1.7.29 - same that is used by LittleProxy 1.1.2  -->
+      <!--This binds to SLF4J 1.7.29 - same that is used up to LittleProxy 2.0.7.
+          More recent LittleProxy versions use "log4j-slf4j2-impl", but several other dependencies still provide the 1.x version, and
+          thus we would have to add a dependency "org.slf4:slf4j-api:2.0.7" to overwrite the other version. It is easier to stay with 1.x-->
       <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
