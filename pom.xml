@@ -75,7 +75,7 @@
 
     <!-- Container Versions -->
     <version.tomee>8.0.14</version.tomee>
-    <version.glassfish40>4.0</version.glassfish40>
+    <version.glassfish>5.1.0</version.glassfish>
     <version.tomcat6>6.0.35</version.tomcat6>
     <version.tomcat7>7.0.26</version.tomcat7>
     <version.wildfly>26.1.3.Final</version.wildfly>

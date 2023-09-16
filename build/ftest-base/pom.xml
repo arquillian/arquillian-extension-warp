@@ -15,7 +15,7 @@
   <properties>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
-    <version.arquillian.glassfish40>1.0.2</version.arquillian.glassfish40>
+    <version.arquillian.glassfish>1.0.2</version.arquillian.glassfish>
 
     <!-- Arquillian Configuration -->
     <arquillian.debug>false</arquillian.debug>
@@ -34,7 +34,7 @@
     <arquillian.launch.tomcat6>false</arquillian.launch.tomcat6>
     <arquillian.launch.tomcat7>false</arquillian.launch.tomcat7>
     <arquillian.launch.tomee>false</arquillian.launch.tomee>
-    <arquillian.launch.glassfish40>false</arquillian.launch.glassfish40>
+    <arquillian.launch.glassfish>false</arquillian.launch.glassfish>
   </properties>
 
   <dependencyManagement>
@@ -208,24 +208,28 @@
       </dependencies>
     </profile>
     <profile>
-      <id>glassfish-managed-4-0</id>
+      <!-- Don't run this profile on windows: the test performance will be incredibly poor (90 seconds per test).
+           It works fast on linux.
+           See https://github.com/arquillian/arquillian-extension-warp/issues/131
+      -->
+      <id>glassfish-managed</id>
       <activation>
         <property>
           <name>integration</name>
-          <value>glassfish40</value>
+          <value>glassfish</value>
         </property>
       </activation>
       <properties>
-        <arquillian.launch.glassfish40>true</arquillian.launch.glassfish40>
-        <arquillian.container.home>${project.build.directory}/glassfish4</arquillian.container.home>
-        <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish40}
+        <arquillian.launch.glassfish>true</arquillian.launch.glassfish>
+        <arquillian.container.home>${project.build.directory}/glassfish5</arquillian.container.home>
+        <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish}
         </arquillian.container.distribution>
       </properties>
       <dependencies>
         <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
           <artifactId>arquillian-glassfish-managed-3.1</artifactId>
-          <version>${version.arquillian.glassfish40}</version>
+          <version>${version.arquillian.glassfish}</version>
           <scope>test</scope>
         </dependency>
         <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
@@ -240,21 +244,31 @@
       </dependencies>
     </profile>
     <profile>
-      <id>glassfish-remote-4-0</id>
+      <!-- Don't run this profile on windows: the test performance will be incredibly poor (90 seconds per test).
+           It works fast on linux.
+           See https://github.com/arquillian/arquillian-extension-warp/issues/131
+      
+           A guide to run it: start GlassFish with this command (remove the "[x]" text - it is just a separator, because double hyphen is forbidden)
+           asadmin start-domain -[x]-verbose=true
+           
+           Shut it down after the tests with this command:
+           asadmin stop-domain domain1
+      -->
+      <id>glassfish-remote</id>
       <activation>
         <property>
           <name>integration</name>
-          <value>glassfish40-remote</value>
+          <value>glassfish-remote</value>
         </property>
       </activation>
       <properties>
-        <arquillian.launch.glassfish40>true</arquillian.launch.glassfish40>
+        <arquillian.launch.glassfish>true</arquillian.launch.glassfish>
       </properties>
       <dependencies>
         <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
           <artifactId>arquillian-glassfish-remote-3.1</artifactId>
-          <version>${version.arquillian.glassfish40}</version>
+          <version>${version.arquillian.glassfish}</version>
           <scope>test</scope>
         </dependency>
         <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the

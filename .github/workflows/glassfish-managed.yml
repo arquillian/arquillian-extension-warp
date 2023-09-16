@@ -30,7 +30,7 @@ jobs:
         java-version: ${{ matrix.jdk-version }}
         cache: maven
     - name: Run Tests
-      run: mvn -ntp -U -B -Pglassfish-managed-4-0 clean verify
+      run: mvn -ntp -U -B -Pglassfish-managed clean verify
     - uses: actions/upload-artifact@v3
       if: failure()
       with:

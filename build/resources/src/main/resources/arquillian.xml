@@ -69,7 +69,7 @@
     </configuration>
   </container>
 
-  <container qualifier="glassfish40" default="${arquillian.launch.glassfish40}">
+  <container qualifier="glassfish" default="${arquillian.launch.glassfish}">
     <configuration>
       <property name="glassFishHome">${arquillian.container.home}</property>
       <property name="javaVmArguments">${arquillian.container.vmargs}</property>
