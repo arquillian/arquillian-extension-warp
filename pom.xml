@@ -59,7 +59,7 @@
     <version.arquillian_drone>3.0.0-alpha.7</version.arquillian_drone>
     <version.arquillian_jacoco>1.1.0</version.arquillian_jacoco>
 
-    <version.littleproxy>2.0.20</version.littleproxy>
+    <version.littleproxy>2.0.21</version.littleproxy>
     <!--Littleproxy logging is done through SL4J and thus Log4j: -->
     <version.log4j>2.20.0</version.log4j>
     <version.javassist>3.29.2-GA</version.javassist>
