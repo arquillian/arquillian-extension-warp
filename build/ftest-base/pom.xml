@@ -284,6 +284,7 @@
     </profile>
 
     <profile>
+      <!--While executing the tests, Drone uses a locally installed Chrome browser. Combine this profile with any server profile, e.g. "mvnw clean install -Pwildfly-remote,browser-chrome"-->
       <id>browser-chrome</id>
       <activation>
         <property>
@@ -297,6 +298,7 @@
     </profile>
 
     <profile>
+      <!--While executing the tests, Drone uses a locally installed Firefox browser. Combine this profile with any server profile, e.g. "mvnw clean install -Pwildfly-remote,browser-firefox"-->
       <id>browser-firefox</id>
       <activation>
         <property>
