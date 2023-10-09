@@ -31,8 +31,6 @@
 
     <!-- Container Selection -->
     <arquillian.launch.wildfly>false</arquillian.launch.wildfly>
-    <arquillian.launch.tomcat6>false</arquillian.launch.tomcat6>
-    <arquillian.launch.tomcat7>false</arquillian.launch.tomcat7>
     <arquillian.launch.tomee>false</arquillian.launch.tomee>
     <arquillian.launch.glassfish>false</arquillian.launch.glassfish>
   </properties>
