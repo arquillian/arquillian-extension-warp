@@ -18,7 +18,6 @@ package org.jboss.arquillian.warp.impl.client.proxy;
 
 import java.net.URL;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -37,11 +36,11 @@ import org.jboss.arquillian.warp.impl.client.event.StartProxy;
  *
  * @author Lukas Fryc
  */
-public class ProxyObserver {
+public class ProxyObserver<TProxy> {
 
     @Inject
     @SuiteScoped
-    private InstanceProducer<ProxyHolder> proxyHolder;
+    private InstanceProducer<ProxyHolder<TProxy>> proxyHolder;
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
@@ -50,11 +49,11 @@ public class ProxyObserver {
     private Event<StartProxy> startProxy;
 
     public void initializeProxies(@Observes BeforeSuite event, ServiceLoader services) {
-        proxyHolder.set(new ProxyHolder());
+        proxyHolder.set(new ProxyHolder<TProxy>());
     }
 
     public void finalizeProxies(@Observes AfterSuite event) {
-        for (Entry entry : (Set<Entry<URL, Object>>) proxyHolder().getAllProxies()) {
+        for (Entry<URL, TProxy> entry : proxyHolder().getAllProxies()) {
             proxyService().stopProxy(entry.getValue());
         }
     }
@@ -67,15 +66,16 @@ public class ProxyObserver {
     }
 
     public void startProxy(@Observes StartProxy event, ServiceLoader services) {
-        Object proxy = proxyService().startProxy(event.getRealUrl(), event.getProxyUrl());
+        TProxy proxy = proxyService().startProxy(event.getRealUrl(), event.getProxyUrl());
         proxyHolder().storeProxy(event.getRealUrl(), proxy);
     }
 
-    private ProxyHolder proxyHolder() {
+    private ProxyHolder<TProxy> proxyHolder() {
         return proxyHolder.get();
     }
 
-    private ProxyService proxyService() {
-        return serviceLoader.get().onlyOne(ProxyService.class);
+    @SuppressWarnings("unchecked")
+    private ProxyService<TProxy> proxyService() {
+        return (ProxyService<TProxy>)serviceLoader.get().onlyOne(ProxyService.class);
     }
 }

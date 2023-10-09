@@ -187,6 +187,7 @@ public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
 
         try {
 
+            @SuppressWarnings("unchecked")
             Class<? extends Annotation> testAnnotation = (Class<? extends Annotation>) classLoader.loadClass(Test.class
                 .getName());
             return getTestClass().getAnnotatedMethods(testAnnotation);

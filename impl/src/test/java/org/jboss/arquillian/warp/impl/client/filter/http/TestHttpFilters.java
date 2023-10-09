@@ -41,7 +41,7 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpExecutionObserver;
 import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -420,7 +420,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
     @RunAsClient
     public static final class TestingClass {
         @Deployment
-        public static Archive deploy() {
+        public static JavaArchive deploy() {
             return null;
         }
     }

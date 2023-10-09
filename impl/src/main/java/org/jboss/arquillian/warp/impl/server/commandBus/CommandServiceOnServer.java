@@ -43,7 +43,9 @@ public class CommandServiceOnServer implements CommandService {
                 if (responsePayload.getThrowable() != null) {
                     Rethrow.asUnchecked(responsePayload.getThrowable());
                 }
-                return (T) responsePayload.getCommand();
+                @SuppressWarnings("unchecked")
+                T command = (T)responsePayload.getCommand();
+                return command;
             }
             try {
                 Thread.sleep(100);
