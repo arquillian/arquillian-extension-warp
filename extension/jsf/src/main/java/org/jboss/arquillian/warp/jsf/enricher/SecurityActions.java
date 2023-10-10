@@ -315,6 +315,7 @@ final class SecurityActions {
 
     }
 
+    @SuppressWarnings("unchecked")
     static <T extends Annotation> T findAnnotation(final Annotation[] annotations, final Class<T> needle) {
         for (Annotation a : annotations) {
             if (a.annotationType() == needle) {

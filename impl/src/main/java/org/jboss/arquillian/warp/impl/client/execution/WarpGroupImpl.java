@@ -126,6 +126,7 @@ public class WarpGroupImpl implements WarpGroup {
      * (non-Javadoc)
      * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getInspection()
      */
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Inspection> T getInspection() {
         return (T) payloads.values().iterator().next().getInspections().get(0);
@@ -135,6 +136,7 @@ public class WarpGroupImpl implements WarpGroup {
      * (non-Javadoc)
      * @see org.jboss.arquillian.warp.client.result.WarpGroupResult#getInspectionForHitNumber(int)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Inspection> T getInspectionForHitNumber(int hitNumber) {
         return (T) getInspectionsForHitNumber(hitNumber).get(0);

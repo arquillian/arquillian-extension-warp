@@ -36,6 +36,7 @@ public class TestSeparateClassLoader {
 
         Method method = loadedClass.getMethod("test");
 
+        @SuppressWarnings("unchecked")
         Class<? extends Annotation> testAnnotation =
             (Class<? extends Annotation>) classLoader.loadClass(Test.class.getName());
 

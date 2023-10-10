@@ -42,7 +42,7 @@ import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -337,7 +337,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
     @RunAsClient
     public static final class TestingClass {
         @Deployment
-        public static Archive deploy() {
+        public static JavaArchive deploy() {
             return null;
         }
     }

@@ -103,7 +103,7 @@ public class TestInspectionLoading {
             replaceClassLoader(serverClassLoader);
             Object deserializedPayload = deserialize(serialized);
             Method getInspectionsMethod = deserializedPayload.getClass().getMethod("getInspections");
-            List deserializedInspectionList = (List) getInspectionsMethod.invoke(deserializedPayload);
+            List<?> deserializedInspectionList = (List<?>) getInspectionsMethod.invoke(deserializedPayload);
             Object deserializedInspection = deserializedInspectionList.iterator().next();
 
             Class<?> deserializedClass = deserializedInspection.getClass();

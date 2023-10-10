@@ -69,12 +69,11 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
      * (non-Javadoc)
      * @see org.jboss.arquillian.warp.client.execution.SingleVerificationSpecifier#verify(org.jboss.arquillian.warp.ServerInspection)
      */
-    @SuppressWarnings("unchecked")
     public <T extends Inspection> T inspect(T inspection) {
         initializeSingleGroup();
         singleGroup.addInspections(inspection);
         WarpResult result = execute();
-        return (T) result.getGroup(SingleInspectionSpecifier.GROUP_ID).getInspection();
+        return result.getGroup(SingleInspectionSpecifier.GROUP_ID).getInspection();
     }
 
     /*
