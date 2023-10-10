@@ -73,7 +73,7 @@ public class DefaultWarpRequestSpecifier implements WarpRequestSpecifier {
         initializeSingleGroup();
         singleGroup.addInspections(inspection);
         WarpResult result = execute();
-        return result.getGroup(SingleInspectionSpecifier.GROUP_ID).<T>getInspection();
+        return result.getGroup(SingleInspectionSpecifier.GROUP_ID).getInspection();
     }
 
     /*
