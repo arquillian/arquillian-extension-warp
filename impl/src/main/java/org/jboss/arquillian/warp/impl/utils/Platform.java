@@ -17,9 +17,6 @@
 
 package org.jboss.arquillian.warp.impl.utils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Represents the known and supported Platforms that WebDriver runs on. This is pretty close to the
  * Operating System, but differs slightly, because this class is used to extract information such as
@@ -135,10 +132,6 @@ public enum Platform {
     },
 
     ANDROID("android", "dalvik") {
-        public String getLineEnding() {
-            return "\n";
-        }
-
         @Override
         public Platform family() {
             return LINUX;
@@ -156,12 +149,13 @@ public enum Platform {
     };
 
     private final String[] partOfOsName;
-    private final int minorVersion;
-    private final int majorVersion;
+    //private final int minorVersion;
+    //private final int majorVersion;
 
     Platform(String... partOfOsName) {
         this.partOfOsName = partOfOsName;
 
+        /*Unused...
         String version = System.getProperty("os.version", "0.0.0");
         int major = 0;
         int min = 0;
@@ -178,7 +172,7 @@ public enum Platform {
         }
 
         majorVersion = major;
-        minorVersion = min;
+        minorVersion = min;*/
     }
 
     public String[] getPartOfOsName() {

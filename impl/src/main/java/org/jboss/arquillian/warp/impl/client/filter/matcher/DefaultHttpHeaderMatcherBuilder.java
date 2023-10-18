@@ -99,7 +99,7 @@ public class DefaultHttpHeaderMatcherBuilder extends AbstractMatcherFilterBuilde
 
                 for (String val : values) {
 
-                    if (val.equals(values)) {
+                    if (val.equals(value)) {
 
                         return true;
                     }

@@ -127,7 +127,6 @@ public class TestTransformedInspection {
         Inspection inspection = new Inspection() {
             private static final long serialVersionUID = 1L;
 
-            @SuppressWarnings("unused")
             @BeforeServlet
             public String get() {
                 return "Test";

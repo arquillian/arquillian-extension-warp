@@ -47,9 +47,16 @@ public class TestSeparateInvocator {
         }
     }
 
+    /**
+     * Must be public. If not the test is failing:
+     * "java.lang.IllegalAccessError: tried to access class org.jboss.arquillian.warp.impl.client.separation.TestSeparateInvocator$Result
+     * from class com.sun.proxy.$Proxy4"
+     */
+    @SuppressWarnings("serial")
     public static class Result implements Serializable {
     }
 
+    @SuppressWarnings("serial")
     public static class Argument implements Serializable {
     }
 }

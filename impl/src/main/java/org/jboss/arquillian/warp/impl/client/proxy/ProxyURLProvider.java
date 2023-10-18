@@ -97,7 +97,7 @@ public class ProxyURLProvider implements ResourceProvider {
         return proxyURL;
     }
 
-    private Injector injector() {
+    /*private Injector injector() {
         return injector.get();
-    }
+    }*/
 }

@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 @RunWith(SeparatedClassloaderRunner.class)
 public class TestDynamicClassLoading {
 
+    @SuppressWarnings({ "unused", "serial" })
     private Inspection inspection = new Inspection() {
     };
 
@@ -35,6 +36,7 @@ public class TestDynamicClassLoading {
 
     @Test
     public void test() {
+        @SuppressWarnings("unused")
         String test = "xyz";
     }
 }
