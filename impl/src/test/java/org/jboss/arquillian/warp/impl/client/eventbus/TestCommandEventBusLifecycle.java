@@ -85,9 +85,11 @@ public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
     }
 
     private static class StartBlockingObserver {
+        @SuppressWarnings("unused")
         public void blockStart(@Observes EventContext<StartBus> ctx) {
         }
 
+        @SuppressWarnings("unused")
         public void blockStop(@Observes EventContext<StopBus> ctx) {
         }
     }

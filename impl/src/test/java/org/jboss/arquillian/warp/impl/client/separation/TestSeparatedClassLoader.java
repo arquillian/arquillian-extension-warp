@@ -156,6 +156,7 @@ public class TestSeparatedClassLoader {
         SeparatedClassLoader separated = new SeparatedClassLoader(cl1, cl2);
 
         try {
+            @SuppressWarnings("unused")
             Class<?> loadedClass = separated.loadClass("SomeNonExistingClassName");
             fail("class should not be found");
         } catch (ClassNotFoundException e) {

@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.impl.shared.RequestPayload;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "serial" })
 public class SharingClass implements Serializable {
 
     public RequestPayload getStaticInnerClass() {

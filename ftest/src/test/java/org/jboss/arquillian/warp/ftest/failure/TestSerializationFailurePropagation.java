@@ -82,6 +82,7 @@ public class TestSerializationFailurePropagation {
                 .inspect(new Inspection() {
                              private static final long serialVersionUID = 1L;
 
+                             @SuppressWarnings("unused")
                              private Object payload = new NonSerializableObject();
 
                              @BeforeServlet
@@ -113,6 +114,7 @@ public class TestSerializationFailurePropagation {
                 .inspect(new Inspection() {
                              private static final long serialVersionUID = 1L;
 
+                             @SuppressWarnings("unused")
                              private Object payload;
 
                              @BeforeServlet

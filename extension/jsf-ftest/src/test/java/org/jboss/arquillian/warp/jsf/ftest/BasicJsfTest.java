@@ -119,6 +119,7 @@ public class BasicJsfTest {
                              updatedName = myBean.getName();
                          }
 
+                         @SuppressWarnings("unused")
                          public String getUpdatedName() {
                              return updatedName;
                          }
