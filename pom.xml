@@ -61,7 +61,7 @@
 
     <version.littleproxy>2.0.22</version.littleproxy>
     <!--Littleproxy logging is done through SL4J and thus Log4j: -->
-    <version.log4j>2.22.0</version.log4j>
+    <version.log4j>2.22.1</version.log4j>
     <version.javassist>3.29.2-GA</version.javassist>
     <version.httpcore>5.2.3</version.httpcore>
 
