@@ -71,8 +71,6 @@ Integration]
 [[community]]
 == Community
 
-* Chat: #arquillian channel @
-http://webchat.freenode.net/[irc.freenode.net]
 * http://arquillian.org/blog/tags/warp/[Blogs]
 * https://community.jboss.org/en/arquillian/dev[Forums]
 * https://community.jboss.org/thread/222044[Roadmap]
