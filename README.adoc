@@ -1,4 +1,4 @@
-= Arquillian Warp https://arquillian.ci.cloudbees.com/view/Extensions/job/Arquillian-Extension-Warp/[image:https://arquillian.ci.cloudbees.com/buildStatus/icon?job=Arquillian-Extension-Warp[Build Status]]
+= Arquillian Warp image:https://github.com/arquillian/arquillian-extension-warp/workflows/CI/badge.svg[CI,link=https://github.com/arquillian/arquillian-extension-warp/actions]
 :asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-extension-warp/documentation/docs
 :numbered:
 :sectlink:
