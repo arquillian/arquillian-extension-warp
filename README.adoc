@@ -1,4 +1,4 @@
-= Arquillian Warp image:https://github.com/arquillian/arquillian-extension-warp/workflows/CI/badge.svg[CI,link=https://github.com/arquillian/arquillian-extension-warp/actions]
+= Arquillian Warp image:https://github.com/arquillian/arquillian-extension-warp/workflows/CI/badge.svg[CI,link=https://github.com/arquillian/arquillian-extension-warp/actions] image:https://img.shields.io/maven-central/v/org.jboss.arquillian.extension/arquillian-warp-bom?logo=apache-maven[Version,link=https://search.maven.org/artifact/org.jboss.arquillian.extension/arquillian-warp-bom]
 :asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-extension-warp/documentation/docs
 :numbered:
 :sectlink:
