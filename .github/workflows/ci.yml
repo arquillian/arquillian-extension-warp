@@ -17,11 +17,16 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+        # Keep this list as: all supported LTS JDKs, the latest GA JDK, and the latest EA JDK (optional).
         java:
-          - 8
+          - 11
+          - 17
+          - 21
+          - 23
         container:
           - wildfly-managed
-          - glassfish-managed
+          # GlassFish 5 is not compatible with JDK 9 and newer
+          # - glassfish-managed
           - tomee-managed
     steps:
       - name: Checkout

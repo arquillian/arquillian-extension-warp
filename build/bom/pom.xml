@@ -87,6 +87,10 @@
           <artifactId>maven-release-plugin</artifactId>
           <version>3.0.1</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.3.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>

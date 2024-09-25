@@ -108,6 +108,11 @@
         <artifactId>mockito-inline</artifactId>
         <version>${version.mockito}</version>
       </dependency>
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>1.15.0</version>
+      </dependency>
 
       <!-- Jacoco -->
       <dependency>
