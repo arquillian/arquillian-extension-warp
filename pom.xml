@@ -60,7 +60,7 @@
     <!-- Arquillian -->
     <version.servlet_api>3.0.1</version.servlet_api>
     <version.arquillian_core>1.8.0.Final</version.arquillian_core>
-    <version.arquillian_drone>3.0.0-alpha.7</version.arquillian_drone>
+    <version.arquillian_drone>3.0.0-alpha.8</version.arquillian_drone>
     <version.arquillian_jacoco>1.1.0</version.arquillian_jacoco>
 
     <version.littleproxy>2.0.22</version.littleproxy>
