@@ -48,8 +48,8 @@
   </scm>
 
   <ciManagement>
-    <system>CloudBess</system>
-    <url>https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/</url>
+    <system>GitHub Actions</system>
+    <url>https://github.com/arquillian/arquillian-extension-warp/actions</url>
   </ciManagement>
 
   <properties>
