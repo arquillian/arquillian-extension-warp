@@ -41,7 +41,7 @@
       <property name="version">${version.tomee}</property>
       <property name="dir">${arquillian.container.home}</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
-      <property name="javaVmArguments">${arquillian.container.vmargs}</property>
+      <property name="catalina_opts">${arquillian.container.vmargs}</property>
     </configuration>
   </container>
 
