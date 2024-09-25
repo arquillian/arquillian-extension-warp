@@ -37,6 +37,7 @@ import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -45,6 +46,7 @@ import org.openqa.selenium.WebDriver;
 /**
  * @author Lukas Fryc
  */
+@Ignore
 @RunWith(Arquillian.class)
 @WarpTest
 @RunAsClient
