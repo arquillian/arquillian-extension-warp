@@ -86,10 +86,6 @@
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <version>3.0.1</version>
-          <configuration>
-            <pushChanges>false</pushChanges>
-            <localCheckout>true</localCheckout>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
