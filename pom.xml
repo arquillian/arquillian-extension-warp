@@ -53,6 +53,10 @@
   </ciManagement>
 
   <properties>
+    <!-- JBoss Parent -->
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+
     <!-- Arquillian -->
     <version.servlet_api>3.0.1</version.servlet_api>
     <version.arquillian_core>1.8.0.Final</version.arquillian_core>
