@@ -75,6 +75,8 @@
     <version.jacoco>0.8.11</version.jacoco>
     <version.shrinkwrap.resolver>3.2.1</version.shrinkwrap.resolver>
     <version.jboss_spec>3.0.3.Final</version.jboss_spec>
+    <surefire.security.manager/>
+    <modular.jdk.args/>
 
     <!-- Container Versions -->
     <version.tomee>8.0.14</version.tomee>
@@ -118,6 +120,56 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.3.0</version>
+          <configuration>
+            <argLine>${surefire.security.manager} ${modular.jdk.args}</argLine>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>jdk-modular</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <properties>
+        <modular.jdk.args>
+          --add-exports=java.desktop/sun.awt=ALL-UNNAMED
+          --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED
+          --add-exports=java.naming/com.sun.jndi.url.ldap=ALL-UNNAMED
+          --add-exports=java.naming/com.sun.jndi.url.ldaps=ALL-UNNAMED
+          --add-exports=jdk.naming.dns/com.sun.jndi.dns=ALL-UNNAMED
+          --add-opens=java.base/java.io=ALL-UNNAMED
+          --add-opens=java.base/java.lang=ALL-UNNAMED
+          --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+          --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+          --add-opens=java.base/java.net=ALL-UNNAMED
+          --add-opens=java.base/java.security=ALL-UNNAMED
+          --add-opens=java.base/java.util=ALL-UNNAMED
+          --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+          --add-opens=java.management/javax.management=ALL-UNNAMED
+          --add-opens=java.naming/javax.naming=ALL-UNNAMED
+        </modular.jdk.args>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdk23-security-manager</id>
+      <activation>
+        <jdk>[23,)</jdk>
+      </activation>
+      <properties>
+        <surefire.security.manager>
+          -Djava.security.manager=allow
+        </surefire.security.manager>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
