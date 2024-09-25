@@ -27,7 +27,7 @@
     <arquillian.container.uninstall>true</arquillian.container.uninstall>
     <arquillian.container.vmargs>-Xmx768m -Darquillian.debug=${arquillian.debug}
     </arquillian.container.vmargs>
-    <arquillian.contaner.maxTestClassesBeforeRestart>50</arquillian.contaner.maxTestClassesBeforeRestart>
+    <arquillian.container.maxTestClassesBeforeRestart>50</arquillian.container.maxTestClassesBeforeRestart>
 
     <!-- Container Selection -->
     <arquillian.launch.wildfly>false</arquillian.launch.wildfly>
