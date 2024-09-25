@@ -81,9 +81,9 @@
     <version.glassfish>5.1.0</version.glassfish>
     <version.tomcat6>6.0.35</version.tomcat6>
     <version.tomcat7>7.0.26</version.tomcat7>
+    <!-- Don't upgrade beyond WildFly 26 for EE 8, WF 27 and newer is Jakarta EE 10 -->
     <version.wildfly>26.1.3.Final</version.wildfly>
-    <!--Don't upgrade beyond 3.0.1.Final. 4.0.0.Alpha6 fails, and 5.0.0.Alpha6 is built with Java 11 -->
-    <version.wildfly.arquillian.container>3.0.1.Final</version.wildfly.arquillian.container>
+    <version.wildfly.arquillian.container>5.0.0.Final</version.wildfly.arquillian.container>
 
     <additionalparam>-Xdoclint:none</additionalparam>
   </properties>
