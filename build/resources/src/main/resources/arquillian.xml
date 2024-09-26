@@ -54,18 +54,9 @@
 
   <extension qualifier="webdriver">
     <property name="browser">${arquillian.drone.browser}</property>
-    <!--Workaround for errors in Drone 3.0.0.Alpha7 - see https://github.com/arquillian/arquillian-extension-drone/issues/418-->
-    <property name="browserVersion">*</property>
 
     <property name="remoteReusable">${arquillian.drone.reusable}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-
-    <!--With Drone 3.0.0.Alpha7 and Chrome 115 or newer, the automatic download of "chromedriver" fails,
-	    see https://chromedriver.chromium.org/downloads/version-selection
-	    You have to download it and set this property to the path.
-    <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
-    -->
-
   </extension>
 
   <extension qualifier="suite">
