@@ -52,7 +52,7 @@
 
     <!-- Little Proxy -->
     <dependency>
-      <groupId>xyz.rogfam</groupId>
+      <groupId>io.github.littleproxy</groupId>
       <artifactId>littleproxy</artifactId>
     </dependency>
 
