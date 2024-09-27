@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.net.URL;
 
-import jakarta.faces.bean.ManagedProperty;
+import jakarta.faces.annotation.ManagedProperty;
 import jakarta.faces.event.PhaseId;
 
 import org.jboss.arquillian.container.test.api.Deployment;

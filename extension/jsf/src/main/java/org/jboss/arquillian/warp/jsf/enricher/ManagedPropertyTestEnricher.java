@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import jakarta.el.ValueExpression;
-import jakarta.faces.bean.ManagedProperty;
+import jakarta.faces.annotation.ManagedProperty;
 import jakarta.faces.context.FacesContext;
 
 import org.jboss.arquillian.test.spi.TestEnricher;

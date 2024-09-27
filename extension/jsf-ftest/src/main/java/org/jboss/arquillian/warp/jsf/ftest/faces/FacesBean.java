@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.warp.jsf.ftest.faces;
 
-import jakarta.faces.bean.ManagedBean;
-import jakarta.faces.bean.ManagedProperty;
-import jakarta.faces.bean.RequestScoped;
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.PhaseId;
 
