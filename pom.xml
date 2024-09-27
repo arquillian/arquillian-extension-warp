@@ -97,10 +97,8 @@
     <!-- Container Versions -->
     <version.tomee>8.0.14</version.tomee>
     <version.glassfish>5.1.0</version.glassfish>
-    <!-- Don't upgrade beyond WildFly 26 for EE 8, WF 27 and newer is Jakarta EE 10 -->
-    <version.wildfly>26.1.3.Final</version.wildfly>
-    <!-- Don't upgrade beyond wildfly-arquillian-container-managed 5.x for EE 8, version 5 and newer is Jakarta EE 10 -->
-    <version.wildfly.arquillian.container>4.0.1.Final</version.wildfly.arquillian.container>
+    <version.wildfly>33.0.0.Final</version.wildfly>
+    <version.wildfly.arquillian.container>5.0.0.Final</version.wildfly.arquillian.container>
   </properties>
 
   <modules>
