@@ -180,7 +180,7 @@ public class DeploymentEnricher implements ProtocolArchiveProcessor {
         // register remote extension
         archive.addClass(WarpRemoteExtension.class);
         archive.addAsServiceProvider(RemoteLoadableExtension.class.getName(), WarpRemoteExtension.class.getName(),
-            "!org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension");
+            "!org.jboss.arquillian.protocol.servlet5.runner.ServletRemoteExtension");
         archive.addAsServiceProvider(LifecycleManagerStore.class, LifecycleManagerStoreImpl.class);
 
         // register RequestProcessingDelegationService
