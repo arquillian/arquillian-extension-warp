@@ -16,17 +16,15 @@
  */
 package org.jboss.arquillian.warp.jsf.ftest.faces;
 
-import jakarta.annotation.ManagedBean;
-import jakarta.faces.annotation.ManagedProperty;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.PhaseId;
+import jakarta.inject.Inject;
 
-@ManagedBean
 @RequestScoped
 public class FacesBean {
 
-    @ManagedProperty("#{facesContext}")
+    @Inject
     private FacesContext facesContext;
 
     public PhaseId getPhase() {

@@ -21,8 +21,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.net.URL;
 
-import jakarta.faces.annotation.ManagedProperty;
 import jakarta.faces.event.PhaseId;
+import jakarta.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -76,17 +76,17 @@ public class TestJSFTestEnrichers {
             .inspect(new Inspection() {
                          private static final long serialVersionUID = 1L;
 
-                         @ManagedProperty("#{facesBean}")
-                         FacesBean managedProperty;
+                         @Inject
+                         private FacesBean facesBean;
 
                          @BeforePhase(Phase.RESTORE_VIEW)
                          public void testFacesBeanIsResolvedBeforeRestoringView() {
-                             assertEquals(managedProperty.getPhase(), PhaseId.RESTORE_VIEW);
+                             assertEquals(facesBean.getPhase(), PhaseId.RESTORE_VIEW);
                          }
 
                          @AfterPhase(Phase.RENDER_RESPONSE)
                          public void testFacesBeanWasResolvedAfterRenderingResponse() {
-                             assertEquals(managedProperty.getPhase(), PhaseId.RENDER_RESPONSE);
+                             assertEquals(facesBean.getPhase(), PhaseId.RENDER_RESPONSE);
                          }
                      }
             );
