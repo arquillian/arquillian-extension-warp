@@ -54,13 +54,9 @@
 
   <extension qualifier="webdriver">
     <property name="browser">${arquillian.drone.browser}</property>
+
     <property name="remoteReusable">${arquillian.drone.reusable}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-
-    <property name="javascriptEnabled">true</property>
-    <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
-    <property name="phantomjs.binary.path">target/phantomjs</property>
-
   </extension>
 
   <extension qualifier="suite">
