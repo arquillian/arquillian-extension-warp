@@ -24,7 +24,7 @@ import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;

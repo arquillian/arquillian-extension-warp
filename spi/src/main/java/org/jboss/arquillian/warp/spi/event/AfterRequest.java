@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.warp.spi.event;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 import org.jboss.arquillian.warp.spi.servlet.event.AfterServlet;
 

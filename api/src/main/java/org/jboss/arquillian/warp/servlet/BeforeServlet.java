@@ -24,7 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Executed after the request is processed by {@link javax.servlet.Servlet}.
+ * Executed after the request is processed by {@link jakarta.servlet.Servlet}.
  *
  * @author Lukas Fryc
  */

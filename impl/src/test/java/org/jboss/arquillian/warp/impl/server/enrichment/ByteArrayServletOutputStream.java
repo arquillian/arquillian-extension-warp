@@ -19,7 +19,7 @@ package org.jboss.arquillian.warp.impl.server.enrichment;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 
 public class ByteArrayServletOutputStream extends ServletOutputStream {
 
