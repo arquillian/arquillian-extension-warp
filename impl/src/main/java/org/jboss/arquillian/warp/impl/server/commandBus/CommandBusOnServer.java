@@ -34,8 +34,8 @@ import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.warp.impl.server.delegation.RequestDelegationService;
 import org.jboss.arquillian.warp.impl.server.event.ActivateManager;
 import org.jboss.arquillian.warp.impl.server.event.PassivateManager;
-import org.jboss.arquillian.warp.impl.shared.command.CommandPayload;
 import org.jboss.arquillian.warp.impl.shared.command.Command;
+import org.jboss.arquillian.warp.impl.shared.command.CommandPayload;
 import org.jboss.arquillian.warp.impl.shared.command.OperationMode;
 
 /**

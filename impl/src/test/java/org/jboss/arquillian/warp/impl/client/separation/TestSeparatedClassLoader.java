@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import net.bytebuddy.dynamic.loading.ClassInjector;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
 import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
@@ -34,8 +35,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.objenesis.ObjenesisStd;
-
-import net.bytebuddy.dynamic.loading.ClassInjector;
 
 @RunWith(SeparatedClassloaderRunner.class)
 public class TestSeparatedClassLoader {

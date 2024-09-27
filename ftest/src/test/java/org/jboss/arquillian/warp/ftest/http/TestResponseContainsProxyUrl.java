@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.ftest.http;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URL;

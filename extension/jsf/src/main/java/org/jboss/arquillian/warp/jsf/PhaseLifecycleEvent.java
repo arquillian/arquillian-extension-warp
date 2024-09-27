@@ -19,7 +19,9 @@ package org.jboss.arquillian.warp.jsf;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
+
 import jakarta.faces.event.PhaseId;
+
 import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 
 /**

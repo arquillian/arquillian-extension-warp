@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import javassist.CtClass;
-
 import org.jboss.shrinkwrap.api.asset.NamedAsset;
 
 /**

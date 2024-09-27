@@ -16,6 +16,11 @@
  */
 package org.jboss.arquillian.warp.ftest.inspection.qualifiers;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.net.URL;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -35,11 +40,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-
-import java.io.File;
-import java.net.URL;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>

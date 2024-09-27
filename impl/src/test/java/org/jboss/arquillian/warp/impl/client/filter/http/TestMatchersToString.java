@@ -17,8 +17,8 @@
 package org.jboss.arquillian.warp.impl.client.filter.http;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
 
 import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;

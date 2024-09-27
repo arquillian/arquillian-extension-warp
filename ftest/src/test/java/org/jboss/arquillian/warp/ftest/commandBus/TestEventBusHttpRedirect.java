@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.ftest.commandBus;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.net.URL;
 
@@ -31,8 +33,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Aris Tzoumas

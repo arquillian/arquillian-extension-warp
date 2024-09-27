@@ -16,12 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
-import io.netty.handler.codec.http.HttpRequest;
-
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Queue;
 
+import io.netty.handler.codec.http.HttpRequest;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
