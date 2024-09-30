@@ -66,7 +66,7 @@
   <properties>
     <!-- Arquillian -->
     <version.servlet_api>3.0.1</version.servlet_api>
-    <version.arquillian_core>1.8.0.Final</version.arquillian_core>
+    <version.arquillian_core>1.9.0.Final</version.arquillian_core>
     <version.arquillian_drone>3.0.0-alpha.8</version.arquillian_drone>
     <version.arquillian_jacoco>1.1.0</version.arquillian_jacoco>
 
@@ -81,6 +81,7 @@
     <version.mockito>4.9.0</version.mockito>
     <version.bytebuddy>1.15.3</version.bytebuddy>
     <version.jacoco>0.8.12</version.jacoco>
+    <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.resolver>3.3.1</version.shrinkwrap.resolver>
     <version.jboss_spec>3.0.3.Final</version.jboss_spec>
     <surefire.security.manager/>
