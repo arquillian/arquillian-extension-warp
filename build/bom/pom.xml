@@ -9,12 +9,12 @@
 
   <name>Arquillian Warp: BOM</name>
   <description>Taking tests from Client to the Server and back</description>
-  <url>http://www.arquillian.org/</url>
+  <url>https://arquillian.org/arquillian-extension-warp/</url>
 
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
 
@@ -22,32 +22,35 @@
     <developer>
       <name>Lukas Fryc</name>
       <email>lfryc@redhat.com</email>
+      <roles>
+        <role>Emeritus Author</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Radoslav Husar</name>
+      <email>rhusar@redhat.com</email>
+      <roles>
+        <role>Maintainer</role>
+      </roles>
     </developer>
   </developers>
 
   <issueManagement>
-    <system>JIRA</system>
-    <url>https://issues.jboss.org/browse/ARQ/component/12315782</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/arquillian/arquillian-extension-warp/issues</url>
   </issueManagement>
 
   <scm>
-    <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-warp.git</connection>
-    <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-warp.git</developerConnection>
-    <url>git://github.com/arquillian/arquillian-extension-warp.git</url>
+    <connection>scm:git:git://github.com:arquillian/arquillian-extension-warp.git</connection>
+    <developerConnection>scm:git:git@github.com:arquillian/arquillian-extension-warp.git</developerConnection>
+    <url>https://github.com/arquillian/arquillian-extension-warp</url>
     <tag>HEAD</tag>
   </scm>
 
   <ciManagement>
-    <system>CloudBess</system>
-    <url>https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/</url>
+    <system>GitHub Actions</system>
+    <url>https://github.com/arquillian/arquillian-extension-warp/actions</url>
   </ciManagement>
-
-  <properties>
-    <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
-    </jboss.releases.repo.url>
-    <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
-    </jboss.snapshots.repo.url>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -80,31 +83,4 @@
     </dependencies>
   </dependencyManagement>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>3.1.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.3.0</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
-  <distributionManagement>
-    <repository>
-      <id>jboss-releases-repository</id>
-      <name>JBoss Releases Repository</name>
-      <url>${jboss.releases.repo.url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>jboss-snapshots-repository</id>
-      <name>JBoss Snapshots Repository</name>
-      <url>${jboss.snapshots.repo.url}</url>
-    </snapshotRepository>
-  </distributionManagement>
 </project>
