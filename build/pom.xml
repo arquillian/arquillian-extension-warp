@@ -15,7 +15,8 @@
     <dependencies>
 
       <!-- ShrinkWrap -->
-      <!--First declare the shrinkwrap-resolver bom to override version 2.2.6 pulled from elsewhere -->
+      <!-- First declare the shrinkwrap-resolver bom to override version 2.2.6 pulled from elsewhere -->
+      <!-- n.b. fixed by https://github.com/arquillian/arquillian-core/pull/575 - TODO move below post upgrade -->
       <dependency>
         <groupId>org.jboss.shrinkwrap.resolver</groupId>
         <artifactId>shrinkwrap-resolver-bom</artifactId>
@@ -56,7 +57,6 @@
         <artifactId>arquillian-jacoco</artifactId>
         <version>${version.arquillian_jacoco}</version>
       </dependency>
-
 
       <!-- Java EE APIs -->
       <dependency>
@@ -111,7 +111,7 @@
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>1.15.3</version>
+        <version>${version.bytebuddy}</version>
       </dependency>
 
       <!-- Jacoco -->
