@@ -15,6 +15,13 @@
     <dependencies>
 
       <!-- ShrinkWrap -->
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-bom</artifactId>
+        <version>${version.shrinkwrap}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!-- First declare the shrinkwrap-resolver bom to override version 2.2.6 pulled from elsewhere -->
       <!-- n.b. fixed by https://github.com/arquillian/arquillian-core/pull/575 - TODO move below post upgrade -->
       <dependency>
