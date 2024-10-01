@@ -125,6 +125,13 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Prepend jacoco surefire args -->
+          <argLine>${surefire.jacoco.args} ${surefire.security.manager} ${modular.jdk.args}</argLine>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
