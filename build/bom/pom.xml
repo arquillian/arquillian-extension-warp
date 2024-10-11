@@ -5,7 +5,7 @@
   <groupId>org.jboss.arquillian.extension</groupId>
   <artifactId>arquillian-warp-bom</artifactId>
   <packaging>pom</packaging>
-  <version>1.1.0.Final-SNAPSHOT</version>
+  <version>1.1.0.Final</version>
 
   <name>Arquillian Warp: BOM</name>
   <description>Taking tests from Client to the Server and back</description>
@@ -52,7 +52,7 @@
     <connection>scm:git:git://github.com:arquillian/arquillian-extension-warp.git</connection>
     <developerConnection>scm:git:git@github.com:arquillian/arquillian-extension-warp.git</developerConnection>
     <url>https://github.com/arquillian/arquillian-extension-warp</url>
-    <tag>HEAD</tag>
+    <tag>1.1.0.Final</tag>
   </scm>
 
   <ciManagement>
