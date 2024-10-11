@@ -11,32 +11,33 @@
 :toc: left
 
 ifndef::generated-doc[]
-To read complete documentation visit http://arquillian.org/arquillian-extension-warp/
+To read the complete documentation, visit https://arquillian.org/arquillian-extension-warp/
 endif::generated-doc[]
 
-== What is Warp ?
+== What is Arquillian Warp?
 
-*Arquillian Warp fills the void between client-side and server-side testing.*
+Arquillian Warp fills the void between client-side and server-side testing.
+Warp extension allows you to write client-side test which asserts server-side logic.
 
-Warp extension allows you to write client-side test which asserts
-server-side logic.
-
-Using Warp, you can initiate a HTTP request using a client-side testing tool such as WebDriver and, in the same request cycle, execute in-container server-side tests. This powerful combination lets you cover integration across client and server.
+Using Warp, you can initiate an HTTP request using a client-side testing tool such as WebDriver and,
+in the same request cycle, execute in-container server-side tests.
+This powerful combination lets you cover integration across client and server.
 
 Warp effectively removes a need for mocking and opens new possibilities for debugging.
 
-*Warp has built-in support for following frameworks:*
+Warp has built-in support for the following frameworks:
 
-* Servlet API
-* JSF 2
+* Jakarta Servlet
+* Jakarta Faces
 
-and it also has several framework extensions:
+NOTE: Warp version 2.0 (in development) is based on Jakarta EE 10 and requires JDK 11 or newer,
+      while version 1.1 is based on Java EE 8.
 
-* http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Spring
-MVC] - led by https://github.com/jmnarloch/[Jakub Narloch]
-* https://github.com/arquillian/arquillian-extension-rest/tree/master/warp-rest[REST] - led by https://github.com/jmnarloch/[Jakub Narloch]
-* https://github.com/maschmid/warped-seam-test[SeamTest migration layer]
-`Proof of Concept` - led by https://github.com/maschmid[Marek Schmidt]
+// FIXME are these relevant?
+// and it also has several framework extensions:
+//
+// * http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Spring MVC] - led by https://github.com/jmnarloch/[Jakub Narloch]
+// * https://github.com/arquillian/arquillian-extension-rest/tree/master/warp-rest[REST] - led by https://github.com/jmnarloch/[Jakub Narloch]
 
 ifdef::generated-doc[]
 include::{asciidoctor-source}/where-to-use-warp.adoc[]
@@ -47,31 +48,25 @@ include::{asciidoctor-source}/architecture.adoc[]
 include::{asciidoctor-source}/learning-from-tests.adoc[]
 endif::generated-doc[]
 
-[[reading]]
 == Further Reading
 
-* http://lukas.fryc.eu/blog/tags/testing-jsf/[Testing JSF with
-Arquillian Warp and Graphene]
-* http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Warp
-Spring Extension]
-* http://rmannibucau.wordpress.com/2012/10/23/arquillian-warp-and-tomee/[Arquillian
-Warp and TomEE]
+* http://lukas.fryc.eu/blog/tags/testing-jsf/[Testing JSF with Arquillian Warp and Graphene]
+* http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Warp Spring Extension]
+* http://rmannibucau.wordpress.com/2012/10/23/arquillian-warp-and-tomee/[Arquillian Warp and TomEE]
 
 Release blogs
 
 * http://arquillian.org/blog/tags/warp/
 
-[[links]]
 == Useful links
 
-* https://issues.jboss.org/browse/ARQ/component/12315782[Issue Tracker]
-* https://arquillian.ci.cloudbees.com/job/Arquillian-Extension-Warp/[Continuous
-Integration]
+Issue Tracking
 
-[[community]]
+* https://github.com/arquillian/arquillian-extension-warp/issues[GitHub Issues]
+* https://issues.redhat.com/issues/?jql=project+%3D+ARQ+AND+component+%3D+%22Extension+-+Warp%22[Jira]
+
 == Community
 
 * http://arquillian.org/blog/tags/warp/[Blogs]
 * https://community.jboss.org/en/arquillian/dev[Forums]
 * https://community.jboss.org/thread/222044[Roadmap]
-

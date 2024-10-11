@@ -20,9 +20,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import javax.el.ValueExpression;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.context.FacesContext;
 
 import org.jboss.arquillian.test.spi.TestEnricher;
 

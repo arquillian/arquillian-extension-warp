@@ -20,26 +20,26 @@
   <dependencies>
 
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.spec.javax.annotation</groupId>
-      <artifactId>jboss-annotations-api_1.1_spec</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <!--The dependency on the servlet api must be declared for each profile contained "ftest-base/pom.xml" instead of using "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec",
         as the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" would fail for TomEE (see detailed explanation in this test)
       -->
     <dependency>
-      <groupId>org.jboss.spec.javax.faces</groupId>
-      <artifactId>jboss-jsf-api_2.1_spec</artifactId>
+      <groupId>jakarta.faces</groupId>
+      <artifactId>jakarta.faces-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.spec.javax.el</groupId>
-      <artifactId>jboss-el-api_2.2_spec</artifactId>
+      <groupId>org.jboss.spec.jakarta.el</groupId>
+      <artifactId>jboss-el-api_5.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
-      <artifactId>arquillian-protocol-servlet</artifactId>
+      <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -16,6 +16,12 @@
  */
 package org.jboss.arquillian.warp.ftest.inspection.qualifiers;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -23,11 +29,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.WarpLifecycleEvent;
 import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>

@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;

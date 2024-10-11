@@ -17,7 +17,8 @@
 
 package org.jboss.arquillian.warp.impl.utils.net;
 
-import org.jboss.arquillian.warp.impl.utils.Platform;
+import static java.lang.Math.max;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -29,8 +30,7 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.max;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import org.jboss.arquillian.warp.impl.utils.Platform;
 
 public class PortProber {
 

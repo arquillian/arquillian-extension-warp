@@ -16,12 +16,12 @@
  */
 package org.jboss.arquillian.warp.ftest.inspection.qualifiers;
 
-import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.jboss.arquillian.warp.spi.WarpLifecycleTest;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>

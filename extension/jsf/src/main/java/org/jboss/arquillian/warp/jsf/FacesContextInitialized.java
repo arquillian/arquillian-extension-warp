@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.jsf;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 public class FacesContextInitialized {
 

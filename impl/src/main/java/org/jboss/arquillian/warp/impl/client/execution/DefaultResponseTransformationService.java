@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Map;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -23,11 +27,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
-
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Map;
-
 import org.apache.hc.core5.http.ContentType;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;

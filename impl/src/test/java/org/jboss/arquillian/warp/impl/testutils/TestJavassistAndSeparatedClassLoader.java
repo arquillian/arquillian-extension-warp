@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-
 import org.jboss.arquillian.warp.impl.client.transformation.CtClassAsset;
 import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

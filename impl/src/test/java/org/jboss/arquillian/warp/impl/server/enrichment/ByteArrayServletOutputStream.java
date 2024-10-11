@@ -19,7 +19,8 @@ package org.jboss.arquillian.warp.impl.server.enrichment;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 public class ByteArrayServletOutputStream extends ServletOutputStream {
 
@@ -48,5 +49,15 @@ public class ByteArrayServletOutputStream extends ServletOutputStream {
 
     public boolean isClosed() {
         return closed;
+    }
+
+    @Override
+    public boolean isReady() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -18,7 +18,7 @@ package org.jboss.arquillian.warp.servlet.provider;
 
 import java.lang.annotation.Annotation;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;

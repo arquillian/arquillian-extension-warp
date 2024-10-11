@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.spi.context;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import org.jboss.arquillian.core.spi.context.IdBoundContext;
 

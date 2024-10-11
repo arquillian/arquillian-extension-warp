@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  * An HTTP message which provides common properties for {@link HttpRequest} and
- * {@link HttpResponse}.
+ * {@link java.net.http.HttpResponse}.
  *
  * @author <a href="http://www.jboss.org/netty/">The Netty Project</a>
  * @author Andy Taylor (andy.taylor@jboss.org)

@@ -16,8 +16,8 @@
         as the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" would fail for TomEE (see detailed explanation in this test)
       -->
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
       <exclusions>
         <exclusion>
           <groupId>org.jboss.interceptor</groupId>

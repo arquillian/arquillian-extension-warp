@@ -13,7 +13,6 @@
 
   <dependencyManagement>
     <dependencies>
-
       <!-- ShrinkWrap -->
       <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
@@ -53,6 +52,13 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.jboss.arquillian.jakarta</groupId>
+        <artifactId>arquillian-jakarta-bom</artifactId>
+        <version>${version.org.jboss.arquillian.jakarta}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-drone-bom</artifactId>
         <version>${version.arquillian_drone}</version>
@@ -65,13 +71,31 @@
         <version>${version.arquillian_jacoco}</version>
       </dependency>
 
-      <!-- Java EE APIs -->
+      <!-- Jakarta EE 10 APIs -->
       <dependency>
-        <groupId>org.jboss.spec</groupId>
-        <artifactId>jboss-javaee-6.0</artifactId>
-        <version>${version.jboss_spec}</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.enterprise</groupId>
+        <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        <version>${version.jakarta.enterprise}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.spec.jakarta.el</groupId>
+        <artifactId>jboss-el-api_5.0_spec</artifactId>
+        <version>${version.org.jboss.spec.jakarta.el.jboss-el-api_5.0_spec}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>${version.jakarta.annotation.jakarta-annotation-api}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.faces</groupId>
+        <artifactId>jakarta.faces-api</artifactId>
+        <version>${version.jakarta.faces.jakarta-faces-api}</version>
       </dependency>
 
       <!-- LittleProxy -->

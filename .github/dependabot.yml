@@ -6,10 +6,6 @@ updates:
       interval: daily
     open-pull-requests-limit: 10
     ignore:
-      - dependency-name: org.wildfly.arquillian:wildfly-arquillian-container-managed
-        versions: "[5,)"
-      - dependency-name: org.wildfly.arquillian:wildfly-arquillian-container-remote
-        versions: "[5,)"
       - dependency-name: org.mockito:mockito-core
         versions: "[5,)"
       - dependency-name: org.mockito:mockito-inline

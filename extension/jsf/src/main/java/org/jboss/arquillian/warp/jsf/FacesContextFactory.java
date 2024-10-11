@@ -18,11 +18,11 @@ package org.jboss.arquillian.warp.jsf;
 
 import java.util.logging.Logger;
 
-import javax.faces.FacesException;
-import javax.faces.context.FacesContext;
-import javax.faces.context.FacesContextWrapper;
-import javax.faces.lifecycle.Lifecycle;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.faces.FacesException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.FacesContextWrapper;
+import jakarta.faces.lifecycle.Lifecycle;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
@@ -30,15 +30,15 @@ import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
-public class FacesContextFactory extends javax.faces.context.FacesContextFactory {
+public class FacesContextFactory extends jakarta.faces.context.FacesContextFactory {
 
     public static final String WARP_ENABLED = FacesContextFactory.class.getName() + ".ENABLED";
 
     private Logger log = WarpJSFCommons.LOG;
 
-    private javax.faces.context.FacesContextFactory delegate;
+    private jakarta.faces.context.FacesContextFactory delegate;
 
-    public FacesContextFactory(javax.faces.context.FacesContextFactory facesContextFactory) {
+    public FacesContextFactory(jakarta.faces.context.FacesContextFactory facesContextFactory) {
         delegate = facesContextFactory;
     }
 

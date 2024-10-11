@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.warp.jsf;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseEvent;
-import javax.faces.event.PhaseId;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.PhaseEvent;
+import jakarta.faces.event.PhaseId;
 
 import org.jboss.arquillian.warp.jsf.FacesContextFactory.WarpFacesContext;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
@@ -26,12 +26,12 @@ import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 
 @SuppressWarnings("serial")
-public class PhaseListener implements javax.faces.event.PhaseListener {
+public class PhaseListener implements jakarta.faces.event.PhaseListener {
 
     /*
      * (non-Javadoc)
      *
-     * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
+     * @see jakarta.faces.event.PhaseListener#beforePhase(jakarta.faces.event.PhaseEvent)
      */
     @Override
     public void beforePhase(PhaseEvent event) {
@@ -41,7 +41,7 @@ public class PhaseListener implements javax.faces.event.PhaseListener {
     /*
      * (non-Javadoc)
      *
-     * @see javax.faces.event.PhaseListener#afterPhase(javax.faces.event.PhaseEvent)
+     * @see jakarta.faces.event.PhaseListener#afterPhase(jakarta.faces.event.PhaseEvent)
      */
     @Override
     public void afterPhase(PhaseEvent event) {
@@ -51,7 +51,7 @@ public class PhaseListener implements javax.faces.event.PhaseListener {
     /*
      * (non-Javadoc)
      *
-     * @see javax.faces.event.PhaseListener#getPhaseId()
+     * @see jakarta.faces.event.PhaseListener#getPhaseId()
      */
     @Override
     public PhaseId getPhaseId() {

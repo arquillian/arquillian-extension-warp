@@ -16,10 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import io.netty.handler.codec.http.HttpResponse;
-
 import java.util.Collection;
 
+import io.netty.handler.codec.http.HttpResponse;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;

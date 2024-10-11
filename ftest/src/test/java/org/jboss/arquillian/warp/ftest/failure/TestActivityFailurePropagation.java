@@ -16,10 +16,10 @@
  */
 package org.jboss.arquillian.warp.ftest.failure;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.net.URL;
-
-import static org.junit.Assert.fail;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;

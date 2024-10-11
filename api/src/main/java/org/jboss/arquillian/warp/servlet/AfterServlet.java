@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * Executed after the request is processed by {@link javax.servlet.Servlet}.
+ * Executed after the request is processed by {@link jakarta.servlet.Servlet}.
  * </p>
  *
  * @author Lukas Fryc

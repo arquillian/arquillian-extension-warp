@@ -18,8 +18,8 @@ package org.jboss.arquillian.warp.jsf.provider;
 
 import java.lang.annotation.Annotation;
 
-import javax.faces.application.ViewHandler;
-import javax.faces.context.FacesContext;
+import jakarta.faces.application.ViewHandler;
+import jakarta.faces.context.FacesContext;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;

@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.server.enrichment;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;

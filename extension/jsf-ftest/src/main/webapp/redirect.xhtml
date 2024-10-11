@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     JBoss, Home of Professional Open Source
@@ -16,12 +17,9 @@
     limitations under the License.
 
 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+<!DOCTYPE html>
+<html xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html">
 
 <body>
 <ui:composition template="/templates/template.xhtml">
@@ -30,7 +28,7 @@
 
     <ui:define name="body">
         <h:form id="form">
-            <h:commandButton id="redirect" value="Redirect to index" action="index?faces-redirect=true" />
+            <h:commandButton id="redirect" value="Redirect to index" action="index?faces-redirect=true"/>
         </h:form>
     </ui:define>
 </ui:composition>

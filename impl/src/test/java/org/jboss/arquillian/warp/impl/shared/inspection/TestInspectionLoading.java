@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.shared.inspection;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -41,8 +43,6 @@ import org.jboss.shrinkwrap.spi.MemoryMapArchive;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
 
 public class TestInspectionLoading {
 
