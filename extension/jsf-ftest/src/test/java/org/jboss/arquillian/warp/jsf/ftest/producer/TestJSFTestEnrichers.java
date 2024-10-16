@@ -36,6 +36,7 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.jsf.AfterPhase;
 import org.jboss.arquillian.warp.jsf.BeforePhase;
 import org.jboss.arquillian.warp.jsf.Phase;
+import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.jsf.ftest.faces.FacesBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -59,6 +60,8 @@ public class TestJSFTestEnrichers {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
             .addClasses(FacesBean.class)
+            //Not required for a successful unit test, but it is used on "index.xhtml".
+            .addClasses(CdiBean.class)
             .addAsWebResource(new File("src/main/webapp/index.xhtml"))
             .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
