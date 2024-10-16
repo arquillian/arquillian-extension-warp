@@ -27,7 +27,7 @@ jobs:
           - wildfly-managed
           # TODO GlassFish 5 is not compatible with JDK 9 and newer
           # - glassfish-managed
-           - tomee-managed
+          - tomee-managed
         exclude:
            # TomEE 10 requires Java 17.
            - os: ubuntu-latest
