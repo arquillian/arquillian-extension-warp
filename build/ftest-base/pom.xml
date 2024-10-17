@@ -188,22 +188,53 @@
         </arquillian.container.distribution>
       </properties>
       <dependencies>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+
+            Also, it must be declared before "org.apache.tomee:arquillian-tomee-remote", because the latter brings "org.apache.tomee:jakartaee-api",
+            which also contains a "ServletException", but with a different SerialVersionUID. Thus the error described in "TestFacesLifecycleFailurePropagation"
+            would occur.
+            If we declare the servlet api jar before the arquillian jar, the ServletException class is loaded from there.
+          -->
+        <dependency>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-servlet-api</artifactId>
+          <scope>provided</scope>
+          <version>${version.tomee.tomcat}</version>
+        </dependency>
         <dependency>
           <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
           <version>${version.tomee}</version>
           <scope>test</scope>
         </dependency>
-        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
-            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
-          -->
-        <dependency>
-          <groupId>org.apache.tomcat</groupId>
-          <artifactId>tomcat-servlet-api</artifactId>
-          <scope>provided</scope>
-          <version>${version.tomee}</version>
-        </dependency>
       </dependencies>
+
+      <!--This profile requires Java 17 to run, as this is required by TomEE -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+              <execution>
+                <id>enforce-java</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireJavaVersion>
+                      <version>17</version>
+                    </requireJavaVersion>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <!-- Don't run this profile on windows: the test performance will be incredibly poor (90 seconds per test).

@@ -21,6 +21,7 @@ import static org.jboss.arquillian.warp.jsf.Phase.UPDATE_MODEL_VALUES;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.function.Function;
@@ -41,6 +42,8 @@ import org.jboss.arquillian.warp.jsf.BeforePhase;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -69,6 +72,14 @@ public class BasicJsfTest {
             .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+    }
+
+    /**Exclude this test for TomEE as long as the HtmlUnit issue is not fixed,
+     * see https://github.com/arquillian/arquillian-extension-warp/issues/242  */
+    @BeforeClass
+    public static void beforeClass() throws IOException, InterruptedException {
+       String tomEEHome = (String) System.getProperty("tomee.home");
+       Assume.assumeTrue(tomEEHome == null || tomEEHome.length() == 0);
     }
 
     @Test

@@ -27,8 +27,12 @@ jobs:
           - wildfly-managed
           # TODO GlassFish 5 is not compatible with JDK 9 and newer
           # - glassfish-managed
-          # TODO Upgrade to compatible TomEE version
-          # - tomee-managed
+          - tomee-managed
+        exclude:
+           # TomEE 10 requires Java 17.
+           - os: ubuntu-latest
+             java: 11
+             container: tomee-managed
     steps:
       - name: Checkout
         uses: actions/checkout@v3

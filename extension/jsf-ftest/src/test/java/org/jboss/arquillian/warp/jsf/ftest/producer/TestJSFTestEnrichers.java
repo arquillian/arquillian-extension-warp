@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.jsf.ftest.producer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import jakarta.faces.event.PhaseId;
@@ -36,9 +37,12 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.jsf.AfterPhase;
 import org.jboss.arquillian.warp.jsf.BeforePhase;
 import org.jboss.arquillian.warp.jsf.Phase;
+import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.arquillian.warp.jsf.ftest.faces.FacesBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -59,10 +63,20 @@ public class TestJSFTestEnrichers {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
             .addClasses(FacesBean.class)
+            //Not required for a successful unit test, but it is used on "index.xhtml".
+            .addClasses(CdiBean.class)
             .addAsWebResource(new File("src/main/webapp/index.xhtml"))
             .addAsWebResource(new File("src/main/webapp/templates/template.xhtml"), "templates/template.xhtml")
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
+    }
+
+    /**Exclude this test for TomEE as long as the HtmlUnit issue is not fixed,
+     * see https://github.com/arquillian/arquillian-extension-warp/issues/242  */
+    @BeforeClass
+    public static void beforeClass() throws IOException, InterruptedException {
+       String tomEEHome = (String) System.getProperty("tomee.home");
+       Assume.assumeTrue(tomEEHome == null || tomEEHome.length() == 0);
     }
 
     @Test
