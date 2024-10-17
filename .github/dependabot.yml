@@ -19,3 +19,6 @@ updates:
         versions: "[6.1.0,)"
       - dependency-name: jakarta.enterprise:jakarta.enterprise.cdi-api
         versions: "[4.1.0,)"
+      # Don't upgrade the tomcat servlet api, as it should match the TomEE version, which most probably does not contain a recent version of this artifact.
+      - dependency-name: org.apache.tomcat:tomcat-servlet-api
+        versions: "[10.1.0,)"
