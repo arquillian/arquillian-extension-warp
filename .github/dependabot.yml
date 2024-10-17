@@ -12,10 +12,10 @@ updates:
         versions: "[5,)"
       # Don't upgrade spec dependencies past Jakarta EE 10
       - dependency-name: jakarta.faces:jakarta.faces-api
-        version: "[4.1.0,)"
+        versions: "[4.1.0,)"
       - dependency-name: jakarta.annotation:jakarta.annotation-api
-        version: "[3.0.0,)"
+        versions: "[3.0.0,)"
       - dependency-name: jakarta.servlet:jakarta.servlet-api
-        version: "[6.1.0,)"
+        versions: "[6.1.0,)"
       - dependency-name: jakarta.enterprise:jakarta.enterprise.cdi-api
-        version: "[4.1.0,)"
+        versions: "[4.1.0,)"
