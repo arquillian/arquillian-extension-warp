@@ -79,13 +79,7 @@
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
-    <!--Use "mockito-inline" by default. See "org.jboss.arquillian.warp.impl.server.test.TestLifecycleTestDriver.when_registry_contains_inspection_with_annotated_method__matching_current_lifecycle_event_then_method_is_fired"
-          for an explanation why this is necessary.-->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-inline</artifactId>
-      <scope>test</scope>
-    </dependency>
+
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
