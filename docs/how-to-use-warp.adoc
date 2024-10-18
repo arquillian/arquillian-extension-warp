@@ -291,7 +291,7 @@ In order to test server-side state effectively, the `Inspection` can be enriched
 * `@Inject` for CDI beans
 * `@EJB` for EJB beans
 * `@ArquillianResource` for Arquillian Resources
-* `@ManagedProperty("#{expression}")` for beans from Expression Language context (JSF)
+* `@ManagedProperty("#+{expression}+")` for beans from Expression Language context (JSF)
 
 The injection can be either at class-level or method-level:
 

@@ -6,7 +6,6 @@
 :sectid:
 :source-language: java
 :source-highlighter: coderay
-:sectnums:
 :icons: font
 :toc: left
 
@@ -40,12 +39,12 @@ NOTE: Warp version 2.0 (in development) is based on Jakarta EE 10 and requires J
 // * https://github.com/arquillian/arquillian-extension-rest/tree/master/warp-rest[REST] - led by https://github.com/jmnarloch/[Jakub Narloch]
 
 ifdef::generated-doc[]
-include::{asciidoctor-source}/where-to-use-warp.adoc[]
-include::{asciidoctor-source}/getting-started.adoc[]
-include::{asciidoctor-source}/how-to-use-warp.adoc[]
-include::{asciidoctor-source}/debugging-warp.adoc[]
-include::{asciidoctor-source}/architecture.adoc[]
-include::{asciidoctor-source}/learning-from-tests.adoc[]
+include::where-to-use-warp.adoc[]
+include::getting-started.adoc[]
+include::how-to-use-warp.adoc[]
+include::debugging-warp.adoc[]
+include::architecture.adoc[]
+include::learning-from-tests.adoc[]
 endif::generated-doc[]
 
 == Further Reading
