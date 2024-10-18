@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import net.bytebuddy.agent.Installer;
 import net.bytebuddy.dynamic.loading.ClassInjector;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
@@ -44,14 +45,16 @@ public class TestSeparatedClassLoader {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).addClasses(SeparatedClassLoader.class,
             ClassLoaderUtils.class);
 
-        JavaArchive mockito = ShrinkWrapUtils.getJavaArchiveFromClass(Mockito.class);
-        //Add mockito dependencies "bytebuddy" and "objenesis", otherwise "ClassNotFoundException" will be thrown when executing the test.
-        JavaArchive bytebuddy = ShrinkWrapUtils.getJavaArchiveFromClass(ClassInjector.class);
-        JavaArchive objenesis = ShrinkWrapUtils.getJavaArchiveFromClass(ObjenesisStd.class);
+        JavaArchive mockitoJar = ShrinkWrapUtils.getJavaArchiveFromClass(Mockito.class);
+        // Add mockito dependencies "bytebuddy", "bytebuddy-agent" and "objenesis";
+        // otherwise "ClassNotFoundException" will be thrown when executing the test.
+        JavaArchive bytebuddyJar = ShrinkWrapUtils.getJavaArchiveFromClass(ClassInjector.class);
+        JavaArchive bytebuddyAgentJar = ShrinkWrapUtils.getJavaArchiveFromClass(Installer.class);
+        JavaArchive objenesisJar = ShrinkWrapUtils.getJavaArchiveFromClass(ObjenesisStd.class);
 
         JavaArchive junit = ShrinkWrapUtils.getJavaArchiveFromClass(Assert.class);
 
-        return new JavaArchive[] {archive, mockito, bytebuddy, objenesis, junit};
+        return new JavaArchive[] {archive, mockitoJar, bytebuddyJar, bytebuddyAgentJar, objenesisJar, junit};
     }
 
     @Test
