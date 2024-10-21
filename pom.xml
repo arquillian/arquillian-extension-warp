@@ -105,7 +105,7 @@
     <version.wildfly.arquillian.container>5.0.1.Final</version.wildfly.arquillian.container>
 
     <!-- Documentation -->
-    <version.asciidoctor-maven-plugin>2.2.6</version.asciidoctor-maven-plugin>
+    <version.asciidoctor-maven-plugin>3.0.0</version.asciidoctor-maven-plugin>
   </properties>
 
   <modules>
