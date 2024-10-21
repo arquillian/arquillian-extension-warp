@@ -103,6 +103,9 @@
     <version.glassfish>5.1.0</version.glassfish>
     <version.wildfly>33.0.0.Final</version.wildfly>
     <version.wildfly.arquillian.container>5.0.1.Final</version.wildfly.arquillian.container>
+
+    <!-- Documentation -->
+    <version.asciidoctor-maven-plugin>2.2.6</version.asciidoctor-maven-plugin>
   </properties>
 
   <modules>
@@ -112,6 +115,9 @@
     <module>build/resources</module>
     <module>build/depchain</module>
     <module>build/ftest-base</module>
+
+    <!-- Documentation module -->
+    <module>build/docs</module>
 
     <!-- main modules -->
     <module>api</module>
