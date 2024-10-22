@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.jsf.ftest.producer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -31,7 +32,6 @@ import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,11 +51,12 @@ public class TestJSFResourceNotFound {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "jsf-test.war")
-            .addAsWebInfResource(new StringAsset("<faces-config version=\"2.0\" xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd\"></faces-config>"), "faces-config.xml")
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
             //The test for GlassFish will fail without "web.xml" with a "java.io.IOException: Server returned HTTP response code: 500 for URL: http://127.0.0.1:10186/jsf-test/faces/notExisting.xhtml"
             //instead of the expected "FileNotFoundException".
             //On other servers, it works as expected.
-            .addAsWebInfResource(new java.io.File("src/main/webapp/WEB-INF/web.xml"));
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"));
     }
 
     @Test
