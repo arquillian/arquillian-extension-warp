@@ -15,7 +15,7 @@
   <properties>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
-    <version.arquillian.glassfish>1.0.2</version.arquillian.glassfish>
+    <version.arquillian.glassfish>1.6</version.arquillian.glassfish>
 
     <!-- Arquillian Configuration -->
     <arquillian.debug>false</arquillian.debug>
@@ -250,14 +250,20 @@
       </activation>
       <properties>
         <arquillian.launch.glassfish>true</arquillian.launch.glassfish>
-        <arquillian.container.home>${project.build.directory}/glassfish5</arquillian.container.home>
+        <arquillian.container.home>${project.build.directory}/glassfish7</arquillian.container.home>
         <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish}
         </arquillian.container.distribution>
       </properties>
+
       <dependencies>
+
+        <!--The original glassfish container is abandoned and does not support glassfish 7
+            (https://github.com/arquillian/arquillian-container-glassfish and https://github.com/arquillian/arquillian-container-glassfish6),
+            so use a fork at https://github.com/OmniFish-EE/arquillian-container-glassfish <dependency>
+        -->
         <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-glassfish-managed-3.1</artifactId>
+          <groupId>org.omnifaces.arquillian</groupId>
+          <artifactId>arquillian-glassfish-server-managed</artifactId>
           <version>${version.arquillian.glassfish}</version>
           <scope>test</scope>
         </dependency>
@@ -295,8 +301,8 @@
       </properties>
       <dependencies>
         <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-glassfish-remote-3.1</artifactId>
+          <groupId>org.omnifaces.arquillian</groupId>
+          <artifactId>arquillian-glassfish-server-remote</artifactId>
           <version>${version.arquillian.glassfish}</version>
           <scope>test</scope>
         </dependency>
