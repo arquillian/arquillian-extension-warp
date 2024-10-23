@@ -89,7 +89,7 @@
     <version.bytebuddy>1.15.5</version.bytebuddy>
     <version.jacoco>0.8.12</version.jacoco>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
-    <version.shrinkwrap.resolver>3.3.1</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.3.2</version.shrinkwrap.resolver>
     <version.jboss_spec>3.0.3.Final</version.jboss_spec>
     <surefire.security.manager />
     <modular.jdk.args />
