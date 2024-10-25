@@ -132,11 +132,6 @@
         <artifactId>mockito-core</artifactId>
         <version>${version.mockito}</version>
       </dependency>
-      <dependency>
-        <groupId>net.bytebuddy</groupId>
-        <artifactId>byte-buddy</artifactId>
-        <version>${version.bytebuddy}</version>
-      </dependency>
 
       <!-- Jacoco -->
       <dependency>

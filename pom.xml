@@ -86,7 +86,6 @@
     <!-- Tests -->
     <version.junit>4.13.2</version.junit>
     <version.mockito>5.14.2</version.mockito>
-    <version.bytebuddy>1.15.5</version.bytebuddy>
     <version.jacoco>0.8.12</version.jacoco>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.resolver>3.3.2</version.shrinkwrap.resolver>
