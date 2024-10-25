@@ -6,10 +6,6 @@ updates:
       interval: daily
     open-pull-requests-limit: 10
     ignore:
-      - dependency-name: org.mockito:mockito-core
-        versions: "[5,)"
-      - dependency-name: org.mockito:mockito-inline
-        versions: "[5,)"
       # Don't upgrade spec dependencies past Jakarta EE 10
       - dependency-name: jakarta.faces:jakarta.faces-api
         versions: "[4.1.0,)"
