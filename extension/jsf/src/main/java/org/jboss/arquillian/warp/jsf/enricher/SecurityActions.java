@@ -131,9 +131,7 @@ final class SecurityActions {
         final T obj;
         try {
             Constructor<T> constructor = getConstructor(implClass, argumentTypes);
-            if (!constructor.isAccessible()) {
-                constructor.setAccessible(true);
-            }
+            constructor.setAccessible(true);
             obj = constructor.newInstance(arguments);
         } catch (Exception e) {
             throw new RuntimeException("Could not create new instance of " + implClass, e);
@@ -193,9 +191,7 @@ final class SecurityActions {
                 @Override
                 public Void run() throws Exception {
                     Field field = source.getDeclaredField(fieldName);
-                    if (!field.isAccessible()) {
-                        field.setAccessible(true);
-                    }
+                    field.setAccessible(true);
                     field.set(target, value);
                     return null;
                 }
@@ -229,9 +225,7 @@ final class SecurityActions {
                 while (nextSource != Object.class) {
                     for (Field field : nextSource.getDeclaredFields()) {
                         if (field.isAnnotationPresent(annotationClass)) {
-                            if (!field.isAccessible()) {
-                                field.setAccessible(true);
-                            }
+                            field.setAccessible(true);
                             foundFields.add(field);
                         }
                     }
@@ -252,9 +246,7 @@ final class SecurityActions {
                 while (nextSource != Object.class) {
                     for (Method method : nextSource.getDeclaredMethods()) {
                         if (method.isAnnotationPresent(annotationClass)) {
-                            if (!method.isAccessible()) {
-                                method.setAccessible(true);
-                            }
+                            method.setAccessible(true);
                             foundMethods.add(method);
                         }
                     }

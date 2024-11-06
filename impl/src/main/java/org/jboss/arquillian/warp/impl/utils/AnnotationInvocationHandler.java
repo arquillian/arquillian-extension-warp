@@ -263,8 +263,7 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
 
     private static Object invoke(Method method, Object instance) {
         try {
-            if (!method.isAccessible())
-                method.setAccessible(true);
+            method.setAccessible(true);
             return method.invoke(instance);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Error checking value of member method " + method.getName() + " on "
