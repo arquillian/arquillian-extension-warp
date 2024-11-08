@@ -137,7 +137,7 @@ public class TestInspectionLoading {
     private Object getStaticInnerClass() throws Throwable {
 
         Class<?> clazz = clientClassLoader.loadClass(SharingClass.class.getName());
-        Object instance = clazz.newInstance();
+        Object instance = clazz.getDeclaredConstructor().newInstance();
         Method method = clazz.getMethod("getStaticInnerClass");
 
         // when
@@ -148,7 +148,7 @@ public class TestInspectionLoading {
     private Object getInnerClass() throws Throwable {
 
         Class<?> clazz = clientClassLoader.loadClass(SharingClass.class.getName());
-        Object instance = clazz.newInstance();
+        Object instance = clazz.getDeclaredConstructor().newInstance();
         Method method = clazz.getMethod("getInnerClass");
 
         // when
@@ -159,7 +159,7 @@ public class TestInspectionLoading {
     private Object getAnonymousClass() throws Throwable {
 
         Class<?> clazz = clientClassLoader.loadClass(SharingClass.class.getName());
-        Object instance = clazz.newInstance();
+        Object instance = clazz.getDeclaredConstructor().newInstance();
         Method method = clazz.getMethod("getAnonymousClass");
 
         // when

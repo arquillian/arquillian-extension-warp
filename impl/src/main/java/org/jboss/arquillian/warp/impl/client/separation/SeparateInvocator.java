@@ -157,7 +157,7 @@ public class SeparateInvocator<T> {
     private Object instantiate() {
         try {
             separatedClass = loadSeparatedClassSafely(clazz);
-            return separatedClass.newInstance();
+            return separatedClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(
                 "Unable to instantiate class " + clazz.getName() + " on separated classloader", e);

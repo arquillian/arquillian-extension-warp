@@ -25,7 +25,7 @@ public class InstanceCreator {
         Object instance = createUnsafeInstance(clazz);
         if(instance == null) {
             try {
-                instance = clazz.newInstance();
+                instance = clazz.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new RuntimeException("Could not create new instance of Transformed class: " + clazz.getName(), e);
             }
