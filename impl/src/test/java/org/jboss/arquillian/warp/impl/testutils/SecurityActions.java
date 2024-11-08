@@ -168,9 +168,7 @@ final class SecurityActions {
                 while (nextSource != Object.class) {
                     for (Field field : nextSource.getDeclaredFields()) {
                         if (field.isAnnotationPresent(annotationClass)) {
-                            if (!field.isAccessible()) {
-                                field.setAccessible(true);
-                            }
+                            field.setAccessible(true);
                             foundFields.add(field);
                         }
                     }
@@ -191,9 +189,7 @@ final class SecurityActions {
                 while (nextSource != Object.class) {
                     for (Method method : nextSource.getDeclaredMethods()) {
                         if (method.isAnnotationPresent(annotationClass)) {
-                            if (!method.isAccessible()) {
-                                method.setAccessible(true);
-                            }
+                            method.setAccessible(true);
                             foundMethods.add(method);
                         }
                     }
@@ -248,9 +244,7 @@ final class SecurityActions {
                 Class<?> nextSource = source;
                 while (nextSource != Object.class) {
                     for (Field field : nextSource.getDeclaredFields()) {
-                        if (!field.isAccessible()) {
-                            field.setAccessible(true);
-                        }
+                        field.setAccessible(true);
                         foundFields.add(field);
                     }
                     nextSource = nextSource.getSuperclass();

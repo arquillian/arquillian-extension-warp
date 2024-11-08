@@ -110,9 +110,7 @@ public class LifecycleTestEnrichmentWatcher {
                     continue;
                 }
 
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
+                field.setAccessible(true);
                 field.set(instance, oldValue);
             }
         } catch (Exception e) {
