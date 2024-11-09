@@ -36,16 +36,15 @@ public class FacesContextFactory extends jakarta.faces.context.FacesContextFacto
 
     private Logger log = WarpJSFCommons.LOG;
 
-    private jakarta.faces.context.FacesContextFactory delegate;
-
     public FacesContextFactory(jakarta.faces.context.FacesContextFactory facesContextFactory) {
-        delegate = facesContextFactory;
+        super(facesContextFactory);
     }
 
+    @Override
     public FacesContext getFacesContext(Object context, Object request, Object response, Lifecycle lifecycle)
         throws FacesException {
 
-        FacesContext facesContext = delegate.getFacesContext(context, request, response, lifecycle);
+        FacesContext facesContext = getWrapped().getFacesContext(context, request, response, lifecycle);
 
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpReq = (HttpServletRequest) request;
@@ -78,15 +77,8 @@ public class FacesContextFactory extends jakarta.faces.context.FacesContextFacto
 
     public static class WarpFacesContext extends FacesContextWrapper {
 
-        private FacesContext wrapped;
-
         public WarpFacesContext(FacesContext wrapped) {
-            this.wrapped = wrapped;
-        }
-
-        @Override
-        public FacesContext getWrapped() {
-            return wrapped;
+          super(wrapped);
         }
 
         @Override
