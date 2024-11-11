@@ -18,3 +18,8 @@ updates:
       # Don't upgrade the tomcat servlet api, as it should match the TomEE version, which most probably does not contain a recent version of this artifact.
       - dependency-name: org.apache.tomcat:tomcat-servlet-api
         versions: "[10.1.0,)"
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
