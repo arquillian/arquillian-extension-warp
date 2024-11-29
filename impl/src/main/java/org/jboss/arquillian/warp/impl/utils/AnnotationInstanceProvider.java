@@ -18,8 +18,6 @@ package org.jboss.arquillian.warp.impl.utils;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
@@ -67,29 +65,13 @@ public class AnnotationInstanceProvider {
             throw new IllegalArgumentException("Must specify an annotation");
         }
 
-        Class<?> clazz = Proxy.getProxyClass(annotationType.getClassLoader(), annotationType, Serializable.class);
         AnnotationInvocationHandler handler = new AnnotationInvocationHandler(values, annotationType);
         // create a new instance by obtaining the constructor via relection
         try {
-            return annotationType.cast(clazz.getConstructor(new Class[] {InvocationHandler.class}).newInstance(
-                new Object[] {handler}));
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(
-                "Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
-        } catch (InstantiationException e) {
-            throw new IllegalStateException(
-                "Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(
-                "Error instantiating proxy for annotation. Annotation type: " + annotationType, e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalStateException(
-                "Error instantiating proxy for annotation. Annotation type: " + annotationType,
-                e.getCause());
+            Object proxyInstance = Proxy.newProxyInstance(annotationType.getClassLoader(), new Class<?>[] {
+              annotationType, Serializable.class}, handler);
+            return annotationType.cast(proxyInstance);
         } catch (SecurityException e) {
-            throw new IllegalStateException("Error accessing proxy constructor for annotation. Annotation type: "
-                + annotationType, e);
-        } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Error accessing proxy constructor for annotation. Annotation type: "
                 + annotationType, e);
         }
