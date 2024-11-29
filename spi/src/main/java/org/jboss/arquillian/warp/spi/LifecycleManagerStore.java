@@ -138,7 +138,7 @@ public abstract class LifecycleManagerStore {
             if (resourceAsStream != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));
                 String type = reader.readLine();
-                store = (LifecycleManagerStore) Class.forName(type).newInstance();
+                store = (LifecycleManagerStore) Class.forName(type).getDeclaredConstructor().newInstance();
                 INSTANCE.compareAndSet(null, store);
                 return INSTANCE.get();
             }
