@@ -117,7 +117,7 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
     }
 
     @After
-    public void finalize() {
+    public void finalizeTest() {
         fire(new AfterClass(TestingClass.class));
     }
 

@@ -18,6 +18,8 @@ package org.jboss.arquillian.warp.impl.utils;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
@@ -33,7 +35,7 @@ public class TestShrinkWrapUtils {
     }
 
     @Test
-    public void testMultipleUse() throws ClassNotFoundException {
+    public void testMultipleUse() throws ClassNotFoundException, IOException {
         JavaArchive archive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
 
         ShrinkWrapClassLoader classLoader =
@@ -44,5 +46,7 @@ public class TestShrinkWrapUtils {
 
         assertNotNull(nestedArchive.get("/org/junit/Test.class"));
         assertNotNull(nestedArchive.get("/org/junit/Ignore.class"));
+
+        classLoader.close();
     }
 }
