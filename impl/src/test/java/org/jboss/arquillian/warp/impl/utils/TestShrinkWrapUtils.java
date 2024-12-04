@@ -35,7 +35,7 @@ public class TestShrinkWrapUtils {
     }
 
     @Test
-    public void testMultipleUse() throws ClassNotFoundException, IOException {
+    public void testMultipleUse() throws Exception {
         JavaArchive archive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
 
         try (ShrinkWrapClassLoader classLoader =
