@@ -38,15 +38,14 @@ public class TestShrinkWrapUtils {
     public void testMultipleUse() throws ClassNotFoundException, IOException {
         JavaArchive archive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
 
-        ShrinkWrapClassLoader classLoader =
-            new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
-        Class<?> nestedClass = classLoader.loadClass(Test.class.getName());
+        try (ShrinkWrapClassLoader classLoader =
+            new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive)) {
+            Class<?> nestedClass = classLoader.loadClass(Test.class.getName());
 
-        JavaArchive nestedArchive = ShrinkWrapUtils.getJavaArchiveFromClass(nestedClass);
+            JavaArchive nestedArchive = ShrinkWrapUtils.getJavaArchiveFromClass(nestedClass);
 
-        assertNotNull(nestedArchive.get("/org/junit/Test.class"));
-        assertNotNull(nestedArchive.get("/org/junit/Ignore.class"));
-
-        classLoader.close();
+            assertNotNull(nestedArchive.get("/org/junit/Test.class"));
+            assertNotNull(nestedArchive.get("/org/junit/Ignore.class"));
+        }
     }
 }

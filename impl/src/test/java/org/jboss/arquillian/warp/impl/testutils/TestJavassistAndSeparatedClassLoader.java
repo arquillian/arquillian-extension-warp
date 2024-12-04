@@ -39,10 +39,8 @@ public class TestJavassistAndSeparatedClassLoader {
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class).add(new CtClassAsset(ctClass));
 
-        ShrinkWrapClassLoader classLoader = new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive);
-
-        assertNotNull(classLoader.loadClass(CLASS_NAME));
-
-        classLoader.close();
+        try (ShrinkWrapClassLoader classLoader = new ShrinkWrapClassLoader(ClassLoaderUtils.getBootstrapClassLoader(), archive)) {
+            assertNotNull(classLoader.loadClass(CLASS_NAME));
+        }
     }
 }
