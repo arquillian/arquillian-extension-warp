@@ -40,3 +40,4 @@ public class TestDynamicClassLoading {
         String test = "xyz";
     }
 }
+
