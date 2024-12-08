@@ -34,15 +34,15 @@ import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestLifecycleTest extends AbstractLifecycleTestBase {
 
     @Mock

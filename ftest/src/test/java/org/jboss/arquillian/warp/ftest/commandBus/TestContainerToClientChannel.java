@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.warp.ftest.commandBus;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.net.URL;
@@ -30,7 +30,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -42,15 +42,15 @@ import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 
 /**
  * @author atzoum
  * @author lfryc
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class TestContainerToClientChannel {
@@ -82,7 +82,7 @@ public class TestContainerToClientChannel {
         Warp.initiate(pingUrl)
             .inspect(new InspectionPerformingSuccessfulOperation());
 
-        assertTrue("operation should be executed on the client", SuccessfulCommand.executedStatic);
+        assertTrue(SuccessfulCommand.executedStatic, "operation should be executed on the client");
     }
 
     @EnrichTestCase
@@ -97,7 +97,7 @@ public class TestContainerToClientChannel {
             CommandService remoteOperationService = serviceLoader.get().onlyOne(CommandService.class);
 
             SuccessfulCommand result = remoteOperationService.execute(new SuccessfulCommand());
-            assertTrue("should be executed on the client", result.executedInstance);
+            assertTrue(result.executedInstance, "should be executed on the client");
         }
     }
 
@@ -126,8 +126,8 @@ public class TestContainerToClientChannel {
             }
         }
 
-        assertTrue("should started on the client", FailedCommand.startedStatic);
-        assertFalse("the execution should fail on client", FailedCommand.executedStatic);
+        assertTrue(FailedCommand.startedStatic, "should started on the client");
+        assertFalse(FailedCommand.executedStatic, "the execution should fail on client");
     }
 
     @EnrichTestCase
@@ -142,8 +142,8 @@ public class TestContainerToClientChannel {
             CommandService remoteOperationService = serviceLoader.get().onlyOne(CommandService.class);
 
             FailedCommand result = remoteOperationService.execute(new FailedCommand());
-            assertTrue("should started on the client", result.startedInstance);
-            assertFalse("the execution should fail on client", result.executedInstance);
+            assertTrue(result.startedInstance, "should started on the client");
+            assertFalse(result.executedInstance, "the execution should fail on client");
         }
     }
 

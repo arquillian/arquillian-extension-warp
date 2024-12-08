@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.server.lifecycle;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -36,15 +36,15 @@ import org.jboss.arquillian.warp.impl.server.request.RequestContextHandler;
 import org.jboss.arquillian.warp.impl.server.request.RequestContextImpl;
 import org.jboss.arquillian.warp.spi.LifecycleManager;
 import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LifecycleManagerTest extends AbstractManagerTestBase {
 
     @Mock
@@ -102,7 +102,7 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
         // then
         assertTrue(VerifyLifecycleManager.invoked);
         injector.get().inject(this);
-        assertNull("lifecycle manager should be finalized after ProcessHttpRequest ", lifecycleManager.get());
+        assertNull(lifecycleManager.get(), "lifecycle manager should be finalized after ProcessHttpRequest");
     }
 
     public static class VerifyLifecycleManager {
@@ -114,7 +114,7 @@ public class LifecycleManagerTest extends AbstractManagerTestBase {
 
         public void observeProcessHttpRequest(@Observes ProcessHttpRequest processHttpRequest) {
             invoked = true;
-            assertNotNull("lifecycle manager should be initialized by ProcessHttpRequest event", lifecycleManager.get());
+            assertNotNull(lifecycleManager.get(), "lifecycle manager should be initialized by ProcessHttpRequest event");
         }
     }
 }

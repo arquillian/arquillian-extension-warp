@@ -22,7 +22,7 @@ import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestMultiThreadEvents {
 

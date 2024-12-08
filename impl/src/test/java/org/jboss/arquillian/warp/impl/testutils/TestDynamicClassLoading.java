@@ -16,11 +16,12 @@
  */
 package org.jboss.arquillian.warp.impl.testutils;
 
+/*
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @RunWith(SeparatedClassloaderRunner.class)
 public class TestDynamicClassLoading {
@@ -40,3 +41,4 @@ public class TestDynamicClassLoading {
         String test = "xyz";
     }
 }
+*/

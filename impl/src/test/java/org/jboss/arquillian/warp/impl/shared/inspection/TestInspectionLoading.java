@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.shared.inspection;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -40,9 +40,9 @@ import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
 import org.jboss.shrinkwrap.spi.MemoryMapArchive;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestInspectionLoading {
 
@@ -50,7 +50,7 @@ public class TestInspectionLoading {
     private ClassLoader clientClassLoader;
     private ClassLoader serverClassLoader;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         clientClassLoader = separatedClassLoader(clientArchive());
         serverClassLoader = separatedClassLoader(serverArchive());
@@ -58,7 +58,7 @@ public class TestInspectionLoading {
         replaceClassLoader(clientClassLoader);
     }
 
-    @After
+    @AfterEach
     public void replaceClassLoader() {
         restoreOriginalClassLoader();
     }

@@ -17,7 +17,7 @@
 package org.jboss.arquillian.warp.ftest.group;
 
 import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.net.URL;
@@ -25,7 +25,7 @@ import java.net.URL;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -38,14 +38,15 @@ import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class TestRequestGroups {
@@ -64,8 +65,9 @@ public class TestRequestGroups {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @Test(expected = MultipleGroupsPerRequestException.class)
+    @Test()
     public void when_there_are_two_matching_groups_per_request_then_exception_should_be_thrown() {
+        Assertions.assertThrows(MultipleGroupsPerRequestException.class, () -> {
         Warp
             .initiate(new Activity() {
                 public void perform() {
@@ -81,6 +83,7 @@ public class TestRequestGroups {
                 private static final long serialVersionUID = 1L;
             })
             .execute();
+        });
     }
 
     @Test
@@ -105,6 +108,6 @@ public class TestRequestGroups {
             .execute();
 
         WarpGroupResult group = result.getGroup(1);
-        assertEquals("first group get hit once", 1, group.getHitCount());
+        assertEquals(1, group.getHitCount(), "first group get hit once");
     }
 }

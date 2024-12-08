@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.impl.client.filter.http;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -48,16 +48,16 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * <p>Tests the {@link HttpFilters} class.</p>
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestHttpFilters extends AbstractWarpClientTestTestBase {
 
     /**
@@ -105,7 +105,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
     /**
      * Sets up the test environment.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
 
         // given
@@ -383,7 +383,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
      */
     private static void assertRequestMatches(HttpFilterBuilder builder, HttpRequest request) {
 
-        assertTrue("The filter does not match the request.", builder.build().matches(request));
+        assertTrue(builder.build().matches(request), "The filter does not match the request.");
     }
 
     /**
@@ -394,7 +394,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
      */
     private static void assertRequestNotMatches(HttpFilterBuilder builder, HttpRequest request) {
 
-        assertFalse("The filter does not match the request.", builder.build().matches(request));
+        assertFalse(builder.build().matches(request), "The filter does not match the request.");
     }
 
     /**

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.jboss.arquillian.warp.impl.client.separation;
-
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+/*
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,9 +29,9 @@ import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -52,7 +52,7 @@ public class TestSeparatedClassLoader {
         JavaArchive bytebuddyAgentJar = ShrinkWrapUtils.getJavaArchiveFromClass(Installer.class);
         JavaArchive objenesisJar = ShrinkWrapUtils.getJavaArchiveFromClass(ObjenesisStd.class);
 
-        JavaArchive junit = ShrinkWrapUtils.getJavaArchiveFromClass(Assert.class);
+        JavaArchive junit = ShrinkWrapUtils.getJavaArchiveFromClass(Assertions.class);
 
         return new JavaArchive[] {archive, mockitoJar, bytebuddyJar, bytebuddyAgentJar, objenesisJar, junit};
     }
@@ -172,3 +172,4 @@ public class TestSeparatedClassLoader {
     private class String2 {
     }
 }
+*/

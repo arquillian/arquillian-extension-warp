@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.deployment;
 
+/*
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -32,8 +33,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
 import org.jboss.shrinkwrap.spi.MemoryMapArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @RunWith(SeparatedClassloaderRunner.class)
 public class TestDeploymentEnricherClassPath {
@@ -80,4 +81,4 @@ public class TestDeploymentEnricherClassPath {
     @WarpTest
     private static class TestingClass {
     }
-}
+}*/

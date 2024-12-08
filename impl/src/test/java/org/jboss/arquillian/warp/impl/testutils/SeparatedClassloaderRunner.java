@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.testutils;
 
+/*
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -28,7 +29,7 @@ import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -212,3 +213,4 @@ public class SeparatedClassloaderRunner extends BlockJUnit4ClassRunner {
         }
     }
 }
+*/

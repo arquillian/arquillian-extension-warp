@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.utils;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestClassLoaderUtils {
 
@@ -29,10 +29,10 @@ public class TestClassLoaderUtils {
 
         ClassLoader classLoader = ClassLoaderUtils.getBootstrapClassLoader();
 
-        assertNotNull("bootstrap classloader should not be null", classLoader);
-        assertNull("bootstrap classloader should not have parent", classLoader.getParent());
+        assertNotNull(classLoader, "bootstrap classloader should not be null");
+        assertNull(classLoader.getParent(), "bootstrap classloader should not have parent");
 
-        assertNotNull("java.lang.String should be on bootstrap classpath", classLoader.loadClass(String.class.getName()));
+        assertNotNull(classLoader.loadClass(String.class.getName()), "java.lang.String should be on bootstrap classpath");
 
         try {
             classLoader.loadClass(Test.class.getName());

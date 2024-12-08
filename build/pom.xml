@@ -121,8 +121,8 @@
 
       <!-- JUnit -->
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
         <version>${version.junit}</version>
       </dependency>
 
@@ -130,6 +130,12 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
+        <version>${version.mockito}</version>
+      </dependency>
+      <!-- Mockito JUnit5 extensions -->
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
         <version>${version.mockito}</version>
       </dependency>
 

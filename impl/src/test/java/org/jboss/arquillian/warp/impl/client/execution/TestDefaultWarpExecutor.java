@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.execution;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -29,16 +29,16 @@ import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.impl.client.execution.DefaultWarpRequestSpecifier.ActivityException;
 import org.jboss.arquillian.warp.impl.client.scope.WarpExecutionContext;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
 
     @Mock
@@ -64,7 +64,7 @@ public class TestDefaultWarpExecutor extends AbstractWarpClientTestTestBase {
         manager.getContext(WarpExecutionContext.class).activate();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         executor = new DefaultWarpExecutor();
         getManager().inject(executor);

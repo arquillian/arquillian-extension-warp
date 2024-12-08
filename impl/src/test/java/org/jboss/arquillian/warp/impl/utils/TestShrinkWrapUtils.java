@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.utils;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestShrinkWrapUtils {
 

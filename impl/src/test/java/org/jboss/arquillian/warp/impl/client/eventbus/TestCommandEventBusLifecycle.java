@@ -31,7 +31,7 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver;
 import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver.StartBus;
 import org.jboss.arquillian.warp.impl.client.commandBus.CommandBusObserver.StopBus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCommandEventBusLifecycle extends AbstractTestTestBase {
 
