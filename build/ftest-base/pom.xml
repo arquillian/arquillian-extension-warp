@@ -14,7 +14,7 @@
   <properties>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
-    <version.arquillian.glassfish>1.6</version.arquillian.glassfish>
+    <version.arquillian.glassfish>1.7</version.arquillian.glassfish>
 
     <!-- Arquillian Configuration -->
     <arquillian.debug>false</arquillian.debug>
