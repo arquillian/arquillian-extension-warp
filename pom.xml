@@ -93,7 +93,7 @@
     <modular.jdk.args />
 
     <!-- Container Versions -->
-    <version.tomee>10.0.0-M3</version.tomee>
+    <version.tomee>10.0.0</version.tomee>
     <!-- Tomcat version bundled with TomEE - see https://tomee.apache.org/comparison.html
          The version can be found in "bin/servlet-api.jar"
          It does not have to match exactly the version bundled with TomEE, but it should be at least the same JakartaEE spec version.-->
