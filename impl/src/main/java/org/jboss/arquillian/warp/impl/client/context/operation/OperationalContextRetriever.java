@@ -21,7 +21,7 @@ package org.jboss.arquillian.warp.impl.client.context.operation;
  *
  * @author Lukas Fryc
  */
-public interface OperationalContextRetriver {
+public interface OperationalContextRetriever {
 
     /**
      * Retrieves the {@link OperationalContext} from arbitrary store
