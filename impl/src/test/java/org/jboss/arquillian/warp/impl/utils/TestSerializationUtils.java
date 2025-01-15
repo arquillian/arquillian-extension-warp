@@ -43,10 +43,9 @@ public class TestSerializationUtils {
         assertEquals(CustomObject.class.getName(), deserialized.payload);
     }
 
-    @SuppressWarnings("serial")
     private static class CustomObject implements Serializable {
 
-        private String payload;
+        private final String payload;
 
         CustomObject(String payload) {
             this.payload = payload;
