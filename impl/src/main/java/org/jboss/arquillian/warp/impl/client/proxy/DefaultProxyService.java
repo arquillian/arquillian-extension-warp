@@ -26,7 +26,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.impl.client.context.operation.Contextualizer;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContext;
-import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContextRetriver;
+import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContextRetriever;
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContexts;
 import org.littleshoot.proxy.ChainedProxy;
 import org.littleshoot.proxy.ChainedProxyAdapter;
@@ -57,7 +57,7 @@ public class DefaultProxyService implements ProxyService<HttpProxyServer> {
     public HttpProxyServer startProxy(final URL realUrl, final URL proxyUrl) {
         final ProxyURLToContextMapping urlToContextMapping = urlToContextMappingInst.get();
 
-        final OperationalContextRetriver retriever = new OperationalContextRetriver() {
+        final OperationalContextRetriever retriever = new OperationalContextRetriever() {
             @Override
             public OperationalContext retrieve() {
                 return urlToContextMapping.get(proxyUrl);

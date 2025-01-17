@@ -32,7 +32,7 @@ public class Contextualizer {
     /**
      * Contextualizes operation with contexts given by {@link OperationalContext}
      *
-     * @param retriever                    the context
+     * @param context                      the context
      * @param instance                     the instance to wrap (must comply with given interface)
      * @param interfaze                    the interface of return object
      * @param contextPropagatingInterfaces when a return type of any invocation is one of these interfaces, the given result will be call contextually as well
@@ -40,7 +40,7 @@ public class Contextualizer {
     public static <T> T contextualize(final OperationalContext context, final T instance, Class<?> interfaze,
         Class<?>... contextPropagatingInterfaces) {
 
-        OperationalContextRetriver retriever = new OperationalContextRetriver() {
+        OperationalContextRetriever retriever = new OperationalContextRetriever() {
             @Override
             public OperationalContext retrieve() {
                 return context;
@@ -52,7 +52,7 @@ public class Contextualizer {
 
     /**
      * Contextualizes operation with contexts given by {@link OperationalContext} which is given by provided
-     * {@link OperationalContextRetriver}
+     * {@link OperationalContextRetriever}
      *
      * @param retriever                    the context retriever
      * @param instance                     the instance to wrap (must comply with given interface)
@@ -60,19 +60,19 @@ public class Contextualizer {
      * @param contextPropagatingInterfaces when a return type of any invocation is one of these interfaces, the given result will be call contextually as well
      */
     @SuppressWarnings("unchecked")
-    public static <T> T contextualize(final OperationalContextRetriver retriver, final T instance, Class<?> interfaze,
-        final Class<?>... contextPropagatingInterfaces) {
+    public static <T> T contextualize(final OperationalContextRetriever retriever, final T instance, Class<?> interfaze,
+                                      final Class<?>... contextPropagatingInterfaces) {
         return (T) Proxy.newProxyInstance(instance.getClass().getClassLoader(), new Class<?>[] {interfaze},
             new InvocationHandler() {
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    OperationalContext context = retriver.retrieve();
+                    OperationalContext context = retriever.retrieve();
                     context.activate();
                     try {
                         Object result = method.invoke(instance, args);
                         Class<?> type = method.getReturnType();
                         if (result != null && type != null && type.isInterface() && Arrays.asList(
                             contextPropagatingInterfaces).contains(type)) {
-                            return contextualize(retriver, result, type, contextPropagatingInterfaces);
+                            return contextualize(retriever, result, type, contextPropagatingInterfaces);
                         } else {
                             return result;
                         }

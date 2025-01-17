@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Base64;
 
 /**
- * The utility methods for serializatio of {@link Serializable} objects.
+ * The utility methods for serialization of {@link Serializable} objects.
  *
  * @author Lukas Fryc
  */
@@ -47,21 +48,18 @@ public class SerializationUtils {
             ByteArrayInputStream bais = new ByteArrayInputStream(serializedObject);
             ObjectInputStream ois = new ObjectInputStream(bais);
             return (T) ois.readObject();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
     }
 
     public static String serializeToBase64(Serializable object) {
         byte[] serialized = serializeToBytes(object);
-        return new String(Base64.encodeBase64(serialized));
+        return Base64.getEncoder().encodeToString(serialized);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Serializable> T deserializeFromBase64(String serializedObject) {
-        byte[] bytes = Base64.decodeBase64(serializedObject);
-        return (T) deserializeFromBytes(bytes);
+        byte[] bytes = Base64.getDecoder().decode(serializedObject);
+        return deserializeFromBytes(bytes);
     }
 }
