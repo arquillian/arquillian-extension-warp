@@ -121,6 +121,7 @@
     <module>api</module>
     <module>spi</module>
     <module>impl</module>
+    <module>impl_test_separatecl</module>
     <module>ftest</module>
 
     <!-- extensions -->

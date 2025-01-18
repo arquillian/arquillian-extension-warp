@@ -20,12 +20,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import javassist.ClassPool;
 import javassist.CtClass;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.impl.client.separation.SeparateInvocator;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
+import org.jboss.arquillian.warp.servlet.BeforeServlet;
+import org.jboss.arquillian.warp.spi.WarpCommons;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -35,7 +43,7 @@ public class TestMigratedInspection {
 
     @Test
     public void testMigrate() throws Throwable {
-        Inspection originalInspection = TestTransformedInspection.getAnonymousServerInspection();
+        Inspection originalInspection = TestMigratedInspection.getAnonymousServerInspection();
         assertTrue(originalInspection.getClass().isAnonymousClass());
 
         TransformedInspection transformedInspection = new TransformedInspection(originalInspection);
@@ -74,5 +82,61 @@ public class TestMigratedInspection {
         JavaArchive javassistArchive = ShrinkWrapUtils.getJavaArchiveFromClass(javassist.CtClass.class);
 
         return new JavaArchive[] {archive, javassistArchive};
+    }
+
+    // Same code in impl_test_separatecl/src/test/java/org/jboss/arquillian/warp/impl/client/transformation
+
+    public static Inspection getAnonymousServerInspection() {
+        Inspection inspection = new Inspection() {
+            private static final long serialVersionUID = 1L;
+
+            @BeforeServlet
+            public String get() {
+                return "Test";
+            }
+        };
+
+        print(inspection.getClass());
+
+        return inspection;
+    }
+
+    private static void print(Class<?> clazz) {
+
+        if (WarpCommons.debugMode()) {
+
+            System.out.println();
+            System.out.println("Class: " + clazz.getName());
+            System.out.println("SuperClass: " + clazz.getSuperclass() + " " + clazz.getSuperclass().hashCode());
+            System.out.println("Interfaces: " + Arrays.asList(clazz.getInterfaces()));
+            System.out.println("Fields");
+            for (Field field : clazz.getDeclaredFields()) {
+                printAnnotation(field);
+                System.out.println("\t" + field);
+            }
+
+            System.out.println("Constructors");
+            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                printAnnotation(constructor);
+                System.out.println("\t" + constructor);
+            }
+
+            System.out.println("Methods");
+            for (Method method : clazz.getDeclaredMethods()) {
+                printAnnotation(method);
+                System.out.println("\t" + method);
+            }
+        }
+    }
+
+    public static void printAnnotation(AnnotatedElement elem) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\t");
+        for (Annotation annotation : elem.getAnnotations()) {
+            sb.append("@" + annotation.annotationType().getSimpleName() + " ");
+        }
+        if (elem.getAnnotations().length > 0) {
+            System.out.println(sb.toString());
+        }
     }
 }

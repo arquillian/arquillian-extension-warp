@@ -16,14 +16,13 @@
  */
 package org.jboss.arquillian.warp.impl.testutils;
 
-/*
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@RunWith(SeparatedClassloaderRunner.class)
+@ExtendWith(SeparatedClassloaderExtension.class)
 public class TestDynamicClassLoading {
 
     @SuppressWarnings({ "unused", "serial" })
@@ -41,4 +40,3 @@ public class TestDynamicClassLoading {
         String test = "xyz";
     }
 }
-*/

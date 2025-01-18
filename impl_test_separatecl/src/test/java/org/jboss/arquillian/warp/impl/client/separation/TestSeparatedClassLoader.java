@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.jboss.arquillian.warp.impl.client.separation;
-/*
+
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 import net.bytebuddy.agent.Installer;
 import net.bytebuddy.dynamic.loading.ClassInjector;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
-import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
+import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderExtension;
 import org.jboss.arquillian.warp.impl.utils.ClassLoaderUtils;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -37,7 +37,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.objenesis.ObjenesisStd;
 
-@RunWith(SeparatedClassloaderRunner.class)
+@ExtendWith(SeparatedClassloaderExtension.class)
 public class TestSeparatedClassLoader {
 
     @SeparatedClassPath
@@ -172,4 +172,3 @@ public class TestSeparatedClassLoader {
     private class String2 {
     }
 }
-*/
