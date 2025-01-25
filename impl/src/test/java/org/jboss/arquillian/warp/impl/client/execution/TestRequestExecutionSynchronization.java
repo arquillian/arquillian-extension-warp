@@ -106,10 +106,12 @@ public class TestRequestExecutionSynchronization extends AbstractWarpClientTestT
         WarpContext warpContext = new WarpContextImpl();
 
         when(serviceLoader.onlyOne(WarpRequestSpecifier.class)).thenReturn(requestExecutor);
-        when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(inspectionSynchronizer);
-        when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(serviceLoader.onlyOne(ExecutionSynchronizer.class)).thenReturn(inspectionSynchronizer);
+        lenient().when(serviceLoader.onlyOne(WarpExecutor.class)).thenReturn(warpExecutor);
         lenient().when(serviceLoader.onlyOne(WarpRuntime.class)).thenReturn(warpRuntime);
-        when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
+        lenient().when(serviceLoader.onlyOne(WarpContext.class)).thenReturn(warpContext);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
 

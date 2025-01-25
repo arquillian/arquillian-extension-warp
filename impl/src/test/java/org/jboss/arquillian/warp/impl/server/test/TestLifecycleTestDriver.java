@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,7 +83,9 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         bind(ApplicationScoped.class, ServiceLoader.class, services);
         bind(RequestScoped.class, InspectionRegistry.class, inspectionRegistry);
         bind(RequestScoped.class, ResponsePayload.class, responsePayload);
-        when(services.all(TestEnricher.class)).thenReturn(Arrays.<TestEnricher>asList());
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(services.all(TestEnricher.class)).thenReturn(Arrays.<TestEnricher>asList());
     }
 
     @Test

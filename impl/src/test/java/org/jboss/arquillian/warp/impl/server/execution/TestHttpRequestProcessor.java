@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -92,8 +93,10 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         bind(RequestScoped.class, HttpServletRequest.class, request);
         bind(RequestScoped.class, HttpServletResponse.class, response);
         bind(RequestScoped.class, FilterChain.class, filterChain);
-        when(services.onlyOne(HttpRequestDeenricher.class)).thenReturn(deenricher);
-        when(services.onlyOne(HttpResponseEnricher.class)).thenReturn(enricher);
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(services.onlyOne(HttpRequestDeenricher.class)).thenReturn(deenricher);
+        lenient().when(services.onlyOne(HttpResponseEnricher.class)).thenReturn(enricher);
     }
 
     @Test

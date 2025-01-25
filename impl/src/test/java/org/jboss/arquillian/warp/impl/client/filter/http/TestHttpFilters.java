@@ -48,6 +48,7 @@ import org.jboss.arquillian.warp.impl.client.execution.WarpExecutor;
 import org.jboss.arquillian.warp.impl.client.execution.WarpRequestSpecifier;
 import org.jboss.arquillian.warp.impl.client.testbase.AbstractWarpClientTestTestBase;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -121,6 +122,7 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
     /**
      * Tears down the test environment.
      */
+    @AfterEach
     public void tearDown() {
 
         fire(new AfterClass(TestingClass.class));
@@ -407,8 +409,10 @@ public class TestHttpFilters extends AbstractWarpClientTestTestBase {
     private static HttpRequest createRequest(HttpMethod method, String uri) {
 
         HttpRequest result = mock(HttpRequest.class);
-        when(result.getMethod()).thenReturn(method);
-        when(result.getUri()).thenReturn(uri);
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(result.getMethod()).thenReturn(method);
+        lenient().when(result.getUri()).thenReturn(uri);
 
         return result;
     }

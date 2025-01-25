@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
@@ -59,9 +60,11 @@ public class TestLifecycleTestEnrichmentWatcher {
     public void setupMocks() {
         testInstance = new TestInstance();
         when(beforeContext.getEvent()).thenReturn(beforeEvent);
-        when(afterContext.getEvent()).thenReturn(afterEvent);
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(afterContext.getEvent()).thenReturn(afterEvent);
         when(beforeEvent.getTestInstance()).thenReturn(testInstance);
-        when(afterEvent.getTestInstance()).thenReturn(testInstance);
+        lenient().when(afterEvent.getTestInstance()).thenReturn(testInstance);
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
