@@ -116,7 +116,7 @@ public class TestFacesLifecycleFailurePropagation {
             .addClass(FailingPhaseListener.class);
     }
 
-    @Test()
+    @Test
     public void test() {
         Assertions.assertThrows(ServerWarpExecutionException.class, () -> {
             Warp
