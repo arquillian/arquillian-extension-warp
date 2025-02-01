@@ -61,7 +61,7 @@ public class TestVerificationOfInvokedInspectionMethods {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @Test()
+    @Test
     public void when_lifecycle_test_is_not_invoked_on_server_then_client_should_throw_exception() {
         Assertions.assertThrows(InspectionMethodWasNotInvokedException.class, () -> {
         Warp

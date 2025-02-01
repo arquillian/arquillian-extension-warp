@@ -65,7 +65,7 @@ public class TestRequestGroups {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @Test()
+    @Test
     public void when_there_are_two_matching_groups_per_request_then_exception_should_be_thrown() {
         Assertions.assertThrows(MultipleGroupsPerRequestException.class, () -> {
         Warp

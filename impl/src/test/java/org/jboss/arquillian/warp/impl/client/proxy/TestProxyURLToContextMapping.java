@@ -46,7 +46,7 @@ public class TestProxyURLToContextMapping {
         mapping = new ProxyURLToContextMapping();
     }
 
-    @Test()
+    @Test
     public void when_another_classes_for_same_url_are_registered_then_mapping_should_fail_to_register() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             mapping.register(url, TestingClass.class, context);

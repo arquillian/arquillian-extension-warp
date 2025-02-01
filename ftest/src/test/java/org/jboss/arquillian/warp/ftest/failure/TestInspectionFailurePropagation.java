@@ -67,7 +67,7 @@ public class TestInspectionFailurePropagation {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @Test()
+    @Test
     public void testAssertionErrorPropagation() {
         Assertions.assertThrows(AssertionError.class, () -> {
         Warp
@@ -112,7 +112,7 @@ public class TestInspectionFailurePropagation {
         }
     }
 
-    @Test()
+    @Test
     public void testRuntimeExceptionPropagation() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
         Warp

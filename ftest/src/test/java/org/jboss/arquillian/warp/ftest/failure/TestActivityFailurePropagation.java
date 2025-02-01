@@ -65,7 +65,7 @@ public class TestActivityFailurePropagation {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @Test()
+    @Test
     public void testAssertionErrorPropagation() {
         Assertions.assertThrows(DefaultWarpRequestSpecifier.ActivityException.class, () -> {
             Warp
@@ -87,7 +87,7 @@ public class TestActivityFailurePropagation {
         });
     }
 
-    @Test()
+    @Test
     public void testRuntimeExceptionPropagation() {
         Assertions.assertThrows(DefaultWarpRequestSpecifier.ActivityException.class, () -> {
             Warp
@@ -109,7 +109,7 @@ public class TestActivityFailurePropagation {
         });
     }
 
-    @Test()
+    @Test
     public void testExceptionPropagationBeforeAssertionErrorInInspection() {
         Assertions.assertThrows(DefaultWarpRequestSpecifier.ActivityException.class, () -> {
             Warp
@@ -131,7 +131,7 @@ public class TestActivityFailurePropagation {
         });
     }
 
-    @Test()
+    @Test
     public void testExceptionPropagationIfExceptionInInspection() {
         Assertions.assertThrows(RuntimeException.class, () -> {
             Warp

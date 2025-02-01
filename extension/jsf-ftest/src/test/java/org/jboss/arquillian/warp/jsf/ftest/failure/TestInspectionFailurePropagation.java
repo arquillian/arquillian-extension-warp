@@ -72,7 +72,7 @@ public class TestInspectionFailurePropagation {
        Assumptions.assumeTrue(tomEEHome == null || tomEEHome.length() == 0);
     }
 
-    @Test()
+    @Test
     public void test() {
         Assertions.assertThrows(AssertionError.class, () -> {
             Warp
