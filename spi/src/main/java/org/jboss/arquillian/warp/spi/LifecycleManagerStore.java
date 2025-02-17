@@ -54,13 +54,13 @@ import org.jboss.arquillian.warp.spi.exception.StoreHasAssociatedObjectsExceptio
  */
 public abstract class LifecycleManagerStore {
 
-    private static AtomicReference<LifecycleManagerStore> INSTANCE = new AtomicReference<LifecycleManagerStore>();
+    private static final AtomicReference<LifecycleManagerStore> INSTANCE = new AtomicReference<>();
 
     /**
      * Retrieves instance of {@link LifecycleManager} for given instance of given class.
      *
-     * @param clazz       the class used as denominator during retrieval
-     * @param boundObject the object used as key for retriving {@link LifecycleManager}
+     * @param type        the class used as denominator during retrieval
+     * @param boundObject the object used as key for retrieving {@link LifecycleManager}
      * @return the bound instance of {@link LifecycleManager}
      * @throws ObjectNotAssociatedException when instance of no such class and class' instance was associated with any
      *                                      {@link LifecycleManager}
@@ -109,7 +109,7 @@ public abstract class LifecycleManagerStore {
      * Provides implementation of obtaining {@link LifecycleManager} for given instance of given class.
      *
      * @param clazz       the class used as denominator during retrieval
-     * @param boundObject the object used as key for retriving {@link LifecycleManager}
+     * @param boundObject the object used as key for retrieving {@link LifecycleManager}
      * @return the bound instance of {@link LifecycleManager}
      * @throws ObjectNotAssociatedException when instance of no such class and class' instance was associated with any
      *                                      {@link LifecycleManager}
@@ -120,7 +120,7 @@ public abstract class LifecycleManagerStore {
      * Retrieves instance of {@link LifecycleManager} for given instance of given class.
      *
      * @param clazz       the class used as denominator during retrieval
-     * @param boundObject the object used as key for retriving {@link LifecycleManager}
+     * @param boundObject the object used as key for retrieving {@link LifecycleManager}
      * @return the bound instance of {@link LifecycleManager}
      * @throws ObjectNotAssociatedException when instance of no such class and class' instance was associated with any
      *                                      {@link LifecycleManager}

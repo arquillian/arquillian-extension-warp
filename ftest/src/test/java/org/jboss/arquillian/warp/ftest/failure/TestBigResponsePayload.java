@@ -77,7 +77,7 @@ public class TestBigResponsePayload {
 
         assertNotNull(responseInspection, "responseInspection must not be null");
         assertNotNull(responseInspection.payload, "payload must not be null");
-        assertEquals(responseInspection.payload.length, TestingInspection.LENGTH);
+        assertEquals(TestingInspection.LENGTH, responseInspection.payload.length);
     }
 
     public static class TestingInspection extends Inspection {

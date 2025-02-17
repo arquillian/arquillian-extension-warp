@@ -64,21 +64,21 @@ public class TestVerificationOfInvokedInspectionMethods {
     @Test
     public void when_lifecycle_test_is_not_invoked_on_server_then_client_should_throw_exception() {
         Assertions.assertThrows(InspectionMethodWasNotInvokedException.class, () -> {
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                }
-            })
-            .inspect(new Inspection() {
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }
+                })
+                .inspect(new Inspection() {
 
-                         private static final long serialVersionUID = 1L;
+                             private static final long serialVersionUID = 1L;
 
-                         @AnnotationNotAvailableOnServer
-                         public void test_should_not_be_executed() {
+                             @AnnotationNotAvailableOnServer
+                             public void test_should_not_be_executed() {
+                             }
                          }
-                     }
-            );
+                );
         });
     }
 }

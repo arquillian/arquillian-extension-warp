@@ -68,21 +68,21 @@ public class TestRequestGroups {
     @Test
     public void when_there_are_two_matching_groups_per_request_then_exception_should_be_thrown() {
         Assertions.assertThrows(MultipleGroupsPerRequestException.class, () -> {
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                }
-            })
-            .group(1)
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-            })
-            .group(2)
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-            })
-            .execute();
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }
+                })
+                .group(1)
+                .inspect(new Inspection() {
+                    private static final long serialVersionUID = 1L;
+                })
+                .group(2)
+                .inspect(new Inspection() {
+                    private static final long serialVersionUID = 1L;
+                })
+                .execute();
         });
     }
 
