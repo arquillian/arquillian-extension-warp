@@ -17,8 +17,8 @@
 package org.jboss.arquillian.warp.impl.client.filter.http;
 
 import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,9 +27,9 @@ import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.client.filter.RequestFilter;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestMatchersFluentAPISemantics {
 
@@ -46,11 +46,11 @@ public class TestMatchersFluentAPISemantics {
         RequestFilter<HttpRequest> filter = request().uri().contains("xyz").index(1).build();
 
         // then
-        assertFalse("the first request doesn't meet URL conditions", filter.matches(request));
-        assertTrue("the second request fulfills conditions - it is first request with given URL",
-            filter.matches(request2));
-        assertFalse("the third request fulfills URL condition, but it isn't first such request",
-            filter.matches(request2));
+        assertFalse(filter.matches(request), "the first request doesn't meet URL conditions");
+        assertTrue(filter.matches(request2),
+            "the second request fulfills conditions - it is first request with given URL");
+        assertFalse(filter.matches(request2),
+            "the third request fulfills URL condition, but it isn't first such request");
     }
 
     @Test
@@ -66,14 +66,14 @@ public class TestMatchersFluentAPISemantics {
         RequestFilter<HttpRequest> filter = request().uri().contains("xyz").index(2).build();
 
         // then
-        assertFalse("the first request doesn't meet URL conditions", filter.matches(request));
-        assertFalse("the second request fulfills URL condition, but it isn't second such request",
-            filter.matches(request2));
-        assertTrue("the third request fulfills conditions - it is first request with given URL",
-            filter.matches(request2));
+        assertFalse(filter.matches(request), "the first request doesn't meet URL conditions");
+        assertFalse(filter.matches(request2),
+            "the second request fulfills URL condition, but it isn't second such request");
+        assertTrue(filter.matches(request2),
+            "the third request fulfills conditions - it is first request with given URL");
     }
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         WarpRuntime.setInstance(new WarpRuntime() {
 
@@ -89,7 +89,7 @@ public class TestMatchersFluentAPISemantics {
         });
     }
 
-    @After
+    @AfterEach
     public void afterTest() {
         WarpRuntime.setInstance(null);
     }

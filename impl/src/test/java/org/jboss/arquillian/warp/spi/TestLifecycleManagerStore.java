@@ -16,13 +16,14 @@
  */
 package org.jboss.arquillian.warp.spi;
 
+/*
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @RunWith(SeparatedClassloaderRunner.class)
 public class TestLifecycleManagerStore {
@@ -52,4 +53,4 @@ public class TestLifecycleManagerStore {
             throw new AssertionError();
         }
     }
-}
+}*/

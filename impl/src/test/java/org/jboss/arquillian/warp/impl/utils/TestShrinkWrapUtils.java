@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.utils;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestShrinkWrapUtils {
 
@@ -28,8 +28,8 @@ public class TestShrinkWrapUtils {
     public void testJavaArchiveFromClass() throws Throwable {
         JavaArchive archive = ShrinkWrapUtils.getJavaArchiveFromClass(Test.class);
 
-        assertNotNull(archive.get("/org/junit/Test.class"));
-        assertNotNull(archive.get("/org/junit/Ignore.class"));
+        assertNotNull(archive.get("/org/junit/jupiter/api/Test.class"));
+        assertNotNull(archive.get("/org/junit/jupiter/api/Disabled.class"));
     }
 
     @Test
@@ -42,8 +42,8 @@ public class TestShrinkWrapUtils {
 
             JavaArchive nestedArchive = ShrinkWrapUtils.getJavaArchiveFromClass(nestedClass);
 
-            assertNotNull(nestedArchive.get("/org/junit/Test.class"));
-            assertNotNull(nestedArchive.get("/org/junit/Ignore.class"));
+            assertNotNull(nestedArchive.get("/org/junit/jupiter/api/Test.class"));
+            assertNotNull(nestedArchive.get("/org/junit/jupiter/api/Disabled.class"));
         }
     }
 }

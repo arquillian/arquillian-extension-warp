@@ -16,9 +16,8 @@
  */
 package org.jboss.arquillian.warp.ftest.observer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.net.URL;
@@ -28,7 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -38,15 +37,15 @@ import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class TestHttpParameterFiltering {
@@ -85,7 +84,7 @@ public class TestHttpParameterFiltering {
 
                 @BeforeServlet
                 public void verifyRequestMethod() {
-                    assertThat(request.getMethod(), equalTo("GET"));
+                    assertEquals(request.getMethod(), "GET");
                 }
             });
     }
@@ -110,7 +109,7 @@ public class TestHttpParameterFiltering {
 
                 @BeforeServlet
                 public void verifyRequestMethod() {
-                    assertThat(request.getMethod(), equalTo("POST"));
+                    assertEquals(request.getMethod(), "POST");
                 }
             });
     }

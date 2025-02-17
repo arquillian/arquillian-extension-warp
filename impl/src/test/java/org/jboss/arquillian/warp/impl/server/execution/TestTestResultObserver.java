@@ -16,10 +16,10 @@
  */
 package org.jboss.arquillian.warp.impl.server.execution;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -32,8 +32,8 @@ import org.jboss.arquillian.warp.impl.server.test.TestResultObserver;
 import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTestBase;
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
 
@@ -48,7 +48,7 @@ public class TestTestResultObserver extends AbstractWarpServerTestTestBase {
         extensions.add(TestResultProvider.class);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         // having
         responsePayload = new ResponsePayload(-1L);

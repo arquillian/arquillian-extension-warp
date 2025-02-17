@@ -16,12 +16,12 @@
  */
 package org.jboss.arquillian.warp.impl.shared;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Method;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @TestingAnnotation(clazz = TestExecutedMethod.class, elementType = ElementType.TYPE, integer = 5, string = "testing")
 public class TestExecutedMethod {

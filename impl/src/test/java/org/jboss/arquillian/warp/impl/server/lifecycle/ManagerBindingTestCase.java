@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.warp.impl.server.lifecycle;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -32,16 +32,16 @@ import org.jboss.arquillian.warp.spi.LifecycleManagerStore;
 import org.jboss.arquillian.warp.spi.event.BeforeRequest;
 import org.jboss.arquillian.warp.spi.exception.ObjectAlreadyAssociatedException;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
     @Mock
@@ -61,7 +61,7 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
         extensions.add(LifecycleManagerObserver.class);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         fire(new BeforeRequest(request, response));
     }
@@ -72,10 +72,10 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
 
         try {
             LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
-            assertNotNull("lifecycle manager should be bound to request", resolvedLifecycleManager);
-            assertSame("resolved lifecycle manager should be the one which which is in the context",
-                lifecycleManager.get(),
-                resolvedLifecycleManager);
+            assertNotNull(resolvedLifecycleManager, "lifecycle manager should be bound to request");
+            assertSame(lifecycleManager.get(),
+                resolvedLifecycleManager,
+                "resolved lifecycle manager should be the one which which is in the context");
         } catch (ObjectNotAssociatedException e) {
         } finally {
             try {
@@ -117,17 +117,17 @@ public class ManagerBindingTestCase extends AbstractLifecycleTestBase {
         try {
             // verify lifecycle manager for request
             LifecycleManager resolvedLifecycleManager = LifecycleManagerStore.get(ServletRequest.class, request);
-            assertNotNull("lifecycle manager should be bound to request", resolvedLifecycleManager);
-            assertSame("resolved lifecycle manager should be the one which which is in the context",
-                lifecycleManager.get(),
-                resolvedLifecycleManager);
+            assertNotNull(resolvedLifecycleManager, "lifecycle manager should be bound to request");
+            assertSame(lifecycleManager.get(),
+                resolvedLifecycleManager,
+                "resolved lifecycle manager should be the one which which is in the context");
 
             // verify lifecycle manager for another class
             resolvedLifecycleManager = LifecycleManagerStore.get(AnotherClass.class, anotherInstance);
-            assertNotNull("lifecycle manager should be bound to another instance", resolvedLifecycleManager);
-            assertSame("resolved lifecycle manager should be the one which which is in the context",
-                lifecycleManager.get(),
-                resolvedLifecycleManager);
+            assertNotNull(resolvedLifecycleManager, "lifecycle manager should be bound to another instance");
+            assertSame(lifecycleManager.get(),
+                resolvedLifecycleManager,
+                "resolved lifecycle manager should be the one which which is in the context");
         } catch (ObjectNotAssociatedException e) {
         } finally {
             try {

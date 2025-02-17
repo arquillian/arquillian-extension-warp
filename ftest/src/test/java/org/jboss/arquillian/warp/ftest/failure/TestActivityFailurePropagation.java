@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.ftest.failure;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.net.URL;
@@ -24,7 +24,7 @@ import java.net.URL;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -36,14 +36,15 @@ import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class TestActivityFailurePropagation {
@@ -64,83 +65,90 @@ public class TestActivityFailurePropagation {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @Test(expected = DefaultWarpRequestSpecifier.ActivityException.class)
+    @Test
     public void testAssertionErrorPropagation() {
+        Assertions.assertThrows(DefaultWarpRequestSpecifier.ActivityException.class, () -> {
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                        fail("AssertionError should be correctly handled and propagated to the client-side");
+                    }
+                })
+                .inspect(new Inspection() {
+                    private static final long serialVersionUID = 1L;
 
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                    fail("AssertionError should be correctly handled and propagated to the client-side");
-                }
-            })
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
-
-                @BeforeServlet
-                public void beforeServlet() {
-                    System.out.println("Hi server, here is AJAX request!");
-                }
-            })
-        ;
+                    @BeforeServlet
+                    public void beforeServlet() {
+                        System.out.println("Hi server, here is AJAX request!");
+                    }
+                })
+            ;
+        });
     }
 
-    @Test(expected = DefaultWarpRequestSpecifier.ActivityException.class)
+    @Test
     public void testRuntimeExceptionPropagation() {
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                    throw new IllegalArgumentException();
-                }
-            })
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
+        Assertions.assertThrows(DefaultWarpRequestSpecifier.ActivityException.class, () -> {
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                        throw new IllegalArgumentException();
+                    }
+                })
+                .inspect(new Inspection() {
+                    private static final long serialVersionUID = 1L;
 
-                @BeforeServlet
-                public void beforeServlet() {
-                    System.out.println("Hi server, here is AJAX request!");
-                }
-            })
-        ;
+                    @BeforeServlet
+                    public void beforeServlet() {
+                        System.out.println("Hi server, here is AJAX request!");
+                    }
+                })
+            ;
+        });
     }
 
-    @Test(expected = DefaultWarpRequestSpecifier.ActivityException.class)
+    @Test
     public void testExceptionPropagationBeforeAssertionErrorInInspection() {
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                    fail("Show me");
-                }
-            })
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
+        Assertions.assertThrows(DefaultWarpRequestSpecifier.ActivityException.class, () -> {
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                        fail("Show me");
+                    }
+                })
+                .inspect(new Inspection() {
+                    private static final long serialVersionUID = 1L;
 
-                @BeforeServlet
-                public void beforeServlet() {
-                    fail("AssertionError should be ignored if there is an error on the client-side");
-                }
-            })
-        ;
+                    @BeforeServlet
+                    public void beforeServlet() {
+                        fail("AssertionError should be ignored if there is an error on the client-side");
+                    }
+                })
+            ;
+        });
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testExceptionPropagationIfExceptionInInspection() {
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                }
-            })
-            .inspect(new Inspection() {
-                private static final long serialVersionUID = 1L;
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }
+                })
+                .inspect(new Inspection() {
+                    private static final long serialVersionUID = 1L;
 
-                @BeforeServlet
-                public void beforeServlet() {
-                    throw new RuntimeException();
-                }
-            })
-        ;
+                    @BeforeServlet
+                    public void beforeServlet() {
+                        throw new RuntimeException();
+                    }
+                })
+            ;
+        });
     }
 }

@@ -17,8 +17,8 @@
 package org.jboss.arquillian.warp.ftest.http;
 
 import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -29,7 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -40,14 +40,14 @@ import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class TestHttpRedirection {
@@ -84,8 +84,9 @@ public class TestHttpRedirection {
 
                 @AfterServlet
                 public void test_that_request_is_redirected() {
-                    assertEquals("Response status is MOVED_TEMPORARILY", HttpServletResponse.SC_MOVED_TEMPORARILY,
-                        response.getStatus());
+                    assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY,
+                        response.getStatus(),
+                        "Response status is MOVED_TEMPORARILY");
                 }
             })
             .group()
@@ -98,7 +99,8 @@ public class TestHttpRedirection {
 
                 @AfterServlet
                 public void test_that_this_is_index_page() {
-                    assertTrue("Request URI ends with index.html", request.getRequestURI().endsWith("index.html"));
+                    assertTrue(request.getRequestURI().endsWith("index.html"),
+                        "Request URI ends with index.html");
                 }
             })
             .execute();

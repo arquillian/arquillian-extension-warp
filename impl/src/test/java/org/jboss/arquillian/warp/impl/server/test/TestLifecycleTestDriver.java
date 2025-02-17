@@ -16,10 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.server.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,14 +43,14 @@ import org.jboss.arquillian.warp.impl.server.testbase.AbstractWarpServerTestTest
 import org.jboss.arquillian.warp.impl.shared.ResponsePayload;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.servlet.event.BeforeServlet;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
     @Mock
@@ -76,13 +77,15 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
         extensions.add(TestResultObserver.class);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         // having
         bind(ApplicationScoped.class, ServiceLoader.class, services);
         bind(RequestScoped.class, InspectionRegistry.class, inspectionRegistry);
         bind(RequestScoped.class, ResponsePayload.class, responsePayload);
-        when(services.all(TestEnricher.class)).thenReturn(Arrays.<TestEnricher>asList());
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(services.all(TestEnricher.class)).thenReturn(Arrays.<TestEnricher>asList());
     }
 
     @Test
@@ -152,10 +155,10 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // then
         TestResult testResult = responsePayload.getTestResult();
-        assertNotNull("response payload test result must be set", testResult);
+        assertNotNull(testResult, "response payload test result must be set");
 
         Throwable throwable = testResult.getThrowable();
-        assertNotNull("response payload throwable must be set", throwable);
+        assertNotNull(throwable, "response payload throwable must be set");
         assertEquals(exception, throwable);
     }
 
@@ -175,10 +178,10 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // then
         TestResult testResult = responsePayload.getTestResult();
-        assertNotNull("response payload test result must be set", testResult);
+        assertNotNull(testResult, "response payload test result must be set");
 
         Throwable throwable = testResult.getThrowable();
-        assertNotNull("response payload throwable must be set", throwable);
+        assertNotNull(throwable, "response payload throwable must be set");
         assertEquals("before failed", throwable.getMessage());
     }
 
@@ -197,10 +200,10 @@ public class TestLifecycleTestDriver extends AbstractWarpServerTestTestBase {
 
         // then
         TestResult testResult = responsePayload.getTestResult();
-        assertNotNull("response payload test result must be set", testResult);
+        assertNotNull(testResult, "response payload test result must be set");
 
         Throwable throwable = testResult.getThrowable();
-        assertNotNull("response payload throwable must be set", throwable);
+        assertNotNull(throwable,"response payload throwable must be set");
         assertEquals("after failed", throwable.getMessage());
     }
 

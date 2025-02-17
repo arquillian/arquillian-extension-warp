@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.jsf.ftest.producer;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.el.ELContext;
 import jakarta.el.ELResolver;
@@ -93,20 +93,20 @@ public class TestingExtension implements RemoteLoadableExtension {
     private Instance<ViewHandler> viewHandler;
 
     public void observeRenderResponse(@Observes PhaseLifecycleEvent.AfterRenderResponse event) {
-        assertNotNull("FacesContext should be available", facesContext.get());
-        assertNotNull("ELContext should be available", elContext.get());
-        assertNotNull("ExceptionHandler should be available", exceptionHandler.get());
-        assertNotNull("PartialViewContext should be available", partialViewContext.get());
-        assertNotNull("RenderKit should be available", renderKit.get());
-        assertNotNull("UIViewRoot should be available", viewRoot.get());
-        assertNotNull("ExternalContext should be available", externalContext.get());
-        assertNotNull("Flash should be available", flash.get());
-        assertNotNull("Application should be available", application.get());
-        assertNotNull("ELResolver should be available", elResolver.get());
-        assertNotNull("ExpressionFactory should be available", expressionFactory.get());
-        assertNotNull("NavigationHandler should be available", navigationHandler.get());
-        assertNotNull("ResourceHandler should be available", resourceHandler.get());
-        assertNotNull("StateManager should be available", stateManager.get());
-        assertNotNull("ViewHandler should be available", viewHandler.get());
+        assertNotNull(facesContext.get(), "FacesContext should be available");
+        assertNotNull(elContext.get(), "ELContext should be available");
+        assertNotNull(exceptionHandler.get(), "ExceptionHandler should be available");
+        assertNotNull(partialViewContext.get(), "PartialViewContext should be available");
+        assertNotNull(renderKit.get(), "RenderKit should be available");
+        assertNotNull(viewRoot.get(), "UIViewRoot should be available");
+        assertNotNull(externalContext.get(), "ExternalContext should be available");
+        assertNotNull(flash.get(), "Flash should be available");
+        assertNotNull(application.get(), "Application should be available");
+        assertNotNull(elResolver.get(), "ELResolver should be available");
+        assertNotNull(expressionFactory.get(), "ExpressionFactory should be available");
+        assertNotNull(navigationHandler.get(), "NavigationHandler should be available");
+        assertNotNull(resourceHandler.get(), "ResourceHandler should be available");
+        assertNotNull(stateManager.get(), "StateManager should be available");
+        assertNotNull(viewHandler.get(), "ViewHandler should be available");
     }
 }

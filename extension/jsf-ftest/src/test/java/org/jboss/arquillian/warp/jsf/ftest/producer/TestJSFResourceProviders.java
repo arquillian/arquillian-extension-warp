@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.jsf.ftest.producer;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ import jakarta.faces.render.RenderKit;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -53,13 +53,13 @@ import org.jboss.arquillian.warp.jsf.Phase;
 import org.jboss.arquillian.warp.jsf.ftest.cdi.CdiBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class TestJSFResourceProviders {
@@ -84,10 +84,10 @@ public class TestJSFResourceProviders {
 
     /**Exclude this test for TomEE as long as the HtmlUnit issue is not fixed,
      * see https://github.com/arquillian/arquillian-extension-warp/issues/242  */
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException, InterruptedException {
        String tomEEHome = (String) System.getProperty("tomee.home");
-       Assume.assumeTrue(tomEEHome == null || tomEEHome.length() == 0);
+       Assumptions.assumeTrue(tomEEHome == null || tomEEHome.length() == 0);
     }
 
     @Test

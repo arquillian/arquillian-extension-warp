@@ -16,10 +16,11 @@
  */
 package org.jboss.arquillian.warp.impl.server.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
@@ -27,17 +28,18 @@ import java.io.Serializable;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestLifecycleTestEnrichmentWatcher {
 
     @Mock
@@ -54,13 +56,15 @@ public class TestLifecycleTestEnrichmentWatcher {
 
     TestInstance testInstance;
 
-    @org.junit.Before
+    @BeforeEach
     public void setupMocks() {
         testInstance = new TestInstance();
         when(beforeContext.getEvent()).thenReturn(beforeEvent);
-        when(afterContext.getEvent()).thenReturn(afterEvent);
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(afterContext.getEvent()).thenReturn(afterEvent);
         when(beforeEvent.getTestInstance()).thenReturn(testInstance);
-        when(afterEvent.getTestInstance()).thenReturn(testInstance);
+        lenient().when(afterEvent.getTestInstance()).thenReturn(testInstance);
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {

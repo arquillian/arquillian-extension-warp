@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.ftest.ear;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.net.URL;
@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -42,15 +42,15 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class EarWarpTest {
@@ -95,12 +95,12 @@ public class EarWarpTest {
 
                     System.out.println("Hi server, here is my initial request!");
 
-                    assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
+                    assertNotNull(request.getHeader(WarpCommons.ENRICHMENT_REQUEST), "request must be enriched");
 
-                    assertNotNull("request context must be available", request);
+                    assertNotNull(request, "request context must be available");
 
-                    assertNotNull("responses enrichment is set before servlet processing",
-                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                    assertNotNull(response.getHeader(WarpCommons.ENRICHMENT_RESPONSE),
+                        "responses enrichment is set before servlet processing");
                 }
 
                 @AfterServlet
@@ -108,10 +108,10 @@ public class EarWarpTest {
 
                     System.out.println("Servlet just processed my initial request!");
 
-                    assertNotNull("responses enrichment is set before servlet processing",
-                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                    assertNotNull(response.getHeader(WarpCommons.ENRICHMENT_RESPONSE),
+                        "responses enrichment is set before servlet processing");
 
-                    assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
+                    assertFalse(response.getHeaderNames().isEmpty(), "some headers has been already set");
                 }
             });
 

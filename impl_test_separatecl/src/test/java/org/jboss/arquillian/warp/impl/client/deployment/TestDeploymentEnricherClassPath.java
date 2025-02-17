@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.warp.impl.client.deployment;
 
+
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -24,7 +25,8 @@ import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.WarpRemoteExtension;
 import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
-import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
+import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderExtension;
+//import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
 import org.jboss.arquillian.warp.impl.utils.ShrinkWrapUtils;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
@@ -32,10 +34,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
 import org.jboss.shrinkwrap.spi.MemoryMapArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@RunWith(SeparatedClassloaderRunner.class)
+@ExtendWith(SeparatedClassloaderExtension.class)
 public class TestDeploymentEnricherClassPath {
 
     @SeparatedClassPath

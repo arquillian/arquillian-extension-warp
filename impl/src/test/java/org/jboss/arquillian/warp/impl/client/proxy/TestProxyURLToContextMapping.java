@@ -16,20 +16,21 @@
  */
 package org.jboss.arquillian.warp.impl.client.proxy;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 
 import org.jboss.arquillian.warp.impl.client.context.operation.OperationalContext;
 import org.jboss.arquillian.warp.impl.utils.URLUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestProxyURLToContextMapping {
 
     private URL url = URLUtils.buildUrl("http://localhost:18080");
@@ -40,15 +41,17 @@ public class TestProxyURLToContextMapping {
 
     private ProxyURLToContextMapping mapping;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mapping = new ProxyURLToContextMapping();
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void when_another_classes_for_same_url_are_registered_then_mapping_should_fail_to_register() {
-        mapping.register(url, TestingClass.class, context);
-        mapping.register(url, AnotherClass.class, context);
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            mapping.register(url, TestingClass.class, context);
+            mapping.register(url, AnotherClass.class, context);
+        });
     }
 
     @Test

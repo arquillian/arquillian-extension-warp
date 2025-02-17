@@ -24,9 +24,9 @@ import org.jboss.arquillian.warp.client.execution.WarpActivityBuilder;
 import org.jboss.arquillian.warp.client.execution.WarpRuntime;
 import org.jboss.arquillian.warp.client.filter.http.HttpFilterBuilder;
 import org.jboss.arquillian.warp.client.filter.http.HttpMethod;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestMatchersToString {
 
@@ -96,7 +96,7 @@ public class TestMatchersToString {
         assertThat(request().uri().not().startsWith("xyz").toString(), equalTo("not uri.startsWith('xyz')"));
     }
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         WarpRuntime.setInstance(new WarpRuntime() {
 
@@ -112,7 +112,7 @@ public class TestMatchersToString {
         });
     }
 
-    @After
+    @AfterEach
     public void afterTest() {
         WarpRuntime.setInstance(null);
     }

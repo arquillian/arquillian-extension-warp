@@ -16,12 +16,13 @@
  */
 package org.jboss.arquillian.warp.impl.server.execution;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,13 +48,13 @@ import org.jboss.arquillian.warp.spi.context.RequestContext;
 import org.jboss.arquillian.warp.spi.context.RequestScoped;
 import org.jboss.arquillian.warp.spi.servlet.event.ProcessHttpRequest;
 import org.jboss.arquillian.warp.spi.servlet.event.ProcessWarpRequest;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
 
     @Mock
@@ -84,7 +85,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         extensions.add(TestResultObserver.class);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         // having
@@ -92,8 +93,10 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         bind(RequestScoped.class, HttpServletRequest.class, request);
         bind(RequestScoped.class, HttpServletResponse.class, response);
         bind(RequestScoped.class, FilterChain.class, filterChain);
-        when(services.onlyOne(HttpRequestDeenricher.class)).thenReturn(deenricher);
-        when(services.onlyOne(HttpResponseEnricher.class)).thenReturn(enricher);
+        // Mockito for JUnit5 requires more "lenient" calls, as the MockitoExtension seems to validate the stubbings created in "@BeforeEach" methods for each test,
+        // but not all test methods call all stubbed methods.
+        lenient().when(services.onlyOne(HttpRequestDeenricher.class)).thenReturn(deenricher);
+        lenient().when(services.onlyOne(HttpResponseEnricher.class)).thenReturn(enricher);
     }
 
     @Test
@@ -165,9 +168,9 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         // then
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
             .get(ResponsePayload.class);
-        assertNotNull("response payload is not null", responsePayload);
-        assertNull("response payload has empty inspection", responsePayload.getInspections());
-        assertNull("response payload has empty test result", responsePayload.getTestResult());
+        assertNotNull(responsePayload, "response payload is not null");
+        assertNull(responsePayload.getInspections(), "response payload has empty inspection");
+        assertNull(responsePayload.getTestResult(), "response payload has empty test result");
     }
 
     @Test
@@ -189,11 +192,11 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         // then
         ResponsePayload responsePayload = getManager().getContext(RequestContext.class).getObjectStore()
             .get(ResponsePayload.class);
-        assertNotNull("response payload is not null", responsePayload);
-        assertNull("response payload has empty inspection", responsePayload.getInspections());
+        assertNotNull(responsePayload, "response payload is not null");
+        assertNull(responsePayload.getInspections(), "response payload has empty inspection");
 
         TestResult testResult = responsePayload.getTestResult();
-        assertNotNull("response payload has test result", testResult);
+        assertNotNull(testResult, "response payload has test result");
         assertEquals(testResult.getThrowable(), exception);
     }
 
@@ -229,7 +232,7 @@ public class TestHttpRequestProcessor extends AbstractWarpServerTestTestBase {
         ResponsePayload resolvedResponsePayload = getManager().getContext(RequestContext.class).getObjectStore()
             .get(ResponsePayload.class);
         assertSame(responsePayload, resolvedResponsePayload);
-        assertNull("response payload has empty inspection", responsePayload.getInspections());
+        assertNull(responsePayload.getInspections(), "response payload has empty inspection");
 
         TestResult testResult = responsePayload.getTestResult();
         assertEquals(exception, testResult.getThrowable());

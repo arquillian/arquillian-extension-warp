@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestSeparateInvocator {
 

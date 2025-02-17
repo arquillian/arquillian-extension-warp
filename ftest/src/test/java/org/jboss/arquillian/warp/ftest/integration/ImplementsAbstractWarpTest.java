@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.warp.ftest.integration;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +29,7 @@ import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.arquillian.warp.servlet.BeforeServlet;
 import org.jboss.arquillian.warp.spi.WarpCommons;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ImplementsAbstractWarpTest extends AbstractBasicWarpTest {
 
@@ -56,12 +56,12 @@ public class ImplementsAbstractWarpTest extends AbstractBasicWarpTest {
 
                     System.out.println("Hi server, here is my initial request!");
 
-                    assertNotNull("request must be enriched", request.getHeader(WarpCommons.ENRICHMENT_REQUEST));
+                    assertNotNull(request.getHeader(WarpCommons.ENRICHMENT_REQUEST), "request must be enriched");
 
-                    assertNotNull("request context must be available", request);
+                    assertNotNull(request, "request context must be available");
 
-                    assertNotNull("responses enrichment is set before servlet processing",
-                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                    assertNotNull(response.getHeader(WarpCommons.ENRICHMENT_RESPONSE),
+                        "responses enrichment is set before servlet processing");
                 }
 
                 @AfterServlet
@@ -69,10 +69,10 @@ public class ImplementsAbstractWarpTest extends AbstractBasicWarpTest {
 
                     System.out.println("Servlet just processed my initial request!");
 
-                    assertNotNull("responses enrichment is set before servlet processing",
-                        response.getHeader(WarpCommons.ENRICHMENT_RESPONSE));
+                    assertNotNull(response.getHeader(WarpCommons.ENRICHMENT_RESPONSE),
+                       "responses enrichment is set before servlet processing");
 
-                    assertFalse("some headers has been already set", response.getHeaderNames().isEmpty());
+                    assertFalse(response.getHeaderNames().isEmpty(), "some headers has been already set");
                 }
             });
     }

@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.ftest.inspection.inheritance;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -24,7 +24,7 @@ import java.net.URL;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Warp;
@@ -33,14 +33,14 @@ import org.jboss.arquillian.warp.ftest.TestingServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @WarpTest
 @RunAsClient
 public class TestSuperClassInspection {
@@ -70,7 +70,7 @@ public class TestSuperClassInspection {
             private static final long serialVersionUID = 1L;
         });
 
-        assertTrue("before servlet must be run", inspection.isBeforeServletRun());
-        assertTrue("after servlet must be run", inspection.isAfterServletRun());
+        assertTrue(inspection.isBeforeServletRun(), "before servlet must be run");
+        assertTrue(inspection.isAfterServletRun(), "after servlet must be run");
     }
 }
