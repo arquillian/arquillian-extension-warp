@@ -36,7 +36,6 @@ import java.util.Set;
  * A set of privileged activities that are not to leak out of this package
  *
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
- * @version $Revision: $
  */
 final class SecurityActions {
 
