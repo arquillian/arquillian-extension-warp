@@ -3,12 +3,9 @@ JUnit4 `BlockJUnit4ClassRunner` (latest code can be found here: https://github.c
 
 As this feature is not supported by JUnit5, a new approach was created using the sample from https://github.com/junit-team/junit5/discussions/4203.
 
-
-
-
 Nearly all tests in this project create a java archive, which is wrapped by a ShrinkWrapClassLoader.
 The test methode shall be executed on this separate classloader
-to simulate the test execeution by arquillian, where the test jar is assembled on the client,
+to simulate the test execution by arquillian, where the test jar is assembled on the client,
 then deployed to the server, and the test is executed inside the server.
 
 To run a tests with a separated classloader, the test class has to be annotated like this:
@@ -37,7 +34,7 @@ The ShrinkWrapClassLoader is created with a parent classloader that is called "f
 
 This "filtering classloader" is necessary, otherwise the test classes will not be loaded from the ShrinkwrapClassLoader.
 If the test method uses any other classes that are bundled in jars in the ShrinkWrapClassLoader, the filtering classloader has
-to filter thoses classes, too, so they have to be added here.
+to filter those classes, too, so they have to be added here.
 
 **Part two** of  the "separated classloader" workaround is found in ```org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderLauncherSessionListener```.
 

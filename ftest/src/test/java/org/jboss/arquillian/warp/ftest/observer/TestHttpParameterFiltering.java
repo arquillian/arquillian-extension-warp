@@ -84,7 +84,7 @@ public class TestHttpParameterFiltering {
 
                 @BeforeServlet
                 public void verifyRequestMethod() {
-                    assertEquals(request.getMethod(), "GET");
+                    assertEquals("GET", request.getMethod());
                 }
             });
     }
@@ -109,7 +109,7 @@ public class TestHttpParameterFiltering {
 
                 @BeforeServlet
                 public void verifyRequestMethod() {
-                    assertEquals(request.getMethod(), "POST");
+                    assertEquals("POST", request.getMethod());
                 }
             });
     }

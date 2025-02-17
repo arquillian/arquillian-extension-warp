@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.warp.ftest.failure;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
@@ -70,21 +70,21 @@ public class TestInspectionFailurePropagation {
     @Test
     public void testAssertionErrorPropagation() {
         Assertions.assertThrows(AssertionError.class, () -> {
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                }
-            })
-            .inspect(new Inspection() {
-                         private static final long serialVersionUID = 1L;
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }
+                })
+                .inspect(new Inspection() {
+                             private static final long serialVersionUID = 1L;
 
-                         @BeforeServlet
-                         public void beforeServlet() {
-                             fail("AssertionError should be correctly handled and propagated to the client-side");
+                             @BeforeServlet
+                             public void beforeServlet() {
+                                 fail("AssertionError should be correctly handled and propagated to the client-side");
+                             }
                          }
-                     }
-            );
+                );
         });
     }
 
@@ -108,28 +108,28 @@ public class TestInspectionFailurePropagation {
                          }
                 );
         } catch (ServerWarpExecutionException e) {
-            assertTrue(e.getCause() instanceof IOException);
+            assertInstanceOf(IOException.class, e.getCause());
         }
     }
 
     @Test
     public void testRuntimeExceptionPropagation() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-        Warp
-            .initiate(new Activity() {
-                public void perform() {
-                    browser.navigate().to(contextPath + "index.html");
-                }
-            })
-            .inspect(new Inspection() {
-                         private static final long serialVersionUID = 1L;
+            Warp
+                .initiate(new Activity() {
+                    public void perform() {
+                        browser.navigate().to(contextPath + "index.html");
+                    }
+                })
+                .inspect(new Inspection() {
+                             private static final long serialVersionUID = 1L;
 
-                         @BeforeServlet
-                         public void beforeServlet() {
-                             throw new IllegalArgumentException();
+                             @BeforeServlet
+                             public void beforeServlet() {
+                                 throw new IllegalArgumentException();
+                             }
                          }
-                     }
-            );
+                );
         });
     }
 }

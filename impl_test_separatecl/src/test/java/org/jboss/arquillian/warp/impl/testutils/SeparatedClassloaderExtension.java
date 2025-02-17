@@ -21,7 +21,7 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * Part one of the "separated classloader" workaround (see Readme.md)
+ * Part one of the "separated classloader" workaround (see README.md)
  *
  * @author WolfgangHG
  */

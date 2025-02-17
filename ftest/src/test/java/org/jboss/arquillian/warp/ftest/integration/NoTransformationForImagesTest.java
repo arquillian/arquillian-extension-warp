@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.warp.ftest.integration;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -71,14 +70,11 @@ public class NoTransformationForImagesTest {
                 try {
                     URL url = new URL(contextPath, "empty.png");
 
-                    byte[] transferedBytes = IOUtils.toByteArray(url.openConnection().getInputStream());
+                    byte[] transferredBytes = IOUtils.toByteArray(url.openConnection().getInputStream());
 
-                    byte[] expectedBytes =
-                        IOUtils.toByteArray(new FileInputStream("src/main/webapp/resources/empty.png"));
+                    byte[] expectedBytes = IOUtils.toByteArray(new FileInputStream("src/main/webapp/resources/empty.png"));
 
-                    assertTrue(
-                        Arrays.equals(expectedBytes, transferedBytes),
-                        "the image loaded from the server through proxy must be same as the one stored on the disk");
+                    assertArrayEquals(expectedBytes, transferredBytes, "The image loaded from the server through proxy must be same as the one stored on the disk");
                 } catch (IOException e) {
                     throw new IllegalStateException("url connection failed", e);
                 }

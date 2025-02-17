@@ -35,17 +35,16 @@ import org.junit.platform.launcher.LauncherSession;
 import org.junit.platform.launcher.LauncherSessionListener;
 
 /**
- * Part two of the "separated classloader" workaround (see Readme.md)
+ * Part two of the "separated classloader" workaround (see README.md)
  *
  * @author WolfgangHG
  */
 public class SeparatedClassloaderLauncherSessionListener implements LauncherSessionListener {
-    private static String ARCHIVE_MESSAGE = "There must be exactly one no-arg static method which returns JavaArchive with annotation @SeparatedClassPath defined";
 
     private final Deque<AutoCloseable> closeables = new ConcurrentLinkedDeque<>();
     private ClassLoader originalClassLoader;
 
-    private static Logger log = Logger.getLogger(SeparatedClassloaderLauncherSessionListener.class.getName());
+    private static final Logger log = Logger.getLogger(SeparatedClassloaderLauncherSessionListener.class.getName());
 
     /**
      * If the test contains a method that is annotated with {@link org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath},
@@ -68,7 +67,7 @@ public class SeparatedClassloaderLauncherSessionListener implements LauncherSess
                     return clazz;
                 }
                 List<Method> classPath = SecurityActions.getMethodsWithAnnotation(clazz, SeparatedClassPath.class);
-                if (classPath.size() > 0) {
+                if (!classPath.isEmpty()) {
                     log.info("Found annotation " + SeparatedClassPath.class.getName() + " on class " + clazz);
                     ClassLoader classLoaderSeparated = initializeClassLoader(clazz);
                     //Register classloader for cleanup:
@@ -123,14 +122,15 @@ public class SeparatedClassloaderLauncherSessionListener implements LauncherSess
     static ClassLoader initializeClassLoader(Class<?> testClass) {
         List<Method> classPath = SecurityActions.getMethodsWithAnnotation(testClass, SeparatedClassPath.class);
 
+        String message = "There must be exactly one no-arg static method which returns JavaArchive with annotation @SeparatedClassPath defined";
         if (classPath.isEmpty()) {
-            throw new RuntimeException(ARCHIVE_MESSAGE);
+            throw new RuntimeException(message);
         }
 
         Method method = classPath.iterator().next();
 
         if (!checkClassPathMethodType(method)) {
-            throw new RuntimeException(ARCHIVE_MESSAGE);
+            throw new RuntimeException(message);
         }
 
         JavaArchive[] archives;
@@ -145,9 +145,7 @@ public class SeparatedClassloaderLauncherSessionListener implements LauncherSess
             throw new IllegalStateException("Failed to retrieve @SeparatedClassPath archive", e);
         }
 
-        ClassLoader shrinkWrapClassLoader = getSeparatedClassLoader(archives, testClass);
-
-        return shrinkWrapClassLoader;
+        return getSeparatedClassLoader(archives, testClass);
     }
 
     private static ClassLoader getSeparatedClassLoader(JavaArchive[] archives, Class<?> testClass) {
@@ -200,7 +198,6 @@ public class SeparatedClassloaderLauncherSessionListener implements LauncherSess
             }
         };
 
-        ShrinkWrapClassLoader shrinkwrapClassLoader = new ShrinkWrapClassLoader(filteringClassLoader, archives);
-        return shrinkwrapClassLoader;
+        return new ShrinkWrapClassLoader(filteringClassLoader, archives);
     }
 }

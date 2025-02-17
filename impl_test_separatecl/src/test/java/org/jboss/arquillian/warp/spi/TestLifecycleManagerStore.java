@@ -16,16 +16,17 @@
  */
 package org.jboss.arquillian.warp.spi;
 
-/*
 import org.jboss.arquillian.warp.impl.testutils.SeparatedClassPath;
-import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderRunner;
+import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderExtension;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@RunWith(SeparatedClassloaderRunner.class)
+@Disabled("Disabled by https://github.com/arquillian/arquillian-extension-warp/pull/288 post JUnit5 migration")
+@ExtendWith(SeparatedClassloaderExtension.class)
 public class TestLifecycleManagerStore {
 
     @SeparatedClassPath
@@ -46,11 +47,11 @@ public class TestLifecycleManagerStore {
     }
 
     @Test
-    public void testObrainingCurrentManager() throws ObjectNotAssociatedException {
+    public void testObtainingCurrentManager() throws ObjectNotAssociatedException {
         LifecycleManager lifecycleManager = LifecycleManagerStore.get(null, null);
 
         if (!(lifecycleManager instanceof TestingLifecycleManager)) {
             throw new AssertionError();
         }
     }
-}*/
+}

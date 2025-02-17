@@ -71,12 +71,14 @@ public class TestJSFTestEnrichers {
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"));
     }
 
-    /**Exclude this test for TomEE as long as the HtmlUnit issue is not fixed,
-     * see https://github.com/arquillian/arquillian-extension-warp/issues/242  */
+    /**
+     * Exclude this test for TomEE as long as the HtmlUnit issue is not fixed,
+     * see https://github.com/arquillian/arquillian-extension-warp/issues/242
+     */
     @BeforeAll
     public static void beforeClass() throws IOException, InterruptedException {
-       String tomEEHome = (String) System.getProperty("tomee.home");
-       Assumptions.assumeTrue(tomEEHome == null || tomEEHome.length() == 0);
+        String tomEEHome = (String) System.getProperty("tomee.home");
+        Assumptions.assumeTrue(tomEEHome == null || tomEEHome.length() == 0);
     }
 
     @Test
@@ -95,12 +97,12 @@ public class TestJSFTestEnrichers {
 
                          @BeforePhase(Phase.RESTORE_VIEW)
                          public void testFacesBeanIsResolvedBeforeRestoringView() {
-                             assertEquals(facesBean.getPhase(), PhaseId.RESTORE_VIEW);
+                             assertEquals(PhaseId.RESTORE_VIEW, facesBean.getPhase());
                          }
 
                          @AfterPhase(Phase.RENDER_RESPONSE)
                          public void testFacesBeanWasResolvedAfterRenderingResponse() {
-                             assertEquals(facesBean.getPhase(), PhaseId.RENDER_RESPONSE);
+                             assertEquals(PhaseId.RENDER_RESPONSE, facesBean.getPhase());
                          }
                      }
             );
