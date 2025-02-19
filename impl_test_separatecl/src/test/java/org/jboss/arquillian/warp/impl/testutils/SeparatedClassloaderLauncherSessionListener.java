@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.impl.testutils;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.junit.platform.commons.util.ClassLoaderUtils;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 import org.junit.platform.launcher.LauncherSession;
 import org.junit.platform.launcher.LauncherSessionListener;
+
 
 /**
  * Part two of the "separated classloader" workaround (see README.md)
@@ -167,6 +169,9 @@ public class SeparatedClassloaderLauncherSessionListener implements LauncherSess
         archives[archives.length - 1] = baseArchive;
 
         // The filtering classLoader pretends that the test class wasn't yet loaded so the child class loader will load it again (after asking its parent).
+        // Also forward classes that are used in the tests. Otherwise, an error like this will occur:
+        // "IllegalAccess class MyTestClass tried to access method 'void MyApiClass.doSomething()' (MyTestClass is in unnamed module of loader
+        // org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader @1cbb87f3; MyApiClass is in unnamed module of loader 'app')"
         ClassLoader filteringClassLoader = new ClassLoader(bootstrapClassLoader) {
             @Override
             protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
@@ -187,13 +192,37 @@ public class SeparatedClassloaderLauncherSessionListener implements LauncherSess
                     return null;
                 }
                 else if (name.startsWith("org.jboss.arquillian.warp.impl.shared.RequestPayload")
-                        || name.startsWith("org.jboss.arquillian.warp.impl.utils.SerializationUtils")) {
+                        || name.equals("org.jboss.arquillian.warp.impl.utils.SerializationUtils")) {
                     // forward all classes used by
                     // "org.jboss.arquillian.warp.impl.client.transformation.TestTransformedInspection".
+                    // "RequestPayload" has inner classes.
                     log.info("Forwarding class " + name + " to separated classloader");
                     return null;
-                } else {
+                }
+                else if (name.equals("org.jboss.arquillian.warp.spi.LifecycleManagerStore")
+                        || name.equals("org.jboss.arquillian.warp.spi.TestingLifecycleManagerStore") ) {
+                    // forward all classes used by
+                    // "org.jboss.arquillian.warp.spi.TestLifecycleManagerStore".
+                    log.info("Forwarding class " + name + " to separated classloader");
+                    return null;
+                }
+                else {
                     return super.loadClass(name, resolve);
+                }
+            }
+
+            @Override
+            public URL getResource(String name) {
+                // The test "org.jboss.arquillian.warp.spi.TestLifecycleManagerStore" also adds a service, which is loaded
+                // by "Classloader.getResourceAsStream" (see "LifecycleManagerStore.getCurrentStore").
+                // This resource lookup has to be forwarded to the ShrinkWrap classloader.
+                System.out.println("getResource: " + name);
+                if (name.equals("META-INF/services/org.jboss.arquillian.warp.spi.LifecycleManagerStore")) {
+                    log.info("Forwarding resource " + name + " to separated classloader");
+                    return null;
+                }
+                else {
+                    return super.getResource(name);
                 }
             }
         };

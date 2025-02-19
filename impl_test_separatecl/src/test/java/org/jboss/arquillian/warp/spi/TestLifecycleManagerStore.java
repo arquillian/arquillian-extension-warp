@@ -21,11 +21,9 @@ import org.jboss.arquillian.warp.impl.testutils.SeparatedClassloaderExtension;
 import org.jboss.arquillian.warp.spi.exception.ObjectNotAssociatedException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@Disabled("Disabled by https://github.com/arquillian/arquillian-extension-warp/pull/288 post JUnit5 migration")
 @ExtendWith(SeparatedClassloaderExtension.class)
 public class TestLifecycleManagerStore {
 
