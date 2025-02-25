@@ -98,7 +98,7 @@
          The version can be found in "bin/servlet-api.jar"
          It does not have to match exactly the version bundled with TomEE, but it should be at least the same JakartaEE spec version.-->
     <version.tomee.tomcat>10.1.30</version.tomee.tomcat>
-    <version.glassfish>7.0.18</version.glassfish>
+    <version.glassfish>7.0.22</version.glassfish>
     <version.wildfly>34.0.1.Final</version.wildfly>
     <version.wildfly.arquillian.container>5.0.1.Final</version.wildfly.arquillian.container>
 
