@@ -87,7 +87,7 @@
     <version.mockito>5.15.2</version.mockito>
     <version.jacoco>0.8.12</version.jacoco>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
-    <version.shrinkwrap.resolver>3.3.3</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
     <version.jboss_spec>3.0.3.Final</version.jboss_spec>
     <surefire.security.manager />
     <modular.jdk.args />
