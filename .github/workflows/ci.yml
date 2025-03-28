@@ -28,10 +28,14 @@ jobs:
           - glassfish-managed
           - tomee-managed
         exclude:
-           # TomEE 10 requires Java 17.
-           - os: ubuntu-latest
-             java: 11
-             container: tomee-managed
+          # WildFly 35 requires JDK 17
+          - os: ubuntu-latest
+            java: 11
+            container: wildfly-managed
+          # TomEE 10 requires JDK 17
+          - os: ubuntu-latest
+            java: 11
+            container: tomee-managed
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,7 +46,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: maven
       - name: Build with Maven
-        run: ./mvnw --batch-mode --no-transfer-progress --activate-profiles ${{ matrix.container }} verify
+        run: ./mvnw --batch-mode --no-transfer-progress --activate-profiles ${{ matrix.container }} clean verify
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
