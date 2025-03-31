@@ -18,11 +18,12 @@ jobs:
         os:
           - ubuntu-latest
         # Keep this list as: all supported LTS JDKs, the latest GA JDK, and the latest EA JDK (optional).
+        # Reference: https://adoptium.net/support/
         java:
           - 11
           - 17
           - 21
-          - 23
+          - 24
         container:
           - wildfly-managed
           - glassfish-managed
