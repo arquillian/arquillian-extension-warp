@@ -19,7 +19,6 @@ jobs:
           - ubuntu-latest
         # Keep this list as: all supported LTS JDKs, the latest GA JDK, and the latest EA JDK (optional).
         java:
-          - 11
           - 17
           - 21
           - 23
@@ -27,11 +26,6 @@ jobs:
           - wildfly-managed
           - glassfish-managed
           - tomee-managed
-        exclude:
-           # TomEE 10 requires Java 17.
-           - os: ubuntu-latest
-             java: 11
-             container: tomee-managed
     steps:
       - name: Checkout
         uses: actions/checkout@v4

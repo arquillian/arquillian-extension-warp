@@ -29,10 +29,31 @@ Warp has built-in support for the following frameworks:
 * Jakarta Servlet
 * Jakarta Faces
 
-NOTE: Warp version 2.0 (in development) is based on Jakarta EE 10 and requires JDK 11 or newer,
-      while version 1.1 is based on Java EE 8.
+=== Support Matrix
 
-// FIXME are these relevant?
+
+|===
+|Version |EE Version |JDK Version
+
+|2.1 (in development)
+|Jakarta EE 10
+|17
+
+|2.0
+|Jakarta EE 10
+|11
+
+|1.1
+|Java EE 8
+|11
+
+|1.0
+|Java EE 8
+|8
+
+|===
+
+// FIXME are these still relevant?
 // and it also has several framework extensions:
 //
 // * http://arquillian.org/blog/2012/07/24/arquillian-extension-spring-1-0-0-Alpha2/[Spring MVC] - led by https://github.com/jmnarloch/[Jakub Narloch]

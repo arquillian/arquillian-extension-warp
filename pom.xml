@@ -63,6 +63,11 @@
   </ciManagement>
 
   <properties>
+    <!-- JBoss Parent -->
+    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
+    <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
+
     <!-- Arquillian -->
     <version.arquillian_core>1.9.4.Final</version.arquillian_core>
     <version.org.jboss.arquillian.jakarta>10.0.0.Final</version.org.jboss.arquillian.jakarta>
