@@ -105,7 +105,7 @@
     <version.tomee.tomcat>10.1.30</version.tomee.tomcat>
     <version.glassfish>7.0.22</version.glassfish>
     <version.wildfly>35.0.1.Final</version.wildfly>
-    <version.wildfly.arquillian.container>5.1.0.Beta10</version.wildfly.arquillian.container>
+    <version.wildfly.arquillian.container>5.1.0.Beta11</version.wildfly.arquillian.container>
 
     <!-- Documentation -->
     <version.asciidoctor-maven-plugin>3.2.0</version.asciidoctor-maven-plugin>
