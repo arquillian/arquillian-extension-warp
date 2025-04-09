@@ -20,10 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +47,7 @@ final class SecurityActions {
      * Obtains the Thread Context ClassLoader
      */
     static ClassLoader getThreadContextClassLoader() {
-        return AccessController.doPrivileged(GetTcclAction.INSTANCE);
+        return Thread.currentThread().getContextClassLoader();
     }
 
     static boolean isClassPresent(String name) {
@@ -145,30 +141,7 @@ final class SecurityActions {
      */
     static <T> Constructor<T> getConstructor(final Class<T> clazz, final Class<?>... argumentTypes)
         throws NoSuchMethodException {
-        try {
-            return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<T>>() {
-                public Constructor<T> run() throws NoSuchMethodException {
-                    return clazz.getDeclaredConstructor(argumentTypes);
-                }
-            });
-        }
-        // Unwrap
-        catch (final PrivilegedActionException pae) {
-            final Throwable t = pae.getCause();
-            // Rethrow
-            if (t instanceof NoSuchMethodException) {
-                throw (NoSuchMethodException) t;
-            } else {
-                // No other checked Exception thrown by Class.getConstructor
-                try {
-                    throw (RuntimeException) t;
-                }
-                // Just in case we've really messed up
-                catch (final ClassCastException cce) {
-                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
-                }
-            }
-        }
+        return clazz.getDeclaredConstructor(argumentTypes);
     }
 
     /**
@@ -183,126 +156,46 @@ final class SecurityActions {
      */
     public static void setFieldValue(final Class<?> source, final Object target, final String fieldName,
         final Object value)
-        throws NoSuchFieldException {
-        try {
-            AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
-                @Override
-                public Void run() throws Exception {
-                    Field field = source.getDeclaredField(fieldName);
-                    field.setAccessible(true);
-                    field.set(target, value);
-                    return null;
-                }
-            });
-        }
-        // Unwrap
-        catch (final PrivilegedActionException pae) {
-            final Throwable t = pae.getCause();
-            // Rethrow
-            if (t instanceof NoSuchFieldException) {
-                throw (NoSuchFieldException) t;
-            } else {
-                // No other checked Exception thrown by Class.getConstructor
-                try {
-                    throw (RuntimeException) t;
-                }
-                // Just in case we've really messed up
-                catch (final ClassCastException cce) {
-                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
-                }
-            }
-        }
+        throws NoSuchFieldException, IllegalAccessException {
+        Field field = source.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
     }
 
     public static List<Field> getFieldsWithAnnotation(final Class<?> source,
         final Class<? extends Annotation> annotationClass) {
-        List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
-            public List<Field> run() {
-                List<Field> foundFields = new ArrayList<Field>();
-                Class<?> nextSource = source;
-                while (nextSource != Object.class) {
-                    for (Field field : nextSource.getDeclaredFields()) {
-                        if (field.isAnnotationPresent(annotationClass)) {
-                            field.setAccessible(true);
-                            foundFields.add(field);
-                        }
-                    }
-                    nextSource = nextSource.getSuperclass();
+        List<Field> foundFields = new ArrayList<Field>();
+        Class<?> nextSource = source;
+        while (nextSource != Object.class) {
+            for (Field field : nextSource.getDeclaredFields()) {
+                if (field.isAnnotationPresent(annotationClass)) {
+                    field.setAccessible(true);
+                    foundFields.add(field);
                 }
-                return foundFields;
             }
-        });
-        return declaredAccessableFields;
+            nextSource = nextSource.getSuperclass();
+        }
+        return foundFields;
     }
 
     public static List<Method> getMethodsWithAnnotation(final Class<?> source,
         final Class<? extends Annotation> annotationClass) {
-        List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>() {
-            public List<Method> run() {
-                List<Method> foundMethods = new ArrayList<Method>();
-                Class<?> nextSource = source;
-                while (nextSource != Object.class) {
-                    for (Method method : nextSource.getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(annotationClass)) {
-                            method.setAccessible(true);
-                            foundMethods.add(method);
-                        }
-                    }
-                    nextSource = nextSource.getSuperclass();
+        List<Method> foundMethods = new ArrayList<Method>();
+        Class<?> nextSource = source;
+        while (nextSource != Object.class) {
+            for (Method method : nextSource.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(annotationClass)) {
+                    method.setAccessible(true);
+                    foundMethods.add(method);
                 }
-                return foundMethods;
             }
-        });
-        return declaredAccessableMethods;
+            nextSource = nextSource.getSuperclass();
+        }
+        return foundMethods;
     }
 
     static String getProperty(final String key) {
-        try {
-            String value = AccessController.doPrivileged(new PrivilegedExceptionAction<String>() {
-                public String run() {
-                    return System.getProperty(key);
-                }
-            });
-            return value;
-        }
-        // Unwrap
-        catch (final PrivilegedActionException pae) {
-            final Throwable t = pae.getCause();
-            // Rethrow
-            if (t instanceof SecurityException) {
-                throw (SecurityException) t;
-            }
-            if (t instanceof NullPointerException) {
-                throw (NullPointerException) t;
-            } else if (t instanceof IllegalArgumentException) {
-                throw (IllegalArgumentException) t;
-            } else {
-                // No other checked Exception thrown by System.getProperty
-                try {
-                    throw (RuntimeException) t;
-                }
-                // Just in case we've really messed up
-                catch (final ClassCastException cce) {
-                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
-                }
-            }
-        }
-    }
-
-    // -------------------------------------------------------------------------------||
-    // Inner Classes ----------------------------------------------------------------||
-    // -------------------------------------------------------------------------------||
-
-    /**
-     * Single instance to get the TCCL
-     */
-    private enum GetTcclAction implements PrivilegedAction<ClassLoader> {
-        INSTANCE;
-
-        public ClassLoader run() {
-            return Thread.currentThread().getContextClassLoader();
-        }
-
+        return System.getProperty(key);
     }
 
     @SuppressWarnings("unchecked")

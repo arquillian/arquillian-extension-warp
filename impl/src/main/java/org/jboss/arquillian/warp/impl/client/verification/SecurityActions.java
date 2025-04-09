@@ -20,10 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -61,7 +57,7 @@ final class SecurityActions {
      * Obtains the Thread Context ClassLoader
      */
     static ClassLoader getThreadContextClassLoader() {
-        return AccessController.doPrivileged(GetTcclAction.INSTANCE);
+        return Thread.currentThread().getContextClassLoader();
     }
 
     /**
@@ -71,30 +67,7 @@ final class SecurityActions {
      */
     static Constructor<?> getConstructor(final Class<?> clazz, final Class<?>... argumentTypes)
         throws NoSuchMethodException {
-        try {
-            return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<?>>() {
-                public Constructor<?> run() throws NoSuchMethodException {
-                    return clazz.getConstructor(argumentTypes);
-                }
-            });
-        }
-        // Unwrap
-        catch (final PrivilegedActionException pae) {
-            final Throwable t = pae.getCause();
-            // Rethrow
-            if (t instanceof NoSuchMethodException) {
-                throw (NoSuchMethodException) t;
-            } else {
-                // No other checked Exception thrown by Class.getConstructor
-                try {
-                    throw (RuntimeException) t;
-                }
-                // Just in case we've really messed up
-                catch (final ClassCastException cce) {
-                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
-                }
-            }
-        }
+        return clazz.getConstructor(argumentTypes);
     }
 
     /**
@@ -160,61 +133,46 @@ final class SecurityActions {
     }
 
     static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) {
-        List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
-            public List<Field> run() {
-                List<Field> foundFields = new ArrayList<Field>();
-                Class<?> nextSource = source;
-                while (nextSource != Object.class) {
-                    for (Field field : nextSource.getDeclaredFields()) {
-                        if (field.isAnnotationPresent(annotationClass)) {
-                            field.setAccessible(true);
-                            foundFields.add(field);
-                        }
-                    }
-                    nextSource = nextSource.getSuperclass();
+        List<Field> foundFields = new ArrayList<Field>();
+        Class<?> nextSource = source;
+        while (nextSource != Object.class) {
+            for (Field field : nextSource.getDeclaredFields()) {
+                if (field.isAnnotationPresent(annotationClass)) {
+                    field.setAccessible(true);
+                    foundFields.add(field);
                 }
-                return foundFields;
             }
-        });
-        return declaredAccessableFields;
+            nextSource = nextSource.getSuperclass();
+        }
+        return foundFields;
     }
 
     static List<Method> getMethodsWithAnnotation(final Class<?> source) {
-        List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>() {
-            public List<Method> run() {
-                List<Method> foundMethods = new ArrayList<Method>();
-                Class<?> nextSource = source;
-                while (nextSource != Object.class) {
-                    for (Method method : nextSource.getDeclaredMethods()) {
-                        foundMethods.add(method);
-                    }
-                    nextSource = nextSource.getSuperclass();
-                }
-                return foundMethods;
+        List<Method> foundMethods = new ArrayList<Method>();
+        Class<?> nextSource = source;
+        while (nextSource != Object.class) {
+            for (Method method : nextSource.getDeclaredMethods()) {
+                foundMethods.add(method);
             }
-        });
-        return declaredAccessableMethods;
+            nextSource = nextSource.getSuperclass();
+        }
+        return foundMethods;
     }
 
     static List<Method> getMethodsWithAnnotation(final Class<?> source,
         final Class<? extends Annotation> annotationClass) {
-        List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>() {
-            public List<Method> run() {
-                List<Method> foundMethods = new ArrayList<Method>();
-                Class<?> nextSource = source;
-                while (nextSource != Object.class) {
-                    for (Method method : nextSource.getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(annotationClass)) {
-                            method.setAccessible(true);
-                            foundMethods.add(method);
-                        }
-                    }
-                    nextSource = nextSource.getSuperclass();
+        List<Method> foundMethods = new ArrayList<Method>();
+        Class<?> nextSource = source;
+        while (nextSource != Object.class) {
+            for (Method method : nextSource.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(annotationClass)) {
+                    method.setAccessible(true);
+                    foundMethods.add(method);
                 }
-                return foundMethods;
             }
-        });
-        return declaredAccessableMethods;
+            nextSource = nextSource.getSuperclass();
+        }
+        return foundMethods;
     }
 
     static List<Method> getMethodsWithAnnotation(final Class<?> source, final Annotation annotation) {
@@ -254,21 +212,16 @@ final class SecurityActions {
     }
 
     static List<Field> getFields(final Class<?> source) {
-        List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
-            public List<Field> run() {
-                List<Field> foundFields = new ArrayList<Field>();
-                Class<?> nextSource = source;
-                while (nextSource != Object.class) {
-                    for (Field field : nextSource.getDeclaredFields()) {
-                        field.setAccessible(true);
-                        foundFields.add(field);
-                    }
-                    nextSource = nextSource.getSuperclass();
-                }
-                return foundFields;
+        List<Field> foundFields = new ArrayList<Field>();
+        Class<?> nextSource = source;
+        while (nextSource != Object.class) {
+            for (Field field : nextSource.getDeclaredFields()) {
+                field.setAccessible(true);
+                foundFields.add(field);
             }
-        });
-        return declaredAccessableFields;
+            nextSource = nextSource.getSuperclass();
+        }
+        return foundFields;
     }
 
     static boolean isAnnotationPresent(final Annotation[] annotations, final Class<? extends Annotation> needle) {
@@ -299,21 +252,5 @@ final class SecurityActions {
         }
 
         return classes.toArray(new Class<?>[classes.size()]);
-    }
-
-    // -------------------------------------------------------------------------------||
-    // Inner Classes
-    // ----------------------------------------------------------------||
-    // -------------------------------------------------------------------------------||
-
-    /**
-     * Single instance to get the TCCL
-     */
-    private enum GetTcclAction implements PrivilegedAction<ClassLoader> {
-        INSTANCE;
-
-        public ClassLoader run() {
-            return Thread.currentThread().getContextClassLoader();
-        }
     }
 }
