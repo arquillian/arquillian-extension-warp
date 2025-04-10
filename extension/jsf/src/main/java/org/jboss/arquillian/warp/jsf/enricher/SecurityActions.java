@@ -50,6 +50,7 @@ final class SecurityActions {
     /**
      * Obtains the Thread Context ClassLoader
      */
+    @SuppressWarnings("removal")
     static ClassLoader getThreadContextClassLoader() {
         return AccessController.doPrivileged(GetTcclAction.INSTANCE);
     }
@@ -143,6 +144,7 @@ final class SecurityActions {
      *
      * @throws NoSuchMethodException
      */
+    @SuppressWarnings("removal")
     static <T> Constructor<T> getConstructor(final Class<T> clazz, final Class<?>... argumentTypes)
         throws NoSuchMethodException {
         try {
@@ -181,6 +183,7 @@ final class SecurityActions {
      * @param value
      *     The new value
      */
+    @SuppressWarnings("removal")
     public static void setFieldValue(final Class<?> source, final Object target, final String fieldName,
         final Object value)
         throws NoSuchFieldException {
@@ -216,6 +219,7 @@ final class SecurityActions {
 
     public static List<Field> getFieldsWithAnnotation(final Class<?> source,
         final Class<? extends Annotation> annotationClass) {
+        @SuppressWarnings("removal")
         List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
             public List<Field> run() {
                 List<Field> foundFields = new ArrayList<Field>();
@@ -237,6 +241,7 @@ final class SecurityActions {
 
     public static List<Method> getMethodsWithAnnotation(final Class<?> source,
         final Class<? extends Annotation> annotationClass) {
+        @SuppressWarnings("removal")
         List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>() {
             public List<Method> run() {
                 List<Method> foundMethods = new ArrayList<Method>();
@@ -258,6 +263,7 @@ final class SecurityActions {
 
     static String getProperty(final String key) {
         try {
+            @SuppressWarnings("removal")
             String value = AccessController.doPrivileged(new PrivilegedExceptionAction<String>() {
                 public String run() {
                     return System.getProperty(key);
