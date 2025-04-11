@@ -59,6 +59,7 @@ final class SecurityActions {
     /**
      * Obtains the Thread Context ClassLoader
      */
+    @SuppressWarnings("removal")
     static ClassLoader getThreadContextClassLoader() {
         return AccessController.doPrivileged(GetTcclAction.INSTANCE);
     }
@@ -68,6 +69,7 @@ final class SecurityActions {
      *
      * @throws NoSuchMethodException
      */
+    @SuppressWarnings("removal")
     static Constructor<?> getConstructor(final Class<?> clazz, final Class<?>... argumentTypes)
         throws NoSuchMethodException {
         try {
@@ -159,6 +161,7 @@ final class SecurityActions {
     }
 
     static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) {
+        @SuppressWarnings("removal")
         List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
             public List<Field> run() {
                 List<Field> foundFields = new ArrayList<Field>();
@@ -180,6 +183,7 @@ final class SecurityActions {
 
     static List<Method> getMethodsWithAnnotation(final Class<?> source,
         final Class<? extends Annotation> annotationClass) {
+        @SuppressWarnings("removal")
         List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>() {
             public List<Method> run() {
                 List<Method> foundMethods = new ArrayList<Method>();
@@ -236,6 +240,7 @@ final class SecurityActions {
     }
 
     static List<Field> getFields(final Class<?> source) {
+        @SuppressWarnings("removal")
         List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
             public List<Field> run() {
                 List<Field> foundFields = new ArrayList<Field>();
