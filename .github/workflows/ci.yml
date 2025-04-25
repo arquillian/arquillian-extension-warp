@@ -29,10 +29,6 @@ jobs:
           - glassfish-managed
           - tomee-managed
         exclude:
-          # GlassFish 7 does not start on Java 24
-          # https://github.com/eclipse-ee4j/glassfish/issues/25437
-          - java: 24
-            container: glassfish-managed
           # TomEE does not launch on Java 24
           # https://issues.apache.org/jira/browse/TOMEE-4474
           - java: 24
