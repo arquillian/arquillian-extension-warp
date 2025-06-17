@@ -69,7 +69,7 @@
     <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
 
     <!-- Arquillian -->
-    <version.arquillian_core>1.9.4.Final</version.arquillian_core>
+    <version.arquillian_core>1.9.5.Final</version.arquillian_core>
     <version.org.jboss.arquillian.jakarta>10.0.0.Final</version.org.jboss.arquillian.jakarta>
     <version.arquillian_drone>3.0.0-alpha.8</version.arquillian_drone>
     <version.arquillian_jacoco>1.1.0</version.arquillian_jacoco>
