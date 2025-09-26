@@ -23,7 +23,7 @@ jobs:
         java:
           - 17
           - 21
-          - 24
+          - 25
         container:
           - wildfly-managed
           - glassfish-managed
