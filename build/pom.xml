@@ -305,7 +305,8 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <argLine>${surefire.security.manager} ${modular.jdk.args}</argLine>
+            <!-- Prepend jacoco surefire args -->
+            <argLine>${surefire.jacoco.args} ${surefire.security.manager} ${modular.jdk.args}</argLine>
           </configuration>
         </plugin>
       </plugins>
