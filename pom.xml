@@ -132,6 +132,9 @@
     <!-- extensions -->
     <module>extension/jsf</module>
     <module>extension/jsf-ftest</module>
+
+    <!--Jacoco report -->
+    <module>aggregate-jacoco-report</module>
   </modules>
 
   <build>

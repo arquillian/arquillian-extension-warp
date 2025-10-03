@@ -138,16 +138,16 @@
           </licenseSets>
         </configuration>
       </plugin>
+      <!--Create Jacoco report (mainly required for report aggregation). This uses the default configuration from "build/pom.xml".
+          The report in this project is also a "proof of concept" that a web project using "arquillian-extension-warp" can create
+          a Jacoco report for invocation of the server side of its classes. -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!-- Prepend jacoco surefire args -->
-          <argLine>${surefire.jacoco.args} ${surefire.security.manager} ${modular.jdk.args}</argLine>
-        </configuration>
+        <!--Jacoco related configuration inherited from "build/pom.xml"-->
       </plugin>
     </plugins>
   </build>

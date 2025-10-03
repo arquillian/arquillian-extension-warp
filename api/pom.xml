@@ -21,6 +21,16 @@
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
       </plugin>
+      <!--Create Jacoco report (required for report aggregation). This uses the default configuration from "build/pom.xml"-
+          Currently, this report is not required, as no unit tests are contained in this module.-->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <!--Jacoco related configuration inherited from "build/pom.xml"-->
+      </plugin>
     </plugins>
   </build>
 
