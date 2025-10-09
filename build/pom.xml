@@ -80,12 +80,12 @@
       <dependency>
         <groupId>jakarta.enterprise</groupId>
         <artifactId>jakarta.enterprise.cdi-api</artifactId>
-        <version>${version.jakarta.enterprise}</version>
+        <version>${version.jakarta.enterprise.jakarta-enterprise-cdi-api}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.spec.jakarta.el</groupId>
-        <artifactId>jboss-el-api_5.0_spec</artifactId>
-        <version>${version.org.jboss.spec.jakarta.el.jboss-el-api_5.0_spec}</version>
+        <groupId>jakarta.el</groupId>
+        <artifactId>jakarta.el-api</artifactId>
+        <version>${version.jakarta.el.jakarta-el-api}</version>
       </dependency>
       <dependency>
         <groupId>jakarta.annotation</groupId>

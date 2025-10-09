@@ -76,10 +76,10 @@
 
     <!-- Jakarta EE 10 -->
     <version.jakarta.annotation.jakarta-annotation-api>2.1.1</version.jakarta.annotation.jakarta-annotation-api>
-    <version.jakarta.enterprise>4.0.1</version.jakarta.enterprise>
+    <version.jakarta.enterprise.jakarta-enterprise-cdi-api>4.0.1</version.jakarta.enterprise.jakarta-enterprise-cdi-api>
     <version.jakarta.faces.jakarta-faces-api>4.0.1</version.jakarta.faces.jakarta-faces-api>
     <version.jakarta.servlet.jakarta-servlet-api>6.0.0</version.jakarta.servlet.jakarta-servlet-api>
-    <version.org.jboss.spec.jakarta.el.jboss-el-api_5.0_spec>4.0.1.Final</version.org.jboss.spec.jakarta.el.jboss-el-api_5.0_spec>
+    <version.jakarta.el.jakarta-el-api>5.0.0</version.jakarta.el.jakarta-el-api>
 
     <version.littleproxy>2.4.5</version.littleproxy>
     <!-- LittleProxy logging is done through SL4J and thus Log4j -->
