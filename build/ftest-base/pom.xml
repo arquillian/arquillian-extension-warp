@@ -14,7 +14,7 @@
   <properties>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
-    <version.arquillian.glassfish>1.8</version.arquillian.glassfish>
+    <version.arquillian.glassfish>2.1.2</version.arquillian.glassfish>
 
     <!-- Arquillian Configuration -->
     <arquillian.debug>false</arquillian.debug>
@@ -235,7 +235,7 @@
             so use a fork at https://github.com/OmniFish-EE/arquillian-container-glassfish <dependency>
         -->
         <dependency>
-          <groupId>org.omnifaces.arquillian</groupId>
+          <groupId>ee.omnifish.arquillian</groupId>
           <artifactId>arquillian-glassfish-server-managed</artifactId>
           <version>${version.arquillian.glassfish}</version>
           <scope>test</scope>
@@ -274,7 +274,7 @@
       </properties>
       <dependencies>
         <dependency>
-          <groupId>org.omnifaces.arquillian</groupId>
+          <groupId>ee.omnifish.arquillian</groupId>
           <artifactId>arquillian-glassfish-server-remote</artifactId>
           <version>${version.arquillian.glassfish}</version>
           <scope>test</scope>
