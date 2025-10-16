@@ -21,6 +21,17 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <!-- JUnit -->
+      <!-- Import before org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-bom, because otherwise the JUnit version from there is picked -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${version.junit}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <!-- First declare the shrinkwrap-resolver bom to override version 2.2.6 pulled from elsewhere -->
       <!-- n.b. fixed by https://github.com/arquillian/arquillian-core/pull/575 - TODO move below post upgrade -->
       <dependency>
@@ -117,15 +128,6 @@
         <groupId>org.apache.httpcomponents.core5</groupId>
         <artifactId>httpcore5</artifactId>
         <version>${version.httpcore}</version>
-      </dependency>
-
-      <!-- JUnit -->
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>${version.junit}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
 
       <!-- Mockito -->
