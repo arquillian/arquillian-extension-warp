@@ -24,6 +24,7 @@
 
       <!-- JUnit -->
       <!-- Import before org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-bom, because otherwise the JUnit version from there is picked -->
+      <!-- Workaround until https://github.com/shrinkwrap/resolver/pull/425 is fixed/merged -->
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
