@@ -11,7 +11,13 @@
   <artifactId>arquillian-warp-aggregate-jacoco-report</artifactId>
   <name>Arquillian Warp: Aggregated Jacoco test coverage report</name>
   <packaging>pom</packaging>
-  
+
+  <properties>
+    <!-- Do NOT deploy any of the jacoco modules -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+  </properties>
+
   <dependencies>
     <!--Add all modules that should be part of the jacoco test coverage report -->
     <dependency>

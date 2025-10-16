@@ -28,6 +28,11 @@
     </license>
   </licenses>
 
+  <organization>
+    <name>Arquillian Community</name>
+    <url>https://arquillian.org/</url>
+  </organization>
+
   <developers>
     <developer>
       <name>Lukas Fryc</name>
@@ -65,8 +70,6 @@
   <properties>
     <!-- JBoss Parent -->
     <maven.compiler.release>17</maven.compiler.release>
-    <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-    <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
 
     <!-- Arquillian -->
     <version.arquillian_core>1.10.0.Final</version.arquillian_core>
@@ -136,18 +139,5 @@
     <!--Jacoco report -->
     <module>aggregate-jacoco-report</module>
   </modules>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <localCheckout>true</localCheckout>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

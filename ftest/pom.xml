@@ -11,6 +11,12 @@
   <artifactId>arquillian-warp-ftest</artifactId>
   <name>Arquillian Warp: Functional Test</name>
 
+  <properties>
+    <!-- Do NOT deploy any of the ITs module -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+  </properties>
+
   <dependencies>
     <!--The dependency on the servlet api must be declared for each profile contained "ftest-base/pom.xml" instead of using "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec",
         as the test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" would fail for TomEE (see detailed explanation in this test)

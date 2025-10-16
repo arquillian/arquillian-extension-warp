@@ -15,6 +15,10 @@
   <properties>
     <browser>htmlUnit</browser>
     <remoteReusable>false</remoteReusable>
+
+    <!-- Do NOT deploy any of the ITs modules -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
   </properties>
 
   <dependencies>

@@ -32,6 +32,10 @@
     <arquillian.launch.wildfly>false</arquillian.launch.wildfly>
     <arquillian.launch.tomee>false</arquillian.launch.tomee>
     <arquillian.launch.glassfish>false</arquillian.launch.glassfish>
+
+    <!-- Do NOT deploy any of the ITs modules -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
   </properties>
 
   <dependencyManagement>
