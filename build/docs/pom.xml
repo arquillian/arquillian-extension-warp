@@ -12,6 +12,9 @@
 
   <properties>
     <documentation.sources.directory>${project.build.directory}/compiled-sources-docs</documentation.sources.directory>
+      <!-- Do NOT deploy any of the docs modules -->
+      <maven.deploy.skip>true</maven.deploy.skip>
+      <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
   </properties>
 
   <build>

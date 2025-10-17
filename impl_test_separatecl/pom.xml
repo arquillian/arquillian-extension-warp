@@ -15,7 +15,9 @@
   <properties>
     <!--Avoid warning "JAR will be empty - no content was marked for inclusion!", as this project contains only test classes -->
     <maven.install.skip>true</maven.install.skip>
+    <!-- Do NOT deploy any of the ITs module -->
     <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
   </properties>
 
   <dependencies>
