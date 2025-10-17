@@ -80,6 +80,16 @@ public class ContainerInstaller {
         log.info(String.format("The container distribution '%s' was installed into '%s'", distribution,
             unpackDestination.getAbsolutePath()));
 
+        //Test: make "asadmin" executable.
+        File fileAsadmin = new File(unpackDestination.getAbsolutePath() + "/glassfish7/glassfish/bin/asadmin");
+        if (fileAsadmin.exists()) {
+          log.info(String.format("making '%s' executable.", fileAsadmin.getAbsoluteFile()));
+          fileAsadmin.setExecutable(true);
+        }
+        else {
+          log.info("No glassfish installation.");
+        }
+
         if (!containerHome.exists()) {
             throw new IllegalStateException(String.format(
                 "The container distribution was unpacked but the containerHome (%s) still doesn't exist", containerHome));
