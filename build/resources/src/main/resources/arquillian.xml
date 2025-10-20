@@ -66,6 +66,9 @@
     <property name="containerConfiguration">${arquillian.container.configuration}</property>
     <!-- true if the container should be uninstalled after test when it was installed from distribution -->
     <property name="containerUninstall">${arquillian.container.uninstall}</property>
+    <!-- If the arquillian container adapter calls a launcher script for starting the container, this file must have the "execute" permisson on linux environments.
+         Configure the path relative to the subdir of "arquillian.container.configuration". -->
+    <property name="containerLinuxExecutePermissionFile">${arquillian.container.linux.executepermission.file}</property>
   </extension>
 
 </arquillian>

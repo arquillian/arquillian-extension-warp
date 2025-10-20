@@ -23,6 +23,8 @@
     <arquillian.container.home />
     <arquillian.container.distribution />
     <arquillian.container.configuration />
+    <!-- Relative path to a file that should be made "executable" when the container is started by the arquillian container. -->
+    <arquillian.container.linux.executepermission.file />
     <arquillian.container.uninstall>true</arquillian.container.uninstall>
     <arquillian.container.vmargs>-Xmx768m -Darquillian.debug=${arquillian.debug}
     </arquillian.container.vmargs>
@@ -230,6 +232,10 @@
         <arquillian.container.home>${project.build.directory}/glassfish7</arquillian.container.home>
         <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish}
         </arquillian.container.distribution>
+        <!-- Relative path to a file that should be made "executable" when the container is started by the arquillian container.
+             Here it is the "asadmin" script (https://github.com/OmniFish-EE/arquillian-container-glassfish/pull/9) -->
+        <arquillian.container.linux.executepermission.file>glassfish7/glassfish/bin/asadmin
+        </arquillian.container.linux.executepermission.file>
       </properties>
 
       <dependencies>

@@ -27,6 +27,7 @@ public class IntegrationTestConfiguration implements DroneConfiguration<Integrat
     private String containerHome;
     private String containerDistribution;
     private String containerConfiguration;
+    private String containerLinuxExecutePermissionFile;
     private Boolean containerUninstall;
     private Boolean debug;
 
@@ -51,6 +52,16 @@ public class IntegrationTestConfiguration implements DroneConfiguration<Integrat
      */
     public String getContainerHome() {
         return containerHome;
+    }
+
+    /**
+     * If the arquillian container adapter calls a launcher script for starting the container, this file must have the "execute" permisson on linux environments.
+     * This property must contain the relative path (subdir of "containerConfiguration").
+     *
+     * @return Relative path to the file that should be marked as "executable" if the test environment is not Windows.
+     */
+    public String getContainerLinuxExecutePermissionFile() {
+        return containerLinuxExecutePermissionFile;
     }
 
     /**
