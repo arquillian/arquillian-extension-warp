@@ -110,6 +110,8 @@
          It does not have to match exactly the version bundled with TomEE, but it should be at least the same JakartaEE spec version.-->
     <version.tomee.tomcat>10.1.44</version.tomee.tomcat>
     <version.glassfish>7.1.0</version.glassfish>
+    <!-- GlassFish 8 ist used to test JakartaEE11 features -->
+    <version.glassfish8>8.0.0-M15</version.glassfish8>
     <version.wildfly>39.0.0.Final</version.wildfly>
     <version.wildfly.arquillian.container>5.1.0.Final</version.wildfly.arquillian.container>
 
@@ -142,5 +144,27 @@
     <!--Jacoco report -->
     <module>aggregate-jacoco-report</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <!-- This profile is used to build arquillian-extension-warp by using the JakartaEE11 api:
+           it redefines the versions of the JakartaEE dependencies.
+           Use it only in combination with one of the JakartaEE11 server profiles, e.g.:
+           mvn clean install -Pjakartaee11,wildfly-jakartaee11-managed
+        -->
+      <id>jakartaee11</id>
+      <activation>
+        <!-- Set this to "true" to compile the project with Eclipse using the JakartaEE11 apis. -->
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <version.jakarta.annotation.jakarta-annotation-api>3.0.0</version.jakarta.annotation.jakarta-annotation-api>
+        <version.jakarta.enterprise.jakarta-enterprise-cdi-api>4.1.0</version.jakarta.enterprise.jakarta-enterprise-cdi-api>
+        <version.jakarta.faces.jakarta-faces-api>4.1.2</version.jakarta.faces.jakarta-faces-api>
+        <version.jakarta.servlet.jakarta-servlet-api>6.1.0</version.jakarta.servlet.jakarta-servlet-api>
+        <version.jakarta.el.jakarta-el-api>6.0.1</version.jakarta.el.jakarta-el-api>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>

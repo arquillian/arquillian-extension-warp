@@ -283,9 +283,8 @@
           <configuration>
             <excludes>
               <!-- Avoid error messages "org.jacoco.agent.rt.internal_1f1cc91.asm.MethodTooLargeException: Method too large" in classes in packages listed here: -->
-              <exclude>com/gargoylesoftware/htmlunit/css/**</exclude>
-              <exclude>com/gargoylesoftware/css/parser/javacc/**</exclude>
               <exclude>org/htmlunit/cssparser/parser/javacc/CSS3ParserTokenManager</exclude>
+              <exclude>org/htmlunit/css/StyleAttributes$Definition</exclude>
             </excludes>
           </configuration>
           <executions>
