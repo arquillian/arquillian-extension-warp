@@ -140,4 +140,26 @@
     <module>aggregate-jacoco-report</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <!-- This profile is used to build arquillian-extension-warp by using the JakartaEE11 api:
+           it redefines the versions of the JakartaEE dependencies.
+           Use it only in combination with one of the JakartaEE11 server profiles, e.g.:
+           mvn clean install -Pjakartaee11,wildfly-jakartaee11-managed
+        -->
+      <id>jakartaee11</id>
+      <activation>
+        <!-- Set this to "true" to compile the project with Eclipse using the JakartaEE11 apis. -->
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <version.jakarta.annotation.jakarta-annotation-api>3.0.0</version.jakarta.annotation.jakarta-annotation-api>
+        <version.jakarta.enterprise.jakarta-enterprise-cdi-api>4.1.0</version.jakarta.enterprise.jakarta-enterprise-cdi-api>
+        <version.jakarta.faces.jakarta-faces-api>4.1.2</version.jakarta.faces.jakarta-faces-api>
+        <version.jakarta.servlet.jakarta-servlet-api>6.1.0</version.jakarta.servlet.jakarta-servlet-api>
+        <version.jakarta.el.jakarta-el-api>6.0.1</version.jakarta.el.jakarta-el-api>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>
