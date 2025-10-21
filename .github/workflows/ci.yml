@@ -26,6 +26,8 @@ jobs:
           - 25
         container:
           - wildfly-managed
+          # Build warp with the JakartaEE11 api and run it using the wildfly-preview server:
+          - jakartaee11,wildfly-jakartaee11-managed
           - glassfish-managed
           - tomee-managed
     steps:
