@@ -80,6 +80,25 @@ public class ContainerInstaller {
         log.info(String.format("The container distribution '%s' was installed into '%s'", distribution,
             unpackDestination.getAbsolutePath()));
 
+        // If we are running on a linux environment, maybe a launcher script that is required by the arquillian container plugin must be executable.
+        String launcherScript = configuration.get().getContainerLinuxExecutePermissionFile();
+        if (launcherScript != null && launcherScript.trim().length() > 0) {
+            // Do this only on non-Windows-OS.
+            if (!System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                File fileAsadmin = new File(unpackDestination.getAbsolutePath(), launcherScript);
+                if (fileAsadmin.exists()) {
+                    log.info(String.format("Preparing container: setting execute permisson for '%s'.", fileAsadmin.getAbsoluteFile()));
+                    fileAsadmin.setExecutable(true);
+                }
+                else {
+                    log.warning(String.format("Wrong configuration: Could not find file '%s'.", fileAsadmin.getAbsoluteFile()));
+                }
+            }
+            else {
+              log.info("Preparing container: No linux environment, skipping step.");
+            }
+        }
+
         if (!containerHome.exists()) {
             throw new IllegalStateException(String.format(
                 "The container distribution was unpacked but the containerHome (%s) still doesn't exist", containerHome));
