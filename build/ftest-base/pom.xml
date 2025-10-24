@@ -216,10 +216,6 @@
       </dependencies>
     </profile>
     <profile>
-      <!-- Don't run this profile on windows: the test performance will be incredibly poor (90 seconds per test).
-           It works fast on linux.
-           See https://github.com/arquillian/arquillian-extension-warp/issues/131
-      -->
       <id>glassfish-managed</id>
       <activation>
         <property>
@@ -262,11 +258,7 @@
       </dependencies>
     </profile>
     <profile>
-      <!-- Don't run this profile on windows: the test performance will be incredibly poor (90 seconds per test).
-           It works fast on linux.
-           See https://github.com/arquillian/arquillian-extension-warp/issues/131
-      
-           A guide to run it: start GlassFish with this command (remove the "[x]" text - it is just a separator, because double hyphen is forbidden)
+      <!-- A guide to run it: start GlassFish with this command (remove the "[x]" text - it is just a separator, because double hyphen is forbidden)
            asadmin start-domain -[x]-verbose=true
            
            Shut it down after the tests with this command:
