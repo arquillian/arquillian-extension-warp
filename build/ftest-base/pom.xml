@@ -379,6 +379,8 @@
           <artifactId>apache-tomee</artifactId>
           <version>${version.tomee}</version>
           <type>zip</type>
+          <!-- TomEE has several classifiers, so define the same that we use in the test suite -->
+          <classifier>webprofile</classifier>
           <scope>provided</scope>
         </dependency>
       </dependencies>
