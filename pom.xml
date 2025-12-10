@@ -92,7 +92,7 @@
 
     <!-- Tests -->
     <version.junit>6.0.1</version.junit>
-    <version.mockito>5.20.0</version.mockito>
+    <version.mockito>5.21.0</version.mockito>
     <version.jacoco>0.8.14</version.jacoco>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
