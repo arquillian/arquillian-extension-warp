@@ -308,10 +308,24 @@
           </executions>
         </plugin>
         <plugin>
+          <!-- The dependency plugin is required for attaching Mockito as a java agent: the path to artifact "org.mockito:mockito-core:jar"
+               is written to a property by this goal, and this property value is used by the property "mockito.java.agent" -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+            <execution>
+               <goals>
+                 <goal>properties</goal>
+               </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <!-- Prepend jacoco surefire args -->
-            <argLine>${surefire.jacoco.args} ${surefire.security.manager} ${modular.jdk.args}</argLine>
+            <!-- Prepend jacoco surefire args.
+                 Also activate the mockito java agent if the property value is set, see https://github.com/arquillian/arquillian-extension-warp/issues/341 -->
+            <argLine>${surefire.jacoco.args} ${surefire.security.manager} ${modular.jdk.args} ${mockito.java.agent}</argLine>
           </configuration>
         </plugin>
       </plugins>
