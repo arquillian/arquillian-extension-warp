@@ -18,6 +18,10 @@
     <!-- Do NOT deploy any of the ITs module -->
     <maven.deploy.skip>true</maven.deploy.skip>
     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+
+    <!-- Attach mockito as java agent: define a property that is forwarded to the maven-surefire-plugin in parent pom.
+         The path to the mockito jar is taken from a property that is set by the maven-dependency-plugin (see parent pom) -->
+    <mockito.java.agent>-javaagent:${org.mockito:mockito-core:jar}</mockito.java.agent>
   </properties>
 
   <dependencies>
@@ -92,9 +96,14 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
+      <!--Enable the maven-dependency-plugin. This uses the default configuration from "build/pom.xml"-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <!--Jacoco related configuration inherited from "build/pom.xml"-->
+        <!--Jacoco and Mockito related configuration inherited from "build/pom.xml"-->
       </plugin>
     </plugins>
   </build>
