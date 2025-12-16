@@ -84,7 +84,7 @@
     <version.jakarta.servlet.jakarta-servlet-api>6.0.0</version.jakarta.servlet.jakarta-servlet-api>
     <version.jakarta.el.jakarta-el-api>5.0.0</version.jakarta.el.jakarta-el-api>
 
-    <version.littleproxy>2.4.6</version.littleproxy>
+    <version.littleproxy>2.4.7</version.littleproxy>
     <!-- LittleProxy logging is done through SL4J and thus Log4j -->
     <version.log4j>2.25.2</version.log4j>
     <version.javassist>3.30.2-GA</version.javassist>
