@@ -178,6 +178,41 @@
       </dependencies>
     </profile>
     <profile>
+      <id>wildfly-jakartaee11-managed</id>
+      <!-- A WildFly preview container which supports JakartaEE11.
+           Run this profile only in combination with the profile "jakartaee11" so that arquillian-extension-warp is built using the JakartaEE11 api:
+           mvn clean install -Pjakartaee11,wildfly-jakartaee11-managed
+	    -->
+      <activation>
+        <property>
+          <name>integration</name>
+          <value>wildfly</value>
+        </property>
+      </activation>
+      <properties>
+        <arquillian.launch.wildfly>true</arquillian.launch.wildfly>
+        <arquillian.container.home>${project.build.directory}/wildfly-preview-${version.wildfly}</arquillian.container.home>
+        <arquillian.container.distribution>org.wildfly:wildfly-preview-dist:zip:${version.wildfly}
+        </arquillian.container.distribution>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.wildfly.arquillian</groupId>
+          <artifactId>wildfly-arquillian-container-managed</artifactId>
+          <version>${version.wildfly.arquillian.container}</version>
+          <scope>test</scope>
+        </dependency>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+          -->
+        <dependency>
+          <groupId>jakarta.servlet</groupId>
+          <artifactId>jakarta.servlet-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>tomee-managed</id>
       <activation>
         <property>
@@ -278,6 +313,75 @@
         <dependency>
           <groupId>ee.omnifish.arquillian</groupId>
           <artifactId>arquillian-glassfish-server-remote</artifactId>
+          <version>${version.arquillian.glassfish}</version>
+          <scope>test</scope>
+        </dependency>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+            Here we use the JBoss implementation instead of the one of GlassFish, as it works as well and is easier to configure.
+          -->
+        <dependency>
+          <groupId>jakarta.servlet</groupId>
+          <artifactId>jakarta.servlet-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <!-- The GlassFish 8 container supports JakartaEE11.
+           Run this profile only in combination with the profile "jakartaee11" so that arquillian-extension-warp is built using the JakartaEE11 api:
+           mvn clean install -Pjakartaee11,glassfish-jakartaee11-managed
+
+           GlassFish 8 does not support Java 17
+	    -->
+      <id>glassfish-jakartaee11-managed</id>
+      <activation>
+        <property>
+          <name>integration</name>
+          <value>glassfish</value>
+        </property>
+      </activation>
+      <properties>
+        <arquillian.launch.glassfish>true</arquillian.launch.glassfish>
+        <arquillian.container.home>${project.build.directory}/glassfish8</arquillian.container.home>
+        <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish8}
+        </arquillian.container.distribution>
+        <!-- Relative path to a file that should be made "executable" when the container is started by the arquillian container.
+             Here it is the "asadmin" script (https://github.com/OmniFish-EE/arquillian-container-glassfish/pull/9) -->
+        <arquillian.container.linux.executepermission.file>glassfish8/glassfish/bin/asadmin
+        </arquillian.container.linux.executepermission.file>
+      </properties>
+
+      <!--This profile requires Java 21 to run, as this is required by GlassFish 8 -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.6.1</version>
+            <executions>
+              <execution>
+                <id>enforce-java</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireJavaVersion>
+                      <version>21</version>
+                    </requireJavaVersion>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+      <dependencies>
+        <dependency>
+          <groupId>ee.omnifish.arquillian</groupId>
+          <artifactId>arquillian-glassfish-server-managed</artifactId>
           <version>${version.arquillian.glassfish}</version>
           <scope>test</scope>
         </dependency>
