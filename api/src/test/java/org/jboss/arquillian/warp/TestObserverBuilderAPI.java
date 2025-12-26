@@ -89,7 +89,7 @@ public class TestObserverBuilderAPI {
         // ".observe(..)" returns a "SingleInspectionSpecifier".
         when(mockBuilder.observe(mockFilterBuilder)).thenReturn(mockInspectionSpecifier);
 
-        // The final step: ".inspect(inspection"):
+        // The final step: ".inspect(inspection)":
         // Return value does not matter:
         when(mockInspectionSpecifier.inspect(inspection)).thenReturn(inspection);
 
@@ -126,7 +126,7 @@ public class TestObserverBuilderAPI {
         // ".observe(...)" returns a "SingleInspectionSpecifier".
         when(mockBuilder.observe(mockFilterBuilder)).thenReturn(mockInspectionSpecifier);
 
-        // The final step: ".inspect(inspection"):
+        // The final step: ".inspect(inspection)":
         // Return value does not matter:
         when(mockInspectionSpecifier.inspect(inspection)).thenReturn(inspection);
 
@@ -163,7 +163,7 @@ public class TestObserverBuilderAPI {
         // ".observe(...)" returns a "SingleInspectionSpecifier".
         when(mockBuilder.observe(mockFilterBuilder)).thenReturn(mockInspectionSpecifier);
 
-        // The final step: ".inspect(inspection"):
+        // The final step: ".inspect(inspection)":
         // Return value does not matter:
         when(mockInspectionSpecifier.inspect(inspection)).thenReturn(inspection);
 
@@ -210,7 +210,7 @@ public class TestObserverBuilderAPI {
         // ".observe(...)" returns a "SingleInspectionSpecifier".
         when(mockBuilder.observe(mockFilterBuilder)).thenReturn(mockInspectionSpecifier);
 
-        // The final step: ".inspect(inspection"):
+        // The final step: ".inspect(inspection)":
         // Return value does not matter:
         when(mockInspectionSpecifier.inspect(inspection)).thenReturn(inspection);
 
