@@ -14,8 +14,9 @@
 
   <properties>
     <!-- Attach mockito as java agent: define a property that is forwarded to the maven-surefire-plugin in parent pom.
-         The path to the mockito jar is taken from a property that is set by the maven-dependency-plugin (see parent pom) -->
-    <mockito.java.agent>-javaagent:${org.mockito:mockito-core:jar}</mockito.java.agent>
+         The path to the mockito jar is taken from a property that is set by the maven-dependency-plugin (see parent pom).
+         The argument "-Xshare:off" removes the warning "Sharing is only supported for boot loader classes because bootstrap classpath has been appended" -->
+    <mockito.java.agent>-javaagent:${org.mockito:mockito-core:jar} -Xshare:off</mockito.java.agent>
   </properties>
 
   <dependencies>
