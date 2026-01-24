@@ -74,7 +74,7 @@
     <!-- Arquillian -->
     <version.arquillian_core>1.10.0.Final</version.arquillian_core>
     <version.org.jboss.arquillian.jakarta>10.0.0.Final</version.org.jboss.arquillian.jakarta>
-    <version.arquillian_drone>3.0.0-alpha.8</version.arquillian_drone>
+    <version.arquillian_drone>3.0.0.Final</version.arquillian_drone>
     <version.arquillian_jacoco>1.1.0</version.arquillian_jacoco>
 
     <!-- Jakarta EE 10 -->
