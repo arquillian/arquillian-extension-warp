@@ -26,11 +26,11 @@ jobs:
           - 25
         container:
           - wildfly-managed
-          # Build warp with the JakartaEE11 api and run it using the wildfly-preview server:
+          # Build warp with the Jakarta EE 11 api and run it using the wildfly-preview server:
           - jakartaee11,wildfly-jakartaee11-managed
           - glassfish-managed
           - tomee-managed
-          # Build warp with the JakartaEE11 api and run it using the glassfish 8 server:
+          # Build warp with the Jakarta EE 11 API and run it using the glassfish 8 server:
           - jakartaee11,glassfish-jakartaee11-managed
         exclude:
           # GlassFish 8 does not support Java 17

@@ -179,7 +179,7 @@
     </profile>
     <profile>
       <id>wildfly-jakartaee11-managed</id>
-      <!-- A WildFly preview container which supports JakartaEE11.
+      <!-- A WildFly Preview container which supports Jakarta EE 11.
            Run this profile only in combination with the profile "jakartaee11" so that arquillian-extension-warp is built using the JakartaEE11 api:
            mvn clean install -Pjakartaee11,wildfly-jakartaee11-managed
 	    -->
