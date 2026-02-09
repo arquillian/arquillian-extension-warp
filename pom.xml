@@ -143,6 +143,10 @@
 
     <!--Jacoco report -->
     <module>aggregate-jacoco-report</module>
+
+    <!--Dummy projects for dependabot workarounds -->
+    <module>build/dependabot_serverupdates_jakartaee10</module>
+    <module>build/dependabot_serverupdates_jakartaee11</module>
   </modules>
 
   <profiles>

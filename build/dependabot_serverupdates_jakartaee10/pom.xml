@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-warp-build</artifactId>
+    <version>2.1.0.Final-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>arquillian-warp-dependabot-serverupdates-jakartaee10</artifactId>
+  <name>Arquillian Warp: Dependabot server updates (JakartaEE 10)</name>
+  <description>Arquillian Warp: Dummy project to let dependabot update server container artifacts used in the test suite:
+    Here the JakartaEE 10 containers are defined. If a newer version of a container exists for JakartaEE 11,
+    dependabot shall not update this JakartaEE 10 container to a JakartaEE 11 version.
+	So, a dependabot rule is defined which includes just this directory and defines upper bounds of the JakartaEE 10 containers.</description>
+  <packaging>pom</packaging>
+
+  <properties>
+    <!-- Do NOT deploy any of the jacoco modules -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+  </properties>
+
+  <profiles>
+    <profile>
+      <!-- A dummy profile so that the dependencies are not loaded during the normal build cycle. -->
+      <id>dependabot-serverupdates</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.glassfish.main.distributions</groupId>
+          <artifactId>glassfish</artifactId>
+          <version>${version.glassfish}</version>
+          <type>zip</type>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.wildfly</groupId>
+          <artifactId>wildfly-dist</artifactId>
+          <version>${version.wildfly}</version>
+          <type>zip</type>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <version>${version.tomee}</version>
+          <type>zip</type>
+          <!-- TomEE has several classifiers, so define the same that we use in the test suite -->
+          <classifier>webprofile</classifier>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
+</project>
