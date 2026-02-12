@@ -42,8 +42,6 @@ updates:
     schedule:
       interval: daily
     open-pull-requests-limit: 10
-    ignore:
-      # No ignore rules up to now.
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
