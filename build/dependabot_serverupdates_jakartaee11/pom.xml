@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-warp-build</artifactId>
+    <version>2.1.0.Final-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>arquillian-warp-dependabot-serverupdates-jakartaee11</artifactId>
+  <name>Arquillian Warp: Dependabot server updates (JakartaEE 11)</name>
+  <description>Arquillian Warp: Dummy project to let dependabot update server container artifacts used in the test suite:
+    Here the JakartaEE 11 containers are defined. Dependabot is allowed to update them to any newer version.
+    If JakartaEE 12 is released in the future, the same rules as for JakartaEE 10 might be applied here.</description>
+  <packaging>pom</packaging>
+
+  <properties>
+    <!-- Do NOT deploy any of the jacoco modules -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+  </properties>
+
+  <profiles>
+    <profile>
+      <!-- A dummy profile so that the dependencies are not loaded during the normal build cycle. -->
+      <id>dependabot-serverupdates</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.glassfish.main.distributions</groupId>
+          <artifactId>glassfish</artifactId>
+          <version>${version.glassfish8}</version>
+          <type>zip</type>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+</project>

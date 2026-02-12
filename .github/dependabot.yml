@@ -20,6 +20,30 @@ updates:
       # Don't upgrade the tomcat servlet api, as it should match the TomEE version, which most probably does not contain a recent version of this artifact.
       - dependency-name: org.apache.tomcat:tomcat-servlet-api
         versions: "[10.1.0,)"
+      # Ignore all containers (see next section)
+      - dependency-name: org.glassfish.main.distributions:glassfish:zip
+      - dependency-name: org.wildfly:wildfly-dist:zip
+      - dependency-name: org.apache.tomee:apache-tomee:zip:webprofile
+    # Workaround for https://github.com/arquillian/arquillian-extension-warp/issues/395
+    # Some containers are used with different server versions in the testsuite, where the server version matches a JakartaEE version.
+    # So two different projects are created which contain dummy dependencies on specific versions of the servers.
+    # For each of those projects, a upper bound of the allowed server version is defined.
+  - package-ecosystem: maven
+    directory: "/build/dependabot_serverupdates_jakartaee10"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    ignore:
+      # Upgrade glassfish to the latest 7.x version (which is the JakartaEE 10 branch), but don't switch to 8.0
+      - dependency-name: org.glassfish.main.distributions:glassfish:zip
+        versions: "[8.0.0,)"
+  - package-ecosystem: maven
+    directory: "/build/dependabot_serverupdates_jakartaee11"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    ignore:
+      # No ignore rules up to now.
   - package-ecosystem: github-actions
     directory: "/"
     schedule:

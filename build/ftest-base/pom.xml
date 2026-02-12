@@ -455,38 +455,5 @@
         </plugins>
       </build>
     </profile>
-
-    <profile>
-      <!-- This profile is only used to enable dependabot so that it can detect and update the server containers
-           that are only declared as shrinkwrap resolver GAV coordinates and thus not readable by dependabot.
-           Don't use this profile for anything else.
-        -->
-      <id>dependabot-serverupdates</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.glassfish.main.distributions</groupId>
-          <artifactId>glassfish</artifactId>
-          <version>${version.glassfish}</version>
-          <type>zip</type>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.wildfly</groupId>
-          <artifactId>wildfly-dist</artifactId>
-          <version>${version.wildfly}</version>
-          <type>zip</type>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.tomee</groupId>
-          <artifactId>apache-tomee</artifactId>
-          <version>${version.tomee}</version>
-          <type>zip</type>
-          <!-- TomEE has several classifiers, so define the same that we use in the test suite -->
-          <classifier>webprofile</classifier>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
-    </profile>
   </profiles>
 </project>
