@@ -5,6 +5,7 @@
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-warp-build</artifactId>
     <version>2.1.0.Final-SNAPSHOT</version>
+    <relativePath>../</relativePath>
   </parent>
 
   <artifactId>arquillian-warp-dependabot-serverupdates-jakartaee11</artifactId>
