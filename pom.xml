@@ -112,7 +112,7 @@
     <version.glassfish>7.1.0</version.glassfish>
     <!-- GlassFish 8 is used to test Jakarta EE 11 features -->
     <version.glassfish8>8.0.0</version.glassfish8>
-    <version.wildfly>39.0.0.Final</version.wildfly>
+    <version.wildfly>39.0.1.Final</version.wildfly>
     <version.wildfly.arquillian.container>5.1.0.Final</version.wildfly.arquillian.container>
 
     <!-- Documentation -->
