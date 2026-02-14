@@ -332,7 +332,7 @@
            Run this profile only in combination with the profile "jakartaee11" so that arquillian-extension-warp is built using the JakartaEE11 api:
            mvn clean install -Pjakartaee11,glassfish-jakartaee11-managed
 
-           GlassFish 8 does not support Java 17
+           GlassFish 8 does not support Java 17, but requires Java 21.
 	    -->
       <id>glassfish-jakartaee11-managed</id>
       <activation>
@@ -342,6 +342,10 @@
         </property>
       </activation>
       <properties>
+        <!-- Enforce Java 21. Instead of defining a rule for the maven-enforcer plugin ourselves, we can use the plugin definition from jboss-parent
+             and just have to set this property. -->
+        <jdk.min.version>21</jdk.min.version>
+
         <arquillian.launch.glassfish>true</arquillian.launch.glassfish>
         <arquillian.container.home>${project.build.directory}/glassfish8</arquillian.container.home>
         <arquillian.container.distribution>org.glassfish.main.distributions:glassfish:zip:${version.glassfish8}
@@ -351,31 +355,6 @@
         <arquillian.container.linux.executepermission.file>glassfish8/glassfish/bin/asadmin
         </arquillian.container.linux.executepermission.file>
       </properties>
-
-      <!--This profile requires Java 21 to run, as this is required by GlassFish 8 -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-java</id>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireJavaVersion>
-                      <version>21</version>
-                    </requireJavaVersion>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
 
       <dependencies>
         <dependency>
