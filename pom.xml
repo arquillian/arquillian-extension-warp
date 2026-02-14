@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>51</version>
+    <version>52</version>
   </parent>
 
   <!-- Model Version -->
@@ -70,6 +70,11 @@
   <properties>
     <!-- JBoss Parent -->
     <maven.compiler.release>17</maven.compiler.release>
+    <!-- Also redefine the JDK version for the maven-enforcer-plugin: jboss-parent 52 sets it to "25". -->
+    <jdk.min.version>${maven.compiler.release}</jdk.min.version>
+    <!-- jboss-parent 52 uses 13.x of "com.puppycrawl.tools:checkstyle", which requires Java 21. So switch back to the older version.
+         The dependeny is only defined in jboss-parent, so dependabot should not send updates. -->
+    <version.checkstyle>12.3.1</version.checkstyle>
 
     <!-- Arquillian -->
     <version.arquillian_core>1.10.0.Final</version.arquillian_core>
