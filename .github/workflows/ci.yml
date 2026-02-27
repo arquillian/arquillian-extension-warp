@@ -47,7 +47,7 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: ./mvnw --batch-mode --no-transfer-progress --activate-profiles ${{ matrix.container }} clean verify
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: surefire-${{ matrix.os }}-${{ matrix.java }}-${{ matrix.container }}
