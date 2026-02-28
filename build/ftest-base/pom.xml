@@ -445,7 +445,8 @@
         <dependency>
           <groupId>org.glassfish.main.distributions</groupId>
           <artifactId>glassfish</artifactId>
-          <version>${version.glassfish}</version>
+          <!--Let dependabot only update GlassFish 8. GlassFish 7 cannot be handled this way, see issue https://github.com/arquillian/arquillian-extension-warp/issues/395 -->
+          <version>${version.glassfish8}</version>
           <type>zip</type>
           <scope>provided</scope>
         </dependency>
