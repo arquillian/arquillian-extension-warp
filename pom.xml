@@ -119,7 +119,7 @@
     <version.glassfish8>8.0.1</version.glassfish8>
     <!-- GlassFish 7 supports Jakarta EE 10 -->	
     <version.glassfish>7.1.0</version.glassfish>
-    <version.wildfly>39.0.1.Final</version.wildfly>
+    <version.wildfly>40.0.0.Final</version.wildfly>
     <version.wildfly.arquillian.container>5.1.0.Final</version.wildfly.arquillian.container>
 
     <!-- Documentation -->
