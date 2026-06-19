@@ -122,7 +122,7 @@
     <!-- Two different WildFly versions. Currently, WildFly 40 supports both Jakarta EE 10 and Jakarta EE 11, 
          but a future WildFly version will remove Jakarta EE 10 support, so the two versions will differ. -->
     <version.wildfly.jakartaee11>40.0.0.Final</version.wildfly.jakartaee11>
-    <version.wildfly.jakartaee10>40.0.0.Final</version.wildfly.jakartaee10>
+    <version.wildfly.jakartaee10>40.0.1.Final</version.wildfly.jakartaee10>
     <version.wildfly.arquillian.container>5.1.0.Final</version.wildfly.arquillian.container>
 
     <!-- Documentation -->
