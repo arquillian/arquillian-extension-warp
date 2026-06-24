@@ -220,9 +220,9 @@
       </activation>
       <properties>
         <arquillian.launch.tomee>true</arquillian.launch.tomee>
-        <arquillian.container.home>${project.build.directory}/apache-tomee-webprofile-${version.tomee}
+        <arquillian.container.home>${project.build.directory}/apache-tomee-webprofile-${version.tomee.jakartaee10}
         </arquillian.container.home>
-        <arquillian.container.distribution>org.apache.tomee:apache-tomee:zip:webprofile:${version.tomee}
+        <arquillian.container.distribution>org.apache.tomee:apache-tomee:zip:webprofile:${version.tomee.jakartaee10}
         </arquillian.container.distribution>
       </properties>
       <dependencies>
@@ -238,12 +238,12 @@
           <groupId>org.apache.tomcat</groupId>
           <artifactId>tomcat-servlet-api</artifactId>
           <scope>provided</scope>
-          <version>${version.tomee.tomcat}</version>
+          <version>${version.tomee.jakartaee10.tomcat}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
-          <version>${version.tomee}</version>
+          <version>${version.tomee.jakartaee10}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -499,7 +499,7 @@
         <dependency>
           <groupId>org.apache.tomee</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${version.tomee}</version>
+          <version>${version.tomee.jakartaee10}</version>
           <type>zip</type>
           <!-- TomEE has several classifiers, so define the same that we use in the test suite -->
           <classifier>webprofile</classifier>
