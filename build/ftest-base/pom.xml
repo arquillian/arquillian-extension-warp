@@ -249,6 +249,48 @@
       </dependencies>
     </profile>
     <profile>
+      <!-- The TomEE 11 container supports JakartaEE11.
+           Run this profile only in combination with the profile "jakartaee11" so that arquillian-extension-warp is built using the JakartaEE11 api:
+           mvn clean install -Pjakartaee11,tomee-jakartaee11-managed
+	    -->
+      <id>tomee-jakartaee11-managed</id>
+      <activation>
+        <property>
+          <name>integration</name>
+          <value>tomee</value>
+        </property>
+      </activation>
+      <properties>
+        <arquillian.launch.tomee>true</arquillian.launch.tomee>
+        <arquillian.container.home>${project.build.directory}/apache-tomee-webprofile-${version.tomee.jakartaee11}
+        </arquillian.container.home>
+        <arquillian.container.distribution>org.apache.tomee:apache-tomee:zip:webprofile:${version.tomee.jakartaee11}
+        </arquillian.container.distribution>
+      </properties>
+      <dependencies>
+        <!--The dependency on the servlet api must be declared for each profile, see detailed explanation in the
+            test "org.jboss.arquillian.warp.jsf.ftest.lifecycle.TestFacesLifecycleFailurePropagation" in "jsf-ftest" project.
+
+            Also, it must be declared before "org.apache.tomee:arquillian-tomee-remote", because the latter brings "org.apache.tomee:jakartaee-api",
+            which also contains a "ServletException", but with a different SerialVersionUID. Thus the error described in "TestFacesLifecycleFailurePropagation"
+            would occur.
+            If we declare the servlet api jar before the arquillian jar, the ServletException class is loaded from there.
+          -->
+        <dependency>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-servlet-api</artifactId>
+          <scope>provided</scope>
+          <version>${version.tomee.jakartaee11.tomcat}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>arquillian-tomee-remote</artifactId>
+          <version>${version.tomee.jakartaee11}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>glassfish-managed</id>
       <activation>
         <property>
