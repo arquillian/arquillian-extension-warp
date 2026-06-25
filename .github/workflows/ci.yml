@@ -34,6 +34,8 @@ jobs:
           - tomee-managed
           # Build warp with the Jakarta EE 11 API and run it using the glassfish 8 server:
           - jakartaee11,glassfish-jakartaee11-managed
+          # Build warp with the Jakarta EE 11 API and run it using the TomEE 11 server:
+          - jakartaee11,tomee-jakartaee11-managed
         exclude:
           # GlassFish 8 does not support Java 17
           - java: 17
