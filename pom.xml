@@ -121,7 +121,7 @@
     <version.tomee.jakartaee11.tomcat>11.0.22</version.tomee.jakartaee11.tomcat>
 
     <!-- GlassFish 8 is used to test Jakarta EE 11 features -->
-    <version.glassfish8>8.0.2</version.glassfish8>
+    <version.glassfish8>8.0.3</version.glassfish8>
     <!-- GlassFish 7 supports Jakarta EE 10 -->	
     <version.glassfish>7.1.0</version.glassfish>
     <!-- Two different WildFly versions. Currently, WildFly 40 supports both Jakarta EE 10 and Jakarta EE 11, 
