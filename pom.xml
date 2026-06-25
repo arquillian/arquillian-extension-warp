@@ -93,7 +93,7 @@
     <!-- LittleProxy logging is done through SL4J and thus Log4j -->
     <version.log4j>2.26.0</version.log4j>
     <version.javassist>3.32.0-GA</version.javassist>
-    <version.httpcore>5.4.2</version.httpcore>
+    <version.httpcore>5.4.3</version.httpcore>
 
     <!-- Tests -->
     <version.hamcrest>3.0</version.hamcrest>
