@@ -97,7 +97,7 @@
 
     <!-- Tests -->
     <version.hamcrest>3.0</version.hamcrest>
-    <version.junit>6.1.0</version.junit>
+    <version.junit>6.1.1</version.junit>
     <version.mockito>5.23.0</version.mockito>
     <version.jacoco>0.8.15</version.jacoco>
     <version.shrinkwrap>1.2.6</version.shrinkwrap>
