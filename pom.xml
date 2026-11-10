@@ -117,8 +117,8 @@
          It does not have to match exactly the version bundled with TomEE, but it should be at least the same JakartaEE spec version.-->
     <version.tomee.jakartaee10.tomcat>10.1.54</version.tomee.jakartaee10.tomcat>
     <!-- TomEE 10 is used to test Jakarta EE 11 compatibility -->
-    <version.tomee.jakartaee11>11.0.0-M1</version.tomee.jakartaee11>
-    <version.tomee.jakartaee11.tomcat>11.0.22</version.tomee.jakartaee11.tomcat>
+    <version.tomee.jakartaee11>11.0.0-M2</version.tomee.jakartaee11>
+    <version.tomee.jakartaee11.tomcat>11.0.27</version.tomee.jakartaee11.tomcat>
 
     <!-- GlassFish 8 is used to test Jakarta EE 11 features -->
     <version.glassfish8>8.0.3</version.glassfish8>
