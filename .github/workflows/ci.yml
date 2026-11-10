@@ -24,9 +24,9 @@ jobs:
           - 17
           - 21
           - 25
-          - 26
+          - 27
         container:
-          # Build warp wíth the Jakarta EE 10 api and use the Jakarta EE 10 WildFly server:
+          # Build warp with the Jakarta EE 10 api and use the Jakarta EE 10 WildFly server:
           - wildfly-managed
           # Build warp with the Jakarta EE 11 api and run it using the default wildfly server:
           - jakartaee11,wildfly-jakartaee11-managed
@@ -40,10 +40,10 @@ jobs:
           # GlassFish 8 does not support Java 17
           - java: 17
             container: jakartaee11,glassfish-jakartaee11-managed
-          # GlassFish 7 and 8 do not support Java 26: https://github.com/eclipse-ee4j/glassfish/pull/25978
-          - java: 26
+          # GlassFish 7 and 8 do not support Java 26 and newer; only fixed in GlassFish 9: https://github.com/eclipse-ee4j/glassfish/pull/26189
+          - java: 27
             container: glassfish-managed
-          - java: 26
+          - java: 27
             container: jakartaee11,glassfish-jakartaee11-managed
     steps:
       - name: Checkout
