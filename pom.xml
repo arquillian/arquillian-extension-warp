@@ -92,7 +92,7 @@
     <version.littleproxy>2.9.1</version.littleproxy>
     <!-- LittleProxy logging is done through SL4J and thus Log4j -->
     <version.log4j>2.26.1</version.log4j>
-    <version.javassist>3.32.0-GA</version.javassist>
+    <version.javassist>3.33.0-GA</version.javassist>
     <version.httpcore>5.4.4</version.httpcore>
 
     <!-- Tests -->
