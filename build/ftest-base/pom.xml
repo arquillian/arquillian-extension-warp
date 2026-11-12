@@ -12,7 +12,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <version.shrinkwrap>1.2.6</version.shrinkwrap>
+    <version.shrinkwrap>2.0.0.Final</version.shrinkwrap>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
     <version.arquillian.glassfish>2.2.1</version.arquillian.glassfish>
 
