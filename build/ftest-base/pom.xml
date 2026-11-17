@@ -12,7 +12,6 @@
   <packaging>pom</packaging>
 
   <properties>
-    <version.shrinkwrap>1.2.6</version.shrinkwrap>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
     <version.arquillian.glassfish>2.2.1</version.arquillian.glassfish>
 
@@ -40,33 +39,13 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-build</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <!-- Integration Tests - Version Management -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap</groupId>
-        <artifactId>shrinkwrap-bom</artifactId>
-        <version>${version.shrinkwrap}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <dependency>
         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
         <artifactId>shrinkwrap-descriptors-bom</artifactId>
         <version>${version.shrinkwrap.descriptors}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-        <artifactId>shrinkwrap-descriptors-depchain</artifactId>
-        <type>pom</type>
-        <version>${version.shrinkwrap.descriptors}</version>
       </dependency>
       <!--LittleProxy logging is done by Log4J: -->
       <dependency>
