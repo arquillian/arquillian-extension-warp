@@ -13,7 +13,7 @@
 
   <properties>
     <version.shrinkwrap.descriptors>2.0.0</version.shrinkwrap.descriptors>
-    <version.arquillian.glassfish>2.2.1</version.arquillian.glassfish>
+    <version.arquillian.glassfish>2.2.2</version.arquillian.glassfish>
 
     <!-- Arquillian Configuration -->
     <arquillian.debug>false</arquillian.debug>
